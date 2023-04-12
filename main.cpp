@@ -1,6 +1,9 @@
 #include <Windows.h>
 #include <string>
 #include <cstdint>
+#include<format>
+#include"DirectX.h"
+#include"WinApp.h"
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	// メッセージに応じてゲーム固有の処理を行う
@@ -18,6 +21,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+	DirectX* directX = nullptr;
 	WNDCLASS wc{};
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
@@ -54,11 +58,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		nullptr,
 		wc.hInstance,
 		nullptr);
+
+	// 文字列を格納する
+	std::string str0{ "STRING!!!" };
+
+	// 整数を文字列にする
+	std::string str1{ std::to_string(10) };
 	
+	// 出力ウィンドウへの文字出力
+	OutputDebugStringA("Hello,DirectX!\n");
+	Log(str1);
+
+	// 変数から型を推論してくれる
+	Log(std::format("enemyHp:{}\n", str1));
+
 	// ウィンドウを表示する
 	ShowWindow(hwnd, SW_SHOW);
 
 	MSG msg{};
+
+
+	directX->Initialize();
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
 		// Windowにメッセージが来てたら最優先で処理させる
@@ -70,9 +91,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// ゲームの処理
 		}
 	}
-
-	// 出力ウィンドウへの文字出力
-	OutputDebugStringA("Hello,DirectX!\n");
 
 	return 0;
 }
