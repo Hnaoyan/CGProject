@@ -20,7 +20,7 @@ public:
 
 	void Set();
 
-	void RenderTargetView(HRESULT& hr, ID3D12Device& device, IDXGISwapChain4& swapChain,
+	void RenderTargetView(HRESULT& hr, ID3D12Device* device, IDXGISwapChain4* swapChain,
 		ID3D12GraphicsCommandList* commandList, ID3D12CommandQueue* commandQueue, ID3D12CommandAllocator* commandAllocator);
 
 public:
