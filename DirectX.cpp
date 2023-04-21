@@ -345,6 +345,7 @@ void DirectX::RenderTargetView(HRESULT& hr, ID3D12Device* device, IDXGISwapChain
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };	// 青っぽい色。RGBAの順
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+
 	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからcloseすること
 	hr = commandList->Close();
 	assert(SUCCEEDED(hr));
