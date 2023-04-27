@@ -145,10 +145,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="DirectX.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectX.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="WinApp.h" />
   </ItemGroup>
   <ItemGroup>
