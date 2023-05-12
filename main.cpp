@@ -906,6 +906,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	pixelShaderBlob->Release();
 	vertexShaderBlob->Release();
 	depthStencilResource->Release();
+	dsvDescriptorHeap->Release();
 
 
 #pragma endregion
