@@ -269,6 +269,7 @@ ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//DirectX* directX = nullptr;
+	CoInitializeEx(0, COINIT_MULTITHREADED);
 	WNDCLASS wc{};
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
@@ -934,6 +935,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 		}
 	}
+
+	CoUninitialize();
 
 #pragma region Release
 	ImGui_ImplDX12_Shutdown();
