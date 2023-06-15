@@ -1019,6 +1019,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix4x4 viewMatrix = MakeInverse(cameraMatrix);
 			Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
 			Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+			wvpData->World = worldMatrix;
 			wvpData->WVP = worldViewProjectionMatrix;
 
 			// Sprite用のWorldViewProjectionMatrixを作る
@@ -1026,6 +1027,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
 			Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(kClientWidth), float(kClientHeight), 0.0f, 100.0f);
 			Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
+			transformationMatrixDataSprite->World = worldMatrixSprite;
 			transformationMatrixDataSprite->WVP = worldViewProjectionMatrixSprite;
 
 			float float3[3] = { transformSprite.translate.x,transformSprite.translate.y,transformSprite.translate.z };
