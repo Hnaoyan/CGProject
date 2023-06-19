@@ -37,15 +37,45 @@ public:
 	/// </summary>
 	void PostDraw();
 
-private:
+private:	//メンバ関数
 
+	/// <summary>
+	/// CPUDescriptorハンドルの作成
+	/// </summary>
+	/// <param name="descriptorHeap"></param>
+	/// <param name="descriptorSize"></param>
+	/// <param name="index"></param>
+	/// <returns></returns>
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
+	/// <summary>
+	/// GPUDescriptorハンドルの作成
+	/// </summary>
+	/// <param name="descriptorHeap"></param>
+	/// <param name="descriptorSize"></param>
+	/// <param name="index"></param>
+	/// <returns></returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
+	/// <summary>
+	/// リソースバリアの作成関数
+	/// </summary>
+	/// <param name="backBuffer"></param>
+	/// <param name="stateBefore"></param>
+	/// <param name="stateAfter"></param>
+	/// <returns></returns>
 	D3D12_RESOURCE_BARRIER GetBarrier(ID3D12Resource* backBuffer, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter);
 
-private:
+	D3D12_RESOURCE_DESC GetResoruceHeap(DXGI_FORMAT format, D3D12_RESOURCE_DIMENSION dimension, D3D12_RESOURCE_FLAGS flags, uint32_t width, uint32_t height);
+
+	D3D12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE type);
+
+	D3D12_CLEAR_VALUE ClearValue(DXGI_FORMAT format, FLOAT depth);
+
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
+		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+
+private:	// メンバ変数
 	// ウィンドウズアプリケーション管理
 	WinApp* winApp_;
 
@@ -57,7 +87,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffer_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthResourceBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
 
 	int32_t backBufferWidth_ = 0;
@@ -89,6 +121,11 @@ private:	// メンバ関数
 	/// </summary>
 	void CreateRenderTargetView();
 
+	void CreateDepthBuffer();
+
+	/// <summary>
+	/// フェンスの生成
+	/// </summary>
 	void CreateFence();
 
 

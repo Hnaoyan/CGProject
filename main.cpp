@@ -7,12 +7,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DirectXCommon* dxCommon;
 
 	winApp = WinApp::GetInstance();
+	winApp->CreateGameWindow();
 
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(winApp);
-
-	//winApp = WinApp::GetInstance();
-	winApp->CreateGameWindow();
 
 	while (winApp->ProcessMessage() == 0)
 	{
