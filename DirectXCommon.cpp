@@ -1,6 +1,5 @@
 #include "DirectXCommon.h"
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "dxgi.lib")
+#include <cassert>
 
 using namespace Microsoft::WRL;
 
@@ -34,35 +33,21 @@ D3D12_RESOURCE_BARRIER DirectXCommon::GetBarrier(ID3D12Resource* backBuffer, D3D
 	return barrier;
 }
 
-D3D12_RESOURCE_DESC DirectXCommon::GetResoruceHeap(DXGI_FORMAT format, D3D12_RESOURCE_DIMENSION dimension, D3D12_RESOURCE_FLAGS flags, uint32_t width, uint32_t height) {
-	D3D12_RESOURCE_DESC resourceDesc{};
-
-	resourceDesc.Width = width;		// テクスチャの幅
-	resourceDesc.Height = height;	// テクスチャの高さ
-	resourceDesc.MipLevels = 1;		// mipMapの数
-	resourceDesc.DepthOrArraySize = 1;	// 奥行き or 配列Textureの配列数
-	resourceDesc.Format = format;	// DepthStencilとして両可能なフォーマット
-	resourceDesc.SampleDesc.Count = 1;	// サンプリングカウント。1固定
-	resourceDesc.Dimension = dimension;	// 2次元
-	resourceDesc.Flags = flags;	// DepthStencilとして使う通知
-
-	return resourceDesc;
-}
-
 D3D12_HEAP_PROPERTIES DirectXCommon::HeapProperties(D3D12_HEAP_TYPE type) {
 	// 利用するHeapの設定
 	D3D12_HEAP_PROPERTIES heapProperties{};
 	heapProperties.Type = type;
-	
+
 	return heapProperties;
 }
+
 
 D3D12_CLEAR_VALUE DirectXCommon::ClearValue(DXGI_FORMAT format, FLOAT depth) {
 	// 深度値のクリア設定
 	D3D12_CLEAR_VALUE depthClearValue{};
 	depthClearValue.DepthStencil.Depth = depth;
 	depthClearValue.Format = format;
-	
+
 	return depthClearValue;
 }
 
@@ -77,6 +62,21 @@ ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(
 	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
+}
+
+D3D12_RESOURCE_DESC DirectXCommon::GetResoruceHeap(DXGI_FORMAT format, D3D12_RESOURCE_DIMENSION dimension, D3D12_RESOURCE_FLAGS flags, uint32_t width, uint32_t height) {
+	D3D12_RESOURCE_DESC resourceDesc{};
+
+	resourceDesc.Width = width;		// テクスチャの幅
+	resourceDesc.Height = height;	// テクスチャの高さ
+	resourceDesc.MipLevels = 1;		// mipMapの数
+	resourceDesc.DepthOrArraySize = 1;	// 奥行き or 配列Textureの配列数
+	resourceDesc.Format = format;	// DepthStencilとして両可能なフォーマット
+	resourceDesc.SampleDesc.Count = 1;	// サンプリングカウント。1固定
+	resourceDesc.Dimension = dimension;	// 2次元
+	resourceDesc.Flags = flags;	// DepthStencilとして使う通知
+
+	return resourceDesc;
 }
 
 DirectXCommon* DirectXCommon::GetInstance() {
@@ -124,6 +124,14 @@ void DirectXCommon::PreDraw() {
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+	D3D12_VIEWPORT viewport = CreateViewport(FLOAT(backBufferWidth_), FLOAT(backBufferHeight_), 0, 0, 0.0f, 1.0f);
+	D3D12_RECT scissorRect = CreateScissorRect(0, FLOAT(backBufferWidth_), 0, FLOAT(backBufferHeight_));
+	commandList_->RSSetViewports(1, &viewport);
+	commandList_->RSSetScissorRects(1, &scissorRect);
+
+	
+
 }
 
 void DirectXCommon::PostDraw() {
@@ -141,7 +149,7 @@ void DirectXCommon::PostDraw() {
 	result = commandList_->Close();
 	assert(SUCCEEDED(result));
 
-	ID3D12CommandList* commandLists[] = { commandList_.Get()};
+	ID3D12CommandList* commandLists[] = { commandList_.Get() };
 	commandQueue_->ExecuteCommandLists(1, commandLists);
 
 	// GPUとOSに画面の交換を行うよう通知する
@@ -151,11 +159,11 @@ void DirectXCommon::PostDraw() {
 	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
 
-	
+
 	// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
 	commandQueue_->Signal(fence_.Get(), ++fenceVal_);
 
-	if (fence_->GetCompletedValue() != fenceVal_) 
+	if (fence_->GetCompletedValue() != fenceVal_)
 	{
 		// 指定したSignalにたどりついていないので、たどり着くまで待つようにイベントを設定する
 		fence_->SetEventOnCompletion(fenceVal_, fenceEvent);
@@ -376,4 +384,24 @@ void DirectXCommon::CreateFence() {
 	result = device_->CreateFence(fenceVal_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
 	assert(SUCCEEDED(result));
 
+}
+
+D3D12_VIEWPORT DirectXCommon::CreateViewport(FLOAT width, FLOAT height, FLOAT topLeftX, FLOAT topLeftY, FLOAT minDepth, FLOAT maxDepth) {
+	D3D12_VIEWPORT viewport{};
+	viewport.Width = width;
+	viewport.Height = height;
+	viewport.TopLeftX = topLeftX;
+	viewport.TopLeftY = topLeftY;
+	viewport.MinDepth = minDepth;
+	viewport.MaxDepth = maxDepth;
+	return viewport;
+}
+
+D3D12_RECT DirectXCommon::CreateScissorRect(FLOAT left, FLOAT right, FLOAT top, FLOAT bottom) {
+	D3D12_RECT scissorRect{};
+	scissorRect.left = LONG(left);
+	scissorRect.right = LONG(right);
+	scissorRect.top = LONG(top);
+	scissorRect.bottom = LONG(bottom);
+	return scissorRect;
 }

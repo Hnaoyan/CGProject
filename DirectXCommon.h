@@ -1,14 +1,20 @@
+
 #pragma once
 
 #include <Windows.h>
 #include <cstdlib>
 #include <d3d12.h>
 #include <dxgi1_6.h>
-#include <cassert>
 #include <chrono>
 
 #include <wrl.h>
 #include "WinApp.h"
+
+#include <dxcapi.h>
+#pragma comment(lib, "dxcompiler.lib")
+
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "dxgi.lib")
 
 class DirectXCommon
 {
@@ -36,6 +42,10 @@ public:
 	/// 描画後処理
 	/// </summary>
 	void PostDraw();
+
+	ID3D12Device* GetDevice() { return device_.Get(); }
+
+	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
 
 private:	//メンバ関数
 
@@ -66,11 +76,15 @@ private:	//メンバ関数
 	/// <returns></returns>
 	D3D12_RESOURCE_BARRIER GetBarrier(ID3D12Resource* backBuffer, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter);
 
-	D3D12_RESOURCE_DESC GetResoruceHeap(DXGI_FORMAT format, D3D12_RESOURCE_DIMENSION dimension, D3D12_RESOURCE_FLAGS flags, uint32_t width, uint32_t height);
-
 	D3D12_HEAP_PROPERTIES HeapProperties(D3D12_HEAP_TYPE type);
 
 	D3D12_CLEAR_VALUE ClearValue(DXGI_FORMAT format, FLOAT depth);
+
+	D3D12_RESOURCE_DESC GetResoruceHeap(DXGI_FORMAT format, D3D12_RESOURCE_DIMENSION dimension, D3D12_RESOURCE_FLAGS flags, uint32_t width, uint32_t height);
+
+	D3D12_VIEWPORT CreateViewport(FLOAT width, FLOAT height, FLOAT topLeftX, FLOAT topLeftY, FLOAT minDepth, FLOAT maxDepth);
+
+	D3D12_RECT CreateScissorRect(FLOAT left, FLOAT right, FLOAT top, FLOAT bottom);
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
