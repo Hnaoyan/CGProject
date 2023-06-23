@@ -81,6 +81,8 @@ private:	// メンバ関数
 
 	Vector4* vertData_ = nullptr;
 
+	Vector4* constData_ = nullptr;
+
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertBufferView_{};
 };
