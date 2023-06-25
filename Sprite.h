@@ -1,6 +1,7 @@
 #pragma once
 #include <wrl.h>
 #include "WinApp.h"
+#include "Matrix.h"
 
 #include <dxgidebug.h>
 #include <dxcapi.h>
@@ -18,6 +19,10 @@ class Sprite
 public:	// サブクラス
 	struct Vector4 {
 		float x, y, z, w;
+	};
+
+	struct TransformationMatrix {
+		Matrix4x4 WVP;
 	};
 
 public:	// 静的メンバ関数
@@ -82,6 +87,10 @@ private:	// メンバ関数
 	Vector4* vertData_ = nullptr;
 
 	Vector4* constData_ = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResoure_;
+
+	TransformationMatrix* wvpData = nullptr;
 
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertBufferView_{};
