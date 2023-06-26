@@ -20,9 +20,19 @@ public:	// サブクラス
 	struct Vector4 {
 		float x, y, z, w;
 	};
+	
+	struct Vector3 {
+		float x, y, z;
+	};
 
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
+	};
+
+	struct Transform {
+		Vector3 scale;
+		Vector3 rotate;
+		Vector3 translate;
 	};
 
 public:	// 静的メンバ関数
@@ -62,6 +72,8 @@ public:
 
 	void Draw();
 
+	void SetWvpMatrix(Matrix4x4 wvp) { wvpMatrix_ = wvp; }
+
 private:
 		
 	static IDxcBlob* CompileShader(
@@ -87,6 +99,8 @@ private:	// メンバ関数
 	Vector4* vertData_ = nullptr;
 
 	Vector4* constData_ = nullptr;
+
+	Matrix4x4 wvpMatrix_;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResoure_;
 

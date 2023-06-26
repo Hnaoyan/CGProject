@@ -159,6 +159,8 @@ void Sprite::PostDraw() {
 
 void Sprite::Draw() {
 
+	wvpData->WVP = wvpMatrix_;
+
 	sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
 	// マテリアルCBufferの場所を設定
 	sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
@@ -218,8 +220,11 @@ bool Sprite::Initialize() {
 	assert(SUCCEEDED(result));
 	*constData_ = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
 
+	// WVP用のリソースのサイズを用意
 	wvpResoure_ = CreateBufferResoruce(sizeof(TransformationMatrix));
-
+	// 書き込むためのアドレスを取得
+	wvpResoure_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	// 単位行列を書き込んでおく
 	wvpData->WVP = MakeIdentity4x4();
 
 	return true;
