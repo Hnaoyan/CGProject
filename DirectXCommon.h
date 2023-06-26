@@ -82,8 +82,14 @@ private:	//メンバ関数
 
 	D3D12_RESOURCE_DESC GetResoruceHeap(DXGI_FORMAT format, D3D12_RESOURCE_DIMENSION dimension, D3D12_RESOURCE_FLAGS flags, uint32_t width, uint32_t height);
 
+	/// <summary>
+	/// Viewport作成関数
+	/// </summary>
 	D3D12_VIEWPORT CreateViewport(FLOAT width, FLOAT height, FLOAT topLeftX, FLOAT topLeftY, FLOAT minDepth, FLOAT maxDepth);
 
+	/// <summary>
+	/// シザー作成関数
+	/// </summary>
 	D3D12_RECT CreateScissorRect(FLOAT left, FLOAT right, FLOAT top, FLOAT bottom);
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
@@ -135,6 +141,9 @@ private:	// メンバ関数
 	/// </summary>
 	void CreateRenderTargetView();
 
+	/// <summary>
+	/// 深度Bufferの生成
+	/// </summary>
 	void CreateDepthBuffer();
 
 	/// <summary>

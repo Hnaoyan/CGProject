@@ -22,11 +22,11 @@ void GameScene::Draw() {
 
 	// コマンドリストを取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-
+	// 描画前
 	Sprite::PreDraw(commandList);
 
 	sprite_->Draw();
-
+	// 描画後
 	Sprite::PostDraw();
 
 }

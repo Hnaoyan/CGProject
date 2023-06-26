@@ -37,14 +37,33 @@ public:	// サブクラス
 
 public:	// 静的メンバ関数
 
+	/// <summary>
+	/// 静的初期化
+	/// </summary>
+	/// <param name="device"></param>
 	static void StaticInitialize(ID3D12Device* device);
 
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
+	/// <param name="blob"></param>
+	/// <returns></returns>
 	static void PreDraw(ID3D12GraphicsCommandList* commandList);
 
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
 	static void PostDraw();
 
+	/// <summary>
+	/// DXCompilerの初期化
+	/// </summary>
 	static void InitializeDXC();
 
+	/// <summary>
+	/// リソース作成
+	/// </summary>
+	/// <returns></returns>
 	static Sprite* Create();
 
 private:	// 静的メンバ変数
@@ -66,12 +85,25 @@ private:	// 静的メンバ変数
 
 public:
 
+	/// <summary>
+	/// new
+	/// </summary>
 	Sprite() {};
 
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <returns></returns>
 	bool Initialize();
 
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// WorldViewportMatrixのSetter
+	/// </summary>
 	void SetWvpMatrix(Matrix4x4 wvp) { wvpMatrix_ = wvp; }
 
 private:
