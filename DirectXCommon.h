@@ -47,6 +47,8 @@ public:
 
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
 
+	size_t GetBackBufferCount() const { return backBuffer_.size(); }
+
 private:	//メンバ関数
 
 	/// <summary>
