@@ -122,6 +122,8 @@ private:
 
 	static ID3D12Resource* CreateBufferResoruce(size_t sizeInBytes);
 
+	D3D12_RESOURCE_DESC SetResourceDesc(size_t size);
+
 private:	// メンバ関数
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff_;

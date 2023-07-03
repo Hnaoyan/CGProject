@@ -279,6 +279,21 @@ ID3D12Resource* Sprite::CreateBufferResoruce(size_t sizeInBytes) {
 	return resultResource;
 }
 
+D3D12_RESOURCE_DESC Sprite::SetResourceDesc(size_t size)
+{
+	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resourceDesc.Width = size;	// リソースサイズ
+	// バッファの場合はこれらは1にする決まり
+	resourceDesc.Height = 1;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.SampleDesc.Count = 1;
+	// バッファの場合これにする決まり
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	return resourceDesc;
+}
+
 IDxcBlob* Sprite::CompileShader(
 	// CompilerするShaderファイルへのパス
 	const std::wstring& filePath,
