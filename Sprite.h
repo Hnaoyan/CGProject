@@ -44,6 +44,10 @@ public:	// サブクラス
 		Vector2 texcoord;
 	};
 
+	struct ConstBufferData {
+		Vector4 color;
+	};
+
 public:	// 静的メンバ関数
 
 	/// <summary>
@@ -90,6 +94,8 @@ private:	// 静的メンバ変数
 	static Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler_;
 
 	static Microsoft::WRL::ComPtr<ID3D12PipelineState> gPipelineState_;
+	// デスクリプタサイズ
+	static UINT sDescriptorHandleIncrementSize_;
 
 
 public:
