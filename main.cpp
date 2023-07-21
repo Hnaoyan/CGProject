@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "GameScene.h"
 #include "ImGuiManager.h"
+#include "TextureManager.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -19,6 +20,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	imguiManager = ImGuiManager::GetInstance();
 	imguiManager->Initialize(dxCommon, winApp);
+
+	// テクスチャマネージャの初期化
+	TextureManager::GetInstance()->Initialize(dxCommon->GetDevice());
+	TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(dxCommon->GetDevice());
 

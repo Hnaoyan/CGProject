@@ -25,6 +25,10 @@ public:	// サブクラス
 		float x, y, z;
 	};
 
+	struct Vector2 {
+		float x, y;
+	};
+
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
 	};
@@ -33,6 +37,11 @@ public:	// サブクラス
 		Vector3 scale;
 		Vector3 rotate;
 		Vector3 translate;
+	};
+
+	struct VertexData {
+		Vector4 position;
+		//Vector2 texcoord;
 	};
 
 public:	// 静的メンバ関数
@@ -120,7 +129,7 @@ private:
 
 	static D3D12_SHADER_BYTECODE ShaderByteCode(IDxcBlob* blob);
 
-	static ID3D12Resource* CreateBufferResoruce(size_t sizeInBytes);
+	static Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResoruce(size_t sizeInBytes);
 
 	D3D12_RESOURCE_DESC SetResourceDesc(size_t size);
 
@@ -130,7 +139,7 @@ private:	// メンバ関数
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
 
-	Vector4* vertData_ = nullptr;
+	VertexData* vertData_ = nullptr;
 
 	Vector4* constData_ = nullptr;
 
@@ -142,5 +151,7 @@ private:	// メンバ関数
 
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertBufferView_{};
+
+	UINT textureHandle_ = 0;
 };
 

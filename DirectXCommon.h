@@ -43,6 +43,8 @@ public:
 	/// </summary>
 	void PostDraw();
 
+	void ClearDepthBuffer();
+
 	ID3D12Device* GetDevice() { return device_.Get(); }
 
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }

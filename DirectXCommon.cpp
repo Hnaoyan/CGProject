@@ -121,9 +121,13 @@ void DirectXCommon::PreDraw() {
 	// 描画先のRTVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetCPUDescriptorHandle(rtvDescriptorHeap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), backBufferIndex);
 	commandList_->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
+
 	// 指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
 	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+	// 深度クリア
+	//ClearDepthBuffer();
 
 	D3D12_VIEWPORT viewport = CreateViewport(FLOAT(backBufferWidth_), FLOAT(backBufferHeight_), 0, 0, 0.0f, 1.0f);
 	D3D12_RECT scissorRect = CreateScissorRect(0, FLOAT(backBufferWidth_), 0, FLOAT(backBufferHeight_));
@@ -178,6 +182,12 @@ void DirectXCommon::PostDraw() {
 	result = commandList_->Reset(commandAllocator_.Get(), nullptr);
 
 
+}
+
+void DirectXCommon::ClearDepthBuffer()
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 void DirectXCommon::InitializeDXGIDevice() {
