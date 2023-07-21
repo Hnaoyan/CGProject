@@ -41,7 +41,7 @@ public:	// サブクラス
 
 	struct VertexData {
 		Vector4 position;
-		//Vector2 texcoord;
+		Vector2 texcoord;
 	};
 
 public:	// 静的メンバ関数
