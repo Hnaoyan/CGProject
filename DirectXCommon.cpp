@@ -3,82 +3,6 @@
 
 using namespace Microsoft::WRL;
 
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
-{
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	handleCPU.ptr += (descriptorSize * index);
-	return handleCPU;
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
-{
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	handleGPU.ptr += (descriptorSize * index);
-	return handleGPU;
-}
-
-D3D12_RESOURCE_BARRIER DirectXCommon::GetBarrier(ID3D12Resource* backBuffer, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter) {
-	// TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
-	// 今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを張る対象のリソース。
-	barrier.Transition.pResource = backBuffer;
-	// 遷移前（現在）のResourceState
-	barrier.Transition.StateBefore = stateBefore;
-	// 遷移後のState
-	barrier.Transition.StateAfter = stateAfter;
-	return barrier;
-}
-
-D3D12_HEAP_PROPERTIES DirectXCommon::HeapProperties(D3D12_HEAP_TYPE type) {
-	// 利用するHeapの設定
-	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = type;
-
-	return heapProperties;
-}
-
-
-D3D12_CLEAR_VALUE DirectXCommon::ClearValue(DXGI_FORMAT format, FLOAT depth) {
-	// 深度値のクリア設定
-	D3D12_CLEAR_VALUE depthClearValue{};
-	depthClearValue.DepthStencil.Depth = depth;
-	depthClearValue.Format = format;
-
-	return depthClearValue;
-}
-
-ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(
-	D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible)
-{
-	ID3D12DescriptorHeap* descriptorHeap = nullptr;
-	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
-	descriptorHeapDesc.Type = heapType;
-	descriptorHeapDesc.NumDescriptors = numDescriptors;
-	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
-	assert(SUCCEEDED(hr));
-	return descriptorHeap;
-}
-
-D3D12_RESOURCE_DESC DirectXCommon::GetResoruceHeap(DXGI_FORMAT format, D3D12_RESOURCE_DIMENSION dimension, D3D12_RESOURCE_FLAGS flags, uint32_t width, uint32_t height) {
-	D3D12_RESOURCE_DESC resourceDesc{};
-
-	resourceDesc.Width = width;		// テクスチャの幅
-	resourceDesc.Height = height;	// テクスチャの高さ
-	resourceDesc.MipLevels = 1;		// mipMapの数
-	resourceDesc.DepthOrArraySize = 1;	// 奥行き or 配列Textureの配列数
-	resourceDesc.Format = format;	// DepthStencilとして両可能なフォーマット
-	resourceDesc.SampleDesc.Count = 1;	// サンプリングカウント。1固定
-	resourceDesc.Dimension = dimension;	// 2次元
-	resourceDesc.Flags = flags;	// DepthStencilとして使う通知
-
-	return resourceDesc;
-}
-
 DirectXCommon* DirectXCommon::GetInstance() {
 	static DirectXCommon instance;
 	return &instance;
@@ -102,6 +26,9 @@ void DirectXCommon::Initialize(WinApp* winApp, int32_t bufferWidth, int32_t buff
 	// RTVの生成
 	CreateRenderTargetView();
 
+	// 深度バッファ生成
+	CreateDepthBuffer();
+
 	// フェンスの生成
 	CreateFence();
 
@@ -119,22 +46,23 @@ void DirectXCommon::PreDraw() {
 	commandList_->ResourceBarrier(1, &barrier);
 
 	// 描画先のRTVを設定する
+	// ハンドルを取得
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetCPUDescriptorHandle(rtvDescriptorHeap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), backBufferIndex);
-	commandList_->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 
-	// 指定した色で画面全体をクリアする
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
-	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	// レンダーターゲットをセット
+	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
+	// 全画面クリア
+	ClearRenderTarget();
 	// 深度クリア
-	//ClearDepthBuffer();
+	ClearDepthBuffer();
 
+	// ビューポートの設定
 	D3D12_VIEWPORT viewport = CreateViewport(FLOAT(backBufferWidth_), FLOAT(backBufferHeight_), 0, 0, 0.0f, 1.0f);
 	D3D12_RECT scissorRect = CreateScissorRect(0, FLOAT(backBufferWidth_), 0, FLOAT(backBufferHeight_));
 	commandList_->RSSetViewports(1, &viewport);
-	commandList_->RSSetScissorRects(1, &scissorRect);
-
-	
+	commandList_->RSSetScissorRects(1, &scissorRect);	
 
 }
 
@@ -184,9 +112,26 @@ void DirectXCommon::PostDraw() {
 
 }
 
-void DirectXCommon::ClearDepthBuffer()
+void DirectXCommon::ClearRenderTarget()
 {
+	// これから書き込むバックバッファのインデックスを取得
+	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	// 描画先のRTVを設定する
+	// ハンドルを取得
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = GetCPUDescriptorHandle(rtvDescriptorHeap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), backBufferIndex);
+
+	// 指定した色で画面全体をクリアする
+	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
+	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+}
+
+void DirectXCommon::ClearDepthBuffer()
+{	
+	// ハンドル
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	// 指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
@@ -376,6 +321,8 @@ void DirectXCommon::CreateDepthBuffer() {
 		IID_PPV_ARGS(&resource));
 	assert(SUCCEEDED(result));
 
+	depthResourceBuffer_ = resource;
+	// DSV用のヒープ作成
 	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 	// DSVの設定
@@ -414,4 +361,80 @@ D3D12_RECT DirectXCommon::CreateScissorRect(FLOAT left, FLOAT right, FLOAT top, 
 	scissorRect.top = LONG(top);
 	scissorRect.bottom = LONG(bottom);
 	return scissorRect;
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
+{
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (descriptorSize * index);
+	return handleGPU;
+}
+
+D3D12_RESOURCE_BARRIER DirectXCommon::GetBarrier(ID3D12Resource* backBuffer, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter) {
+	// TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+	// 今回のバリアはTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る対象のリソース。
+	barrier.Transition.pResource = backBuffer;
+	// 遷移前（現在）のResourceState
+	barrier.Transition.StateBefore = stateBefore;
+	// 遷移後のState
+	barrier.Transition.StateAfter = stateAfter;
+	return barrier;
+}
+
+D3D12_HEAP_PROPERTIES DirectXCommon::HeapProperties(D3D12_HEAP_TYPE type) {
+	// 利用するHeapの設定
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = type;
+
+	return heapProperties;
+}
+
+
+D3D12_CLEAR_VALUE DirectXCommon::ClearValue(DXGI_FORMAT format, FLOAT depth) {
+	// 深度値のクリア設定
+	D3D12_CLEAR_VALUE depthClearValue{};
+	depthClearValue.DepthStencil.Depth = depth;
+	depthClearValue.Format = format;
+
+	return depthClearValue;
+}
+
+ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(
+	D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible)
+{
+	ID3D12DescriptorHeap* descriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+	descriptorHeapDesc.Type = heapType;
+	descriptorHeapDesc.NumDescriptors = numDescriptors;
+	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	assert(SUCCEEDED(hr));
+	return descriptorHeap;
+}
+
+D3D12_RESOURCE_DESC DirectXCommon::GetResoruceHeap(DXGI_FORMAT format, D3D12_RESOURCE_DIMENSION dimension, D3D12_RESOURCE_FLAGS flags, uint32_t width, uint32_t height) {
+	D3D12_RESOURCE_DESC resourceDesc{};
+
+	resourceDesc.Width = width;		// テクスチャの幅
+	resourceDesc.Height = height;	// テクスチャの高さ
+	resourceDesc.MipLevels = 1;		// mipMapの数
+	resourceDesc.DepthOrArraySize = 1;	// 奥行き or 配列Textureの配列数
+	resourceDesc.Format = format;	// DepthStencilとして両可能なフォーマット
+	resourceDesc.SampleDesc.Count = 1;	// サンプリングカウント。1固定
+	resourceDesc.Dimension = dimension;	// 2次元
+	resourceDesc.Flags = flags;	// DepthStencilとして使う通知
+
+	return resourceDesc;
 }

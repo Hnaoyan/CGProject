@@ -145,6 +145,12 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 	gPipelineStateDesc.InputLayout = inputLayoutDesc;			// インプットレイアウト
 	gPipelineStateDesc.BlendState = blendDesc;					// ブレンド
 	gPipelineStateDesc.RasterizerState = rasterizerDesc;		// ラスタライザ
+	D3D12_DEPTH_STENCIL_DESC dsDesc{};
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	gPipelineStateDesc.DepthStencilState = dsDesc;
+	gPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 書き込むRTVの情報
 	gPipelineStateDesc.NumRenderTargets = 1;
@@ -213,7 +219,7 @@ void Sprite::Draw() {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 2, textureHandle_);
 
 	// 描画（仮）
-	sCommandList_->DrawInstanced(3, 1, 0, 0);
+	sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
 
 	// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 	//sCommandList_->SetGraphicsRootDescriptorTable(2,)
@@ -230,7 +236,7 @@ bool Sprite::Initialize() {
 		D3D12_HEAP_PROPERTIES uploadHeapProps{};
 		uploadHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
 
-		vertBuff_ = CreateBufferResoruce(sizeof(VertexData) * 3);
+		vertBuff_ = CreateBufferResoruce(sizeof(VertexData) * kVertNum);
 
 		vertBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertData_));
 		// 左下
@@ -244,10 +250,25 @@ bool Sprite::Initialize() {
 		// 右下
 		vertData_[2].position = { 0.5f,-0.5f,0.0f,1.0f };
 		vertData_[2].texcoord = { 1.0f,1.0f };
+
+		// 左下2
+		vertData_[3].position = { -0.5f,-0.5f,0.5f,1.0f };
+		vertData_[3].texcoord = { 0.0f,1.0f };
+
+		// 上2
+		vertData_[4].position = { 0.0f,0.0f,0.0f,1.0f };
+		vertData_[4].texcoord = { 0.5f,0.0f };
+
+		// 右下2
+		vertData_[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
+		vertData_[5].texcoord = { 1.0f,1.0f };
+
+
+
 	}
 
 	vertBufferView_.BufferLocation = vertBuff_->GetGPUVirtualAddress();
-	vertBufferView_.SizeInBytes = sizeof(VertexData) * 3;
+	vertBufferView_.SizeInBytes = sizeof(VertexData) * kVertNum;
 	vertBufferView_.StrideInBytes = sizeof(VertexData);
 
 	{

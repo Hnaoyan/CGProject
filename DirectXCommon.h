@@ -43,6 +43,14 @@ public:
 	/// </summary>
 	void PostDraw();
 
+	/// <summary>
+	/// レンダーターゲットのクリア
+	/// </summary>
+	void ClearRenderTarget();
+
+	/// <summary>
+	/// 深度バッファのクリア
+	/// </summary>
 	void ClearDepthBuffer();
 
 	ID3D12Device* GetDevice() { return device_.Get(); }

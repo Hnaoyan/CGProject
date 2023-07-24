@@ -96,7 +96,8 @@ private:	// 静的メンバ変数
 	static Microsoft::WRL::ComPtr<ID3D12PipelineState> gPipelineState_;
 	// デスクリプタサイズ
 	static UINT sDescriptorHandleIncrementSize_;
-
+	// 頂点数
+	static const int kVertNum = 6;
 
 public:
 
