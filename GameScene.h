@@ -28,6 +28,10 @@ private:
 
 	bool IsTriangel = 1;
 
+	bool IsSprite = 0;
+
+	int onTop = 0;
+
 	Transform spriteTransform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 };

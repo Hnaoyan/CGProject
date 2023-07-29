@@ -19,16 +19,33 @@ void GameScene::Update() {
 		ImGui::Text("%d", IsTriangel);
 
 		ImGui::Checkbox("isEnable", &IsTriangel);
-		sprite_->SetIsDepth(IsTriangel);
+		sprite_->SetIsTriangle(IsTriangel);
 
 		ImGui::TreePop();
 	}
 
 	if (ImGui::TreeNode("Sprite")) 
 	{
+		ImGui::DragFloat3("translateSprite", &spriteTransform.translate.x, 1.0f, 0.0f, 1000.0f);
+		ImGui::DragFloat3("scaleSprite", &spriteTransform.scale.x, 0.01f, -5.0f, 5.0f);
+		ImGui::DragFloat3("rotateSprite", &spriteTransform.rotate.x, 0.01f, -5.0f, 5.0f);
+		ImGui::Text("%d", IsSprite);
+
+		ImGui::Checkbox("isEnableSprite", &IsSprite);
+		sprite_->SetIsSprite(IsSprite);
 
 		ImGui::TreePop();
 	}
+
+	//if (ImGui::TreeNode("OnTop"))
+	//{
+	//	// ドロップダウンメニューを作成
+	//	const char* items[] = { "0", "1"/*, "2", "3", "4", "5"*/ };
+	//	ImGui::Combo("Select Value", &onTop, items, IM_ARRAYSIZE(items));
+	//	sprite_->SetPattern(onTop);
+	//	ImGui::TreePop();
+
+	//}
 
 	ImGui::End();
 	

@@ -207,30 +207,58 @@ void Sprite::PostDraw() {
 void Sprite::Draw() {
 
 	wvpData->WVP = wvpMatrix_;
+	wvpSpriteData_->WVP = wvpSpriteMat_;
 
-	sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
 	// マテリアルCBufferの場所を設定
 	sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
-
-	// wvp用のCBufferの場所を設定
-	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpResoure_->GetGPUVirtualAddress());
 
 	// シェーダリソースビューをセット
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 2, textureHandle_);
 
-	// 描画（仮）
-	if (IsTriangel_) {
-		sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
+	switch (pattern)
+	{
+	case PatternUp:
+		// 三角形
+		// VBVの設定
+		sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
+		// wvp用のCBufferの場所を設定
+		sCommandList_->SetGraphicsRootConstantBufferView(1, wvpResoure_->GetGPUVirtualAddress());
+		// 描画（仮）
+		if (IsTriangle_) {
+			sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
+		}
+		// スプライト
+		// VBVの設定
+		sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
+		// wvp用のCBufferの場所を設定
+		sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSpriteResource_->GetGPUVirtualAddress());
+
+		if (IsSprite_) {
+			sCommandList_->DrawInstanced(6, 1, 0, 0);
+		}
+		break;
+
+	case PatternDown:
+		// スプライト
+		// VBVの設定
+		sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
+		// wvp用のCBufferの場所を設定
+		sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSpriteResource_->GetGPUVirtualAddress());
+
+		if (IsSprite_) {
+			sCommandList_->DrawInstanced(6, 1, 0, 0);
+		}
+		// 三角形
+		// VBVの設定
+		sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
+		// wvp用のCBufferの場所を設定
+		sCommandList_->SetGraphicsRootConstantBufferView(1, wvpResoure_->GetGPUVirtualAddress());
+		// 描画（仮）
+		if (IsTriangle_) {
+			sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
+		}
+		break;
 	}
-
-	sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
-
-	sCommandList_->SetGraphicsRootConstantBufferView(1, vertSpriteBuff_->GetGPUVirtualAddress());
-
-	//sCommandList_->DrawInstanced(6, 1, 0, 0);
-
-	// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-	//sCommandList_->SetGraphicsRootDescriptorTable(2,)
 }
 
 bool Sprite::Initialize() {
@@ -239,12 +267,22 @@ bool Sprite::Initialize() {
 
 	HRESULT result = S_FALSE;
 
+
+	// WVP用のリソースのサイズを用意
+	wvpResoure_ = CreateBufferResoruce(sizeof(TransformationMatrix));
+	// 書き込むためのアドレスを取得
+	wvpResoure_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	// 単位行列を書き込んでおく
+	wvpData->WVP = MakeIdentity4x4();	
+
+	// WVP用のリソースのサイズを用意
+	wvpSpriteResource_ = CreateBufferResoruce(sizeof(TransformationMatrix));
+	// 書き込むためのアドレスを取得
+	wvpSpriteResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpSpriteData_));
+	// 単位行列を書き込んでおく
+	wvpSpriteData_->WVP = MakeIdentity4x4();
+
 	{
-		//// 頂点リソース用のヒープの設定
-		//D3D12_HEAP_PROPERTIES uploadHeapProps{};
-		//uploadHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-
-
 		// 三角形
 		vertBuff_ = CreateBufferResoruce(sizeof(VertexData) * kVertNum);
 
@@ -316,19 +354,6 @@ bool Sprite::Initialize() {
 	result = constBuff_->Map(0, nullptr, (void**)&constData_);
 	assert(SUCCEEDED(result));
 	*constData_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	// WVP用のリソースのサイズを用意
-	wvpResoure_ = CreateBufferResoruce(sizeof(TransformationMatrix));
-	// 書き込むためのアドレスを取得
-	wvpResoure_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	// 単位行列を書き込んでおく
-	wvpData->WVP = MakeIdentity4x4();
-
-	wvpSpriteResource_ = CreateBufferResoruce(sizeof(TransformationMatrix));
-
-	wvpSpriteResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpSpriteData_));
-
-	wvpSpriteData_->WVP = MakeIdentity4x4();
 
 	return true;
 }

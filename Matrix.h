@@ -13,6 +13,11 @@ struct Transform {
 	Vector3 translate;
 };
 
+enum UpDown {
+	PatternUp,
+	PatternDown,
+};
+
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 //Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
 Matrix4x4 Subtract(const Matrix4x4& m1, const Matrix4x4& m2);

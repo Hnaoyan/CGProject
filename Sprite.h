@@ -124,7 +124,11 @@ public:
 
 	void SetWvpSpriteMatrix(Matrix4x4 wvp) { wvpSpriteMat_ = wvp; }
 
-	void SetIsDepth(bool isDepth) { IsTriangel_ = isDepth; }
+	void SetIsTriangle(bool isTriangle) { IsTriangle_ = isTriangle; }
+
+	void SetIsSprite(bool isSprite) { IsSprite_ = isSprite; }
+
+	void SetPattern(int patt) { pattern = patt; }
 
 private:
 		
@@ -179,6 +183,11 @@ private:	// メンバ関数
 
 	UINT textureHandle_ = 0;
 
-	bool IsTriangel_ = 1;
+	bool IsTriangle_ = 1;
+
+	bool IsSprite_ = 0;
+
+	int pattern = PatternUp;
+
 };
 
