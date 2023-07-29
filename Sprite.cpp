@@ -219,7 +219,15 @@ void Sprite::Draw() {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 2, textureHandle_);
 
 	// 描画（仮）
-	sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
+	if (IsTriangel_) {
+		sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
+	}
+
+	sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
+
+	sCommandList_->SetGraphicsRootConstantBufferView(1, vertSpriteBuff_->GetGPUVirtualAddress());
+
+	//sCommandList_->DrawInstanced(6, 1, 0, 0);
 
 	// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 	//sCommandList_->SetGraphicsRootDescriptorTable(2,)
@@ -232,10 +240,12 @@ bool Sprite::Initialize() {
 	HRESULT result = S_FALSE;
 
 	{
-		// 頂点リソース用のヒープの設定
-		D3D12_HEAP_PROPERTIES uploadHeapProps{};
-		uploadHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+		//// 頂点リソース用のヒープの設定
+		//D3D12_HEAP_PROPERTIES uploadHeapProps{};
+		//uploadHeapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
 
+
+		// 三角形
 		vertBuff_ = CreateBufferResoruce(sizeof(VertexData) * kVertNum);
 
 		vertBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertData_));
@@ -263,13 +273,39 @@ bool Sprite::Initialize() {
 		vertData_[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
 		vertData_[5].texcoord = { 1.0f,1.0f };
 
-
-
 	}
 
 	vertBufferView_.BufferLocation = vertBuff_->GetGPUVirtualAddress();
 	vertBufferView_.SizeInBytes = sizeof(VertexData) * kVertNum;
 	vertBufferView_.StrideInBytes = sizeof(VertexData);
+
+
+	{
+
+		vertSpriteBuff_ = CreateBufferResoruce(sizeof(VertexData) * 6);
+
+		vertSpriteBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertSpriteData_));
+
+		// 1枚目の三角形
+		vertSpriteData_[0].position = { 0.0f,360.0f,0.0f,1.0f };// 左下
+		vertSpriteData_[0].texcoord = { 0.0f,1.0f };
+		vertSpriteData_[1].position = { 0.0f,0.0f,0.0f,1.0f };// 左上
+		vertSpriteData_[1].texcoord = { 0.0f,0.0f };
+		vertSpriteData_[2].position = { 640.0f,360.0f,0.0f,1.0f };
+		vertSpriteData_[2].texcoord = { 1.0f,1.0f };
+		// 2枚目の三角形
+		vertSpriteData_[3].position = { 0.0f,0.0f,0.0f,1.0f };
+		vertSpriteData_[3].texcoord = { 0.0f,0.0f };
+		vertSpriteData_[4].position = { 640.0f,0.0f,0.0f,1.0f };
+		vertSpriteData_[4].texcoord = { 1.0f,0.0f };
+		vertSpriteData_[5].position = { 640.0f,360.0f,0.0f,1.0f };
+		vertSpriteData_[5].texcoord = { 1.0f,1.0f };
+
+	}
+
+	vertSpriteBufferView_.BufferLocation = vertSpriteBuff_->GetGPUVirtualAddress();
+	vertSpriteBufferView_.SizeInBytes = sizeof(VertexData) * 6;
+	vertSpriteBufferView_.StrideInBytes = sizeof(VertexData);
 
 	{
 		// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
@@ -287,6 +323,12 @@ bool Sprite::Initialize() {
 	wvpResoure_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	// 単位行列を書き込んでおく
 	wvpData->WVP = MakeIdentity4x4();
+
+	wvpSpriteResource_ = CreateBufferResoruce(sizeof(TransformationMatrix));
+
+	wvpSpriteResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpSpriteData_));
+
+	wvpSpriteData_->WVP = MakeIdentity4x4();
 
 	return true;
 }

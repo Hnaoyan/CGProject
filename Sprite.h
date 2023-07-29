@@ -122,6 +122,10 @@ public:
 	/// </summary>
 	void SetWvpMatrix(Matrix4x4 wvp) { wvpMatrix_ = wvp; }
 
+	void SetWvpSpriteMatrix(Matrix4x4 wvp) { wvpSpriteMat_ = wvp; }
+
+	void SetIsDepth(bool isDepth) { IsTriangel_ = isDepth; }
+
 private:
 		
 	static IDxcBlob* CompileShader(
@@ -156,9 +160,25 @@ private:	// メンバ関数
 
 	TransformationMatrix* wvpData = nullptr;
 
+
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertSpriteBuff_;
+
+	VertexData* vertSpriteData_ = nullptr;
+
+	Matrix4x4 wvpSpriteMat_;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpSpriteResource_;
+
+	TransformationMatrix* wvpSpriteData_ = nullptr;
+
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertBufferView_{};
 
+	D3D12_VERTEX_BUFFER_VIEW vertSpriteBufferView_{};
+
 	UINT textureHandle_ = 0;
+
+	bool IsTriangel_ = 1;
 };
 
