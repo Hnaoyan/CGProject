@@ -1,22 +1,5 @@
 #pragma once
-struct Matrix4x4
-{
-	float m[4][4];
-};
-struct Vector3 {
-	float x, y, z;
-};
-
-struct Transform {
-	Vector3 scale;
-	Vector3 rotate;
-	Vector3 translate;
-};
-
-enum UpDown {
-	PatternUp,
-	PatternDown,
-};
+#include "SturctManager.h"
 
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 //Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);

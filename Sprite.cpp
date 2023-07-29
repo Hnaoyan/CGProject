@@ -1,6 +1,8 @@
 #include "Sprite.h"
 #include "StringManager.h"
 #include "TextureManager.h"
+#include <cmath>
+#include <numbers>
 #include <cassert>
 
 using namespace Microsoft::WRL;
@@ -208,6 +210,8 @@ void Sprite::Draw() {
 
 	wvpData->WVP = wvpMatrix_;
 	wvpSpriteData_->WVP = wvpSpriteMat_;
+	wvpSphereData_->WVP = wvpSphereMatrix_;
+	*constData_ = color_;
 
 	// マテリアルCBufferの場所を設定
 	sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
@@ -215,50 +219,34 @@ void Sprite::Draw() {
 	// シェーダリソースビューをセット
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 2, textureHandle_);
 
-	switch (pattern)
-	{
-	case PatternUp:
-		// 三角形
-		// VBVの設定
-		sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
-		// wvp用のCBufferの場所を設定
-		sCommandList_->SetGraphicsRootConstantBufferView(1, wvpResoure_->GetGPUVirtualAddress());
-		// 描画（仮）
-		if (IsTriangle_) {
-			sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
-		}
-		// スプライト
-		// VBVの設定
-		sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
-		// wvp用のCBufferの場所を設定
-		sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSpriteResource_->GetGPUVirtualAddress());
+	// スプライト
+	// VBVの設定
+	sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
+	// wvp用のCBufferの場所を設定
+	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSpriteResource_->GetGPUVirtualAddress());
 
-		if (IsSprite_) {
-			sCommandList_->DrawInstanced(6, 1, 0, 0);
-		}
-		break;
-
-	case PatternDown:
-		// スプライト
-		// VBVの設定
-		sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
-		// wvp用のCBufferの場所を設定
-		sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSpriteResource_->GetGPUVirtualAddress());
-
-		if (IsSprite_) {
-			sCommandList_->DrawInstanced(6, 1, 0, 0);
-		}
-		// 三角形
-		// VBVの設定
-		sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
-		// wvp用のCBufferの場所を設定
-		sCommandList_->SetGraphicsRootConstantBufferView(1, wvpResoure_->GetGPUVirtualAddress());
-		// 描画（仮）
-		if (IsTriangle_) {
-			sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
-		}
-		break;
+	if (IsSprite_) {
+		sCommandList_->DrawInstanced(6, 1, 0, 0);
 	}
+	// 三角形
+	// VBVの設定
+	sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
+	// wvp用のCBufferの場所を設定
+	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpResoure_->GetGPUVirtualAddress());
+	// 描画（仮）
+	if (IsTriangle_) {
+		sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
+	}
+	// 球
+	// VBVの設定
+	sCommandList_->IASetVertexBuffers(0, 1, &vertSphereBufferView_);
+	// wvp用のCBufferの場所を設定
+	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSphereResource_->GetGPUVirtualAddress());
+	// 描画（仮）
+	if (IsSphere_) {
+		sCommandList_->DrawInstanced(kVertexIndex, 1, 0, 0);
+	}
+
 }
 
 bool Sprite::Initialize() {
@@ -269,22 +257,29 @@ bool Sprite::Initialize() {
 
 
 	// WVP用のリソースのサイズを用意
-	wvpResoure_ = CreateBufferResoruce(sizeof(TransformationMatrix));
+	wvpResoure_ = CreateBufferResource(sizeof(TransformationMatrix));
 	// 書き込むためのアドレスを取得
 	wvpResoure_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	// 単位行列を書き込んでおく
 	wvpData->WVP = MakeIdentity4x4();	
 
 	// WVP用のリソースのサイズを用意
-	wvpSpriteResource_ = CreateBufferResoruce(sizeof(TransformationMatrix));
+	wvpSpriteResource_ = CreateBufferResource(sizeof(TransformationMatrix));
 	// 書き込むためのアドレスを取得
 	wvpSpriteResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpSpriteData_));
 	// 単位行列を書き込んでおく
 	wvpSpriteData_->WVP = MakeIdentity4x4();
 
+	// リソースのサイズ
+	wvpSphereResource_ = CreateBufferResource(sizeof(TransformationMatrix));
+	// アドレス取得
+	wvpSphereResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpSphereData_));
+	// 単位行列
+	wvpSphereData_->WVP = MakeIdentity4x4();
+
 	{
 		// 三角形
-		vertBuff_ = CreateBufferResoruce(sizeof(VertexData) * kVertNum);
+		vertBuff_ = CreateBufferResource(sizeof(VertexData) * kVertNum);
 
 		vertBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertData_));
 		// 左下
@@ -320,7 +315,7 @@ bool Sprite::Initialize() {
 
 	{
 
-		vertSpriteBuff_ = CreateBufferResoruce(sizeof(VertexData) * 6);
+		vertSpriteBuff_ = CreateBufferResource(sizeof(VertexData) * 6);
 
 		vertSpriteBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertSpriteData_));
 
@@ -346,8 +341,80 @@ bool Sprite::Initialize() {
 	vertSpriteBufferView_.StrideInBytes = sizeof(VertexData);
 
 	{
+		vertSphereBuff_ = CreateBufferResource(sizeof(VertexData) * kVertexIndex);
+
+		vertSphereBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertSphereData_));
+
+		// 経度分割１つ分の角度 φd
+		const float kLonEvery = float(std::numbers::pi) * 2.0f / float(kSubdivision);
+		// 緯度分割１つ分の角度 θd
+		const float kLatEvery = float(std::numbers::pi) / float(kSubdivision);
+		// 緯度の方向に分割
+		for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
+			float lat = float(-std::numbers::pi) / 2.0f + kLatEvery * latIndex; // θ
+			for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
+				uint32_t index = (latIndex * kSubdivision + lonIndex) * 6;
+				float lon = lonIndex * kLonEvery; // φ
+				// 頂点にデータを入力する。基準点a 1
+				vertSphereData_[index].position.x = std::cosf(lat) * std::cosf(lon);
+				vertSphereData_[index].position.y = std::sinf(lat);
+				vertSphereData_[index].position.z = std::cosf(lat) * std::sinf(lon);
+				vertSphereData_[index].position.w = 1.0f;
+				vertSphereData_[index].texcoord.x = float(lonIndex) / float(kSubdivision);
+				vertSphereData_[index].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+
+				// 頂点b 2
+				vertSphereData_[index + 1].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
+				vertSphereData_[index + 1].position.y = std::sinf(lat + kLatEvery);
+				vertSphereData_[index + 1].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon);
+				vertSphereData_[index + 1].position.w = 1.0f;
+				vertSphereData_[index + 1].texcoord.x = float(lonIndex) / float(kSubdivision);
+				vertSphereData_[index + 1].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+
+				// 頂点c 3
+				vertSphereData_[index + 2].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
+				vertSphereData_[index + 2].position.y = std::sinf(lat);
+				vertSphereData_[index + 2].position.z = std::cosf(lat) * std::sinf(lon + kLonEvery);
+				vertSphereData_[index + 2].position.w = 1.0f;
+				vertSphereData_[index + 2].texcoord.x = float(lonIndex) / float(kSubdivision);
+				vertSphereData_[index + 2].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+
+				// 頂点c 4
+				vertSphereData_[index + 3].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
+				vertSphereData_[index + 3].position.y = std::sinf(lat);
+				vertSphereData_[index + 3].position.z = std::cosf(lat) * std::sinf(lon + kLonEvery);
+				vertSphereData_[index + 3].position.w = 1.0f;
+				vertSphereData_[index + 3].texcoord.x = float(lonIndex) / float(kSubdivision);
+				vertSphereData_[index + 3].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+
+				// 頂点b 5
+				vertSphereData_[index + 4].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
+				vertSphereData_[index + 4].position.y = std::sinf(lat + kLatEvery);
+				vertSphereData_[index + 4].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon);
+				vertSphereData_[index + 4].position.w = 1.0f;
+				vertSphereData_[index + 4].texcoord.x = float(lonIndex) / float(kSubdivision);
+				vertSphereData_[index + 4].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+
+				// 頂点d 6
+				vertSphereData_[index + 5].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon + kLonEvery);
+				vertSphereData_[index + 5].position.y = std::sinf(lat + kLatEvery);
+				vertSphereData_[index + 5].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon + kLonEvery);
+				vertSphereData_[index + 5].position.w = 1.0f;
+				vertSphereData_[index + 5].texcoord.x = float(lonIndex) / float(kSubdivision);
+				vertSphereData_[index + 5].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+
+			}
+		}
+	}
+
+	vertSphereBufferView_.BufferLocation = vertSphereBuff_->GetGPUVirtualAddress();
+	vertSphereBufferView_.SizeInBytes = sizeof(VertexData) * kVertexIndex;
+	vertSphereBufferView_.StrideInBytes = sizeof(VertexData);
+
+
+	{
 		// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
-		constBuff_ = CreateBufferResoruce(sizeof(Vector4));
+		constBuff_ = CreateBufferResource(sizeof(Vector4));
 
 	}
 
@@ -377,7 +444,7 @@ D3D12_SHADER_BYTECODE Sprite::ShaderByteCode(IDxcBlob* blob) {
 	return shaderByte;
 }
 
-ComPtr<ID3D12Resource> Sprite::CreateBufferResoruce(size_t sizeInBytes) {
+ComPtr<ID3D12Resource> Sprite::CreateBufferResource(size_t sizeInBytes) {
 	// nullptrチェック
 	assert(sDevice_);
 

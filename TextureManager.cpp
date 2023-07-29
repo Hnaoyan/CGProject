@@ -223,7 +223,8 @@ ID3D12Resource* TextureManager::CreateTextureResource(ID3D12Device* device, cons
 
 	// Resourceの生成
 	ID3D12Resource* resource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(
+	HRESULT hr = S_FALSE;
+	hr = device->CreateCommittedResource(
 		&heapProperties,	// Heapの設定
 		D3D12_HEAP_FLAG_NONE,	// Heapの特殊な設定。特になし
 		&resourceDesc,	// Resourceの設定

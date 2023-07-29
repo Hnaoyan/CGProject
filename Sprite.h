@@ -17,17 +17,17 @@
 class Sprite
 {
 public:	// サブクラス
-	struct Vector4 {
-		float x, y, z, w;
-	};
-	
-	struct Vector3 {
-		float x, y, z;
-	};
+	//struct Vector4 {
+	//	float x, y, z, w;
+	//};
+	//
+	//struct Vector3 {
+	//	float x, y, z;
+	//};
 
-	struct Vector2 {
-		float x, y;
-	};
+	//struct Vector2 {
+	//	float x, y;
+	//};
 
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
@@ -117,6 +117,7 @@ public:
 	/// </summary>
 	void Draw();
 
+public:
 	/// <summary>
 	/// WorldViewportMatrixのSetter
 	/// </summary>
@@ -124,11 +125,23 @@ public:
 
 	void SetWvpSpriteMatrix(Matrix4x4 wvp) { wvpSpriteMat_ = wvp; }
 
+	void SetWvpSphereMatrix(Matrix4x4 wvp) { wvpSphereMatrix_ = wvp; }
+
+	/// <summary>
+	/// 表示フラグのセッター
+	/// </summary>
+	/// <param name="isTriangle"></param>
 	void SetIsTriangle(bool isTriangle) { IsTriangle_ = isTriangle; }
 
 	void SetIsSprite(bool isSprite) { IsSprite_ = isSprite; }
 
-	void SetPattern(int patt) { pattern = patt; }
+	void SetIsSphere(bool isSphere) { IsSphere_ = isSphere; }
+
+	/// <summary>
+	/// 色のセッター
+	/// </summary>
+	/// <param name="color"></param>
+	void SetColor(Vector4 color) { color_ = color; }
 
 private:
 		
@@ -144,19 +157,25 @@ private:
 
 	static D3D12_SHADER_BYTECODE ShaderByteCode(IDxcBlob* blob);
 
-	static Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResoruce(size_t sizeInBytes);
+	static Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
 	D3D12_RESOURCE_DESC SetResourceDesc(size_t size);
 
 private:	// メンバ関数
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff_;
-
+	/// <summary>
+	/// 定数バッファ
+	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
 
-	VertexData* vertData_ = nullptr;
-
 	Vector4* constData_ = nullptr;
+
+	/// <summary>
+	/// 三角形のバッファ
+	/// </summary>
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff_;
+
+	VertexData* vertData_ = nullptr;
 
 	Matrix4x4 wvpMatrix_;
 
@@ -165,7 +184,9 @@ private:	// メンバ関数
 	TransformationMatrix* wvpData = nullptr;
 
 
-
+	/// <summary>
+	/// スプライトのバッファ
+	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertSpriteBuff_;
 
 	VertexData* vertSpriteData_ = nullptr;
@@ -176,10 +197,30 @@ private:	// メンバ関数
 
 	TransformationMatrix* wvpSpriteData_ = nullptr;
 
+	
+	/// <summary>
+	/// 球体用
+	/// </summary>
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertSphereBuff_;
+
+	VertexData* vertSphereData_ = nullptr;
+
+	Matrix4x4 wvpSphereMatrix_;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpSphereResource_;
+
+	TransformationMatrix* wvpSphereData_ = nullptr;
+	// 分割数
+	uint32_t kSubdivision = 512;
+	// 頂点数
+	uint32_t kVertexIndex = kSubdivision * kSubdivision * 6;
+
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertBufferView_{};
 
 	D3D12_VERTEX_BUFFER_VIEW vertSpriteBufferView_{};
+
+	D3D12_VERTEX_BUFFER_VIEW vertSphereBufferView_{};
 
 	UINT textureHandle_ = 0;
 
@@ -187,7 +228,11 @@ private:	// メンバ関数
 
 	bool IsSprite_ = 0;
 
+	bool IsSphere_ = 0;
+
 	int pattern = PatternUp;
+
+	Vector4 color_ = {1.0f,1.0f,1.0f,1.0f};
 
 };
 

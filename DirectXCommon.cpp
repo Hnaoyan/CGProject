@@ -312,7 +312,8 @@ void DirectXCommon::CreateDepthBuffer() {
 
 	// Resourceの生成
 	ComPtr<ID3D12Resource> resource;
-	HRESULT result = device_->CreateCommittedResource(
+	HRESULT result = S_FALSE;
+	result = device_->CreateCommittedResource(
 		&heapProperties,	// Heapの設定
 		D3D12_HEAP_FLAG_NONE,	// Heapの特殊な設定。特になし
 		&resourceDesc,
@@ -414,12 +415,13 @@ D3D12_CLEAR_VALUE DirectXCommon::ClearValue(DXGI_FORMAT format, FLOAT depth) {
 ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(
 	D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible)
 {
+	HRESULT hr = S_FALSE;
 	ID3D12DescriptorHeap* descriptorHeap = nullptr;
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
 	descriptorHeapDesc.Type = heapType;
 	descriptorHeapDesc.NumDescriptors = numDescriptors;
 	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	HRESULT hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	hr = device_->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
 }
