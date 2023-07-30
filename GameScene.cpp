@@ -49,7 +49,7 @@ void GameScene::Update() {
 		ImGui::Text("%d", IsSphere);
 
 		ImGui::Checkbox("isEnableSphere", &IsSphere);
-		//sprite_->SetIsSprite(IsSprite);
+		sprite_->SetIsSphere(IsSphere);
 
 		ImGui::TreePop();
 	}

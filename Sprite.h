@@ -42,10 +42,12 @@ public:	// サブクラス
 	struct VertexData {
 		Vector4 position;
 		Vector2 texcoord;
+		Vector3 normal;
 	};
 
 	struct ConstBufferData {
 		Vector4 color;
+		int32_t enableLighting;
 	};
 
 public:	// 静的メンバ関数
@@ -168,7 +170,11 @@ private:	// メンバ関数
 	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
 
-	Vector4* constData_ = nullptr;
+	ConstBufferData* constData_ = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> constSpriteBuff_;
+
+	ConstBufferData* constSpriteData_ = nullptr;
 
 	/// <summary>
 	/// 三角形のバッファ

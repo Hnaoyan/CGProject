@@ -108,7 +108,7 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	// InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -119,6 +119,10 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
+	inputElementDescs[2].SemanticName = "NORMAL";
+	inputElementDescs[2].SemanticIndex = 0;
+	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
@@ -211,11 +215,10 @@ void Sprite::Draw() {
 	wvpData->WVP = wvpMatrix_;
 	wvpSpriteData_->WVP = wvpSpriteMat_;
 	wvpSphereData_->WVP = wvpSphereMatrix_;
-	*constData_ = color_;
+	constData_->color = color_;
 
 	// マテリアルCBufferの場所を設定
-	sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
-
+	sCommandList_->SetGraphicsRootShaderResourceView(0, constSpriteBuff_->GetGPUVirtualAddress());
 	// シェーダリソースビューをセット
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 2, textureHandle_);
 
@@ -228,6 +231,8 @@ void Sprite::Draw() {
 	if (IsSprite_) {
 		sCommandList_->DrawInstanced(6, 1, 0, 0);
 	}
+
+	//sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
 	// 三角形
 	// VBVの設定
 	sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
@@ -285,26 +290,32 @@ bool Sprite::Initialize() {
 		// 左下
 		vertData_[0].position = { -0.5f,-0.5f,0.0f,1.0f };
 		vertData_[0].texcoord = { 0.0f,1.0f };
+		vertData_[0].normal = { 0.0f,0.0f,-1.0f };
 
 		// 上
 		vertData_[1].position = { 0.0f,0.5f,0.0f,1.0f };
 		vertData_[1].texcoord = { 0.5f,0.0f };
+		vertData_[1].normal = { 0.0f,0.0f,-1.0f };
 
 		// 右下
 		vertData_[2].position = { 0.5f,-0.5f,0.0f,1.0f };
 		vertData_[2].texcoord = { 1.0f,1.0f };
+		vertData_[2].normal = { 0.0f,0.0f,-1.0f };
 
 		// 左下2
 		vertData_[3].position = { -0.5f,-0.5f,0.5f,1.0f };
 		vertData_[3].texcoord = { 0.0f,1.0f };
+		vertData_[3].normal = { 0.0f,0.0f,-1.0f };
 
 		// 上2
 		vertData_[4].position = { 0.0f,0.0f,0.0f,1.0f };
 		vertData_[4].texcoord = { 0.5f,0.0f };
+		vertData_[4].normal = { 0.0f,0.0f,-1.0f };
 
 		// 右下2
 		vertData_[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
 		vertData_[5].texcoord = { 1.0f,1.0f };
+		vertData_[5].normal = { 0.0f,0.0f,-1.0f };
 
 	}
 
@@ -322,17 +333,28 @@ bool Sprite::Initialize() {
 		// 1枚目の三角形
 		vertSpriteData_[0].position = { 0.0f,360.0f,0.0f,1.0f };// 左下
 		vertSpriteData_[0].texcoord = { 0.0f,1.0f };
+		vertSpriteData_[0].normal = { vertSpriteData_[0].position.x,vertSpriteData_[0].position.y,vertSpriteData_[0].position.z };
+		
 		vertSpriteData_[1].position = { 0.0f,0.0f,0.0f,1.0f };// 左上
 		vertSpriteData_[1].texcoord = { 0.0f,0.0f };
+		vertSpriteData_[1].normal = { vertSpriteData_[1].position.x,vertSpriteData_[1].position.y,vertSpriteData_[1].position.z };
+		
 		vertSpriteData_[2].position = { 640.0f,360.0f,0.0f,1.0f };
 		vertSpriteData_[2].texcoord = { 1.0f,1.0f };
+		vertSpriteData_[2].normal = { vertSpriteData_[2].position.x,vertSpriteData_[2].position.y,vertSpriteData_[2].position.z };
+		
 		// 2枚目の三角形
 		vertSpriteData_[3].position = { 0.0f,0.0f,0.0f,1.0f };
 		vertSpriteData_[3].texcoord = { 0.0f,0.0f };
+		vertSpriteData_[3].normal = { vertSpriteData_[3].position.x,vertSpriteData_[3].position.y,vertSpriteData_[3].position.z };
+
 		vertSpriteData_[4].position = { 640.0f,0.0f,0.0f,1.0f };
 		vertSpriteData_[4].texcoord = { 1.0f,0.0f };
+		vertSpriteData_[4].normal = { vertSpriteData_[4].position.x,vertSpriteData_[4].position.y,vertSpriteData_[4].position.z };
+
 		vertSpriteData_[5].position = { 640.0f,360.0f,0.0f,1.0f };
 		vertSpriteData_[5].texcoord = { 1.0f,1.0f };
+		vertSpriteData_[5].normal = { vertSpriteData_[5].position.x,vertSpriteData_[5].position.y,vertSpriteData_[5].position.z };
 
 	}
 
@@ -362,7 +384,9 @@ bool Sprite::Initialize() {
 				vertSphereData_[index].position.w = 1.0f;
 				vertSphereData_[index].texcoord.x = float(lonIndex) / float(kSubdivision);
 				vertSphereData_[index].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-
+				vertSphereData_[index].normal.x = vertSphereData_[index].position.x;
+				vertSphereData_[index].normal.y = vertSphereData_[index].position.y;
+				vertSphereData_[index].normal.z = vertSphereData_[index].position.z;
 				// 頂点b 2
 				vertSphereData_[index + 1].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
 				vertSphereData_[index + 1].position.y = std::sinf(lat + kLatEvery);
@@ -370,6 +394,9 @@ bool Sprite::Initialize() {
 				vertSphereData_[index + 1].position.w = 1.0f;
 				vertSphereData_[index + 1].texcoord.x = float(lonIndex) / float(kSubdivision);
 				vertSphereData_[index + 1].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+				vertSphereData_[index + 1].normal.x = vertSphereData_[index + 1].position.x;
+				vertSphereData_[index + 1].normal.y = vertSphereData_[index + 1].position.y;
+				vertSphereData_[index + 1].normal.z = vertSphereData_[index + 1].position.z;
 
 				// 頂点c 3
 				vertSphereData_[index + 2].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
@@ -378,6 +405,9 @@ bool Sprite::Initialize() {
 				vertSphereData_[index + 2].position.w = 1.0f;
 				vertSphereData_[index + 2].texcoord.x = float(lonIndex) / float(kSubdivision);
 				vertSphereData_[index + 2].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+				vertSphereData_[index + 2].normal.x = vertSphereData_[index + 2].position.x;
+				vertSphereData_[index + 2].normal.y = vertSphereData_[index + 2].position.y;
+				vertSphereData_[index + 2].normal.z = vertSphereData_[index + 2].position.z;
 
 				// 頂点c 4
 				vertSphereData_[index + 3].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
@@ -386,6 +416,9 @@ bool Sprite::Initialize() {
 				vertSphereData_[index + 3].position.w = 1.0f;
 				vertSphereData_[index + 3].texcoord.x = float(lonIndex) / float(kSubdivision);
 				vertSphereData_[index + 3].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+				vertSphereData_[index + 3].normal.x = vertSphereData_[index + 3].position.x;
+				vertSphereData_[index + 3].normal.y = vertSphereData_[index + 3].position.y;
+				vertSphereData_[index + 3].normal.z = vertSphereData_[index + 3].position.z;
 
 				// 頂点b 5
 				vertSphereData_[index + 4].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
@@ -394,6 +427,9 @@ bool Sprite::Initialize() {
 				vertSphereData_[index + 4].position.w = 1.0f;
 				vertSphereData_[index + 4].texcoord.x = float(lonIndex) / float(kSubdivision);
 				vertSphereData_[index + 4].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+				vertSphereData_[index + 4].normal.x = vertSphereData_[index + 4].position.x;
+				vertSphereData_[index + 4].normal.y = vertSphereData_[index + 4].position.y;
+				vertSphereData_[index + 4].normal.z = vertSphereData_[index + 4].position.z;
 
 				// 頂点d 6
 				vertSphereData_[index + 5].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon + kLonEvery);
@@ -402,6 +438,9 @@ bool Sprite::Initialize() {
 				vertSphereData_[index + 5].position.w = 1.0f;
 				vertSphereData_[index + 5].texcoord.x = float(lonIndex) / float(kSubdivision);
 				vertSphereData_[index + 5].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+				vertSphereData_[index + 5].normal.x = vertSphereData_[index + 5].position.x;
+				vertSphereData_[index + 5].normal.y = vertSphereData_[index + 5].position.y;
+				vertSphereData_[index + 5].normal.z = vertSphereData_[index + 5].position.z;
 
 			}
 		}
@@ -414,13 +453,21 @@ bool Sprite::Initialize() {
 
 	{
 		// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
-		constBuff_ = CreateBufferResource(sizeof(Vector4));
+		constBuff_ = CreateBufferResource(sizeof(ConstBufferData));
+
+		constSpriteBuff_ = CreateBufferResource(sizeof(ConstBufferData));
 
 	}
 
 	result = constBuff_->Map(0, nullptr, (void**)&constData_);
 	assert(SUCCEEDED(result));
-	*constData_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	result = constSpriteBuff_->Map(0, nullptr, (void**)&constSpriteData_);
+	assert(SUCCEEDED(result));
+
+	constData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	constData_->enableLighting = false;
+	*constSpriteData_ = ConstBufferData{{ 1.0f,1.0f,1.0f,1.0f}, false};
 
 	return true;
 }
