@@ -2,6 +2,7 @@
 #include <wrl.h>
 #include "WinApp.h"
 #include "Matrix.h"
+#include "StructManager.h"
 
 #include <dxgidebug.h>
 #include <dxcapi.h>
@@ -28,11 +29,11 @@ public:	// サブクラス
 		float intensity;
 	};
 
-	//struct Transform {
-	//	Vector3 scale;
-	//	Vector3 rotate;
-	//	Vector3 translate;
-	//};
+	struct Transform {
+		Vector3 scale;
+		Vector3 rotate;
+		Vector3 translate;
+	};
 
 	struct VertexData {
 		Vector4 position;
@@ -43,6 +44,8 @@ public:	// サブクラス
 	struct ConstBufferData {
 		Vector4 color;
 		int32_t enableLighting;
+		float padding[3];
+		Matrix4x4 uvTransform;
 	};
 
 	enum LightingPattern {
@@ -165,6 +168,13 @@ public:
 	int GetLightPattern() { return lightPattern_; }
 
 	void SetLightPattern(int lightpattern) { lightPattern_ = lightpattern; }
+
+	/// <summary>
+	/// UV座標の行列
+	/// </summary>
+	/// <param name="mat"></param>
+	/// <returns></returns>
+	void SetUVTransformSprite(Matrix4x4 mat) { constSpriteData_->uvTransform = mat; }
 
 private:
 		

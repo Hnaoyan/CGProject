@@ -2,6 +2,7 @@
 #include "ImGuiManager.h"
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
+#include "Camera.h"
 
 
 void GameScene::Initialize() {
@@ -13,24 +14,15 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 	ImGui::Begin("Setting");
-	ImGui::BeginTabBar("Color", 0);
+	ImGui::DragFloat3("cameraTranslate", &cameraTransform.translate.x, 0.01f, -10.0f, 10.0f);
+	ImGui::DragFloat3("cameraScale", &cameraTransform.scale.x, 0.01f, -10.0f, 10.0f);
+	ImGui::DragFloat3("cameraRotate", &cameraTransform.rotate.x, 0.01f, -10.0f, 10.0f);
+
 	ImVec4 color = ImVec4(color_.x, color_.y, color_.z, color_.w); // 初期色は赤 (RGBA)
 	ImGui::ColorEdit4("Color", (float*)&color); // RGBA色の編集ウィジェット
 	color_ = { color.x,color.y,color.z,color.w };
 	sprite_->SetColor(color_);
-	if (ImGui::TreeNode("Triangle"))
-	{
-		ImGui::DragFloat3("translate", &triangle1.translate.x, 0.01f, -5.0f, 5.0f);
-		ImGui::DragFloat3("scale", &triangle1.scale.x, 0.01f, -5.0f, 5.0f);
-		ImGui::DragFloat3("rotate", &triangle1.rotate.x, 0.01f, -5.0f, 5.0f);
-
-		ImGui::Checkbox("isEnable", &IsTriangel);
-		sprite_->SetIsTriangle(IsTriangel);
-
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("Sprite")) 
+	if (ImGui::TreeNode("Sprite"))
 	{
 		ImGui::DragFloat3("translateSprite", &spriteTransform.translate.x, 1.0f, 0.0f, 1000.0f);
 		ImGui::DragFloat3("scaleSprite", &spriteTransform.scale.x, 0.01f, -5.0f, 5.0f);
@@ -39,11 +31,29 @@ void GameScene::Update() {
 		ImGui::Checkbox("isEnableSprite", &IsSprite);
 		sprite_->SetIsSprite(IsSprite);
 
+		if (ImGui::TreeNode("uvTransform")) {
+			ImGui::DragFloat2("UVTranslate", &spriteUvTransform.translate.x, 0.01f, -10.0f, 10.0f);
+			ImGui::DragFloat2("UVScale", &spriteUvTransform.scale.x, 0.01f, -10.0f, 10.0f);
+			ImGui::SliderAngle("UVRotate", &spriteUvTransform.rotate.z);
+			ImGui::TreePop();
+		}
+
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("Triangle"))
+	{
+		ImGui::DragFloat3("translate", &triangle1.translate.x, 0.01f, -10.0f, 10.0f);
+		ImGui::DragFloat3("scale", &triangle1.scale.x, 0.01f, -5.0f, 5.0f);
+		ImGui::DragFloat3("rotate", &triangle1.rotate.x, 0.01f, -5.0f, 5.0f);
+
+		ImGui::Checkbox("isEnable", &IsTriangel);
+		sprite_->SetIsTriangle(IsTriangel);
+
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Sphere"))
 	{
-		ImGui::DragFloat3("translateSphere", &SphereTransform.translate.x, 0.01f, -5.0f, 5.0f);
+		ImGui::DragFloat3("translateSphere", &SphereTransform.translate.x, 0.01f, -10.0f, 10.0f);
 		ImGui::DragFloat3("scaleSphere", &SphereTransform.scale.x, 0.01f, -5.0f, 5.0f);
 		ImGui::DragFloat3("rotateSphere", &SphereTransform.rotate.x, 0.01f, -5.0f, 5.0f);
 
@@ -71,39 +81,33 @@ void GameScene::Update() {
 
 		ImGui::TreePop();
 	}
-	ImGui::EndTabBar();
 	ImGui::End();
 	
 	// WVPMatrixを作成
 	// 三角の行列
 	Matrix4x4 worldMatrix = MakeAffineMatrix(triangle1.scale, triangle1.rotate, triangle1.translate);
-	// 球の行列
-	Matrix4x4 sphereMatrix = MakeAffineMatrix(SphereTransform.scale, SphereTransform.rotate, SphereTransform.translate);
-	// スプライトの行列
-	Matrix4x4 worldSpriteMatrix = MakeAffineMatrix(spriteTransform.scale, spriteTransform.rotate, spriteTransform.translate);
-	// カメラから描画まで
-	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
-	Matrix4x4 viewMatrix = MakeInverse(cameraMatrix);
-	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.0f);
-	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+	Matrix4x4 worldViewProjectionMatrix = Camera::SetViewProjectionMat(triangle1, cameraTransform, 0.45f, 0.1f, 100.0f);
 	// セッター
 	sprite_->SetWorldMat(worldMatrix);
 	sprite_->SetWvpMatrix(worldViewProjectionMatrix);
 
-	// カメラから描画まで
-	cameraMatrix = MakeAffineMatrix(cameraSpTransform.scale, cameraSpTransform.rotate, cameraSpTransform.translate);
-	viewMatrix = MakeInverse(cameraMatrix);
-	projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.0f);
-	Matrix4x4 worldSphereViewProjectionMatrix = Multiply(sphereMatrix, Multiply(viewMatrix, projectionMatrix));
+	// 球の行列
+	Matrix4x4 sphereMatrix = MakeAffineMatrix(SphereTransform.scale, SphereTransform.rotate, SphereTransform.translate);
+	Matrix4x4 worldSphereViewProjectionMatrix = Camera::SetViewProjectionMat(SphereTransform, cameraTransform, 0.45f, 0.1f, 100.0f);
 	// セッター
 	sprite_->SetWorldSphereMat(sphereMatrix);
 	sprite_->SetWvpSphereMatrix(worldSphereViewProjectionMatrix);
 
-	Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
-	Matrix4x4 projectionMatrixSprite = MakeOrthographicMatrix(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
-	Matrix4x4 worldViewProjectionMatrixSprite= Multiply(worldSpriteMatrix, Multiply(viewMatrixSprite, projectionMatrixSprite));
+	// スプライトの行列
+	Matrix4x4 worldViewProjectionMatrixSprite = Camera::SetViewProjectionMat(spriteTransform, 0, 100.0f);
 	// セッター
 	sprite_->SetWvpSpriteMatrix(worldViewProjectionMatrixSprite);
+	// UV座標系
+	Matrix4x4 uvTransformMatrix = MakeScaleMatrix(spriteUvTransform.scale);
+	uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateZMatrix(spriteUvTransform.rotate.z));
+	uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(spriteUvTransform.translate));
+	sprite_->SetUVTransformSprite(uvTransformMatrix);
+
 }
 
 void GameScene::Draw() {

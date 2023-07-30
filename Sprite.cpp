@@ -421,7 +421,9 @@ bool Sprite::Initialize() {
 
 	constData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	constData_->enableLighting = lightPattern_;
-	*constSpriteData_ = ConstBufferData{{ 1.0f,1.0f,1.0f,1.0f}, false};
+	constData_->uvTransform = MakeIdentity4x4();
+	*constSpriteData_ = ConstBufferData{ { 1.0f,1.0f,1.0f,1.0f}, false};
+	constSpriteData_->uvTransform = MakeIdentity4x4();
 
 	return true;
 }
@@ -438,7 +440,6 @@ void Sprite::Draw() {
 	constData_->color = color_;
 	constData_->enableLighting = lightPattern_;
 
-	//sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
 	// スプライト
 	// VBVの設定
 	sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
