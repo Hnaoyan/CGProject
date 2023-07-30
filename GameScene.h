@@ -35,15 +35,23 @@ private:
 	// 球用のカメラ
 	Transform cameraSpTransform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
+	/// <summary>
+	/// 表示するかどうか
+	/// </summary>
 	bool IsTriangel = 1;
 
 	bool IsSprite = 0;
 
 	bool IsSphere = 0;
 
-	int onTop = 0;
-
+	/// 画像の色
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 
+	/// <summary>
+	/// ライティング関係
+	/// </summary>
+	Sprite::DirectionalLight lighting_;
+
+	int lightPattern = Sprite::None;
 };
 

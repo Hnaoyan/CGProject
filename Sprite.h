@@ -17,27 +17,22 @@
 class Sprite
 {
 public:	// サブクラス
-	//struct Vector4 {
-	//	float x, y, z, w;
-	//};
-	//
-	//struct Vector3 {
-	//	float x, y, z;
-	//};
-
-	//struct Vector2 {
-	//	float x, y;
-	//};
-
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
+		Matrix4x4 World;
 	};
 
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
+	struct DirectionalLight {
+		Vector4 color;
+		Vector3 direction;
+		float intensity;
 	};
+
+	//struct Transform {
+	//	Vector3 scale;
+	//	Vector3 rotate;
+	//	Vector3 translate;
+	//};
 
 	struct VertexData {
 		Vector4 position;
@@ -48,6 +43,12 @@ public:	// サブクラス
 	struct ConstBufferData {
 		Vector4 color;
 		int32_t enableLighting;
+	};
+
+	enum LightingPattern {
+		None,
+		Lambertian,
+		Half,
 	};
 
 public:	// 静的メンバ関数
@@ -145,6 +146,26 @@ public:
 	/// <param name="color"></param>
 	void SetColor(Vector4 color) { color_ = color; }
 
+	/// <summary>
+	/// ワールド座標
+	/// </summary>
+	/// <param name="world"></param>
+	void SetWorldMat(Matrix4x4 world) { worldMat_ = world; }
+
+	void SetWorldSphereMat(Matrix4x4 world) { worldSphereMat_ = world; }
+
+	/// <summary>
+	/// ライティング系
+	/// </summary>
+	/// <param name="light"></param>
+	void SetLighting(DirectionalLight light) { *directionalLightData_ = light; }
+
+	DirectionalLight GetLighting() { return *directionalLightData_; }
+
+	int GetLightPattern() { return lightPattern_; }
+
+	void SetLightPattern(int lightpattern) { lightPattern_ = lightpattern; }
+
 private:
 		
 	static IDxcBlob* CompileShader(
@@ -176,6 +197,14 @@ private:	// メンバ関数
 
 	ConstBufferData* constSpriteData_ = nullptr;
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> constSphereBuff_;
+
+	ConstBufferData* constSphereData_ = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightBuff_;
+
+	DirectionalLight* directionalLightData_ = nullptr;
+
 	/// <summary>
 	/// 三角形のバッファ
 	/// </summary>
@@ -185,10 +214,11 @@ private:	// メンバ関数
 
 	Matrix4x4 wvpMatrix_;
 
+	Matrix4x4 worldMat_;
+
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResoure_;
 
 	TransformationMatrix* wvpData = nullptr;
-
 
 	/// <summary>
 	/// スプライトのバッファ
@@ -203,6 +233,11 @@ private:	// メンバ関数
 
 	TransformationMatrix* wvpSpriteData_ = nullptr;
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexSpriteBuff_;
+
+	D3D12_INDEX_BUFFER_VIEW indexSpriteBufferView_{};
+
+	uint32_t* indexSpriteData = nullptr;
 	
 	/// <summary>
 	/// 球体用
@@ -212,6 +247,8 @@ private:	// メンバ関数
 	VertexData* vertSphereData_ = nullptr;
 
 	Matrix4x4 wvpSphereMatrix_;
+
+	Matrix4x4 worldSphereMat_;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpSphereResource_;
 
@@ -236,9 +273,9 @@ private:	// メンバ関数
 
 	bool IsSphere_ = 0;
 
-	int pattern = PatternUp;
-
 	Vector4 color_ = {1.0f,1.0f,1.0f,1.0f};
+	
+	int lightPattern_ = LightingPattern::None;
 
 };
 

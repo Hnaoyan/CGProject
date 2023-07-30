@@ -7,6 +7,8 @@
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	sprite_ = Sprite::Create();
+
+	lighting_ = { { 1.0f,1.0f,1.0f,1.0f } ,{ 0.0f,-1.0f,0.0f }, 1.0f };
 }
 
 void GameScene::Update() {
@@ -21,7 +23,6 @@ void GameScene::Update() {
 		ImGui::DragFloat3("translate", &triangle1.translate.x, 0.01f, -5.0f, 5.0f);
 		ImGui::DragFloat3("scale", &triangle1.scale.x, 0.01f, -5.0f, 5.0f);
 		ImGui::DragFloat3("rotate", &triangle1.rotate.x, 0.01f, -5.0f, 5.0f);
-		ImGui::Text("%d", IsTriangel);
 
 		ImGui::Checkbox("isEnable", &IsTriangel);
 		sprite_->SetIsTriangle(IsTriangel);
@@ -34,7 +35,6 @@ void GameScene::Update() {
 		ImGui::DragFloat3("translateSprite", &spriteTransform.translate.x, 1.0f, 0.0f, 1000.0f);
 		ImGui::DragFloat3("scaleSprite", &spriteTransform.scale.x, 0.01f, -5.0f, 5.0f);
 		ImGui::DragFloat3("rotateSprite", &spriteTransform.rotate.x, 0.01f, -5.0f, 5.0f);
-		ImGui::Text("%d", IsSprite);
 
 		ImGui::Checkbox("isEnableSprite", &IsSprite);
 		sprite_->SetIsSprite(IsSprite);
@@ -46,24 +46,31 @@ void GameScene::Update() {
 		ImGui::DragFloat3("translateSphere", &SphereTransform.translate.x, 0.01f, -5.0f, 5.0f);
 		ImGui::DragFloat3("scaleSphere", &SphereTransform.scale.x, 0.01f, -5.0f, 5.0f);
 		ImGui::DragFloat3("rotateSphere", &SphereTransform.rotate.x, 0.01f, -5.0f, 5.0f);
-		ImGui::Text("%d", IsSphere);
 
 		ImGui::Checkbox("isEnableSphere", &IsSphere);
 		sprite_->SetIsSphere(IsSphere);
 
+		if (ImGui::TreeNode("Lighting")) {
+			lighting_ = sprite_->GetLighting();
+			ImGui::SliderFloat4("color", &lighting_.color.x, 0.0f, 1.0f);
+			ImGui::SliderFloat3("direction", &lighting_.direction.x, -1.0f, 1.0f);
+			ImGui::DragFloat("intencity", &lighting_.intensity, 0.01f, 0.0f, 10.0f);
+			sprite_->SetLighting(lighting_);
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("LightingType"))
+		{
+			// ドロップダウンメニューを作成
+			const char* items[] = { "None", "Lambertian Reflectance", "Half Lambert" };
+			lightPattern = sprite_->GetLightPattern();
+			ImGui::Combo("Select Value", &lightPattern, items, IM_ARRAYSIZE(items));
+			sprite_->SetLightPattern(lightPattern);
+			ImGui::TreePop();
+		}
+
 		ImGui::TreePop();
 	}
-
-
-	//if (ImGui::TreeNode("OnTop"))
-	//{
-	//	// ドロップダウンメニューを作成
-	//	const char* items[] = { "0", "1"/*, "2", "3", "4", "5"*/ };
-	//	ImGui::Combo("Select Value", &onTop, items, IM_ARRAYSIZE(items));
-	//	sprite_->SetPattern(onTop);
-	//	ImGui::TreePop();
-
-	//}
 	ImGui::EndTabBar();
 	ImGui::End();
 	
@@ -80,6 +87,7 @@ void GameScene::Update() {
 	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.0f);
 	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 	// セッター
+	sprite_->SetWorldMat(worldMatrix);
 	sprite_->SetWvpMatrix(worldViewProjectionMatrix);
 
 	// カメラから描画まで
@@ -88,6 +96,7 @@ void GameScene::Update() {
 	projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.0f);
 	Matrix4x4 worldSphereViewProjectionMatrix = Multiply(sphereMatrix, Multiply(viewMatrix, projectionMatrix));
 	// セッター
+	sprite_->SetWorldSphereMat(sphereMatrix);
 	sprite_->SetWvpSphereMatrix(worldSphereViewProjectionMatrix);
 
 	Matrix4x4 viewMatrixSprite = MakeIdentity4x4();

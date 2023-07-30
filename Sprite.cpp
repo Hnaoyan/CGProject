@@ -74,7 +74,7 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 
 
 	// RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[3] = {};
+	D3D12_ROOT_PARAMETER rootParameters[4] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	// CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	// PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;	// レジスタ番号0とバインド
@@ -89,6 +89,10 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	// PixelShaderで使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;	// Tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);	// Tableで利用する数
+
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters[3].Descriptor.ShaderRegister = 1;
 
 	descriptionRootSignature.pParameters = rootParameters;	// ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);
@@ -190,76 +194,18 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 
 }
 
-void Sprite::PreDraw(ID3D12GraphicsCommandList* commandList) {
-	assert(Sprite::sCommandList_ == nullptr);
-
-	sCommandList_ = commandList;
-	// ルートシグネチャの設定
-	sCommandList_->SetGraphicsRootSignature(sRootSignature_.Get());
-	// パイプラインの設定
-	sCommandList_->SetPipelineState(gPipelineState_.Get());
-	
-	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い
-	sCommandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-}
-
-void Sprite::PostDraw() {
-	// コマンドリストを解除
-	Sprite::sCommandList_ = nullptr;
-
-}
-
-void Sprite::Draw() {
-
-	wvpData->WVP = wvpMatrix_;
-	wvpSpriteData_->WVP = wvpSpriteMat_;
-	wvpSphereData_->WVP = wvpSphereMatrix_;
-	constData_->color = color_;
-
-	// マテリアルCBufferの場所を設定
-	sCommandList_->SetGraphicsRootShaderResourceView(0, constSpriteBuff_->GetGPUVirtualAddress());
-	// シェーダリソースビューをセット
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 2, textureHandle_);
-
-	// スプライト
-	// VBVの設定
-	sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
-	// wvp用のCBufferの場所を設定
-	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSpriteResource_->GetGPUVirtualAddress());
-
-	if (IsSprite_) {
-		sCommandList_->DrawInstanced(6, 1, 0, 0);
-	}
-
-	//sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
-	// 三角形
-	// VBVの設定
-	sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
-	// wvp用のCBufferの場所を設定
-	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpResoure_->GetGPUVirtualAddress());
-	// 描画（仮）
-	if (IsTriangle_) {
-		sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
-	}
-	// 球
-	// VBVの設定
-	sCommandList_->IASetVertexBuffers(0, 1, &vertSphereBufferView_);
-	// wvp用のCBufferの場所を設定
-	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSphereResource_->GetGPUVirtualAddress());
-	// 描画（仮）
-	if (IsSphere_) {
-		sCommandList_->DrawInstanced(kVertexIndex, 1, 0, 0);
-	}
-
-}
-
 bool Sprite::Initialize() {
 	// デバイスのnullptrチェック
 	assert(sDevice_);
 
 	HRESULT result = S_FALSE;
+	// Lighting用リソース
+	directionalLightBuff_ = CreateBufferResource(sizeof(DirectionalLight));
+	directionalLightBuff_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
 
+	directionalLightData_->color = { 1.0f,1.0f,1.0f,1.0f };
+	directionalLightData_->direction = { 0.0f,-1.0f,0.0f };
+	directionalLightData_->intensity = 1.0f;
 
 	// WVP用のリソースのサイズを用意
 	wvpResoure_ = CreateBufferResource(sizeof(TransformationMatrix));
@@ -355,6 +301,14 @@ bool Sprite::Initialize() {
 		vertSpriteData_[5].position = { 640.0f,360.0f,0.0f,1.0f };
 		vertSpriteData_[5].texcoord = { 1.0f,1.0f };
 		vertSpriteData_[5].normal = { vertSpriteData_[5].position.x,vertSpriteData_[5].position.y,vertSpriteData_[5].position.z };
+		
+		//indexSpriteBuff_ = CreateBufferResource(sizeof(uint32_t) * 6);
+		//indexSpriteBufferView_.BufferLocation = indexSpriteBuff_->GetGPUVirtualAddress();
+		//indexSpriteBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
+		//indexSpriteBufferView_.Format = DXGI_FORMAT_R32_UINT;
+		//indexSpriteBuff_->Map(0, nullptr, reinterpret_cast<void**>(&indexSpriteData));
+		//indexSpriteData[0] = 0;	indexSpriteData[1] = 1;	indexSpriteData[2] = 2;
+		//indexSpriteData[3] = 1;	indexSpriteData[4] = 3;	indexSpriteData[5] = 2;
 
 	}
 
@@ -466,11 +420,87 @@ bool Sprite::Initialize() {
 	assert(SUCCEEDED(result));
 
 	constData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	constData_->enableLighting = false;
+	constData_->enableLighting = lightPattern_;
 	*constSpriteData_ = ConstBufferData{{ 1.0f,1.0f,1.0f,1.0f}, false};
 
 	return true;
 }
+
+void Sprite::Draw() {
+
+	wvpData->WVP = wvpMatrix_;
+	wvpSpriteData_->WVP = wvpSpriteMat_;
+	wvpSphereData_->WVP = wvpSphereMatrix_;
+
+	wvpData->World = worldMat_;
+	wvpSphereData_->World = worldSphereMat_;
+
+	constData_->color = color_;
+	constData_->enableLighting = lightPattern_;
+
+	//sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
+	// スプライト
+	// VBVの設定
+	sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
+	//sCommandList_->IASetIndexBuffer(&indexSpriteBufferView_);
+	// wvp用のCBufferの場所を設定
+	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSpriteResource_->GetGPUVirtualAddress());
+	// シェーダリソースビューをセット
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 2, textureHandle_);
+	sCommandList_->SetGraphicsRootConstantBufferView(3, directionalLightBuff_->GetGPUVirtualAddress());
+
+	// マテリアルCBufferの場所を設定
+	sCommandList_->SetGraphicsRootConstantBufferView(0, constSpriteBuff_->GetGPUVirtualAddress());
+
+	if (IsSprite_) {
+		sCommandList_->DrawInstanced(6, 1, 0, 0);
+		//sCommandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	}
+
+	// 三角形
+	// VBVの設定
+	sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
+	// wvp用のCBufferの場所を設定
+	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpResoure_->GetGPUVirtualAddress());
+	// 描画（仮）
+	if (IsTriangle_) {
+		sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
+	}
+
+	sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
+
+	// 球
+	// VBVの設定
+	sCommandList_->IASetVertexBuffers(0, 1, &vertSphereBufferView_);
+	// wvp用のCBufferの場所を設定
+	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSphereResource_->GetGPUVirtualAddress());
+	// 描画（仮）
+	if (IsSphere_) {
+		sCommandList_->DrawInstanced(kVertexIndex, 1, 0, 0);
+	}
+
+}
+
+void Sprite::PreDraw(ID3D12GraphicsCommandList* commandList) {
+	assert(Sprite::sCommandList_ == nullptr);
+
+	sCommandList_ = commandList;
+	// パイプラインの設定
+	sCommandList_->SetPipelineState(gPipelineState_.Get());
+	// ルートシグネチャの設定
+	sCommandList_->SetGraphicsRootSignature(sRootSignature_.Get());
+
+	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い
+	sCommandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+}
+
+void Sprite::PostDraw() {
+	// コマンドリストを解除
+	Sprite::sCommandList_ = nullptr;
+
+}
+
 
 
 void Sprite::InitializeDXC() {
