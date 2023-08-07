@@ -149,6 +149,10 @@ public:
 	/// <param name="color"></param>
 	void SetColor(Vector4 color) { color_ = color; }
 
+	void SetSpriteColor(Vector4 color) { constSpriteData_->color = color; }
+
+	Vector4 GetSpriteColor() { return constSpriteData_->color; }
+
 	/// <summary>
 	/// ワールド座標
 	/// </summary>

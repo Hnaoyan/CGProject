@@ -22,6 +22,12 @@ void GameScene::Update() {
 	ImGui::ColorEdit4("Color", (float*)&color); // RGBA色の編集ウィジェット
 	color_ = { color.x,color.y,color.z,color.w };
 	sprite_->SetColor(color_);
+
+	ImVec4 spColor = ImVec4(sprite_->GetSpriteColor().x, sprite_->GetSpriteColor().y, sprite_->GetSpriteColor().z,
+		sprite_->GetSpriteColor().w);
+	ImGui::ColorEdit4("SpriteColor", (float*)&spColor);
+	sprite_->SetSpriteColor(Vector4(spColor.x, spColor.y, spColor.z, spColor.w));
+
 	if (ImGui::TreeNode("Sprite"))
 	{
 		ImGui::DragFloat3("translateSprite", &spriteTransform.translate.x, 1.0f, 0.0f, 1000.0f);
