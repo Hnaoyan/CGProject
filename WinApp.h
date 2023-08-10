@@ -54,6 +54,8 @@ public:
 
 	HWND GetHwnd() const { return hwnd_; }
 
+	HINSTANCE GetHInstance() const { return windowClass_.hInstance; }
+
 private:// メンバ変数
 	// Window関連
 	HWND hwnd_ = nullptr;		// ウィンドウハンドル

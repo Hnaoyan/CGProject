@@ -2,6 +2,8 @@
 
 #include "DirectXCommon.h"
 #include "Sprite.h"
+#include "Input.h"
+#include "Audio.h"
 
 class GameScene
 {
@@ -19,9 +21,12 @@ public:
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
-
+	Input* input_ = nullptr;
+	Audio* audio_ = nullptr;
 	Sprite* sprite_ = nullptr;
 	
+	uint32_t sound_;
+
 	// それぞれの座標系
 	Sprite::Transform triangle1 = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 

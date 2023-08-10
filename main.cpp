@@ -1,23 +1,39 @@
 #include "DirectXCommon.h"
 #include"WinApp.h"
 #include "Sprite.h"
-#include "GameScene.h"
+#include"GameScene.h"
 #include "ImGuiManager.h"
-#include "TextureManager.h"
+#include"TextureManager.h"
+#include "Audio.h"
+#include"Input.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	WinApp* winApp;
 	DirectXCommon* dxCommon;
+	Audio* audio;
+	Input* input;
 	GameScene* gameScene = nullptr;
 	ImGuiManager* imguiManager = nullptr;
 
+	// WindowsApp
 	winApp = WinApp::GetInstance();
 	winApp->CreateGameWindow();
 
+	// DirectX
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(winApp);
 
+	// Input
+	input = Input::GetInstance();
+	input->Initialize();
+
+	// オーディオ
+	audio = Audio::GetInstance();
+	audio->Initialize();
+
+
+	// Imgui
 	imguiManager = ImGuiManager::GetInstance();
 	imguiManager->Initialize(dxCommon, winApp);
 
@@ -32,6 +48,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	while (winApp->ProcessMessage() == 0)
 	{
+		if (winApp->ProcessMessage()) {
+			break;
+		}
+
+		// 入力処理
+		input->Update();
 		// ImGui受付開始
 		imguiManager->Begin();
 		// ゲームシーン更新処理
@@ -54,5 +76,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	imguiManager->Finalize();
+	audio->Finalize();
 	CoUninitialize();
+
+	
+	return 0;
 }

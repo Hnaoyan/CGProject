@@ -40,6 +40,21 @@
     <Filter Include="ソース ファイル\math">
       <UniqueIdentifier>{08cbf4f1-48f8-4582-9a23-2055b43e33c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="シェーダーファイル">
+      <UniqueIdentifier>{78427d3f-5c84-4d73-a020-5d684692b25e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\audio">
+      <UniqueIdentifier>{1e2c78f8-4bd1-4125-91c7-44c53a68cd84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\audio">
+      <UniqueIdentifier>{f13eb812-f219-444d-a24c-530fd6bcdbc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D">
+      <UniqueIdentifier>{092fc66b-a862-475f-b1d6-ab66e835f12d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D">
+      <UniqueIdentifier>{f6e563b4-5510-4fbb-9044-8cee066cbdc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -94,6 +109,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Audio.cpp">
+      <Filter>ソース ファイル\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -153,12 +174,14 @@
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="Audio.h">
+      <Filter>ヘッダー ファイル\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Object3D.VS.hlsl" />
-    <FxCompile Include="Object3D.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
@@ -166,6 +189,16 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Object3d.hlsli" />
+    <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\Sprite.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>

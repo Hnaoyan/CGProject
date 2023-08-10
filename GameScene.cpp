@@ -8,11 +8,18 @@
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	sprite_ = Sprite::Create();
+	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
+	sound_ = audio_->LoadWave("fanfare.wav");
 
 	lighting_ = { { 1.0f,1.0f,1.0f,1.0f } ,{ 0.0f,-1.0f,0.0f }, 1.0f };
 }
 
 void GameScene::Update() {
+	if (input_->TrigerKey(DIK_SPACE)) {
+		audio_->PlayWave(sound_, 0, 0.45f);
+	}
+
 	ImGui::Begin("Setting");
 	ImGui::DragFloat3("cameraTranslate", &cameraTransform.translate.x, 0.01f, -10.0f, 10.0f);
 	ImGui::DragFloat3("cameraScale", &cameraTransform.scale.x, 0.01f, -10.0f, 10.0f);
@@ -113,6 +120,9 @@ void GameScene::Update() {
 	uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateZMatrix(spriteUvTransform.rotate.z));
 	uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(spriteUvTransform.translate));
 	sprite_->SetUVTransformSprite(uvTransformMatrix);
+
+
+	//if()
 
 }
 
