@@ -55,6 +55,12 @@
     <Filter Include="ソース ファイル\3D">
       <UniqueIdentifier>{f6e563b4-5510-4fbb-9044-8cee066cbdc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\D3D12Lib">
+      <UniqueIdentifier>{227ca665-96cb-4b8e-ada8-4ca78883c789}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\D3D12Lib">
+      <UniqueIdentifier>{7562e42c-678f-441e-aa43-db9a0d2a23ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -116,6 +122,9 @@
     </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D12Lib\D3D12Lib.cpp">
+      <Filter>ソース ファイル\D3D12Lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D12Lib\D3D12Lib.h">
+      <Filter>ヘッダー ファイル\D3D12Lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

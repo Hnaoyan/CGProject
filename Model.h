@@ -19,9 +19,24 @@ class Model
 public:
 
 	struct ModelData {
-		//std::vector<>
+		//std::vector<VertexData> vertices;
 	};
 
+	struct Material {
+		Vector4 color;
+		int32_t enableLighting;
+		float padding[3];
+		Matrix4x4 uvTransform;
+	};
+
+	struct VertexData {
+		Vector4 position;
+		Vector2 texcoord;
+		Vector3 normal;
+	};
+private:
+	static const std::string kBaseDirectory;
+	static const std::string kDefaultName;
 
 private:	// 静的メンバ変数
 	// デスクリプタサイズ
@@ -34,11 +49,20 @@ private:	// 静的メンバ変数
 	static Microsoft::WRL::ComPtr<ID3D12PipelineState> sPipelineState_;
 
 public:
-
+	/// <summary>
+	/// 静的初期化
+	/// </summary>
 	static void StaticInitialize();
 
+	/// <summary>
+	/// グラフィックスの初期化
+	/// </summary>
 	static void InitializeGraphicsPipeline();
 
+	/// <summary>
+	/// モデル生成
+	/// </summary>
+	/// <returns></returns>
 	static Model* Create();
 
 	/// <summary>
@@ -68,6 +92,28 @@ public:
 	~Model();
 
 	void Initialize(const std::string& modelName, bool smoothing = false);
+
+
+private:	// メンバ関数
+
+	/// <summary>
+	/// モデル読み込み
+	/// </summary>
+	/// <param name="modelName"></param>
+	/// <param name="smoothing"></param>
+	void LoadModel(const std::string& modelName,bool smoothing);
+
+	/// <summary>
+	/// マテリアル読み込み
+	/// </summary>
+	/// <param name="directoryPath"></param>
+	/// <param name="fileName"></param>
+	void LoadMaterial(const std::string& directoryPath,const std::string& fileName);
+
+	/// <summary>
+	/// テクスチャ読み込み
+	/// </summary>
+	void LoadTextures();
 
 };
 
