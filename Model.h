@@ -1,8 +1,11 @@
 #pragma once
 #include "StructManager.h"
+#include "Material.h"
+#include "Mesh.h"
 #include <vector>
 #include <string>
 #include <wrl.h>
+#include <unordered_map>
 
 #include <dxgidebug.h>
 #include <dxcapi.h>
@@ -18,16 +21,9 @@ class Model
 {
 public:
 
-	struct ModelData {
-		//std::vector<VertexData> vertices;
-	};
-
-	struct Material {
-		Vector4 color;
-		int32_t enableLighting;
-		float padding[3];
-		Matrix4x4 uvTransform;
-	};
+	//struct ModelData {
+	//	//std::vector<VertexData> vertices;
+	//};
 
 	struct VertexData {
 		Vector4 position;
@@ -47,6 +43,16 @@ private:	// 静的メンバ変数
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
 	// パイプラインステートオブジェ
 	static Microsoft::WRL::ComPtr<ID3D12PipelineState> sPipelineState_;
+
+private:
+	// 名前
+	std::string name_;
+	// メッシュ
+	std::vector<Mesh*> meshes_;
+	// マテリアルコンテナ
+	std::unordered_map<std::string, Material*> materials_;
+	// デフォルトマテリアル
+	Material* defaultMaterial_ = nullptr;
 
 public:
 	/// <summary>
@@ -93,6 +99,7 @@ public:
 
 	void Initialize(const std::string& modelName, bool smoothing = false);
 
+	void Draw();
 
 private:	// メンバ関数
 
@@ -109,6 +116,8 @@ private:	// メンバ関数
 	/// <param name="directoryPath"></param>
 	/// <param name="fileName"></param>
 	void LoadMaterial(const std::string& directoryPath,const std::string& fileName);
+
+	void AddMaterial(Material* material);
 
 	/// <summary>
 	/// テクスチャ読み込み
