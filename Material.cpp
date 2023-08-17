@@ -43,7 +43,7 @@ void Material::LoadTexture(const std::string& directoryPath)
 		textureFilename_ = "white1x1.png";
 	}
 
-	HRESULT result = S_FALSE;
+	//HRESULT result = S_FALSE;
 	// WICテクスチャのロード
 	DirectX::TexMetadata metadata{};
 	DirectX::ScratchImage scratchImg{};

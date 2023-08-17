@@ -36,6 +36,15 @@ void Model::InitializeGraphicsPipeline()
 	ComPtr<IDxcCompiler3> dxcCompiler_;
 	ComPtr<IDxcIncludeHandler> includeHandler_;
 
+	result = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
+
+	assert(SUCCEEDED(result));
+	result = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
+	assert(SUCCEEDED(result));
+
+	result = dxcUtils_->CreateDefaultIncludeHandler(includeHandler_.GetAddressOf());
+	assert(SUCCEEDED(result));
+
 	// 頂点シェーダの読み込みとコンパイル
 	vsBlob = D3D12Lib::CompileShader(L"resources/shaders/Sprite.VS.hlsl",
 			L"vs_6_0", dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get());
@@ -53,11 +62,11 @@ void Model::InitializeGraphicsPipeline()
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
 		},
 		{
-			"NORMAL",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			"TEXCOORD",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
 		},
 		{
-			"TEXCOORD",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			"NORMAL",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
 		},
 	};
@@ -245,6 +254,7 @@ void Model::Draw()
 
 void Model::LoadModel(const std::string& modelName, bool smoothing)
 {
+	smoothing;
 	const std::string fileName = modelName + ".obj";
 	const std::string directoryPath = kBaseDirectory + modelName + "/";
 
@@ -263,7 +273,7 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 	meshes_.emplace_back(new Mesh);
 	Mesh* mesh = meshes_.back();
 	int indexCountTex = 0;
-	int indexCountNoTex = 0;
+	//int indexCountNoTex = 0;
 
 	//ModelData modelData;
 	std::vector<Vector4> positions;
@@ -385,13 +395,13 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 
 				}
 				if (faceIndexCount >= 3) {
-					mesh->AddIndex(indexCountTex - 1);
-					mesh->AddIndex(indexCountTex);
-					mesh->AddIndex(indexCountTex - 3);
+					mesh->AddIndex(static_cast<unsigned short>(indexCountTex - 1));
+					mesh->AddIndex(static_cast<unsigned short>(indexCountTex));
+					mesh->AddIndex(static_cast<unsigned short>(indexCountTex - 3));
 
 				}
 				else {
-					mesh->AddIndex(indexCountTex);
+					mesh->AddIndex(static_cast<unsigned short>(indexCountTex));
 				}
 				indexCountTex++;
 				faceIndexCount++;

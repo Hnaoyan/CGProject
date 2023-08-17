@@ -1,21 +1,18 @@
 #include "Object3D.hlsli"
 
-struct TransformationMatrix {
-	float32_t4x4 WVP;
-	float32_t4x4 World;
-};
-ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
+VSOutput main(float4 pos : POSITION, float3 normal : NORMAL, float2 uv : TEXCOORD)
+{
+	// 法線にワールド行列によるスケーリング・回転を適用
+	// ※スケーリングが一様な場合のみ正しい
+	float4 worldNormal = normalize(mul(world, float4(normal, 0)));
+	float4 worldPos = mul(world, pos);
 
-struct VertexShaderInput {
-	float32_t4 position : POSITION0;
-	float32_t2 texcoord : TEXCOORD0;
-	float32_t3 normal : NORMAL0;
-};
+	VSOutput output; // ピクセルシェーダーに渡す値
+	output.svpos = mul(mul(mul(projection, view), world), pos);
 
-VertexShaderOutput main(VertexShaderInput input) {
-	VertexShaderOutput output;
-	output.position = mul(input.position, gTransformationMatrix.WVP);
-	output.texcoord = input.texcoord;
-	output.normal = normalize(mul(input.normal, (float32_t3x3)gTransformationMatrix.World));
+	output.worldpos = worldPos;
+	output.normal = worldNormal.xyz;
+	output.uv = uv;
+
 	return output;
 }

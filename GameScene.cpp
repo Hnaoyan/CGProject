@@ -3,6 +3,7 @@
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
 #include "Camera.h"
+#include "Model.h"
 
 
 void GameScene::Initialize() {
@@ -136,5 +137,10 @@ void GameScene::Draw() {
 	sprite_->Draw();
 	// 描画後
 	Sprite::PostDraw();
+
+	Model::PreDraw(commandList);
+
+
+	Model::PostDraw();
 
 }

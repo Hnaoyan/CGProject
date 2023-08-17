@@ -6,6 +6,7 @@
 #include"TextureManager.h"
 #include "Audio.h"
 #include"Input.h"
+#include "Model.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -42,6 +43,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	TextureManager::Load("uvChecker.png");
 
 	Sprite::StaticInitialize(dxCommon->GetDevice());
+
+	//Model::StaticInitialize();
 
 	gameScene = new GameScene();
 	gameScene->Initialize();
