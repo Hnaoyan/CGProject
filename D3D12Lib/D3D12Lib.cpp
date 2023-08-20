@@ -2,6 +2,18 @@
 #include "../StringManager.h"
 #include <cassert>
 
+using namespace Microsoft::WRL;
+
+ComPtr<IDxcUtils> D3D12Lib::dxcUtils_;
+ComPtr<IDxcCompiler3> D3D12Lib::dxcCompiler_;
+ComPtr<IDxcIncludeHandler> D3D12Lib::includeHandler_;
+
+D3D12Lib* D3D12Lib::GetInstance()
+{
+	static D3D12Lib instance;
+	return &instance;
+}
+
 D3D12_HEAP_PROPERTIES D3D12Lib::SetHeapProperties(D3D12_HEAP_TYPE type)
 {
 	D3D12_HEAP_PROPERTIES heapProp{};
@@ -80,15 +92,16 @@ D3D12_ROOT_PARAMETER D3D12Lib::InitAsDescriptorTable(UINT numDescriptorRanges, c
 	return rootParam;
 }
 
-IDxcBlob* D3D12Lib::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler)
+IDxcBlob* D3D12Lib::CompileShader(const std::wstring& filePath, const wchar_t* profile)
 {
+	CreateDXC();
 	// ここの中身をこの後書く
 		// 1.hlslファイルを読む
 		// これからシェーダーをコンパイルする旨をログに出す
 	Log(ConvertString(std::format(L"Begin CompileShader, path:{}, profile:{}\n", filePath, profile)));
 	// hlslファイルを読む
 	IDxcBlobEncoding* shaderSource = nullptr;
-	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
+	HRESULT hr = dxcUtils_->LoadFile(filePath.c_str(), nullptr, &shaderSource);
 	// 読めなかったら止める
 	assert(SUCCEEDED(hr));
 	// 読み込んだファイルの内容を設定する
@@ -107,11 +120,11 @@ IDxcBlob* D3D12Lib::CompileShader(const std::wstring& filePath, const wchar_t* p
 	};
 	// 実際にShaderをコンパイルする
 	IDxcResult* shaderResult = nullptr;
-	hr = dxcCompiler->Compile(
+	hr = dxcCompiler_->Compile(
 		&shaderSourceBuffer,	// 読み込んだファイル
 		arguments,				// コンパイルオプション
 		_countof(arguments),	// コンパイルオプションの数
-		includeHandler,			// includeが含まれた諸々
+		includeHandler_.Get(),			// includeが含まれた諸々
 		IID_PPV_ARGS(&shaderResult)	// コンパイル結果
 	);
 	// コンパイルエラーではなくdxcが起動できないなど致命的な状況
@@ -201,3 +214,17 @@ D3D12_RASTERIZER_DESC D3D12Lib::SetRasterizer()
 	rasterizer.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 	return rasterizer;
 }
+
+void D3D12Lib::CreateDXC()
+{
+	HRESULT result = S_FALSE;
+	result = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
+
+	assert(SUCCEEDED(result));
+	result = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
+	assert(SUCCEEDED(result));
+
+	result = dxcUtils_->CreateDefaultIncludeHandler(includeHandler_.GetAddressOf());
+	assert(SUCCEEDED(result));
+}
+

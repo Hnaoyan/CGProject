@@ -14,7 +14,22 @@
 
 class D3D12Lib
 {
+private:
+	static Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler_;
+
+	static Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils_;
+
+	static Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler_;
+
+
+
 public:
+	static void CreateDXC();
+
+	static D3D12Lib* GetInstance();
+
+public:
+
 	static D3D12_HEAP_PROPERTIES SetHeapProperties(D3D12_HEAP_TYPE type);
 	static D3D12_RESOURCE_DESC SetResourceDesc(UINT64 sizeInByte);
 	static D3D12_STATIC_SAMPLER_DESC SetSamplerDesc(UINT shaderRegister, D3D12_FILTER filter);
@@ -36,11 +51,7 @@ public:
 		// CompilerするShaderファイルへのパス
 		const std::wstring& filePath,
 		// Compilerに使用するProfile
-		const wchar_t* profile,
-		// 初期化で生成したものを3つ
-		IDxcUtils* dxcUtils,
-		IDxcCompiler3* dxcCompiler,
-		IDxcIncludeHandler* includeHandler);
+		const wchar_t* profile);
 
 	// バイトコード設定
 	static D3D12_SHADER_BYTECODE ShaderByteCode(IDxcBlob* blob);

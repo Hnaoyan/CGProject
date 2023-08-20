@@ -1,6 +1,7 @@
 #include "Model.h"
 #include "DirectXCommon.h"
 #include "D3D12Lib/D3D12Lib.h"
+#include "StringManager.h"
 
 #include <string>
 #include <cassert>
@@ -16,12 +17,16 @@ const std::string Model::kDefaultName = "cube";
 ID3D12GraphicsCommandList* Model::sCommandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Model::sRootSignature_;
 ComPtr<ID3D12PipelineState> Model::sPipelineState_;
+std::unique_ptr<LightGroup> Model::lightGroup_;
 
 void Model::StaticInitialize()
 {
 
 	// パイプライン初期化
 	InitializeGraphicsPipeline();
+
+	// ライト生成
+	lightGroup_.reset(LightGroup::Create());
 
 }
 
@@ -31,42 +36,30 @@ void Model::InitializeGraphicsPipeline()
 	ComPtr<IDxcBlob> vsBlob;
 	ComPtr<IDxcBlob> psBlob;
 	ComPtr<ID3DBlob> errorBlob;
-
-	ComPtr<IDxcUtils> dxcUtils_;
-	ComPtr<IDxcCompiler3> dxcCompiler_;
-	ComPtr<IDxcIncludeHandler> includeHandler_;
-
-	result = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
-
-	assert(SUCCEEDED(result));
-	result = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
-	assert(SUCCEEDED(result));
-
-	result = dxcUtils_->CreateDefaultIncludeHandler(includeHandler_.GetAddressOf());
-	assert(SUCCEEDED(result));
+	ComPtr<ID3DBlob> rootSigBlob;
 
 	// 頂点シェーダの読み込みとコンパイル
-	vsBlob = D3D12Lib::CompileShader(L"resources/shaders/Sprite.VS.hlsl",
-			L"vs_6_0", dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get());
+	vsBlob = D3D12Lib::GetInstance()->CompileShader(L"resources/shaders/ObjVS.hlsl",
+			L"vs_6_0");
 	assert(vsBlob != nullptr);
 
 	// ピクセルシェーダの読み込みとコンパイル
-	psBlob = D3D12Lib::CompileShader(L"resources/shaders/Sprite.PS.hlsl",
-		L"ps_6_0", dxcUtils_.Get(), dxcCompiler_.Get(), includeHandler_.Get());
+	psBlob = D3D12Lib::GetInstance()->CompileShader(L"resources/shaders/ObjPS.hlsl",
+		L"ps_6_0");
 	assert(psBlob != nullptr);
 
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{
-			"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			"POSITION",	0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
 		},
 		{
-			"TEXCOORD",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			"NORMAL",	0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
 		},
 		{
-			"NORMAL",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			"TEXCOORD",	0,DXGI_FORMAT_R32G32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
 		},
 	};
@@ -81,12 +74,9 @@ void Model::InitializeGraphicsPipeline()
 	// ラスタライザステート
 	gpipeline.RasterizerState = D3D12Lib::SetRasterizer();
 	// デプスステンシルステート
-	gpipeline.DepthStencilState.DepthEnable = TRUE;
+	gpipeline.DepthStencilState.DepthEnable = true;
 	gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-	gpipeline.DepthStencilState.StencilEnable = FALSE;
-	gpipeline.DepthStencilState.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-	gpipeline.DepthStencilState.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
 
 	// レンダーターゲットのブレンド設定
 	D3D12_RENDER_TARGET_BLEND_DESC blenddesc{};
@@ -104,7 +94,7 @@ void Model::InitializeGraphicsPipeline()
 	gpipeline.BlendState.RenderTarget[0] = blenddesc;
 
 	// 深度バッファのフォーマット
-	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	gpipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 頂点レイアウト
 	gpipeline.InputLayout.pInputElementDescs = inputLayout;
@@ -134,7 +124,11 @@ void Model::InitializeGraphicsPipeline()
 
 	// スタティックサンプラー
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[1];
-	samplerDesc[0] = D3D12Lib::SetSamplerDesc(0, D3D12_FILTER_ANISOTROPIC);
+	samplerDesc[0] = D3D12Lib::SetSamplerDesc(0, D3D12_FILTER_MIN_MAG_MIP_LINEAR);
+	samplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	samplerDesc[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	samplerDesc[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+
 
 	// ルートシグネチャの設定
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
@@ -146,10 +140,14 @@ void Model::InitializeGraphicsPipeline()
 	rootSignatureDesc.pStaticSamplers = samplerDesc;
 	rootSignatureDesc.NumStaticSamplers = _countof(samplerDesc);
 
-	ComPtr<ID3DBlob> rootSigBlob;
 	// バージョン自動判定のシリアライズ
 	result = D3D12SerializeRootSignature(
 		&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
+	if (FAILED(result)) {
+		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		assert(false);
+	}
+
 	// ルートシグネチャの生成
 	result = DirectXCommon::GetInstance()->GetDevice()->CreateRootSignature(
 		0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(),
@@ -276,7 +274,7 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 	//int indexCountNoTex = 0;
 
 	//ModelData modelData;
-	std::vector<Vector4> positions;
+	std::vector<Vector3> positions;
 	std::vector<Vector3> normals;
 	std::vector<Vector2> texcoords;
 	std::string line;
@@ -318,9 +316,8 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 
 		// 先頭文字がvなら頂点座標
 		if (key == "v") {
-			Vector4 position;
+			Vector3 position;
 			s >> position.x >> position.y >> position.z;
-			position.w = 1.0f;
 			// 頂点座標データに追加
 			positions.push_back(position);
 		}

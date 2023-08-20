@@ -40,11 +40,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// テクスチャマネージャの初期化
 	TextureManager::GetInstance()->Initialize(dxCommon->GetDevice());
-	TextureManager::Load("uvChecker.png");
+	TextureManager::Load("white1x1.png");
 
 	Sprite::StaticInitialize(dxCommon->GetDevice());
 
-	//Model::StaticInitialize();
+	Model::StaticInitialize();
 
 	gameScene = new GameScene();
 	gameScene->Initialize();

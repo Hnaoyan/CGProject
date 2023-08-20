@@ -61,6 +61,12 @@
     <Filter Include="ヘッダー ファイル\D3D12Lib">
       <UniqueIdentifier>{7562e42c-678f-441e-aa43-db9a0d2a23ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\input">
+      <UniqueIdentifier>{2d83af68-ef05-4d85-ab41-0cd70f27c0e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\input">
+      <UniqueIdentifier>{b5b2eb98-7cf4-422c-a973-c2b4e908ad99}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -120,9 +126,6 @@
     <ClCompile Include="Model.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="D3D12Lib\D3D12Lib.cpp">
       <Filter>ソース ファイル\D3D12Lib</Filter>
     </ClCompile>
@@ -131,6 +134,27 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="LightGroup.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>ソース ファイル\input</Filter>
+    </ClCompile>
+    <ClCompile Include="CircleShadow.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldTransform.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewProjection.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MathCalc.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3Math.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -194,9 +218,6 @@
     <ClInclude Include="Model.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="D3D12Lib\D3D12Lib.h">
       <Filter>ヘッダー ファイル\D3D12Lib</Filter>
     </ClInclude>
@@ -205,6 +226,30 @@
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="LightGroup.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>ヘッダー ファイル\input</Filter>
+    </ClInclude>
+    <ClInclude Include="CircleShadow.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldTransform.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewProjection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="MathCalc.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3Math.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -219,18 +264,18 @@
     <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\ObjPS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\ObjVS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
-    <None Include="resources\shaders\Object3D.hlsli">
-      <Filter>シェーダーファイル</Filter>
-    </None>
-    <None Include="resources\shaders\Object3D.PS.hlsl">
-      <Filter>シェーダーファイル</Filter>
-    </None>
-    <None Include="resources\shaders\Object3D.VS.hlsl">
+    <None Include="resources\shaders\Obj.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
   </ItemGroup>

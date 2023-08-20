@@ -138,9 +138,9 @@ void GameScene::Draw() {
 	// 描画後
 	Sprite::PostDraw();
 
-	Model::PreDraw(commandList);
+	//Model::PreDraw(commandList);
 
 
-	Model::PostDraw();
+	//Model::PostDraw();
 
 }

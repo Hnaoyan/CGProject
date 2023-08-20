@@ -12,9 +12,9 @@ class Mesh
 public:
 
 	struct VertexPosNormalUv {
-		Vector4 pos;
-		Vector2 uv;
+		Vector3 pos;
 		Vector3 normal;
+		Vector2 uv;
 	};
 
 public:

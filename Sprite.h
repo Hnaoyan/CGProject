@@ -93,12 +93,6 @@ private:	// 静的メンバ変数
 
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
 
-	static Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils_;
-
-	static Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler_;
-
-	static Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler_;
-
 	static Microsoft::WRL::ComPtr<ID3D12PipelineState> gPipelineState_;
 	// デスクリプタサイズ
 	static UINT sDescriptorHandleIncrementSize_;
@@ -182,16 +176,6 @@ public:
 
 private:
 		
-	static IDxcBlob* CompileShader(
-		// CompilerするShaderファイルへのパス
-		const std::wstring& filePath,
-		// Compilerに使用するProfile
-		const wchar_t* profile,
-		// 初期化で生成したものを3つ
-		IDxcUtils* dxcUtils,
-		IDxcCompiler3* dxcCompiler,
-		IDxcIncludeHandler* includeHandler);
-
 	static D3D12_SHADER_BYTECODE ShaderByteCode(IDxcBlob* blob);
 
 	static Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);

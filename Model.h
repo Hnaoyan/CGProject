@@ -2,10 +2,14 @@
 #include "StructManager.h"
 #include "Material.h"
 #include "Mesh.h"
+#include "WorldTransform.h"
+#include "ViewProjection.h"
 #include <vector>
 #include <string>
+#include <memory>
 #include <wrl.h>
 #include <unordered_map>
+#include "LightGroup.h"
 
 #include <dxgidebug.h>
 #include <dxcapi.h>
@@ -20,16 +24,15 @@
 class Model
 {
 public:
-
-	//struct ModelData {
-	//	//std::vector<VertexData> vertices;
-	//};
-
-	struct VertexData {
-		Vector4 position;
-		Vector2 texcoord;
-		Vector3 normal;
+	enum class RootParameter {
+		kWorldTransform,
+		kViewProjection,
+		kMaterial,
+		kTexture,
+		kLight,
 	};
+
+
 private:
 	static const std::string kBaseDirectory;
 	static const std::string kDefaultName;
@@ -43,6 +46,8 @@ private:	// 静的メンバ変数
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
 	// パイプラインステートオブジェ
 	static Microsoft::WRL::ComPtr<ID3D12PipelineState> sPipelineState_;
+	// ライト
+	static std::unique_ptr<LightGroup> lightGroup_;
 
 private:
 	// 名前
