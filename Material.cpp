@@ -53,17 +53,31 @@ void Material::LoadTexture(const std::string& directoryPath)
 	// テクスチャ読み込み
 	textureHandle_ = TextureManager::Load(filepath);
 
-
 }
 
 void Material::Update()
 {
+	// 定数バッファのデータ転送
+	constMap_->ambient = ambient_;
+	constMap_->diffuse = diffuse_;
+	constMap_->specular = specular_;
+	constMap_->alpha = alpha_;
 }
 
 void Material::SetGraphicsCommand(ID3D12GraphicsCommandList* commandList, UINT rootParametreIndexMaterial, UINT rootParameterIndexTexture)
 {
 	// SRVをセット
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList, rootParameterIndexTexture, textureHandle_);
+
+	// マテリアルの定数バッファをセット
+	commandList->SetGraphicsRootConstantBufferView(rootParametreIndexMaterial, constBuff_->GetGPUVirtualAddress());
+
+}
+
+void Material::SetGraphicsCommand(ID3D12GraphicsCommandList* commandList, UINT rootParametreIndexMaterial, UINT rootParameterIndexTexture, uint32_t textureHandle)
+{
+	// SRVをセット
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList, rootParameterIndexTexture, textureHandle);
 
 	// マテリアルの定数バッファをセット
 	commandList->SetGraphicsRootConstantBufferView(rootParametreIndexMaterial, constBuff_->GetGPUVirtualAddress());

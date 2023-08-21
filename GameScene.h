@@ -4,6 +4,10 @@
 #include "Sprite.h"
 #include "Input.h"
 #include "Audio.h"
+#include "ViewProjection.h"
+#include "WorldTransform.h"
+#include "Model.h"
+#include <memory>
 
 class GameScene
 {
@@ -11,7 +15,7 @@ public:
 
 	GameScene() {};
 
-	~GameScene() {};
+	~GameScene();
 
 	void Initialize();
 
@@ -26,6 +30,14 @@ private:
 	Sprite* sprite_ = nullptr;
 	
 	uint32_t sound_;
+
+	ViewProjection viewProjection_;
+
+	WorldTransform cubeWVP_;
+
+	Model* cubeModel_ = nullptr;
+
+	int32_t tex = 0;
 
 	// それぞれの座標系
 	Sprite::Transform triangle1 = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };

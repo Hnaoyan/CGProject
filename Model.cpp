@@ -152,6 +152,14 @@ void Model::InitializeGraphicsPipeline()
 
 }
 
+Model* Model::Create()
+{
+	// メモリ確保
+	Model* instance = new Model;
+	instance->Initialize(kDefaultName, false);
+	return instance;
+}
+
 Model* Model::CreateFromObj(const std::string& modelName, bool smoothing)
 {
 	// メモリ
@@ -231,12 +239,41 @@ void Model::Initialize(const std::string& modelName, bool smoothing)
 
 }
 
-void Model::Draw()
+void Model::Draw(const WorldTransform& worldTransform,const ViewProjection& viewProjection)
 {
-	// CBVをセット
-	//sCommandList_->SetGraphicsRootConstantBufferView(0,)
+	// ライト
+	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
 
+	// CBV（ワールド行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kWorldTransform),
+		worldTransform.constBuff_->GetGPUVirtualAddress());
 
+	// CBV（ビュープロジェクション行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kViewProjection),
+		viewProjection.constBuff_->GetGPUVirtualAddress());
+
+	// 全メッシュを描画
+	for (auto& mesh : meshes_) {
+		mesh->Draw(sCommandList_, (UINT)RootParameter::kMaterial, (UINT)RootParameter::kTexture);
+	}
+}
+
+void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle)
+{
+	// ライト
+	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
+
+	// CBV（ワールド行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kWorldTransform),
+		worldTransform.constBuff_->GetGPUVirtualAddress());
+
+	// CBV（ビュープロジェクション行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kViewProjection),
+		viewProjection.constBuff_->GetGPUVirtualAddress());
+	// 全メッシュを描画
+	for (auto& mesh : meshes_) {
+		mesh->Draw(sCommandList_, (UINT)RootParameter::kMaterial, (UINT)RootParameter::kTexture, textureHandle);
+	}
 }
 
 void Model::LoadModel(const std::string& modelName, bool smoothing)
@@ -262,7 +299,6 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 	int indexCountTex = 0;
 	//int indexCountNoTex = 0;
 
-	//ModelData modelData;
 	std::vector<Vector3> positions;
 	std::vector<Vector3> normals;
 	std::vector<Vector2> texcoords;

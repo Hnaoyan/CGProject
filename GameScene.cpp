@@ -3,8 +3,13 @@
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
 #include "Camera.h"
+#include "TextureManager.h"
 #include "Model.h"
 
+
+GameScene::~GameScene() {
+	delete cubeModel_;
+}
 
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -12,6 +17,14 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	sound_ = audio_->LoadWave("fanfare.wav");
+
+	viewProjection_.Initialize();
+
+	tex = TextureManager::Load("uvChecker.png");
+
+	cubeWVP_.Initialize();
+
+	cubeModel_ = Model::Create();
 
 	lighting_ = { { 1.0f,1.0f,1.0f,1.0f } ,{ 0.0f,-1.0f,0.0f }, 1.0f };
 }
@@ -140,6 +153,7 @@ void GameScene::Draw() {
 
 	Model::PreDraw(commandList);
 
+	cubeModel_->Draw(cubeWVP_, viewProjection_, tex);
 
 	Model::PostDraw();
 

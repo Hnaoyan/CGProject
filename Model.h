@@ -104,7 +104,9 @@ public:
 
 	void Initialize(const std::string& modelName, bool smoothing = false);
 
-	void Draw();
+	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
+
+	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle);
 
 private:	// メンバ関数
 

@@ -42,6 +42,10 @@ public:
 		ID3D12GraphicsCommandList* commandList, UINT rootParametreIndexMaterial,
 		UINT rootParameterIndexTexture);
 
+	void SetGraphicsCommand(
+		ID3D12GraphicsCommandList* commandList, UINT rootParametreIndexMaterial,
+		UINT rootParameterIndexTexture, uint32_t textureHandle);
+
 private:
 	// 定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;

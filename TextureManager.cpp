@@ -50,8 +50,9 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	DirectX::ScratchImage mipChain{};
 
 	// ミップマップの作成
-	result = DirectX::GenerateMipMaps(scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, 0, mipChain);
-	//assert(SUCCEEDED(result));
+	result = DirectX::GenerateMipMaps(
+		scratchImg.GetImages(), scratchImg.GetImageCount(),
+		scratchImg.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, 0, mipChain);
 
 	if (SUCCEEDED(result)) {
 		scratchImg = std::move(mipChain);
@@ -61,10 +62,10 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	
 	// metadataを基にResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Width = UINT(metadata.width);
-	resourceDesc.Height = UINT(metadata.height);
-	resourceDesc.MipLevels = UINT16(metadata.mipLevels);
-	resourceDesc.DepthOrArraySize = UINT16(metadata.arraySize);
+	resourceDesc.Width = (UINT)metadata.width;
+	resourceDesc.Height = (UINT)metadata.height;
+	resourceDesc.MipLevels = (UINT16)metadata.mipLevels;
+	resourceDesc.DepthOrArraySize = (UINT16)metadata.arraySize;
 	resourceDesc.Format = metadata.format;
 	resourceDesc.SampleDesc.Count = 1;
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);
@@ -73,7 +74,6 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	heapProps.Type = D3D12_HEAP_TYPE_CUSTOM;
 	heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 	heapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-	
 
 	result = device_->CreateCommittedResource(
 		&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc,

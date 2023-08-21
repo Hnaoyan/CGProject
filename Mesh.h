@@ -75,6 +75,9 @@ public:
 	void Draw(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndexMaterial,
 		UINT rootParameterIndexTexture);
 
+	void Draw(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndexMaterial,
+		UINT rootParameterIndexTexture, int32_t textureHandle);
+
 	/// <summary>
 	/// 頂点配列
 	/// </summary>
