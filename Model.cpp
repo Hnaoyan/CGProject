@@ -79,19 +79,11 @@ void Model::InitializeGraphicsPipeline()
 	gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 	// レンダーターゲットのブレンド設定
-	D3D12_RENDER_TARGET_BLEND_DESC blenddesc{};
-	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blenddesc.BlendEnable = true;
-	blenddesc.BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blenddesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-
-	blenddesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+	D3D12_BLEND_DESC blenddesc{};
+	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
 	// ブレンドステート
-	gpipeline.BlendState.RenderTarget[0] = blenddesc;
+	gpipeline.BlendState = blenddesc;
 
 	// 深度バッファのフォーマット
 	gpipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -109,10 +101,7 @@ void Model::InitializeGraphicsPipeline()
 
 	// デスクリプタレンジ
 	D3D12_DESCRIPTOR_RANGE descRangeSRV;
-	descRangeSRV.BaseShaderRegister = 0;
-	descRangeSRV.NumDescriptors = 1;
-	descRangeSRV.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	descRangeSRV.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+	descRangeSRV = D3D12Lib::Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 	// ルートパラメータ
 	D3D12_ROOT_PARAMETER rootparams[5];
