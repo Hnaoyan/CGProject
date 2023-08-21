@@ -18,40 +18,15 @@
 class Sprite
 {
 public:	// サブクラス
-	struct TransformationMatrix {
-		Matrix4x4 WVP;
-		Matrix4x4 World;
-	};
-
-	struct DirectionalLight {
-		Vector4 color;
-		Vector3 direction;
-		float intensity;
-	};
-
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
-	};
 
 	struct VertexData {
-		Vector4 position;
+		Vector3 position;
 		Vector2 texcoord;
-		Vector3 normal;
 	};
 
 	struct ConstBufferData {
 		Vector4 color;
-		int32_t enableLighting;
-		float padding[3];
-		Matrix4x4 uvTransform;
-	};
-
-	enum LightingPattern {
-		None,
-		Lambertian,
-		Half,
+		Matrix4x4 mat;
 	};
 
 public:	// 静的メンバ関数
@@ -60,7 +35,7 @@ public:	// 静的メンバ関数
 	/// 静的初期化
 	/// </summary>
 	/// <param name="device"></param>
-	static void StaticInitialize(ID3D12Device* device);
+	static void StaticInitialize(ID3D12Device* device, int window_width, int window_height);
 
 	/// <summary>
 	/// 描画前処理
@@ -83,7 +58,7 @@ public:	// 静的メンバ関数
 	/// リソース作成
 	/// </summary>
 	/// <returns></returns>
-	static Sprite* Create();
+	static Sprite* Create(uint32_t textureHandle, Vector2 position, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY);
 
 private:	// 静的メンバ変数
 
@@ -97,7 +72,9 @@ private:	// 静的メンバ変数
 	// デスクリプタサイズ
 	static UINT sDescriptorHandleIncrementSize_;
 	// 頂点数
-	static const int kVertNum = 6;
+	static const int kVertNum = 4;
+
+	static Matrix4x4 sMatProjection_;
 
 public:
 
@@ -105,6 +82,15 @@ public:
 	/// new
 	/// </summary>
 	Sprite() {};
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	/// <param name="textureHandle"></param>
+	/// <param name="position"></param>
+	/// <param name="color"></param>
+	/// <param name="anchorpoint"></param>
+	Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY);
 
 	/// <summary>
 	/// 初期化
@@ -117,62 +103,7 @@ public:
 	/// </summary>
 	void Draw();
 
-public:
-	/// <summary>
-	/// WorldViewportMatrixのSetter
-	/// </summary>
-	void SetWvpMatrix(Matrix4x4 wvp) { wvpMatrix_ = wvp; }
-
-	void SetWvpSpriteMatrix(Matrix4x4 wvp) { wvpSpriteMat_ = wvp; }
-
-	void SetWvpSphereMatrix(Matrix4x4 wvp) { wvpSphereMatrix_ = wvp; }
-
-	/// <summary>
-	/// 表示フラグのセッター
-	/// </summary>
-	/// <param name="isTriangle"></param>
-	void SetIsTriangle(bool isTriangle) { IsTriangle_ = isTriangle; }
-
-	void SetIsSprite(bool isSprite) { IsSprite_ = isSprite; }
-
-	void SetIsSphere(bool isSphere) { IsSphere_ = isSphere; }
-
-	/// <summary>
-	/// 色のセッター
-	/// </summary>
-	/// <param name="color"></param>
-	void SetColor(Vector4 color) { color_ = color; }
-
-	void SetSpriteColor(Vector4 color) { constSpriteData_->color = color; }
-
-	Vector4 GetSpriteColor() { return constSpriteData_->color; }
-
-	/// <summary>
-	/// ワールド座標
-	/// </summary>
-	/// <param name="world"></param>
-	void SetWorldMat(Matrix4x4 world) { worldMat_ = world; }
-
-	void SetWorldSphereMat(Matrix4x4 world) { worldSphereMat_ = world; }
-
-	/// <summary>
-	/// ライティング系
-	/// </summary>
-	/// <param name="light"></param>
-	void SetLighting(DirectionalLight light) { *directionalLightData_ = light; }
-
-	DirectionalLight GetLighting() { return *directionalLightData_; }
-
-	int GetLightPattern() { return lightPattern_; }
-
-	void SetLightPattern(int lightpattern) { lightPattern_ = lightpattern; }
-
-	/// <summary>
-	/// UV座標の行列
-	/// </summary>
-	/// <param name="mat"></param>
-	/// <returns></returns>
-	void SetUVTransformSprite(Matrix4x4 mat) { constSpriteData_->uvTransform = mat; }
+	void SetWorldMatrix(Matrix4x4 wvp) { matWorld_ = wvp; }
 
 private:
 		
@@ -184,96 +115,54 @@ private:
 
 private:	// メンバ関数
 
-	/// <summary>
-	/// 定数バッファ
-	/// </summary>
-	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
-
-	ConstBufferData* constData_ = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> constSpriteBuff_;
-
-	ConstBufferData* constSpriteData_ = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> constSphereBuff_;
-
-	ConstBufferData* constSphereData_ = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightBuff_;
-
-	DirectionalLight* directionalLightData_ = nullptr;
-
-	/// <summary>
-	/// 三角形のバッファ
-	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff_;
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
+	// 頂点バッファ
 	VertexData* vertData_ = nullptr;
-
-	Matrix4x4 wvpMatrix_;
-
-	Matrix4x4 worldMat_;
+	// 定数バッファ
+	ConstBufferData* constData_ = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResoure_;
-
-	TransformationMatrix* wvpData = nullptr;
-
-	/// <summary>
-	/// スプライトのバッファ
-	/// </summary>
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertSpriteBuff_;
-
-	VertexData* vertSpriteData_ = nullptr;
-
-	Matrix4x4 wvpSpriteMat_;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpSpriteResource_;
-
-	TransformationMatrix* wvpSpriteData_ = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> indexSpriteBuff_;
-
-	D3D12_INDEX_BUFFER_VIEW indexSpriteBufferView_{};
-
-	uint32_t* indexSpriteData = nullptr;
-	
-	/// <summary>
-	/// 球体用
-	/// </summary>
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertSphereBuff_;
-
-	VertexData* vertSphereData_ = nullptr;
-
-	Matrix4x4 wvpSphereMatrix_;
-
-	Matrix4x4 worldSphereMat_;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpSphereResource_;
-
-	TransformationMatrix* wvpSphereData_ = nullptr;
-	// 分割数
-	uint32_t kSubdivision = 512;
-	// 頂点数
-	uint32_t kVertexIndex = kSubdivision * kSubdivision * 6;
 
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertBufferView_{};
 
-	D3D12_VERTEX_BUFFER_VIEW vertSpriteBufferView_{};
-
-	D3D12_VERTEX_BUFFER_VIEW vertSphereBufferView_{};
-
+	// テクスチャ
 	UINT textureHandle_ = 0;
 
-	bool IsTriangle_ = 1;
+	// テクスチャの始点
+	Vector2 texBase_{ 0,0 };
+	// 座標
+	Vector2 position_{};
 
-	bool IsSprite_ = 0;
+	// スプライトのサイズ
+	Vector2 size_ = { 100.0f,100.0f };
 
-	bool IsSphere_ = 0;
+	// アンカーポイント
+	Vector2 anchorpoint_{};
 
-	Vector4 color_ = {1.0f,1.0f,1.0f,1.0f};
-	
-	int lightPattern_ = LightingPattern::None;
+	// ワールド行列
+	Matrix4x4 matWorld_{};
+
+	// 色
+	Vector4 color_ = { 1,1,1,1 };
+
+	float rotation_ = 0;
+
+	// テクスチャのサイズ
+	Vector2 texSize_ = { 100.0f,100.0f };
+	// 左右反転
+	bool isFlipX_ = false;
+	// 上下反転
+	bool isFlipY_ = false;
+
+	D3D12_RESOURCE_DESC resourceDesc_;
+
+private:
+
+	void TransferVertices();
+
 
 };
 

@@ -11,13 +11,22 @@ using namespace Microsoft::WRL;
 ID3D12Device* Sprite::sDevice_ = nullptr;
 ID3D12GraphicsCommandList* Sprite::sCommandList_;
 UINT Sprite::sDescriptorHandleIncrementSize_;
+Matrix4x4 Sprite::sMatProjection_;
 
 ComPtr<ID3D12RootSignature> Sprite::sRootSignature_;
 ComPtr<ID3D12PipelineState> Sprite::gPipelineState_;
 
-Sprite* Sprite::Create() {
+Sprite* Sprite::Create(uint32_t textureHandle, Vector2 position, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY) {
+	// 仮のサイズを追加
+	Vector2 size = { 100.0f,100.0f };
+	// テクスチャの設定
+	{
+		const D3D12_RESOURCE_DESC& rDesc = TextureManager::GetInstance()->GetResourceDesc(textureHandle);
+		size = { float(rDesc.Width),float(rDesc.Height) };
+	}
 
-	Sprite* sprite = new Sprite();
+
+	Sprite* sprite = new Sprite(textureHandle, position, size, color, anchorpoint, isFlipX, isFlipY);
 	if (sprite == nullptr) {
 		return nullptr;
 	}
@@ -31,7 +40,7 @@ Sprite* Sprite::Create() {
 	return sprite;
 }
 
-void Sprite::StaticInitialize(ID3D12Device* device) {
+void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window_height) {
 	// nullptrチェック
 	assert(device);
 	sDevice_ = device;
@@ -68,64 +77,54 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;	// Offsetを自動計算
 
 
+	// DescriptorRangeの作成
+	D3D12_DESCRIPTOR_RANGE descRangeSRV[1];
+	descRangeSRV[0] = D3D12Lib::Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);	// t0レジスタ
+
 	// RootParameter作成。複数設定できるので配列。
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	// CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	// PixelShaderで使う
-	rootParameters[0].Descriptor.ShaderRegister = 0;	// レジスタ番号0とバインド
+	D3D12_ROOT_PARAMETER rootParameters[2] = {};
+	rootParameters[0] = D3D12Lib::InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+	rootParameters[1] = D3D12Lib::InitAsDescriptorTable(1, descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
 
-	// 1
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameters[1].Descriptor.ShaderRegister = 0;
-
-	// 2
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	// DescriptorTableを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	// PixelShaderで使う
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;	// Tableの中身の配列を指定
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);	// Tableで利用する数
-
-	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[3].Descriptor.ShaderRegister = 1;
 
 	descriptionRootSignature.pParameters = rootParameters;	// ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);
 
 	/// Samplerの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;	// バイリニアフィルタ
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;	// 0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;	// 比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;	// ありったけのMipmapを使う
-	staticSamplers[0].ShaderRegister = 0;	// レジスタ番号0を使う
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	// PixelShaderで使う
+	staticSamplers[0] = D3D12Lib::SetSamplerDesc(0, D3D12_FILTER_MIN_MAG_MIP_LINEAR);
+	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;	// 0~1の範囲外をリピート
+	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 
 	descriptionRootSignature.pStaticSamplers = staticSamplers;	
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
+	// シリアライズしてバイナリにする
+	ComPtr<ID3DBlob> signatureBlob;
+	result = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	if (FAILED(result)) {
+		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		assert(false);
+	}
+	// バイナリを元に生成
+	result = sDevice_->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
+		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&sRootSignature_));
+	assert(SUCCEEDED(result));
+
 	// InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
-	inputElementDescs[0].SemanticName = "POSITION";
-	inputElementDescs[0].SemanticIndex = 0;
-	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[1].SemanticName = "TEXCOORD";
-	inputElementDescs[1].SemanticIndex = 0;
-	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[2].SemanticName = "NORMAL";
-	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
+		{	// xy
+			"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0},
+		{	// uv
+			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0},
+	};
 
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	inputLayoutDesc.pInputElementDescs = inputElementDescs;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs);
+	inputLayoutDesc.pInputElementDescs = inputLayout;
+	inputLayoutDesc.NumElements = _countof(inputLayout);
 
 
 	// BlendStateの設定
@@ -140,6 +139,11 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	// Depth
+	D3D12_DEPTH_STENCIL_DESC dsDesc{};
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 	// PSOを作成
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gPipelineStateDesc{};
@@ -150,10 +154,6 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 	gPipelineStateDesc.InputLayout = inputLayoutDesc;			// インプットレイアウト
 	gPipelineStateDesc.BlendState = blendDesc;					// ブレンド
 	gPipelineStateDesc.RasterizerState = rasterizerDesc;		// ラスタライザ
-	D3D12_DEPTH_STENCIL_DESC dsDesc{};
-	dsDesc.DepthEnable = true;
-	dsDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	dsDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 	gPipelineStateDesc.DepthStencilState = dsDesc;
 	gPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
@@ -168,25 +168,28 @@ void Sprite::StaticInitialize(ID3D12Device* device) {
 	gPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
 	
-
-	// シリアライズしてバイナリにする
-	ComPtr<ID3DBlob> signatureBlob;
-	result = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(result)) {
-		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-	// バイナリを元に生成
-	result = sDevice_->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
-		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&sRootSignature_));
-	assert(SUCCEEDED(result));
-
 	gPipelineStateDesc.pRootSignature = sRootSignature_.Get();	// ルートシグネチャ
 
 	// グラフィックスパイプラインの生成
 	result = sDevice_->CreateGraphicsPipelineState(&gPipelineStateDesc, IID_PPV_ARGS(&gPipelineState_));
 	assert(SUCCEEDED(result));
 
+	// 射影行列
+	sMatProjection_ = MakeOrthographicMatrix(0.0f, 0.0f, (float)window_width, (float)window_height, 0.0f, 1.0f);
+
+}
+
+Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY)
+{
+	position_ = position;
+	size_ = size;
+	anchorpoint_ = anchorpoint;
+	matWorld_ = MakeIdentity4x4();
+	color_ = color;
+	textureHandle_ = textureHandle;
+	isFlipX_ = isFlipX;
+	isFlipY_ = isFlipY;
+	texSize_ = size;
 }
 
 bool Sprite::Initialize() {
@@ -194,286 +197,117 @@ bool Sprite::Initialize() {
 	assert(sDevice_);
 
 	HRESULT result = S_FALSE;
-	// Lighting用リソース
-	directionalLightBuff_ = CreateBufferResource(sizeof(DirectionalLight));
-	directionalLightBuff_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
 
-	directionalLightData_->color = { 1.0f,1.0f,1.0f,1.0f };
-	directionalLightData_->direction = { 0.0f,-1.0f,0.0f };
-	directionalLightData_->intensity = 1.0f;
-
-	// WVP用のリソースのサイズを用意
-	wvpResoure_ = CreateBufferResource(sizeof(TransformationMatrix));
-	// 書き込むためのアドレスを取得
-	wvpResoure_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	// 単位行列を書き込んでおく
-	wvpData->WVP = MakeIdentity4x4();	
-
-	// WVP用のリソースのサイズを用意
-	wvpSpriteResource_ = CreateBufferResource(sizeof(TransformationMatrix));
-	// 書き込むためのアドレスを取得
-	wvpSpriteResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpSpriteData_));
-	// 単位行列を書き込んでおく
-	wvpSpriteData_->WVP = MakeIdentity4x4();
-
-	// リソースのサイズ
-	wvpSphereResource_ = CreateBufferResource(sizeof(TransformationMatrix));
-	// アドレス取得
-	wvpSphereResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpSphereData_));
-	// 単位行列
-	wvpSphereData_->WVP = MakeIdentity4x4();
+	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
 
 	{
-		// 三角形
-		vertBuff_ = CreateBufferResource(sizeof(VertexData) * kVertNum);
+		// ヒーププロパティ
+		D3D12_HEAP_PROPERTIES heapProps = D3D12Lib::SetHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+		// リソース設定
+		D3D12_RESOURCE_DESC resourceDesc = D3D12Lib::SetResourceDesc(sizeof(VertexData) * kVertNum);
 
+		// 頂点バッファ生成
+		result = sDevice_->CreateCommittedResource(
+			&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr, IID_PPV_ARGS(&vertBuff_));
+		assert(SUCCEEDED(result));
+
+		// 頂点バッファマッピング
 		vertBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertData_));
-		// 左下
-		vertData_[0].position = { -0.5f,-0.5f,0.0f,1.0f };
-		vertData_[0].texcoord = { 0.0f,1.0f };
-		vertData_[0].normal = { 0.0f,0.0f,-1.0f };
-
-		// 上
-		vertData_[1].position = { 0.0f,0.5f,0.0f,1.0f };
-		vertData_[1].texcoord = { 0.5f,0.0f };
-		vertData_[1].normal = { 0.0f,0.0f,-1.0f };
-
-		// 右下
-		vertData_[2].position = { 0.5f,-0.5f,0.0f,1.0f };
-		vertData_[2].texcoord = { 1.0f,1.0f };
-		vertData_[2].normal = { 0.0f,0.0f,-1.0f };
-
-		// 左下2
-		vertData_[3].position = { -0.5f,-0.5f,0.5f,1.0f };
-		vertData_[3].texcoord = { 0.0f,1.0f };
-		vertData_[3].normal = { 0.0f,0.0f,-1.0f };
-
-		// 上2
-		vertData_[4].position = { 0.0f,0.0f,0.0f,1.0f };
-		vertData_[4].texcoord = { 0.5f,0.0f };
-		vertData_[4].normal = { 0.0f,0.0f,-1.0f };
-
-		// 右下2
-		vertData_[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
-		vertData_[5].texcoord = { 1.0f,1.0f };
-		vertData_[5].normal = { 0.0f,0.0f,-1.0f };
-
+		assert(SUCCEEDED(result));
 	}
+	// 頂点バッファへの転送
+	TransferVertices();
 
 	vertBufferView_.BufferLocation = vertBuff_->GetGPUVirtualAddress();
 	vertBufferView_.SizeInBytes = sizeof(VertexData) * kVertNum;
 	vertBufferView_.StrideInBytes = sizeof(VertexData);
 
-
 	{
-
-		vertSpriteBuff_ = CreateBufferResource(sizeof(VertexData) * 6);
-
-		vertSpriteBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertSpriteData_));
-
-		// 1枚目の三角形
-		vertSpriteData_[0].position = { 0.0f,360.0f,0.0f,1.0f };// 左下
-		vertSpriteData_[0].texcoord = { 0.0f,1.0f };
-		vertSpriteData_[0].normal = { vertSpriteData_[0].position.x,vertSpriteData_[0].position.y,vertSpriteData_[0].position.z };
-		
-		vertSpriteData_[1].position = { 0.0f,0.0f,0.0f,1.0f };// 左上
-		vertSpriteData_[1].texcoord = { 0.0f,0.0f };
-		vertSpriteData_[1].normal = { vertSpriteData_[1].position.x,vertSpriteData_[1].position.y,vertSpriteData_[1].position.z };
-		
-		vertSpriteData_[2].position = { 640.0f,360.0f,0.0f,1.0f };
-		vertSpriteData_[2].texcoord = { 1.0f,1.0f };
-		vertSpriteData_[2].normal = { vertSpriteData_[2].position.x,vertSpriteData_[2].position.y,vertSpriteData_[2].position.z };
-		
-		// 2枚目の三角形
-		vertSpriteData_[3].position = { 0.0f,0.0f,0.0f,1.0f };
-		vertSpriteData_[3].texcoord = { 0.0f,0.0f };
-		vertSpriteData_[3].normal = { vertSpriteData_[3].position.x,vertSpriteData_[3].position.y,vertSpriteData_[3].position.z };
-
-		vertSpriteData_[4].position = { 640.0f,0.0f,0.0f,1.0f };
-		vertSpriteData_[4].texcoord = { 1.0f,0.0f };
-		vertSpriteData_[4].normal = { vertSpriteData_[4].position.x,vertSpriteData_[4].position.y,vertSpriteData_[4].position.z };
-
-		vertSpriteData_[5].position = { 640.0f,360.0f,0.0f,1.0f };
-		vertSpriteData_[5].texcoord = { 1.0f,1.0f };
-		vertSpriteData_[5].normal = { vertSpriteData_[5].position.x,vertSpriteData_[5].position.y,vertSpriteData_[5].position.z };
-		
-		//indexSpriteBuff_ = CreateBufferResource(sizeof(uint32_t) * 6);
-		//indexSpriteBufferView_.BufferLocation = indexSpriteBuff_->GetGPUVirtualAddress();
-		//indexSpriteBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
-		//indexSpriteBufferView_.Format = DXGI_FORMAT_R32_UINT;
-		//indexSpriteBuff_->Map(0, nullptr, reinterpret_cast<void**>(&indexSpriteData));
-		//indexSpriteData[0] = 0;	indexSpriteData[1] = 1;	indexSpriteData[2] = 2;
-		//indexSpriteData[3] = 1;	indexSpriteData[4] = 3;	indexSpriteData[5] = 2;
+		// ヒーププロパティ
+		D3D12_HEAP_PROPERTIES heapProps = D3D12Lib::SetHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+		// リソース設定
+		D3D12_RESOURCE_DESC resourceDesc = D3D12Lib::SetResourceDesc((sizeof(ConstBufferData) + 0xff) & ~0xff);
+		// 定数バッファ生成
+		result = sDevice_->CreateCommittedResource(
+			&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr, IID_PPV_ARGS(&constBuff_));
+		assert(SUCCEEDED(result));
+		// 定数バッファマッピング
+		result = constBuff_->Map(0, nullptr, (void**)&constData_);
+		assert(SUCCEEDED(result));
 
 	}
-
-	vertSpriteBufferView_.BufferLocation = vertSpriteBuff_->GetGPUVirtualAddress();
-	vertSpriteBufferView_.SizeInBytes = sizeof(VertexData) * 6;
-	vertSpriteBufferView_.StrideInBytes = sizeof(VertexData);
-
-	{
-		vertSphereBuff_ = CreateBufferResource(sizeof(VertexData) * kVertexIndex);
-
-		vertSphereBuff_->Map(0, nullptr, reinterpret_cast<void**>(&vertSphereData_));
-
-		// 経度分割１つ分の角度 φd
-		const float kLonEvery = float(std::numbers::pi) * 2.0f / float(kSubdivision);
-		// 緯度分割１つ分の角度 θd
-		const float kLatEvery = float(std::numbers::pi) / float(kSubdivision);
-		// 緯度の方向に分割
-		for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
-			float lat = float(-std::numbers::pi) / 2.0f + kLatEvery * latIndex; // θ
-			for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
-				uint32_t index = (latIndex * kSubdivision + lonIndex) * 6;
-				float lon = lonIndex * kLonEvery; // φ
-				// 頂点にデータを入力する。基準点a 1
-				vertSphereData_[index].position.x = std::cosf(lat) * std::cosf(lon);
-				vertSphereData_[index].position.y = std::sinf(lat);
-				vertSphereData_[index].position.z = std::cosf(lat) * std::sinf(lon);
-				vertSphereData_[index].position.w = 1.0f;
-				vertSphereData_[index].texcoord.x = float(lonIndex) / float(kSubdivision);
-				vertSphereData_[index].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-				vertSphereData_[index].normal.x = vertSphereData_[index].position.x;
-				vertSphereData_[index].normal.y = vertSphereData_[index].position.y;
-				vertSphereData_[index].normal.z = vertSphereData_[index].position.z;
-				// 頂点b 2
-				vertSphereData_[index + 1].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
-				vertSphereData_[index + 1].position.y = std::sinf(lat + kLatEvery);
-				vertSphereData_[index + 1].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon);
-				vertSphereData_[index + 1].position.w = 1.0f;
-				vertSphereData_[index + 1].texcoord.x = float(lonIndex) / float(kSubdivision);
-				vertSphereData_[index + 1].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-				vertSphereData_[index + 1].normal.x = vertSphereData_[index + 1].position.x;
-				vertSphereData_[index + 1].normal.y = vertSphereData_[index + 1].position.y;
-				vertSphereData_[index + 1].normal.z = vertSphereData_[index + 1].position.z;
-
-				// 頂点c 3
-				vertSphereData_[index + 2].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
-				vertSphereData_[index + 2].position.y = std::sinf(lat);
-				vertSphereData_[index + 2].position.z = std::cosf(lat) * std::sinf(lon + kLonEvery);
-				vertSphereData_[index + 2].position.w = 1.0f;
-				vertSphereData_[index + 2].texcoord.x = float(lonIndex) / float(kSubdivision);
-				vertSphereData_[index + 2].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-				vertSphereData_[index + 2].normal.x = vertSphereData_[index + 2].position.x;
-				vertSphereData_[index + 2].normal.y = vertSphereData_[index + 2].position.y;
-				vertSphereData_[index + 2].normal.z = vertSphereData_[index + 2].position.z;
-
-				// 頂点c 4
-				vertSphereData_[index + 3].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
-				vertSphereData_[index + 3].position.y = std::sinf(lat);
-				vertSphereData_[index + 3].position.z = std::cosf(lat) * std::sinf(lon + kLonEvery);
-				vertSphereData_[index + 3].position.w = 1.0f;
-				vertSphereData_[index + 3].texcoord.x = float(lonIndex) / float(kSubdivision);
-				vertSphereData_[index + 3].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-				vertSphereData_[index + 3].normal.x = vertSphereData_[index + 3].position.x;
-				vertSphereData_[index + 3].normal.y = vertSphereData_[index + 3].position.y;
-				vertSphereData_[index + 3].normal.z = vertSphereData_[index + 3].position.z;
-
-				// 頂点b 5
-				vertSphereData_[index + 4].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
-				vertSphereData_[index + 4].position.y = std::sinf(lat + kLatEvery);
-				vertSphereData_[index + 4].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon);
-				vertSphereData_[index + 4].position.w = 1.0f;
-				vertSphereData_[index + 4].texcoord.x = float(lonIndex) / float(kSubdivision);
-				vertSphereData_[index + 4].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-				vertSphereData_[index + 4].normal.x = vertSphereData_[index + 4].position.x;
-				vertSphereData_[index + 4].normal.y = vertSphereData_[index + 4].position.y;
-				vertSphereData_[index + 4].normal.z = vertSphereData_[index + 4].position.z;
-
-				// 頂点d 6
-				vertSphereData_[index + 5].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon + kLonEvery);
-				vertSphereData_[index + 5].position.y = std::sinf(lat + kLatEvery);
-				vertSphereData_[index + 5].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon + kLonEvery);
-				vertSphereData_[index + 5].position.w = 1.0f;
-				vertSphereData_[index + 5].texcoord.x = float(lonIndex) / float(kSubdivision);
-				vertSphereData_[index + 5].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
-				vertSphereData_[index + 5].normal.x = vertSphereData_[index + 5].position.x;
-				vertSphereData_[index + 5].normal.y = vertSphereData_[index + 5].position.y;
-				vertSphereData_[index + 5].normal.z = vertSphereData_[index + 5].position.z;
-
-			}
-		}
-	}
-
-	vertSphereBufferView_.BufferLocation = vertSphereBuff_->GetGPUVirtualAddress();
-	vertSphereBufferView_.SizeInBytes = sizeof(VertexData) * kVertexIndex;
-	vertSphereBufferView_.StrideInBytes = sizeof(VertexData);
-
-
-	{
-		// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
-		constBuff_ = CreateBufferResource(sizeof(ConstBufferData));
-
-		constSpriteBuff_ = CreateBufferResource(sizeof(ConstBufferData));
-
-	}
-
-	result = constBuff_->Map(0, nullptr, (void**)&constData_);
-	assert(SUCCEEDED(result));
-
-	result = constSpriteBuff_->Map(0, nullptr, (void**)&constSpriteData_);
-	assert(SUCCEEDED(result));
-
-	constData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	constData_->enableLighting = lightPattern_;
-	constData_->uvTransform = MakeIdentity4x4();
-	*constSpriteData_ = ConstBufferData{ { 1.0f,1.0f,1.0f,1.0f}, false};
-	constSpriteData_->uvTransform = MakeIdentity4x4();
 
 	return true;
 }
 
+void Sprite::TransferVertices()
+{
+	//HRESULT result = S_FALSE;
+
+	// 4頂点
+	enum { LB, LT, RB, RT };
+
+	// 左右上下
+	float left = (0.0f - anchorpoint_.x) * size_.x;
+	float right = (1.0f - anchorpoint_.x) * size_.x;
+	float top = (0.0f - anchorpoint_.y) * size_.y;
+	float bottom = (1.0f - anchorpoint_.y) * size_.y;
+
+	if (isFlipX_) {	// 左右反転
+		left = -left;
+		right = -right;
+	}
+	if (isFlipY_) {	// 上下反転
+		top = -top;
+		bottom = -bottom;
+	}
+
+	// 頂点情報
+	VertexData vertices[kVertNum];
+
+	vertices[LB].position = { left,bottom,0.0f };	// 左下
+	vertices[LT].position = { left,top,0.0f };		// 左上
+	vertices[RB].position = { right,bottom,0.0f };	// 右下
+	vertices[RT].position = { right,top,0.0f };		// 右上
+
+	// テクスチャ情報取得
+	{
+		float tex_left = texBase_.x / resourceDesc_.Width;
+		float tex_right = (texBase_.x + texSize_.x) / resourceDesc_.Width;
+		float tex_top = texBase_.y / resourceDesc_.Height;
+		float tex_bottom = (texBase_.y + texSize_.y) / resourceDesc_.Height;
+
+		vertices[LB].texcoord = { tex_left, tex_bottom };  // 左下
+		vertices[LT].texcoord = { tex_left, tex_top };     // 左上
+		vertices[RB].texcoord = { tex_right, tex_bottom }; // 右下
+		vertices[RT].texcoord = { tex_right, tex_top };    // 右上
+	}
+
+	memcpy(vertData_, vertices, sizeof(vertices));
+}
+
 void Sprite::Draw() {
+	// ワールド行列の更新
+	matWorld_ = MakeIdentity4x4();
+	matWorld_ = Multiply(matWorld_, MakeRotateZMatrix(rotation_));
 
-	wvpData->WVP = wvpMatrix_;
-	wvpSpriteData_->WVP = wvpSpriteMat_;
-	wvpSphereData_->WVP = wvpSphereMatrix_;
-
-	wvpData->World = worldMat_;
-	wvpSphereData_->World = worldSphereMat_;
-
+	matWorld_ = Multiply(matWorld_, MakeTranslateMatrix(Vector3(position_.x, position_.y, 0)));
+	// 定数バッファにデータ転送
 	constData_->color = color_;
-	constData_->enableLighting = lightPattern_;
+	constData_->mat = Multiply(matWorld_, sMatProjection_);
 
-	// スプライト
-	// VBVの設定
-	sCommandList_->IASetVertexBuffers(0, 1, &vertSpriteBufferView_);
-	//sCommandList_->IASetIndexBuffer(&indexSpriteBufferView_);
-	// wvp用のCBufferの場所を設定
-	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSpriteResource_->GetGPUVirtualAddress());
-	// シェーダリソースビューをセット
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 2, textureHandle_);
-	sCommandList_->SetGraphicsRootConstantBufferView(3, directionalLightBuff_->GetGPUVirtualAddress());
+	// 頂点バッファの設定
+	sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
 
 	// マテリアルCBufferの場所を設定
-	sCommandList_->SetGraphicsRootConstantBufferView(0, constSpriteBuff_->GetGPUVirtualAddress());
-
-	if (IsSprite_) {
-		sCommandList_->DrawInstanced(6, 1, 0, 0);
-		//sCommandList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
-	}
-
-	// 三角形
-	// VBVの設定
-	sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
-	// wvp用のCBufferの場所を設定
-	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpResoure_->GetGPUVirtualAddress());
-	// 描画（仮）
-	if (IsTriangle_) {
-		sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
-	}
-
 	sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
+	// シェーダリソースビューをセット
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 1, textureHandle_);
 
-	// 球
-	// VBVの設定
-	sCommandList_->IASetVertexBuffers(0, 1, &vertSphereBufferView_);
-	// wvp用のCBufferの場所を設定
-	sCommandList_->SetGraphicsRootConstantBufferView(1, wvpSphereResource_->GetGPUVirtualAddress());
 	// 描画（仮）
-	if (IsSphere_) {
-		sCommandList_->DrawInstanced(kVertexIndex, 1, 0, 0);
-	}
+	sCommandList_->DrawInstanced(kVertNum, 1, 0, 0);
 
 }
 

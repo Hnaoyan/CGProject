@@ -42,7 +42,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	TextureManager::GetInstance()->Initialize(dxCommon->GetDevice());
 	TextureManager::Load("white1x1.png");
 
-	Sprite::StaticInitialize(dxCommon->GetDevice());
+	Sprite::StaticInitialize(dxCommon->GetDevice(),(int)WinApp::kClientWidth,(int)WinApp::kClientHeight);
 
 	Model::StaticInitialize();
 
