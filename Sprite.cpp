@@ -26,7 +26,8 @@ Sprite* Sprite::Create(uint32_t textureHandle, Vector2 position, Vector4 color, 
 	}
 
 
-	Sprite* sprite = new Sprite(textureHandle, position, size, color, anchorpoint, isFlipX, isFlipY);
+	Sprite* sprite =
+		new Sprite(textureHandle, position, size, color, anchorpoint, isFlipX, isFlipY);
 	if (sprite == nullptr) {
 		return nullptr;
 	}
@@ -212,7 +213,8 @@ bool Sprite::Initialize() {
 		// ヒーププロパティ
 		D3D12_HEAP_PROPERTIES heapProps = D3D12Lib::SetHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
 		// リソース設定
-		D3D12_RESOURCE_DESC resourceDesc = D3D12Lib::SetResourceDesc(sizeof(VertexData) * kVertNum);
+		D3D12_RESOURCE_DESC resourceDesc = 
+			D3D12Lib::SetResourceDesc(sizeof(VertexData) * kVertNum);
 
 		// 頂点バッファ生成
 		result = sDevice_->CreateCommittedResource(
@@ -300,8 +302,8 @@ void Sprite::Draw() {
 	// ワールド行列の更新
 	matWorld_ = MakeIdentity4x4();
 	matWorld_ = Multiply(matWorld_, MakeRotateZMatrix(rotation_));
-
 	matWorld_ = Multiply(matWorld_, MakeTranslateMatrix(Vector3(position_.x, position_.y, 0)));
+
 	// 定数バッファにデータ転送
 	constData_->color = color_;
 	constData_->mat = Multiply(matWorld_, sMatProjection_);
@@ -329,7 +331,7 @@ void Sprite::PreDraw(ID3D12GraphicsCommandList* commandList) {
 	sCommandList_->SetGraphicsRootSignature(sRootSignature_.Get());
 
 	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い
-	sCommandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	sCommandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 }
 
