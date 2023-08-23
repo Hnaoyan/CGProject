@@ -65,6 +65,24 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
+	// InputLayout
+	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
+		{	// xy
+			"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0},
+		{	// uv
+			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0},
+	};
+
+	// グラフィックスパイプライン
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC gPipeline{};
+	gPipeline.VS = Sprite::ShaderByteCode(vertexShaderBlob.Get());		// VertexShader
+	gPipeline.PS = Sprite::ShaderByteCode(pixelShaderBlob.Get());		// PixelShader
+
+	// サンプルマスクの設定
+	gPipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+
 	// RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -112,16 +130,6 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&sRootSignature_));
 	assert(SUCCEEDED(result));
 
-	// InputLayout
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{	// xy
-			"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0},
-		{	// uv
-			"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0},
-	};
-
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputLayout;
 	inputLayoutDesc.NumElements = _countof(inputLayout);
@@ -146,32 +154,28 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	dsDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 	// PSOを作成
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC gPipelineStateDesc{};
-	gPipelineStateDesc.SampleDesc.Count = _countof(staticSamplers);
-	
-	gPipelineStateDesc.VS = Sprite::ShaderByteCode(vertexShaderBlob.Get());		// VertexShader
-	gPipelineStateDesc.PS = Sprite::ShaderByteCode(pixelShaderBlob.Get());		// PixelShader
-	gPipelineStateDesc.InputLayout = inputLayoutDesc;			// インプットレイアウト
-	gPipelineStateDesc.BlendState = blendDesc;					// ブレンド
-	gPipelineStateDesc.RasterizerState = rasterizerDesc;		// ラスタライザ
-	gPipelineStateDesc.DepthStencilState = dsDesc;
-	gPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	gPipeline.SampleDesc.Count = _countof(staticSamplers);
+
+	gPipeline.InputLayout = inputLayoutDesc;			// インプットレイアウト
+	gPipeline.BlendState = blendDesc;					// ブレンド
+	gPipeline.RasterizerState = rasterizerDesc;		// ラスタライザ
+	gPipeline.DepthStencilState = dsDesc;
+	gPipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 書き込むRTVの情報
-	gPipelineStateDesc.NumRenderTargets = 1;
-	gPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	gPipeline.NumRenderTargets = 1;
+	gPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	// 利用するトポロジ（形状）のタイプ。三角形
-	gPipelineStateDesc.PrimitiveTopologyType =
+	gPipeline.PrimitiveTopologyType =
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	// どのように画面に色を打ち込むかの設定（気にしなくてよい）
-	gPipelineStateDesc.SampleDesc.Count = 1;
-	gPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	gPipeline.SampleDesc.Count = 1;
 
 	
-	gPipelineStateDesc.pRootSignature = sRootSignature_.Get();	// ルートシグネチャ
+	gPipeline.pRootSignature = sRootSignature_.Get();	// ルートシグネチャ
 
 	// グラフィックスパイプラインの生成
-	result = sDevice_->CreateGraphicsPipelineState(&gPipelineStateDesc, IID_PPV_ARGS(&gPipelineState_));
+	result = sDevice_->CreateGraphicsPipelineState(&gPipeline, IID_PPV_ARGS(&gPipelineState_));
 	assert(SUCCEEDED(result));
 
 	// 射影行列
@@ -219,9 +223,9 @@ bool Sprite::Initialize() {
 	// 頂点バッファへの転送
 	TransferVertices();
 
-	vertBufferView_.BufferLocation = vertBuff_->GetGPUVirtualAddress();
-	vertBufferView_.SizeInBytes = sizeof(VertexData) * kVertNum;
-	vertBufferView_.StrideInBytes = sizeof(VertexData);
+	vbView_.BufferLocation = vertBuff_->GetGPUVirtualAddress();
+	vbView_.SizeInBytes = sizeof(VertexData) * kVertNum;
+	vbView_.StrideInBytes = sizeof(VertexData);
 
 	{
 		// ヒーププロパティ
@@ -299,7 +303,7 @@ void Sprite::Draw() {
 	constData_->mat = Multiply(matWorld_, sMatProjection_);
 
 	// 頂点バッファの設定
-	sCommandList_->IASetVertexBuffers(0, 1, &vertBufferView_);
+	sCommandList_->IASetVertexBuffers(0, 1, &vbView_);
 
 	// マテリアルCBufferの場所を設定
 	sCommandList_->SetGraphicsRootConstantBufferView(0, constBuff_->GetGPUVirtualAddress());
