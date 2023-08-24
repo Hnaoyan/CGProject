@@ -31,16 +31,53 @@ D3D12_RESOURCE_DESC D3D12Lib::SetResourceDesc(UINT64 sizeInByte)
 	D3D12_RESOURCE_DESC resourceDesc{};
 	// バッファリソース。テクスチャの場合はまた別の設定をする
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resourceDesc.Alignment = 0;
 	resourceDesc.Width = sizeInByte;	// リソースのサイズ
 	// バッファの場合はこれらは1にする決まり
 	resourceDesc.Height = 1;
 	resourceDesc.DepthOrArraySize = 1;
 	resourceDesc.MipLevels = 1;
+	resourceDesc.Format = DXGI_FORMAT_UNKNOWN;
 	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.SampleDesc.Quality = 0;
 	// バッファの場合はこれにする決まり
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 	return resourceDesc;
 }
+
+D3D12_RESOURCE_DESC D3D12Lib::TexResoruceDesc(DXGI_FORMAT format,  uint32_t width, uint32_t height, UINT16 arraySize, UINT16 mipLevels) {
+	D3D12_RESOURCE_DESC resourceDesc{};
+
+	resourceDesc.Format = format;	// DepthStencilとして両可能なフォーマット
+	resourceDesc.Width = width;		// テクスチャの幅
+	resourceDesc.Height = height;	// テクスチャの高さ
+	resourceDesc.MipLevels = mipLevels;		// mipMapの数
+	resourceDesc.DepthOrArraySize = arraySize;	// 奥行き or 配列Textureの配列数
+	resourceDesc.SampleDesc.Count = 1;	// サンプリングカウント。1固定
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	// 2次元
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;	// DepthStencilとして使う通知
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+
+	return resourceDesc;
+}
+
+//D3D12_RESOURCE_DESC D3D12Lib::TexResourceDesc(DXGI_FORMAT format, UINT64 width, UINT height)
+//{
+//	format;
+//	width;
+//	height;
+//	return D3D12_RESOURCE_DESC();
+//}
+//
+//D3D12_RESOURCE_DESC D3D12Lib::TexResourceDesc(DXGI_FORMAT format, UINT64 width, UINT height, UINT16 arraySize, UINT16 mipLevels)
+//{
+//	D3D12_RESOURCE_DESC resDesc;
+//	resDesc = { D3D12_RESOURCE_DIMENSION_TEXTURE2D, 0, width, height, arraySize,
+//			mipLevels, format, 1, 0, D3D12_TEXTURE_LAYOUT_UNKNOWN, D3D12_RESOURCE_FLAG_NONE };
+//	return resDesc;
+//}
+
 
 D3D12_STATIC_SAMPLER_DESC D3D12Lib::SetSamplerDesc(UINT shaderRegister, D3D12_FILTER filter)
 {
@@ -157,21 +194,6 @@ D3D12_SHADER_BYTECODE D3D12Lib::ShaderByteCode(IDxcBlob* blob)
 	return shaderByte;
 }
 
-D3D12_RESOURCE_DESC D3D12Lib::TexResourceDesc(DXGI_FORMAT format, UINT64 width, UINT height)
-{
-	format;
-	width;
-	height;
-	return D3D12_RESOURCE_DESC();
-}
-
-D3D12_RESOURCE_DESC D3D12Lib::TexResourceDesc(DXGI_FORMAT format, UINT64 width, UINT height, UINT16 arraySize, UINT16 mipLevels)
-{
-	D3D12_RESOURCE_DESC resDesc;
-	resDesc = { D3D12_RESOURCE_DIMENSION_TEXTURE2D, 0, width, height, arraySize,
-			mipLevels, format, 1, 0, D3D12_TEXTURE_LAYOUT_UNKNOWN, D3D12_RESOURCE_FLAG_NONE };
-	return resDesc;
-}
 
 D3D12_HEAP_PROPERTIES D3D12Lib::SetTexHeapProp(D3D12_CPU_PAGE_PROPERTY prop, D3D12_MEMORY_POOL memoryPool)
 {

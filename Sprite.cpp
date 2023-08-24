@@ -5,6 +5,7 @@
 #include <numbers>
 #include <cassert>
 #include "D3D12Lib/D3D12Lib.h"
+#include "Camera.h"
 
 using namespace Microsoft::WRL;
 
@@ -113,7 +114,7 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	//dsDesc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 
 	// 深度バッファのフォーマット
-	gPipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	gPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
 	// 頂点レイアウトの設定
 	gPipeline.InputLayout.pInputElementDescs = inputLayout;
@@ -303,7 +304,7 @@ void Sprite::Draw() {
 	matWorld_ = MakeIdentity4x4();
 	matWorld_ = Multiply(matWorld_, MakeRotateZMatrix(rotation_));
 	matWorld_ = Multiply(matWorld_, MakeTranslateMatrix(Vector3(position_.x, position_.y, 0)));
-
+	
 	// 定数バッファにデータ転送
 	constData_->color = color_;
 	constData_->mat = Multiply(matWorld_, sMatProjection_);

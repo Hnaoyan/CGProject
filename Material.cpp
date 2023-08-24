@@ -67,19 +67,23 @@ void Material::Update()
 void Material::SetGraphicsCommand(ID3D12GraphicsCommandList* commandList, UINT rootParametreIndexMaterial, UINT rootParameterIndexTexture)
 {
 	// SRVをセット
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList, rootParameterIndexTexture, textureHandle_);
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(
+		commandList, rootParameterIndexTexture, textureHandle_);
 
 	// マテリアルの定数バッファをセット
-	commandList->SetGraphicsRootConstantBufferView(rootParametreIndexMaterial, constBuff_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(
+		rootParametreIndexMaterial, constBuff_->GetGPUVirtualAddress());
 
 }
 
 void Material::SetGraphicsCommand(ID3D12GraphicsCommandList* commandList, UINT rootParametreIndexMaterial, UINT rootParameterIndexTexture, uint32_t textureHandle)
 {
 	// SRVをセット
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(commandList, rootParameterIndexTexture, textureHandle);
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(
+		commandList, rootParameterIndexTexture, textureHandle);
 
 	// マテリアルの定数バッファをセット
-	commandList->SetGraphicsRootConstantBufferView(rootParametreIndexMaterial, constBuff_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(
+		rootParametreIndexMaterial, constBuff_->GetGPUVirtualAddress());
 
 }

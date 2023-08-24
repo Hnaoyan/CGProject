@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <wrl.h>
 
 class Mesh
@@ -36,6 +37,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	inline size_t GetVertexCount() { return vertices_.size(); }
+
+	void AddSmoothData(unsigned short indexPosition, unsigned short indexVertex);
+
+	void CalculateSmoothedVertexNormals();
+
 
 	/// <summary>
 	/// マテリアルの取得
@@ -106,6 +112,8 @@ private:
 	std::vector<VertexPosNormalUv> vertices_;
 	// 頂点インデックス配列
 	std::vector<unsigned short> indices_;
+	// 法線スムージングデータ
+	std::unordered_map<unsigned short, std::vector<unsigned short>> smoothData_;
 	// マテリアル
 	Material* material_ = nullptr;
 };

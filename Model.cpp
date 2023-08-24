@@ -51,7 +51,7 @@ void Model::InitializeGraphicsPipeline()
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{
-			"POSITION",	0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			"POSITION",	0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
 		},
 		{
@@ -86,7 +86,7 @@ void Model::InitializeGraphicsPipeline()
 	gpipeline.BlendState = blenddesc;
 
 	// 深度バッファのフォーマット
-	gpipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
 	// 頂点レイアウト
 	gpipeline.InputLayout.pInputElementDescs = inputLayout;
@@ -180,7 +180,7 @@ void Model::PreDraw(ID3D12GraphicsCommandList* commandList)
 	// パイプラインステートの設定
 	commandList->SetPipelineState(sPipelineState_.Get());
 	// ルートシグネチャの設定
-	commandList->SetComputeRootSignature(sRootSignature_.Get());
+	commandList->SetGraphicsRootSignature(sRootSignature_.Get());
 	// プリミティブ形状を設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -245,16 +245,20 @@ void Model::Draw(const WorldTransform& worldTransform,const ViewProjection& view
 	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
 
 	// CBV（ワールド行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kWorldTransform),
+	sCommandList_->SetGraphicsRootConstantBufferView(
+		static_cast<UINT>(RootParameter::kWorldTransform),
 		worldTransform.constBuff_->GetGPUVirtualAddress());
 
 	// CBV（ビュープロジェクション行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kViewProjection),
+	sCommandList_->SetGraphicsRootConstantBufferView(
+		static_cast<UINT>(RootParameter::kViewProjection),
 		viewProjection.constBuff_->GetGPUVirtualAddress());
 
 	// 全メッシュを描画
 	for (auto& mesh : meshes_) {
-		mesh->Draw(sCommandList_, (UINT)RootParameter::kMaterial, (UINT)RootParameter::kTexture);
+		mesh->Draw(
+			sCommandList_, (UINT)RootParameter::kMaterial, 
+			(UINT)RootParameter::kTexture);
 	}
 }
 
@@ -272,7 +276,9 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 		viewProjection.constBuff_->GetGPUVirtualAddress());
 	// 全メッシュを描画
 	for (auto& mesh : meshes_) {
-		mesh->Draw(sCommandList_, (UINT)RootParameter::kMaterial, (UINT)RootParameter::kTexture, textureHandle);
+		mesh->Draw(
+			sCommandList_, (UINT)RootParameter::kMaterial,
+			(UINT)RootParameter::kTexture, textureHandle);
 	}
 }
 
@@ -288,7 +294,7 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 	file.open(directoryPath + fileName);
 	// 失敗をチェック
 	if (file.fail()) {
-		assert(file.is_open());
+		assert(0);
 	}
 
 	name_ = modelName;
@@ -302,22 +308,22 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 	std::vector<Vector3> positions;
 	std::vector<Vector3> normals;
 	std::vector<Vector2> texcoords;
-	std::string line;
 
+	std::string line;
 	while (std::getline(file, line)) {
 
 		// 1行分の文字列をストリームに変換して解析しやすくする
-		std::istringstream s(line);
+		std::istringstream line_stream(line);
 
 		// 先頭の識別子確認
 		std::string key;
-		std::getline(s, key, ' ');
+		std::getline(line_stream, key, ' ');
 
 		// マテリアル
 		if (key == "mtllib") {
 			// マテリアルファイル名読み込み
 			std::string filename;
-			s >> filename;
+			line_stream >> filename;
 			// マテリアル読み込み
 			LoadMaterial(directoryPath, filename);
 		}
@@ -326,6 +332,10 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 
 			// カレントメッシュの情報が揃っているなら
 			if (mesh->GetName().size() > 0 && mesh->GetVertexCount() > 0) {
+				if (smoothing) {
+					mesh->CalculateSmoothedVertexNormals();
+				}
+				
 				meshes_.emplace_back(new Mesh);
 				mesh = meshes_.back();
 				indexCountTex = 0;
@@ -333,7 +343,7 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 
 			// グループ名読み込み
 			std::string groupName;
-			s >> groupName;
+			line_stream >> groupName;
 
 			// メッシュに名前をセット
 			mesh->SetName(groupName);
@@ -342,25 +352,45 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 		// 先頭文字がvなら頂点座標
 		if (key == "v") {
 			Vector3 position;
-			s >> position.x >> position.y >> position.z;
+			line_stream >> position.x;
+			line_stream >> position.y;
+			line_stream >> position.z;
 			// 頂点座標データに追加
-			positions.push_back(position);
+			positions.emplace_back(position);
 		}
 		// 先頭文字列がvtならテクスチャ
 		if (key == "vt") {
 			// UV成分読み込み
 			Vector2 texcoord;
-			s >> texcoord.x >> texcoord.y;
+			line_stream >> texcoord.x >> texcoord.y;
+
+			texcoord.y = 1.0f - texcoord.y;
+
 			// テクスチャ座標データに追加
-			texcoords.push_back(texcoord);
+			texcoords.emplace_back(texcoord);
 		}
 		// 先頭文字列がvnなら法線ベクトル
 		if (key == "vn") {
 			// XYZ成分
 			Vector3 normal;
-			s >> normal.x >> normal.y >> normal.z;
+			line_stream >> normal.x >> normal.y >> normal.z;
 			// 法線ベクトルデータに追加
-			normals.push_back(normal);
+			normals.emplace_back(normal);
+		}
+		// 先頭文字列がusemtlならマテリアルを割り当てる
+		if (key == "usemtl") {
+			if (mesh->GetMaterial() == nullptr) {
+				// マテリアルの名読み込み
+				std::string materialName;
+				line_stream >> materialName;
+
+				// マテリアル名で検索し、マテリアルを割り当てる
+				auto itr = materials_.find(materialName);
+				if (itr != materials_.end()) {
+					mesh->SetMaterial(itr->second);
+				}
+
+			}
 		}
 		// 先頭文字列がfならポリゴン（三角形）
 		if (key == "f") {
@@ -368,7 +398,7 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 			// 半角スペース区切りで行の続きを読み込む
 			std::string index_string;
 
-			while (std::getline(s, index_string, ' ')) {
+			while (std::getline(line_stream, index_string, ' ')) {
 				// 頂点インデックス一個分の文字列をストリームに変換して解析しやすくする
 				std::istringstream index_stream(index_string);
 				unsigned short indexPosition, indexTexcoord, indexNormal;
@@ -389,6 +419,10 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 					vertex.uv = texcoords[indexTexcoord - 1];
 					mesh->AddVertex(vertex);
 
+					if (smoothing) {
+						mesh->AddSmoothData(
+							indexPosition, (unsigned short)mesh->GetVertexCount() - 1);
+					}
 				}
 				else {
 					char c;
@@ -401,6 +435,7 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 						vertex.normal = { 0,0,1 };
 						vertex.uv = { 0,0 };
 						mesh->AddVertex(vertex);
+
 					}
 					else {
 						index_stream.seekg(-1, std::ios_base::cur);
@@ -413,6 +448,11 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 						vertex.normal = normals[indexNormal - 1];
 						vertex.uv = { 0,0 };
 						mesh->AddVertex(vertex);
+						if (smoothing) {
+							mesh->AddSmoothData(
+								indexPosition, (unsigned short)mesh->GetVertexCount() - 1);
+						}
+
 					}
 
 				}
@@ -434,6 +474,10 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 	}
 
 	file.close();
+
+	if (smoothing) {
+		mesh->CalculateSmoothedVertexNormals();
+	}
 
 }
 
@@ -482,20 +526,14 @@ void Model::LoadMaterial(const std::string& directoryPath, const std::string& fi
 		}
 		// 先頭文字列がKaならアンビエント色
 		if (key == "Ka") {
-			line_stream >> material->ambient_.x;
-			line_stream >> material->ambient_.y;
-			line_stream >> material->ambient_.z;
+			line_stream >> material->ambient_.x >> material->ambient_.y >> material->ambient_.z;
 		}
 		// 先頭文字列がKdならディフューズ色
 		if (key == "Kd") {
-			line_stream >> material->diffuse_.x;
-			line_stream >> material->diffuse_.y;
-			line_stream >> material->diffuse_.z;
+			line_stream >> material->diffuse_.x >> material->diffuse_.y >> material->diffuse_.z;
 		}
 		if (key == "Ks") {
-			line_stream >> material->specular_.x;
-			line_stream >> material->specular_.y;
-			line_stream >> material->specular_.z;
+			line_stream >> material->specular_.x >> material->specular_.y >> material->specular_.z;
 		}
 		// 先頭文字列がmap_Kdならテクスチャファイル名
 		if (key == "map_Kd") {

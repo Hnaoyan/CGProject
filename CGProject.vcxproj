@@ -169,6 +169,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="StringManager.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Vector3Math.cpp" />
+    <ClCompile Include="Vector4Math.cpp" />
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
     <ClCompile Include="WorldTransform.cpp" />
@@ -202,6 +203,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="StructManager.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Vector3Math.h" />
+    <ClInclude Include="Vector4Math.h" />
     <ClInclude Include="ViewProjection.h" />
     <ClInclude Include="WinApp.h" />
     <ClInclude Include="WorldTransform.h" />

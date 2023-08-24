@@ -22,8 +22,8 @@ void GameScene::Initialize() {
 	tex = TextureManager::Load("uvChecker.png");
 	sprite_ = Sprite::Create(tex, { 100,50 }, { 1.0f,1.0f,1.0f,1.0f }, { 0,0 }, 0, 0);
 	cubeWVP_.Initialize();
-
-	//cubeModel_ = Model::Create();
+	cubeWVP_.translation_ = { 0,0,0.0f };
+	cubeModel_ = Model::CreateFromObj("cube", true);
 
 }
 
@@ -31,7 +31,8 @@ void GameScene::Update() {
 	if (input_->TrigerKey(DIK_SPACE)) {
 		audio_->PlayWave(sound_, 0, 0.45f);
 	}
-	
+
+	cubeWVP_.UpdateMatrix();
 }
 
 void GameScene::Draw() {
@@ -44,10 +45,11 @@ void GameScene::Draw() {
 	sprite_->Draw();
 	// 描画後
 	Sprite::PostDraw();
+	dxCommon_->ClearDepthBuffer();
 
 	Model::PreDraw(commandList);
 
-	//cubeModel_->Draw(cubeWVP_, viewProjection_, tex);
+	cubeModel_->Draw(cubeWVP_, viewProjection_);
 
 	Model::PostDraw();
 

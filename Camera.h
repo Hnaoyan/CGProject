@@ -24,7 +24,7 @@ public:
 	/// <param name="nearClip"></param>
 	/// <param name="farClip"></param>
 	/// <returns></returns>
-	//static Matrix4x4 SetViewProjectionMat(const Sprite::Transform transform, float nearClip, float farClip);
+	static Matrix4x4 SetViewProjectionMat(const Vector3& translate, const Vector3& scale, const Vector3& rotate, float nearClip, float farClip);
 
 };
 

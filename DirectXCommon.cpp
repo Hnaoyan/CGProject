@@ -275,7 +275,7 @@ void DirectXCommon::CreateRenderTargetView() {
 	// ディスクリプタヒープの生成
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
 	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;	// レンダーターゲットビュー用
-	rtvDescriptorHeapDesc.NumDescriptors = 2;	// ダブルバッファ用に2つ。多くても別に構わない
+	rtvDescriptorHeapDesc.NumDescriptors = swcDesc.BufferCount;	// ダブルバッファ用に2つ。多くても別に構わない
 	result = device_->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap_));
 	// ディスクリプタヒープが作れなかったので起動できない
 	assert(SUCCEEDED(result));
@@ -302,13 +302,13 @@ void DirectXCommon::CreateRenderTargetView() {
 void DirectXCommon::CreateDepthBuffer() {
 	// リソースの設定
 	D3D12_RESOURCE_DESC resourceDesc = GetResoruceHeap(
-		DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_RESOURCE_DIMENSION_TEXTURE2D, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, backBufferWidth_, backBufferHeight_);
+		DXGI_FORMAT_D32_FLOAT, D3D12_RESOURCE_DIMENSION_TEXTURE2D, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, backBufferWidth_, backBufferHeight_);
 
 	// 利用するHeapの設定
 	D3D12_HEAP_PROPERTIES heapProperties = HeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
 	// 深度値のクリア設定
-	D3D12_CLEAR_VALUE depthClearValue = ClearValue(DXGI_FORMAT_D24_UNORM_S8_UINT, 1.0f);
+	D3D12_CLEAR_VALUE depthClearValue = ClearValue(DXGI_FORMAT_D32_FLOAT, 1.0f);
 
 	// Resourceの生成
 	ComPtr<ID3D12Resource> resource;
@@ -328,7 +328,7 @@ void DirectXCommon::CreateDepthBuffer() {
 
 	// DSVの設定
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;	// Format。基本的にはResourceに合わせる
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;	// Format。基本的にはResourceに合わせる
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	// DSVHeapの先頭にDSVをつくる
 	device_->CreateDepthStencilView(depthResourceBuffer_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
@@ -398,6 +398,10 @@ D3D12_HEAP_PROPERTIES DirectXCommon::HeapProperties(D3D12_HEAP_TYPE type) {
 	// 利用するHeapの設定
 	D3D12_HEAP_PROPERTIES heapProperties{};
 	heapProperties.Type = type;
+	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProperties.CreationNodeMask = 1;
+	heapProperties.VisibleNodeMask = 1;
 
 	return heapProperties;
 }

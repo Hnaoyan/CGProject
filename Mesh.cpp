@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include "DirectXCommon.h"
 #include "D3D12Lib/D3D12Lib.h"
+#include "MathCalc.h"
 
 #include <cassert>
 
@@ -12,6 +13,32 @@ void Mesh::AddVertex(const VertexPosNormalUv& vertex)
 void Mesh::AddIndex(unsigned short index)
 {
 	indices_.emplace_back(index);
+}
+
+void Mesh::AddSmoothData(unsigned short indexPosition, unsigned short indexVertex)
+{
+	smoothData_[indexPosition].emplace_back(indexVertex);
+}
+
+void Mesh::CalculateSmoothedVertexNormals()
+{
+	auto itr = smoothData_.begin();
+	for (; itr != smoothData_.end(); ++itr) {
+		std::vector<unsigned short>& v = itr->second;
+		Vector4 normal = {};
+		for (unsigned short index : v) {
+			normal = Vector4Math::Add(normal,
+				Vector4(vertices_[index].normal.x, vertices_[index].normal.y, vertices_[index].normal.z, 0));
+		}
+		Vector3 normalize = { normal.x,normal.y,normal.z };
+		normalize = MathCalc::Normalize(Vector3Math::Scaler(normalize, 1.0f / (float)v.size()));
+		normal = Vector4(normalize.x, normalize.y, normalize.z, normal.w);
+
+		for (unsigned short index : v) {
+			vertices_[index].normal = { normal.x,normal.y,normal.z };
+		}
+
+	}
 }
 
 void Mesh::CreateBuffers()

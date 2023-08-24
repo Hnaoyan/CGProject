@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include "StringManager.h"
+#include "D3D12Lib/D3D12Lib.h"
 
 uint32_t TextureManager::Load(const std::string& fileName)
 {
@@ -39,7 +40,6 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	wchar_t wfilePath[256];
 	MultiByteToWideChar(CP_ACP, 0, fullPath.c_str(), -1, wfilePath, _countof(wfilePath));
 
-	//DirectX::ScratchImage mipImages = LoadTexture(fileName);
 	DirectX::ScratchImage scratchImg{};
 	DirectX::TexMetadata metadata{};
 
@@ -51,8 +51,8 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 
 	// ミップマップの作成
 	result = DirectX::GenerateMipMaps(
-		scratchImg.GetImages(), scratchImg.GetImageCount(),
-		scratchImg.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, 0, mipChain);
+		scratchImg.GetImages(), scratchImg.GetImageCount(),scratchImg.GetMetadata(),
+		DirectX::TEX_FILTER_DEFAULT, 0, mipChain);
 
 	if (SUCCEEDED(result)) {
 		scratchImg = std::move(mipChain);
@@ -62,18 +62,11 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	
 	// metadataを基にResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Width = (UINT)metadata.width;
-	resourceDesc.Height = (UINT)metadata.height;
-	resourceDesc.MipLevels = (UINT16)metadata.mipLevels;
-	resourceDesc.DepthOrArraySize = (UINT16)metadata.arraySize;
-	resourceDesc.Format = metadata.format;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);
+	resourceDesc = D3D12Lib::TexResoruceDesc(
+		metadata.format, (UINT)metadata.width, (UINT)metadata.height, (UINT16)metadata.arraySize, (UINT16)metadata.mipLevels);
 
 	D3D12_HEAP_PROPERTIES heapProps{};
-	heapProps.Type = D3D12_HEAP_TYPE_CUSTOM;
-	heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-	heapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+	heapProps = D3D12Lib::SetTexHeapProp(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 
 	result = device_->CreateCommittedResource(
 		&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc,
@@ -81,12 +74,11 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 		nullptr, IID_PPV_ARGS(&texture.resource));
 	assert(SUCCEEDED(result));
 
-	//Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CreateTextureResource(device_, metadata);
 
-	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
-		const DirectX::Image* img = scratchImg.GetImage(mipLevel, 0, 0);
+	for (size_t i = 0; i < metadata.mipLevels; ++i) {
+		const DirectX::Image* img = scratchImg.GetImage(i, 0, 0);
 		result = texture.resource->WriteToSubresource(
-			UINT(mipLevel),
+			UINT(i),
 			nullptr,
 			img->pixels,
 			UINT(img->rowPitch),
@@ -96,12 +88,12 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	}
 
 	// SRVを作成するDescriptorHeapの場所を決める
-	texture.SrvHandleCPU = descriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-	texture.SrvHandleGPU = descriptorHeap_->GetGPUDescriptorHandleForHeapStart();
+	texture.cpuDescHandleSRV = descriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	texture.gpuDescHandleSRV = descriptorHeap_->GetGPUDescriptorHandleForHeapStart();
 
 	// 先頭は使われているためその次
-	texture.SrvHandleCPU.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	texture.SrvHandleGPU.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	texture.cpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
+	texture.gpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
 
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -116,7 +108,7 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	device_->CreateShaderResourceView(
 		texture.resource.Get(),
 		&srvDesc,
-		texture.SrvHandleCPU);
+		texture.cpuDescHandleSRV);
 
 	indexNextDescriptorHeap_++;
 
@@ -160,8 +152,8 @@ void TextureManager::ResetAll()
 	// 全テクスチャを初期化
 	for (size_t i = 0; i < kNumDescriptor; i++) {
 		textures_[i].resource.Reset();
-		textures_[i].SrvHandleCPU.ptr = 0;
-		textures_[i].SrvHandleGPU.ptr = 0;
+		textures_[i].cpuDescHandleSRV.ptr = 0;
+		textures_[i].gpuDescHandleSRV.ptr = 0;
 		textures_[i].name.clear();
 	}
 }
@@ -182,7 +174,7 @@ void TextureManager::SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* c
 
 	// シェーダリソースビューをセット
 	commandList->SetGraphicsRootDescriptorTable(
-		rootParamIndex, textures_[textureHandle].SrvHandleGPU);
+		rootParamIndex, textures_[textureHandle].gpuDescHandleSRV);
 
 }
 

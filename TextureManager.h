@@ -16,9 +16,9 @@ public:
 		// テクスチャリソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 		// シェーダーリソースビューのハンドル（CPU）
-		D3D12_CPU_DESCRIPTOR_HANDLE SrvHandleCPU;
+		D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
 		// シェーダーリソースビューのハンドル（GPU）
-		D3D12_GPU_DESCRIPTOR_HANDLE SrvHandleGPU;
+		D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
 		// 名前
 		std::string name;
 	};

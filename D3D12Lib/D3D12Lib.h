@@ -30,7 +30,17 @@ public:
 
 public:
 
+	/// <summary>
+	/// CD3DX12_HEAP_PROPERTIES
+	/// </summary>
+	/// <param name="type"></param>
+	/// <returns></returns>
 	static D3D12_HEAP_PROPERTIES SetHeapProperties(D3D12_HEAP_TYPE type);
+	/// <summary>
+	/// CD3DX12::Buffer
+	/// </summary>
+	/// <param name="sizeInByte"></param>
+	/// <returns></returns>
 	static D3D12_RESOURCE_DESC SetResourceDesc(UINT64 sizeInByte);
 	static D3D12_STATIC_SAMPLER_DESC SetSamplerDesc(UINT shaderRegister, D3D12_FILTER filter);
 
@@ -58,7 +68,8 @@ public:
 	
 	static D3D12_RESOURCE_DESC TexResourceDesc(DXGI_FORMAT format, UINT64 width, UINT height);
 
-	static D3D12_RESOURCE_DESC TexResourceDesc(DXGI_FORMAT format, UINT64 width, UINT height, UINT16 arraySize, UINT16 mipLevels);
+	static D3D12_RESOURCE_DESC TexResoruceDesc(DXGI_FORMAT format, uint32_t width, uint32_t height, UINT16 arraySize, UINT16 mipLevels);
+	
 	// ヒーププロパティの設定
 	static D3D12_HEAP_PROPERTIES SetTexHeapProp(D3D12_CPU_PAGE_PROPERTY prop, D3D12_MEMORY_POOL memoryPool);
 	// CPUデスクリプタハンドルを取得
@@ -67,6 +78,7 @@ public:
 	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(const D3D12_GPU_DESCRIPTOR_HANDLE& other, uint32_t handle, UINT descriptorHandleIncrementSize);
 
 	static D3D12_RASTERIZER_DESC SetRasterizer();
+
 
 };
 
