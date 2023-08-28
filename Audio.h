@@ -88,6 +88,26 @@ public:
 	uint32_t PlayWave(uint32_t soundHandle, bool loopFlag = false, float volume = 1.0f);
 
 	/// <summary>
+	/// 再生中の音源を停止
+	/// </summary>
+	/// <param name="voiceHandle"></param>
+	void StopWave(uint32_t voiceHandle);
+
+	/// <summary>
+	/// 再生中かどうかの判断
+	/// </summary>
+	/// <param name="voiceHandle"></param>
+	/// <returns></returns>
+	bool IsPlaying(uint32_t voiceHandle);
+	
+	/// <summary>
+	/// 音声のサイズ設定
+	/// </summary>
+	/// <param name="voiceHandle"></param>
+	/// <param name="volume"></param>
+	void SetVolume(uint32_t voiceHandle, float volume);
+
+	/// <summary>
 	/// 終了時の処理
 	/// </summary>
 	void Finalize();

@@ -173,6 +173,46 @@ uint32_t Audio::PlayWave(uint32_t soundHandle, bool loopFlag, float volume)
 	return handle;
 }
 
+void Audio::StopWave(uint32_t voiceHandle)
+{
+	// 再生中リストから検索
+	auto it = std::find_if(
+		voices_.begin(), voices_.end(), [&](Voice* voice) {return voice->handle == voiceHandle; });
+	// 発見
+	if (it != voices_.end()) {
+		(*it)->sourceVoice->DestroyVoice();
+		
+		voices_.erase(it);
+	}
+
+}
+
+bool Audio::IsPlaying(uint32_t voiceHandle)
+{
+	// 再生中リストから検索
+	auto it = std::find_if(
+		voices_.begin(), voices_.end(), [&](Voice* voice) {return voice->handle == voiceHandle; });
+	// 発見の判断
+	if (it != voices_.end()) {
+		XAUDIO2_VOICE_STATE state{};
+		(*it)->sourceVoice->GetState(&state);
+		return state.SamplesPlayed != 0;
+	}
+	
+	return false;
+}
+
+void Audio::SetVolume(uint32_t voiceHandle, float volume)
+{
+	// 再生中リストから検索
+	auto it = std::find_if(
+		voices_.begin(), voices_.end(), [&](Voice* voice) { return voice->handle == voiceHandle; });
+	// 発見
+	if (it != voices_.end()) {
+		(*it)->sourceVoice->SetVolume(volume);
+	}
+}
+
 void Audio::Finalize()
 {
 	// XAudio2解放
