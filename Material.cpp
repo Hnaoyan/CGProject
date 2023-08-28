@@ -22,7 +22,8 @@ void Material::CreateConstantBuffer()
 	// ヒーププロパティ
 	D3D12_HEAP_PROPERTIES heapProps = D3D12Lib::SetHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
 	// リソース設定
-	D3D12_RESOURCE_DESC resourceDesc = D3D12Lib::SetResourceDesc((sizeof(ConstBufferData) + 0xff) & ~0xff);
+	D3D12_RESOURCE_DESC resourceDesc =
+		D3D12Lib::SetResourceDesc((sizeof(ConstBufferData) + 0xff) & ~0xff);
 
 	// 定数バッファの生成
 	result = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
@@ -43,7 +44,6 @@ void Material::LoadTexture(const std::string& directoryPath)
 		textureFilename_ = "white1x1.png";
 	}
 
-	//HRESULT result = S_FALSE;
 	// WICテクスチャのロード
 	DirectX::TexMetadata metadata{};
 	DirectX::ScratchImage scratchImg{};
@@ -52,7 +52,6 @@ void Material::LoadTexture(const std::string& directoryPath)
 
 	// テクスチャ読み込み
 	textureHandle_ = TextureManager::Load(filepath);
-
 }
 
 void Material::Update()

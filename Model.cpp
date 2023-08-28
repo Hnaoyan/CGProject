@@ -11,9 +11,13 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 using namespace Microsoft::WRL;
+
+/// <summary>
+/// 静的変数の実体化
+/// </summary>
 const std::string Model::kBaseDirectory = "resources/";
 const std::string Model::kDefaultName = "cube";
-
+UINT Model::sDescriptorHandleIncrementSize_ = 0;
 ID3D12GraphicsCommandList* Model::sCommandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Model::sRootSignature_;
 ComPtr<ID3D12PipelineState> Model::sPipelineState_;
@@ -51,7 +55,7 @@ void Model::InitializeGraphicsPipeline()
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 		{
-			"POSITION",	0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+			"POSITION",	0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
 		},
 		{
@@ -236,55 +240,10 @@ void Model::Initialize(const std::string& modelName, bool smoothing)
 
 	// テクスチャの読み込み
 	LoadTextures();
-
-}
-
-void Model::Draw(const WorldTransform& worldTransform,const ViewProjection& viewProjection)
-{
-	// ライト
-	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
-
-	// CBV（ワールド行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(
-		static_cast<UINT>(RootParameter::kWorldTransform),
-		worldTransform.constBuff_->GetGPUVirtualAddress());
-
-	// CBV（ビュープロジェクション行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(
-		static_cast<UINT>(RootParameter::kViewProjection),
-		viewProjection.constBuff_->GetGPUVirtualAddress());
-
-	// 全メッシュを描画
-	for (auto& mesh : meshes_) {
-		mesh->Draw(
-			sCommandList_, (UINT)RootParameter::kMaterial, 
-			(UINT)RootParameter::kTexture);
-	}
-}
-
-void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle)
-{
-	// ライト
-	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
-
-	// CBV（ワールド行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kWorldTransform),
-		worldTransform.constBuff_->GetGPUVirtualAddress());
-
-	// CBV（ビュープロジェクション行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kViewProjection),
-		viewProjection.constBuff_->GetGPUVirtualAddress());
-	// 全メッシュを描画
-	for (auto& mesh : meshes_) {
-		mesh->Draw(
-			sCommandList_, (UINT)RootParameter::kMaterial,
-			(UINT)RootParameter::kTexture, textureHandle);
-	}
 }
 
 void Model::LoadModel(const std::string& modelName, bool smoothing)
 {
-	smoothing;
 	const std::string fileName = modelName + ".obj";
 	const std::string directoryPath = kBaseDirectory + modelName + "/";
 
@@ -332,10 +291,11 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 
 			// カレントメッシュの情報が揃っているなら
 			if (mesh->GetName().size() > 0 && mesh->GetVertexCount() > 0) {
+				// エッジの平滑化
 				if (smoothing) {
 					mesh->CalculateSmoothedVertexNormals();
 				}
-				
+				// メッシュの生成
 				meshes_.emplace_back(new Mesh);
 				mesh = meshes_.back();
 				indexCountTex = 0;
@@ -348,9 +308,9 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 			// メッシュに名前をセット
 			mesh->SetName(groupName);
 		}
-
 		// 先頭文字がvなら頂点座標
 		if (key == "v") {
+			// X,Y,Z座標読み込み
 			Vector3 position;
 			line_stream >> position.x;
 			line_stream >> position.y;
@@ -364,6 +324,7 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 			Vector2 texcoord;
 			line_stream >> texcoord.x >> texcoord.y;
 
+			// V方向反転
 			texcoord.y = 1.0f - texcoord.y;
 
 			// テクスチャ座標データに追加
@@ -448,15 +409,17 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 						vertex.normal = normals[indexNormal - 1];
 						vertex.uv = { 0,0 };
 						mesh->AddVertex(vertex);
+
 						if (smoothing) {
 							mesh->AddSmoothData(
 								indexPosition, (unsigned short)mesh->GetVertexCount() - 1);
 						}
-
 					}
-
 				}
+				// インデックスデータの追加
 				if (faceIndexCount >= 3) {
+					// 四角形のポリゴン4点目なので
+					// 四角形の0,1,2,3の内 2,3,0で三角形を構築
 					mesh->AddIndex(static_cast<unsigned short>(indexCountTex - 1));
 					mesh->AddIndex(static_cast<unsigned short>(indexCountTex));
 					mesh->AddIndex(static_cast<unsigned short>(indexCountTex - 3));
@@ -576,6 +539,7 @@ void Model::LoadTextures()
 {
 	int textureIndex = 0;
 	std::string directoryPath = name_ + "/";
+
 	for (auto& m : materials_) {
 		Material* material = m.second;
 
@@ -592,5 +556,48 @@ void Model::LoadTextures()
 			material->LoadTexture("white1x1.png");
 			textureIndex++;
 		}
+	}
+}
+
+void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
+{
+	// ライト
+	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
+
+	// CBV（ワールド行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(
+		static_cast<UINT>(RootParameter::kWorldTransform),
+		worldTransform.constBuff_->GetGPUVirtualAddress());
+
+	// CBV（ビュープロジェクション行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(
+		static_cast<UINT>(RootParameter::kViewProjection),
+		viewProjection.constBuff_->GetGPUVirtualAddress());
+
+	// 全メッシュを描画
+	for (auto& mesh : meshes_) {
+		mesh->Draw(
+			sCommandList_, (UINT)RootParameter::kMaterial,
+			(UINT)RootParameter::kTexture);
+	}
+}
+
+void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle)
+{
+	// ライト
+	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
+
+	// CBV（ワールド行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kWorldTransform),
+		worldTransform.constBuff_->GetGPUVirtualAddress());
+
+	// CBV（ビュープロジェクション行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kViewProjection),
+		viewProjection.constBuff_->GetGPUVirtualAddress());
+	// 全メッシュを描画
+	for (auto& mesh : meshes_) {
+		mesh->Draw(
+			sCommandList_, (UINT)RootParameter::kMaterial,
+			(UINT)RootParameter::kTexture, textureHandle);
 	}
 }

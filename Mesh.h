@@ -20,10 +20,22 @@ public:
 
 public:
 	
+	/// <summary>
+	/// 名前のゲッター
+	/// </summary>
+	/// <returns></returns>
 	const std::string& GetName() { return name_; }
 
+	/// <summary>
+	/// 名前をセット
+	/// </summary>
+	/// <param name="name"></param>
 	void SetName(const std::string& name) { this->name_ = name; }
 
+	/// <summary>
+	/// 頂点の追加
+	/// </summary>
+	/// <param name="vertex"></param>
 	void AddVertex(const VertexPosNormalUv& vertex);
 
 	/// <summary>
@@ -38,10 +50,17 @@ public:
 	/// <returns></returns>
 	inline size_t GetVertexCount() { return vertices_.size(); }
 
+	/// <summary>
+	/// エッジの平滑化データの追加
+	/// </summary>
+	/// <param name="indexPosition"></param>
+	/// <param name="indexVertex"></param>
 	void AddSmoothData(unsigned short indexPosition, unsigned short indexVertex);
 
+	/// <summary>
+	/// 平滑化された頂点法線の計算
+	/// </summary>
 	void CalculateSmoothedVertexNormals();
-
 
 	/// <summary>
 	/// マテリアルの取得

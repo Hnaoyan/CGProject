@@ -23,7 +23,7 @@ void GameScene::Initialize() {
 	sprite_ = Sprite::Create(tex, { 100,50 }, { 1.0f,1.0f,1.0f,1.0f }, { 0,0 }, 0, 0);
 	cubeWVP_.Initialize();
 	cubeWVP_.translation_ = { 0,0,0.0f };
-	cubeModel_ = Model::CreateFromObj("cube", true);
+	cubeModel_ = Model::CreateFromObj("player", true);
 
 }
 

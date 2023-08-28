@@ -11,11 +11,11 @@ struct ViewProjection
 
 	ConstBufferDataViewProjection* constMap = nullptr;
 
-	Vector3 eye = { 0,0,-50.0f };
+	Vector3 scale_ = { 1.0f,1.0f,1.0f };
 
-	Vector3 target = { 0,0,0 };
+	Vector3 rotate_ = { 0,0,0 };
 
-	Vector3 up = { 0,1,0 };
+	Vector3 translate_ = { 0,0,-50.0f };
 
 	float fovAngleY = 45.0f * (float)(std::numbers::pi / 180.0f);
 
@@ -36,6 +36,8 @@ struct ViewProjection
 	void Map();
 
 	void UpdateMatrix();
+
+	void TransferMatrix();
 
 };
 

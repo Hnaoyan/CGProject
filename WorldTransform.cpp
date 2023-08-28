@@ -35,19 +35,25 @@ void WorldTransform::Map()
 
 void WorldTransform::UpdateMatrix()
 {
-	Matrix4x4 matScale, matRotate, matTranslate;
+	//Matrix4x4 matScale, matRotate, matTranslate;
 
-	matScale = MakeScaleMatrix(scale_);
-	matRotate = MakeIdentity4x4();
-	matRotate = Multiply(MakeRotateXMatrix(rotation_.x),
-		Multiply(MakeRotateZMatrix(rotation_.z), MakeRotateYMatrix(rotation_.y)));
+	//matScale = MakeScaleMatrix(scale_);
+	////matRotate = Multiply(MakeIdentity4x4(), MakeRotateZMatrix(rotation_.z));
+	////matRotate = Multiply(matRotate, MakeRotateXMatrix(rotation_.x));
+	////matRotate = Multiply(matRotate, MakeRotateYMatrix(rotation_.y));
 
-	matTranslate = MakeTranslateMatrix(translation_);
+	////matRotate = Multiply(MakeRotateXMatrix(rotation_.x),
+	////	Multiply(MakeRotateZMatrix(rotation_.z), MakeRotateYMatrix(rotation_.y)));
 
-	matWorld_ = MakeIdentity4x4();
-	matWorld_ = Multiply(matWorld_, matScale);
-	matWorld_ = Multiply(matWorld_, matRotate);
-	matWorld_ = Multiply(matWorld_, matTranslate);
+
+	//matTranslate = MakeTranslateMatrix(translation_);
+
+	//matWorld_ = MakeIdentity4x4();
+	//matWorld_ = Multiply(matWorld_, matScale);
+	//matWorld_ = Multiply(matWorld_, matRotate);
+	//matWorld_ = Multiply(matWorld_, matTranslate);
+
+	matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
 
 	constMap->matWorld = matWorld_;
 }

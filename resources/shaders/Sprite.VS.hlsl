@@ -2,7 +2,7 @@
 
 VSOutput main(float4 pos : POSITION, float2 uv : TEXCOORD) {
 	VSOutput output;
-	output.svPos = mul(mat, pos);
+	output.svPos = mul(pos, mat);
 	output.uv = uv;
 	return output;
 }

@@ -1,4 +1,4 @@
-#include "ViewProjection.h"
+	#include "ViewProjection.h"
 #include "D3D12Lib/D3D12Lib.h"
 #include "DirectXCommon.h"
 #include <cassert>
@@ -36,40 +36,21 @@ void ViewProjection::Map()
 
 void ViewProjection::UpdateMatrix()
 {
-	Matrix4x4 view;
-	
-	Vector3 forward = MathCalc::Normalize(Vector3Math::Subtract(target, eye));
-	Vector3 right = MathCalc::Normalize(MathCalc::Cross(up, forward));
-	Vector3 actual_up = MathCalc::Cross(forward, right);
-
-	view.m[0][0] = right.x;
-	view.m[1][0] = right.y;
-	view.m[2][0] = right.z;
-	view.m[3][0] = 0.0f;
-	
-	view.m[0][1] = actual_up.x;
-	view.m[1][1] = actual_up.y;
-	view.m[2][1] = actual_up.z;
-	view.m[3][1] = 0.0f;
-
-	view.m[0][2] = -forward.x;
-	view.m[1][2] = -forward.y;
-	view.m[2][2] = -forward.z;
-	view.m[3][2] = 0.0f;
-
-
-	view.m[0][3] = 0.0f;
-	view.m[1][3] = 0.0f;
-	view.m[2][3] = 0.0f;
-	view.m[3][3] = 1.0f;
-
-
-	matView = view;
-
+	Matrix4x4 matCamera = MakeAffineMatrix(scale_, rotate_, translate_);
+	matView = MakeInverse(matCamera);
 	matProjection = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+	TransferMatrix();
+}
 
+void ViewProjection::TransferMatrix()
+{
 	constMap->view = matView;
 	constMap->projection = matProjection;
-	constMap->cameraPos = eye;
+
+	Matrix4x4 matTranslate = MakeTranslateMatrix(translate_);
+
+	constMap->cameraPos.x = matTranslate.m[3][0];
+	constMap->cameraPos.y = matTranslate.m[3][1];
+	constMap->cameraPos.z = matTranslate.m[3][2];
 
 }

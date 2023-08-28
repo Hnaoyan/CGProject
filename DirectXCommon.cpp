@@ -303,7 +303,7 @@ void DirectXCommon::CreateDepthBuffer() {
 	// リソースの設定
 	D3D12_RESOURCE_DESC resourceDesc = GetResoruceHeap(
 		DXGI_FORMAT_D32_FLOAT, D3D12_RESOURCE_DIMENSION_TEXTURE2D, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, backBufferWidth_, backBufferHeight_);
-
+	resourceDesc.MipLevels = 0;
 	// 利用するHeapの設定
 	D3D12_HEAP_PROPERTIES heapProperties = HeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
