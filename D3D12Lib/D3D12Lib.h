@@ -1,6 +1,6 @@
 #pragma once
 #include <wrl.h>
-#include "../WinApp.h"
+#include "WinApp.h"
 
 #include <dxgidebug.h>
 #include <dxcapi.h>

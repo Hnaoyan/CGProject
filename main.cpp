@@ -1,7 +1,7 @@
 #include "DirectXCommon.h"
 #include"WinApp.h"
 #include "Sprite.h"
-#include"GameScene.h"
+#include"SceneManager.h"
 #include "ImGuiManager.h"
 #include"TextureManager.h"
 #include "Audio.h"
@@ -14,8 +14,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DirectXCommon* dxCommon;
 	Audio* audio;
 	Input* input;
-	GameScene* gameScene = nullptr;
 	ImGuiManager* imguiManager = nullptr;
+	SceneManager* sceneManager = nullptr;
 
 	// WindowsApp
 	winApp = WinApp::GetInstance();
@@ -46,8 +46,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Model::StaticInitialize();
 
-	gameScene = new GameScene();
-	gameScene->Initialize();
+	sceneManager = new SceneManager();
 
 	while (winApp->ProcessMessage() == 0)
 	{
@@ -60,13 +59,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ImGui受付開始
 		imguiManager->Begin();
 		// ゲームシーン更新処理
-		gameScene->Update();
+		sceneManager->Update();
 
 		// 描画前処理
 		dxCommon->PreDraw();
 
 		// ゲームシーン描画処理
-		gameScene->Draw();
+		sceneManager->Draw();
 
 		// ImGui受付終了
 		imguiManager->End();

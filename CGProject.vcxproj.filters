@@ -67,6 +67,36 @@
     <Filter Include="ソース ファイル\input">
       <UniqueIdentifier>{b5b2eb98-7cf4-422c-a973-c2b4e908ad99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\other">
+      <UniqueIdentifier>{3b0bfe8b-ed99-4c9a-8929-d106cc67ceff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\charactor">
+      <UniqueIdentifier>{bc8a1215-e6d8-48fb-9b68-d048c80ec8ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\charactor">
+      <UniqueIdentifier>{afcf7bf5-ded3-45ff-887c-a55a162da8f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\bullet">
+      <UniqueIdentifier>{1f08bfc1-ff98-4bbf-8573-916727f7952d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\bullet">
+      <UniqueIdentifier>{aa7638b4-6034-4d7d-b3ef-524167140123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\other">
+      <UniqueIdentifier>{6569cc47-dd0a-4008-a6f7-62b34f67debd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\object">
+      <UniqueIdentifier>{1dfc13ae-8cd7-46d5-a53c-ade0d4c4f763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\object">
+      <UniqueIdentifier>{f26c45be-f2e8-4f8f-9d19-bae91dcd8f29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\collider">
+      <UniqueIdentifier>{ad23d170-3d24-4829-a2b6-c745fb92c2d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\collider">
+      <UniqueIdentifier>{65f5ebf0-1fba-43a8-bd7f-a03653a6d319}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -93,71 +123,107 @@
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
       <Filter>ソース ファイル\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXCommon.cpp">
-      <Filter>ソース ファイル\base</Filter>
-    </ClCompile>
-    <ClCompile Include="WinApp.cpp">
-      <Filter>ソース ファイル\base</Filter>
-    </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>ソース ファイル\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>ソース ファイル\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix.cpp">
-      <Filter>ソース ファイル\math</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>ソース ファイル\base</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGuiManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="StringManager.cpp">
-      <Filter>ソース ファイル\base</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Audio.cpp">
-      <Filter>ソース ファイル\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>ソース ファイル\3D</Filter>
-    </ClCompile>
     <ClCompile Include="D3D12Lib\D3D12Lib.cpp">
       <Filter>ソース ファイル\D3D12Lib</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>ソース ファイル\3D</Filter>
+    <ClCompile Include="Scene\GameScene.cpp">
+      <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>ソース ファイル\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="LightGroup.cpp">
-      <Filter>ソース ファイル\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
+    <ClCompile Include="Input\Input.cpp">
       <Filter>ソース ファイル\input</Filter>
     </ClCompile>
-    <ClCompile Include="WorldTransform.cpp">
+    <ClCompile Include="3D\CircleShadow.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
-    <ClCompile Include="Vector3Math.cpp">
-      <Filter>ソース ファイル\math</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewProjection.cpp">
+    <ClCompile Include="3D\LightGroup.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
-    <ClCompile Include="MathCalc.cpp">
-      <Filter>ソース ファイル\math</Filter>
-    </ClCompile>
-    <ClCompile Include="CircleShadow.cpp">
+    <ClCompile Include="3D\Material.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
-    <ClCompile Include="Vector4Math.cpp">
+    <ClCompile Include="3D\Mesh.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\Model.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\ViewProjection.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\WorldTransform.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="2D\Sprite.cpp">
+      <Filter>ソース ファイル\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\Audio.cpp">
+      <Filter>ソース ファイル\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\DirectXCommon.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\ImGuiManager.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\StringManager.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\TextureManager.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\WinApp.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MathCalc.cpp">
       <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Matrix.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector3Math.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector4Math.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SceneManager.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\BaseScene.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\WorldTransformEx.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MatrixMath.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Other\FollowCamera.cpp">
+      <Filter>ソース ファイル\other</Filter>
+    </ClCompile>
+    <ClCompile Include="Other\GlobalVariables.cpp">
+      <Filter>ソース ファイル\other</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Player\Player.cpp">
+      <Filter>ソース ファイル\charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\BaseCharacter.cpp">
+      <Filter>ソース ファイル\charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\BaseBullet.cpp">
+      <Filter>ソース ファイル\bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Player\PlayerBullet.cpp">
+      <Filter>ソース ファイル\bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Enemy\Enemy.cpp">
+      <Filter>ソース ファイル\charactor</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Ground\Ground.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider\Collider.cpp">
+      <Filter>ソース ファイル\collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -185,77 +251,113 @@
     <ClInclude Include="externals\imgui\imgui_impl_win32.h">
       <Filter>ソース ファイル\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXCommon.h">
-      <Filter>ヘッダー ファイル\base</Filter>
-    </ClInclude>
-    <ClInclude Include="WinApp.h">
-      <Filter>ヘッダー ファイル\base</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>ヘッダー ファイル\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Matrix.h">
-      <Filter>ヘッダー ファイル\math</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="StringManager.h">
-      <Filter>ヘッダー ファイル\base</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>ヘッダー ファイル\base</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="StructManager.h">
-      <Filter>ヘッダー ファイル\base</Filter>
-    </ClInclude>
-    <ClInclude Include="Audio.h">
-      <Filter>ヘッダー ファイル\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
-    </ClInclude>
     <ClInclude Include="D3D12Lib\D3D12Lib.h">
       <Filter>ヘッダー ファイル\D3D12Lib</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
+    <ClInclude Include="Scene\GameScene.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectionalLight.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="LightGroup.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
+    <ClInclude Include="Input\Input.h">
       <Filter>ヘッダー ファイル\input</Filter>
     </ClInclude>
-    <ClInclude Include="CircleShadow.h">
+    <ClInclude Include="3D\CircleShadow.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
-    <ClInclude Include="WorldTransform.h">
+    <ClInclude Include="3D\DirectionalLight.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
-    <ClInclude Include="ViewProjection.h">
+    <ClInclude Include="3D\LightGroup.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
-    <ClInclude Include="Vector3Math.h">
+    <ClInclude Include="3D\Material.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Mesh.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Model.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\ViewProjection.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\WorldTransform.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="2D\Sprite.h">
+      <Filter>ヘッダー ファイル\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\Audio.h">
+      <Filter>ヘッダー ファイル\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\DirectXCommon.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\ImGuiManager.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\StringManager.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\StructManager.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\TextureManager.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\WinApp.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathCalc.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="MathCalc.h">
+    <ClInclude Include="Math\Matrix.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="Vector4Math.h">
+    <ClInclude Include="Math\Vector3Math.h">
       <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector4Math.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\BaseScene.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneManager.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MatrixMath.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\Player.h">
+      <Filter>ヘッダー ファイル\charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\BaseCharacter.h">
+      <Filter>ヘッダー ファイル\charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\BaseBullet.h">
+      <Filter>ヘッダー ファイル\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Player\PlayerBullet.h">
+      <Filter>ヘッダー ファイル\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Other\FollowCamera.h">
+      <Filter>ヘッダー ファイル\other</Filter>
+    </ClInclude>
+    <ClInclude Include="Other\GlobalVariables.h">
+      <Filter>ヘッダー ファイル\other</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Ground\Ground.h">
+      <Filter>ヘッダー ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Enemy\Enemy.h">
+      <Filter>ヘッダー ファイル\charactor</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider\Collider.h">
+      <Filter>ヘッダー ファイル\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider\CollisionConfig.h">
+      <Filter>ヘッダー ファイル\collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 #include "D3D12Lib.h"
-#include "../StringManager.h"
+#include "StringManager.h"
 #include <cassert>
 
 using namespace Microsoft::WRL;

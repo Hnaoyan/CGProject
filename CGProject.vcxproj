@@ -107,6 +107,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalIncludeDirectories>D:\Summer\Scene;D:\Summer\2D;D:\Summer\3D;D:\Summer\Audio;D:\Summer\Base;D:\Summer\D3D12Lib;D:\Summer\Input;D:\Summer\Math;D:\Summer\externals\imgui;D:\Summer\externals\DirectXTex;D:\Summer\GameObject\Player;D:\Summer\GameObject\Enemy;D:\Summer\GameObject;D:\Summer\Other;D:\Summer\Collider;D:\Summer\GameObject\Ground;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -129,6 +131,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalIncludeDirectories>D:\Summer\Scene;D:\Summer\2D;D:\Summer\3D;D:\Summer\Audio;D:\Summer\Base;D:\Summer\D3D12Lib;D:\Summer\Input;D:\Summer\Math;D:\Summer\externals\imgui;D:\Summer\externals\DirectXTex;D:\Summer\GameObject\Player;D:\Summer\GameObject\Enemy;D:\Summer\GameObject;D:\Summer\Other;D:\Summer\Collider;D:\Summer\GameObject\Ground;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,11 +147,23 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CircleShadow.cpp" />
+    <ClCompile Include="2D\Sprite.cpp" />
+    <ClCompile Include="3D\CircleShadow.cpp" />
+    <ClCompile Include="3D\LightGroup.cpp" />
+    <ClCompile Include="3D\Material.cpp" />
+    <ClCompile Include="3D\Mesh.cpp" />
+    <ClCompile Include="3D\Model.cpp" />
+    <ClCompile Include="3D\ViewProjection.cpp" />
+    <ClCompile Include="3D\WorldTransform.cpp" />
+    <ClCompile Include="3D\WorldTransformEx.cpp" />
+    <ClCompile Include="Audio\Audio.cpp" />
+    <ClCompile Include="Base\DirectXCommon.cpp" />
+    <ClCompile Include="Base\ImGuiManager.cpp" />
+    <ClCompile Include="Base\StringManager.cpp" />
+    <ClCompile Include="Base\TextureManager.cpp" />
+    <ClCompile Include="Base\WinApp.cpp" />
+    <ClCompile Include="Collider\Collider.cpp" />
     <ClCompile Include="D3D12Lib\D3D12Lib.cpp" />
-    <ClCompile Include="DirectXCommon.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -155,32 +171,45 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="ImGuiManager.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="LightGroup.cpp" />
+    <ClCompile Include="GameObject\BaseBullet.cpp" />
+    <ClCompile Include="GameObject\BaseCharacter.cpp" />
+    <ClCompile Include="GameObject\Enemy\Enemy.cpp" />
+    <ClCompile Include="GameObject\Ground\Ground.cpp" />
+    <ClCompile Include="GameObject\Player\Player.cpp" />
+    <ClCompile Include="GameObject\Player\PlayerBullet.cpp" />
+    <ClCompile Include="Input\Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="MathCalc.cpp" />
-    <ClCompile Include="Matrix.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="StringManager.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="Vector3Math.cpp" />
-    <ClCompile Include="Vector4Math.cpp" />
-    <ClCompile Include="ViewProjection.cpp" />
-    <ClCompile Include="WinApp.cpp" />
-    <ClCompile Include="WorldTransform.cpp" />
+    <ClCompile Include="Math\MathCalc.cpp" />
+    <ClCompile Include="Math\Matrix.cpp" />
+    <ClCompile Include="Math\MatrixMath.cpp" />
+    <ClCompile Include="Math\Vector3Math.cpp" />
+    <ClCompile Include="Math\Vector4Math.cpp" />
+    <ClCompile Include="Other\FollowCamera.cpp" />
+    <ClCompile Include="Other\GlobalVariables.cpp" />
+    <ClCompile Include="Scene\BaseScene.cpp" />
+    <ClCompile Include="Scene\GameScene.cpp" />
+    <ClCompile Include="Scene\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Audio.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="CircleShadow.h" />
+    <ClInclude Include="2D\Sprite.h" />
+    <ClInclude Include="3D\CircleShadow.h" />
+    <ClInclude Include="3D\DirectionalLight.h" />
+    <ClInclude Include="3D\LightGroup.h" />
+    <ClInclude Include="3D\Material.h" />
+    <ClInclude Include="3D\Mesh.h" />
+    <ClInclude Include="3D\Model.h" />
+    <ClInclude Include="3D\ViewProjection.h" />
+    <ClInclude Include="3D\WorldTransform.h" />
+    <ClInclude Include="Audio\Audio.h" />
+    <ClInclude Include="Base\DirectXCommon.h" />
+    <ClInclude Include="Base\ImGuiManager.h" />
+    <ClInclude Include="Base\StringManager.h" />
+    <ClInclude Include="Base\StructManager.h" />
+    <ClInclude Include="Base\TextureManager.h" />
+    <ClInclude Include="Base\WinApp.h" />
+    <ClInclude Include="Collider\Collider.h" />
+    <ClInclude Include="Collider\CollisionConfig.h" />
     <ClInclude Include="D3D12Lib\D3D12Lib.h" />
-    <ClInclude Include="DirectionalLight.h" />
-    <ClInclude Include="DirectXCommon.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -189,24 +218,23 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="GameScene.h" />
-    <ClInclude Include="ImGuiManager.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="LightGroup.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="MathCalc.h" />
-    <ClInclude Include="Matrix.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="StringManager.h" />
-    <ClInclude Include="StructManager.h" />
-    <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="Vector3Math.h" />
-    <ClInclude Include="Vector4Math.h" />
-    <ClInclude Include="ViewProjection.h" />
-    <ClInclude Include="WinApp.h" />
-    <ClInclude Include="WorldTransform.h" />
+    <ClInclude Include="GameObject\BaseBullet.h" />
+    <ClInclude Include="GameObject\BaseCharacter.h" />
+    <ClInclude Include="GameObject\Enemy\Enemy.h" />
+    <ClInclude Include="GameObject\Ground\Ground.h" />
+    <ClInclude Include="GameObject\Player\Player.h" />
+    <ClInclude Include="GameObject\Player\PlayerBullet.h" />
+    <ClInclude Include="Input\Input.h" />
+    <ClInclude Include="Math\MathCalc.h" />
+    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\MatrixMath.h" />
+    <ClInclude Include="Math\Vector3Math.h" />
+    <ClInclude Include="Math\Vector4Math.h" />
+    <ClInclude Include="Other\FollowCamera.h" />
+    <ClInclude Include="Other\GlobalVariables.h" />
+    <ClInclude Include="Scene\BaseScene.h" />
+    <ClInclude Include="Scene\GameScene.h" />
+    <ClInclude Include="Scene\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
