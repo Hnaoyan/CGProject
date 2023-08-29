@@ -108,7 +108,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>D:\Summer\Scene;D:\Summer\2D;D:\Summer\3D;D:\Summer\Audio;D:\Summer\Base;D:\Summer\D3D12Lib;D:\Summer\Input;D:\Summer\Math;D:\Summer\externals\imgui;D:\Summer\externals\DirectXTex;D:\Summer\GameObject\Player;D:\Summer\GameObject\Enemy;D:\Summer\GameObject;D:\Summer\Other;D:\Summer\Collider;D:\Summer\GameObject\Ground;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\hazama naoya\Desktop\MyEngine\Scene;C:\Users\hazama naoya\Desktop\MyEngine\2D;C:\Users\hazama naoya\Desktop\MyEngine\3D;C:\Users\hazama naoya\Desktop\MyEngine\Audio;C:\Users\hazama naoya\Desktop\MyEngine\Base;C:\Users\hazama naoya\Desktop\MyEngine\D3D12Lib;C:\Users\hazama naoya\Desktop\MyEngine\Input;C:\Users\hazama naoya\Desktop\MyEngine\Math;C:\Users\hazama naoya\Desktop\MyEngine\externals\imgui;C:\Users\hazama naoya\Desktop\MyEngine\externals\DirectXTex;C:\Users\hazama naoya\Desktop\MyEngine\GameObject;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Enemy;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Ground;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Player;C:\Users\hazama naoya\Desktop\MyEngine\Other;C:\Users\hazama naoya\Desktop\MyEngine\Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -132,7 +132,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>D:\Summer\Scene;D:\Summer\2D;D:\Summer\3D;D:\Summer\Audio;D:\Summer\Base;D:\Summer\D3D12Lib;D:\Summer\Input;D:\Summer\Math;D:\Summer\externals\imgui;D:\Summer\externals\DirectXTex;D:\Summer\GameObject\Player;D:\Summer\GameObject\Enemy;D:\Summer\GameObject;D:\Summer\Other;D:\Summer\Collider;D:\Summer\GameObject\Ground;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\hazama naoya\Desktop\MyEngine\Scene;C:\Users\hazama naoya\Desktop\MyEngine\2D;C:\Users\hazama naoya\Desktop\MyEngine\3D;C:\Users\hazama naoya\Desktop\MyEngine\Audio;C:\Users\hazama naoya\Desktop\MyEngine\Base;C:\Users\hazama naoya\Desktop\MyEngine\D3D12Lib;C:\Users\hazama naoya\Desktop\MyEngine\Input;C:\Users\hazama naoya\Desktop\MyEngine\Math;C:\Users\hazama naoya\Desktop\MyEngine\externals\imgui;C:\Users\hazama naoya\Desktop\MyEngine\externals\DirectXTex;C:\Users\hazama naoya\Desktop\MyEngine\GameObject;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Enemy;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Ground;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Player;C:\Users\hazama naoya\Desktop\MyEngine\Other;C:\Users\hazama naoya\Desktop\MyEngine\Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
