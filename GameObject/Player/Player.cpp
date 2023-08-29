@@ -46,14 +46,14 @@ void Player::Update()
 		return false;
 	});
 
-	//ImGui::Begin("player");
-	//ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.01f, -20.0f, 20.0f);
-	//ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x, 0.01f, -20.0f, 20.0f);
-	//ImGui::DragFloat("jumpPower", &jumpPower_, 0.01f, -20.0f, 20.0f);
-	//ImGui::Text("BulletCount : %d", this->bulletCount);
-	//ImGui::Text("isReload : %d", this->isReload);
-	//ImGui::Text("ReloadTime : %d", this->reloadCount);
-	//ImGui::End();
+	ImGui::Begin("player");
+	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.01f, -20.0f, 20.0f);
+	ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x, 0.01f, -20.0f, 20.0f);
+	ImGui::DragFloat("jumpPower", &jumpPower_, 0.01f, -20.0f, 20.0f);
+	ImGui::Text("BulletCount : %d", this->bulletCount);
+	ImGui::Text("isReload : %d", this->isReload);
+	ImGui::Text("ReloadTime : %d", this->reloadCount);
+	ImGui::End();
 
 
 	XINPUT_STATE joyState;

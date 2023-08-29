@@ -267,7 +267,6 @@ void Input::Initialize()
 	SetWindowsHookExW(
 		WH_CALLWNDPROC, (HOOKPROC)&SubWndProc, GetModuleHandleW(NULL), GetCurrentThreadId());
 
-
 }
 
 void Input::Update()
@@ -404,6 +403,13 @@ bool Input::GetJoystickStatePrevious(int32_t stickNo, XINPUT_STATE& out)
 		}
 	}
 	return false;
+}
+
+void Input::SetJoystickDeadZone(int32_t stickNo, int32_t deadZoneL, int32_t deadZoneR) {
+	if (0 <= stickNo && stickNo < devJoysticks_.size()) {
+		devJoysticks_[stickNo].deadZoneL_ = (std::max)(0, (std::min)(deadZoneL, 0x8000));
+		devJoysticks_[stickNo].deadZoneR_ = (std::max)(0, (std::min)(deadZoneR, 0x8000));
+	}
 }
 
 void Input::SetupJoySticks()

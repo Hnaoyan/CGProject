@@ -88,6 +88,8 @@ public:	// コントローラー系
 
 	bool GetJoystickStatePrevious(int32_t stickNo, XINPUT_STATE& out);
 
+	void SetJoystickDeadZone(int32_t stickNo, int32_t deadZoneL, int32_t deadZoneR);
+
 	size_t GetNumberOfJoysticks();
 
 private:
