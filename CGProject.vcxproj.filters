@@ -192,9 +192,6 @@
     <ClCompile Include="Scene\BaseScene.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
-    <ClCompile Include="3D\WorldTransformEx.cpp">
-      <Filter>ソース ファイル\3D</Filter>
-    </ClCompile>
     <ClCompile Include="Math\MatrixMath.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>

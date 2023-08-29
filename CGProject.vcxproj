@@ -155,7 +155,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="3D\Model.cpp" />
     <ClCompile Include="3D\ViewProjection.cpp" />
     <ClCompile Include="3D\WorldTransform.cpp" />
-    <ClCompile Include="3D\WorldTransformEx.cpp" />
     <ClCompile Include="Audio\Audio.cpp" />
     <ClCompile Include="Base\DirectXCommon.cpp" />
     <ClCompile Include="Base\ImGuiManager.cpp" />

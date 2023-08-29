@@ -29,7 +29,7 @@ void GameScene::Initialize() {
 
 	// 地面
 	ground_ = std::make_unique<Ground>();
-	groundModel_.reset(Model::CreateFromObj("ground", true));
+	//groundModel_.reset(Model::CreateFromObj("ground", true));
 	//ground_->Initialize(groundModel_.get());
 
 	// 追従カメラ

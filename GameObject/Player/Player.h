@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <Model.h>
 #include<WorldTransform.h>
 #include <ViewProjection.h>
@@ -34,6 +34,8 @@ public:
 	void Update() override;
 
 	void Draw(const ViewProjection& viewProjection) override;
+
+	void CameraUpdate();
 
 public:
 	
@@ -91,7 +93,7 @@ private:
 
 	bool isShot = false;
 
-	int Interval = 15;
+	int Interval = 50;
 
 	
 	// ジャンプ系

@@ -3,6 +3,7 @@
 #include "DirectXCommon.h"
 #include <cassert>
 #include "Matrix.h"
+#include "MatrixMath.h"
 
 void WorldTransform::Initialize()
 {
@@ -38,9 +39,10 @@ void WorldTransform::TransferMatrix()
 	constMap->matWorld = matWorld_;
 }
 
-//void WorldTransform::UpdateMatrix()
-//{
-//
-//	matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
-//
-//}
+void WorldTransform::UpdateMatrix() {
+	this->matWorld_ =
+		MatrixMath::MakeAffineMatrix(this->scale_, this->rotation_, this->translation_);
+
+	// 定数バッファに転送
+	TransferMatrix();
+}

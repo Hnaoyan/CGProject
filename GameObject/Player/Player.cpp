@@ -50,7 +50,7 @@ void Player::Update()
 	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.01f, -20.0f, 20.0f);
 	ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x, 0.01f, -20.0f, 20.0f);
 	ImGui::DragFloat("jumpPower", &jumpPower_, 0.01f, -20.0f, 20.0f);
-	ImGui::Text("BulletCount : %d", this->bulletCount);
+	ImGui::Text("BulletCount : %d	CoolTime : %d", this->bulletCount, this->coolTime);
 	ImGui::Text("isReload : %d", this->isReload);
 	ImGui::Text("ReloadTime : %d", this->reloadCount);
 	ImGui::End();
@@ -59,7 +59,7 @@ void Player::Update()
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		// 
-		float speed = 0.5f;
+		float speed = 0.2f;
 
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && !dash.isDash) {
 			speed = 10.0f;
@@ -88,13 +88,6 @@ void Player::Update()
 
 	}
 
-	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		
-		float rotateSpeed = 0.1f;
-		worldTransform_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
-
-
-	}
 
 	if (dash.isDash) {
 		dash.coolDownCount += 1;
@@ -103,6 +96,8 @@ void Player::Update()
 			dash.coolDownCount = 0;
 		}
 	}
+
+	CameraUpdate();
 
 	Jump();
 
@@ -125,6 +120,28 @@ void Player::Draw(const ViewProjection& viewProjection)
 
 }
 
+void Player::CameraUpdate()
+{
+	XINPUT_STATE joyState;
+
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		const float threshold = 0.7f;
+		bool isRotation = false;
+
+		// スティックの操作
+		float rotateZ = (float)joyState.Gamepad.sThumbRX / SHRT_MAX;
+		float length = sqrt(powf(rotateZ, 2));
+		if (length > threshold) {
+			isRotation = true;
+		}
+		if (isRotation) {
+			float rotateSpeed = 0.005f;
+			worldTransform_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
+		}
+	}
+
+}
+
 void Player::Attack() { 
 	XINPUT_STATE joyState;
 	// ゲームパッド未接続なら何もせずに抜ける
@@ -134,9 +151,10 @@ void Player::Attack() {
 	// Rトリガーを押していたら
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER && !isShot && !isReload) {
 		// 弾速
-		const float kBulletSpeed = 5.0f;
+		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
-
+		
+		// 弾数の使用
 		this->bulletCount += 1;
 
 		velocity = MatrixMath::TransformNormal(velocity, worldTransform_.matWorld_);
@@ -148,7 +166,7 @@ void Player::Attack() {
 
 		newBullet->SetRotate(this->worldTransform_.rotation_);
 
-		//
+		// 弾生成
 		bullets_.push_back(newBullet);
 		isShot = true;
 	}
@@ -167,10 +185,11 @@ void Player::Attack() {
 		}
 	}
 
+	// 射撃のクールダウン
 	if (isShot) {
-		++coolTime;
+		coolTime += 1;
 		if(coolTime == Interval) {
-			coolTime=0;
+			coolTime = 0;
 			isShot = false;
 		}
 	}
