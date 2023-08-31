@@ -4,17 +4,16 @@
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
-//#include "SafeDelete.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-//#include "DebugCamera.h"
 #include "FollowCamera.h"
 #include "Player.h"
 #include "Ground.h"
 #include "Enemy.h"
 #include <memory>
 #include "BaseScene.h"
+#include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -52,12 +51,33 @@ public:
 
 	void CheckCollisionPair() {};
 
+	void CheckGroundToPlayer();
+
+	enum StageNumber
+	{
+		kStageOne,
+		kStageTwo,
+		kStageThree,
+		kStageClear,
+		kNone,
+	};
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
 	ViewProjection viewProjection_;
+
+	int enemyCount_ = 0;
+
+	uint32_t soundHandle_ = 0;
+
+	int stageNum = kStageOne;
+
+	int clearCount_ = 0;
+
+	Sprite* clear_;
 
 private:	// メンバポインタ
 	// プレイヤー
@@ -66,8 +86,9 @@ private:	// メンバポインタ
 	std::unique_ptr<Model> plBulletModel_;
 
 	// エネミー
-	std::unique_ptr<Enemy> enemy_;
 	std::unique_ptr<Model> eneModel_;
+
+	std::list<Enemy*> enemys_;
 
 	// カメラ
 	//std::unique_ptr<DebugCamera> debugCamera_;
@@ -78,6 +99,10 @@ private:	// メンバポインタ
 	// 地面
 	std::unique_ptr<Ground> ground_;
 	std::unique_ptr<Model> groundModel_;
+	std::unique_ptr<Skydome> skyDome_;
+	std::unique_ptr<Model> skyDomeModel_;
+
+	Sprite* info_;
 
 	/// <summary>
 	/// ゲームシーン用

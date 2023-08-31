@@ -1,4 +1,4 @@
-﻿#include "BaseCharacter.h"
+#include "BaseCharacter.h"
 #include "MatrixMath.h"
 
 void BaseCharacter::Initialize(Model* model) {
@@ -10,7 +10,6 @@ void BaseCharacter::Initialize(Model* model) {
 void BaseCharacter::Update() 
 { 
 	worldTransform_.UpdateMatrix();
-
 }
 
 void BaseCharacter::Draw(const ViewProjection& viewProjection) 

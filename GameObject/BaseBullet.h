@@ -49,9 +49,9 @@ protected:
 	// 座標系
 	WorldTransform worldTransform_;
 	// モデル
-	Model* model_;
+	Model* model_ = nullptr;
 	// 移動速度
-	Vector3 velocity_;
+	Vector3 velocity_ = {};
 	// 生きているか
 	bool isDead_ = false;
 	// デスタイマー

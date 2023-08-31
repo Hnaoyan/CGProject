@@ -16,9 +16,10 @@ private:
 	int collisionMask_ = 0xffffffff;
 
 protected:
-	float radius_ = 0;
+	float radius_ = 1.0f;
 	Model* model_;
 	WorldTransform worldTransform_;
+	AABB aabb_;
 
 public:	// デフォルト関数
 

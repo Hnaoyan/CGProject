@@ -4,6 +4,7 @@
 #include <ViewProjection.h>
 #include<list>
 #include <optional>
+#include"Ground.h"
 
 #include "BaseCharacter.h"
 #include "PlayerBullet.h"
@@ -53,6 +54,8 @@ public:
 
 	const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
+	//const static float gravity_ = 9.8f * 1.0f / 60.0f;
+
 public:
 	void BehaviorRootUpdate(){};
 
@@ -75,6 +78,10 @@ private:
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
 
+	WorldTransform worldTransformReticle_;
+
+	Ground ground_;
+
 	// 弾
 	std::list<PlayerBullet*> bullets_;
 
@@ -93,7 +100,7 @@ private:
 
 	bool isShot = false;
 
-	int Interval = 50;
+	int Interval = 25;
 
 	
 	// ジャンプ系
@@ -101,5 +108,11 @@ private:
 
 	bool isJump_ = false;
 
-	float jumpPower_ = 4.0f;
+	float jumpPower_ = 3.0f;
+
+	bool isFall = false;
+
+	Vector3 tmpPos_ = {};
+
+	Vector3 radius_ = { 1.0f,2.0f,1.0f };
 };

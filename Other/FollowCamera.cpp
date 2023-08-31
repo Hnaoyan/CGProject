@@ -8,6 +8,7 @@ void FollowCamera::Initialize() {
 	viewProjection_.Initialize();
 
 	offset = {0.0f, 2.0f, -12.5f};
+	cameraState_ = CameraView::kShoot;
 }
 
 void FollowCamera::Update() {
@@ -43,7 +44,7 @@ void FollowCamera::Update() {
 
 		if (isChange) {
 			changeTime++;
-			if (changeTime == 60) {
+			if (changeTime == 80) {
 				isChange = false;
 				changeTime = 0;
 			}

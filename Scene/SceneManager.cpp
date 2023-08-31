@@ -2,11 +2,11 @@
 
 SceneManager::SceneManager() 
 { 
-	sceneArray_[TITLE] = std::make_unique<GameScene>();
+	sceneArray_[TITLE] = std::make_unique<TitleScene>();
 	sceneArray_[GAMESCENE] = std::make_unique<GameScene>();
-	sceneArray_[CLEAR] = std::make_unique<GameScene>();
+	sceneArray_[CLEAR] = std::make_unique<ResultScene>();
 
-	sceneNum_ = GAMESCENE;
+	sceneNum_ = TITLE;
 	sceneArray_[sceneNum_]->Initialize();
 }
 

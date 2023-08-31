@@ -34,3 +34,8 @@ struct ConstBufferDataViewProjection {
 	Matrix4x4 projection;
 	Vector3 cameraPos;
 };
+
+struct AABB {
+	Vector3 min;	// 最小点
+	Vector3 max;	// 最大点
+};

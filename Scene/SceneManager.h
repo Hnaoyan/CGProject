@@ -2,6 +2,8 @@
 #include <memory>
 #include "BaseScene.h"
 #include "GameScene.h"
+#include "TitleScene.h"
+#include "ResultScene.h"
 
 class SceneManager {
 private:

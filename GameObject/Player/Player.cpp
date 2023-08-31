@@ -5,6 +5,7 @@
 #include "MatrixMath.h"
 #include "ImGuiManager.h"
 #include "CollisionConfig.h"
+#include "Collider.h"
 
 Player::~Player() {
 	for (PlayerBullet* bullet : bullets_) {
@@ -31,7 +32,8 @@ void Player::Initialize(Model* model)
 { 
 	// 基底クラスの初期化
 	BaseCharacter::Initialize(model);
-	worldTransform_.translation_.y = 1.0f;
+	worldTransform_.translation_.y = 2.01f;
+	worldTransform_.translation_.z = -25.0f;
 	this->SetCollisionAttribute(kCollisionAttributePlayer);
 	this->SetCollisionMask(kCollisionAttributeEnemy);
 }
@@ -46,20 +48,10 @@ void Player::Update()
 		return false;
 	});
 
-	ImGui::Begin("player");
-	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.01f, -20.0f, 20.0f);
-	ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x, 0.01f, -20.0f, 20.0f);
-	ImGui::DragFloat("jumpPower", &jumpPower_, 0.01f, -20.0f, 20.0f);
-	ImGui::Text("BulletCount : %d	CoolTime : %d", this->bulletCount, this->coolTime);
-	ImGui::Text("isReload : %d", this->isReload);
-	ImGui::Text("ReloadTime : %d", this->reloadCount);
-	ImGui::End();
-
-
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		// 
-		float speed = 0.2f;
+		float speed = 0.5f;
 
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && !dash.isDash) {
 			speed = 10.0f;
@@ -91,7 +83,7 @@ void Player::Update()
 
 	if (dash.isDash) {
 		dash.coolDownCount += 1;
-		if (dash.coolDownCount == 10) {
+		if (dash.coolDownCount == 30) {
 			dash.isDash = false;
 			dash.coolDownCount = 0;
 		}
@@ -107,7 +99,6 @@ void Player::Update()
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Update();
 	}
-
 }
 
 void Player::Draw(const ViewProjection& viewProjection) 
@@ -135,7 +126,7 @@ void Player::CameraUpdate()
 			isRotation = true;
 		}
 		if (isRotation) {
-			float rotateSpeed = 0.005f;
+			float rotateSpeed = 0.05f;
 			worldTransform_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
 		}
 	}
@@ -151,7 +142,7 @@ void Player::Attack() {
 	// Rトリガーを押していたら
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER && !isShot && !isReload) {
 		// 弾速
-		const float kBulletSpeed = 1.0f;
+		const float kBulletSpeed = 5.0f;
 		Vector3 velocity(0, 0, kBulletSpeed);
 		
 		// 弾数の使用
@@ -171,19 +162,19 @@ void Player::Attack() {
 		isShot = true;
 	}
 
-	if (bulletCount == 25) {
-		isReload = true;
-		bulletCount = 0;
-	}
+	//if (bulletCount == PlayerBullet::kMaxBullet) {
+	//	isReload = true;
+	//	bulletCount = 0;
+	//}
 
-	if (isReload) {
-		const int ReloadClearCount = 200;
-		reloadCount++;
-		if (reloadCount == ReloadClearCount) {
-			isReload = false;
-			reloadCount = 0;
-		}
-	}
+	//if (isReload) {
+	//	const int ReloadClearCount = 200;
+	//	reloadCount++;
+	//	if (reloadCount == ReloadClearCount) {
+	//		isReload = false;
+	//		reloadCount = 0;
+	//	}
+	//}
 
 	// 射撃のクールダウン
 	if (isShot) {
@@ -213,8 +204,8 @@ void Player::Jump()
 		worldTransform_.translation_.y += jumpVelocity_.y + (-9.8f * (fallTime_) / 60.0f);
 	}
 
-	if (worldTransform_.translation_.y < 1.2f) {
+	if (worldTransform_.translation_.y < 2.0f) {
 		isJump_ = false;
-		worldTransform_.translation_.y = 1.0f;
+		worldTransform_.translation_.y = 2.01f;
 	}
 }

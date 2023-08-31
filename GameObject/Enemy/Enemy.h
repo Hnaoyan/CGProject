@@ -12,6 +12,10 @@ public:
 
 	void OnCollision() override;
 
+	bool IsDead() const { return info_.isDead_; }
+
+	void SetPosition(Vector3 pos) { worldTransform_.translation_ = pos; }
+
 public:
 
 	struct EnemyInfo {

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "BaseBullet.h"
 
 class PlayerBullet : public BaseBullet
@@ -9,6 +9,8 @@ public:
 	void Update() override;
 
 	void Draw(const ViewProjection& viewProjection) override;
+
+	const static int kMaxBullet = 50;
 
 private:
 

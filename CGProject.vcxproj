@@ -108,7 +108,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>C:\Users\hazama naoya\Desktop\MyEngine\Scene;C:\Users\hazama naoya\Desktop\MyEngine\2D;C:\Users\hazama naoya\Desktop\MyEngine\3D;C:\Users\hazama naoya\Desktop\MyEngine\Audio;C:\Users\hazama naoya\Desktop\MyEngine\Base;C:\Users\hazama naoya\Desktop\MyEngine\D3D12Lib;C:\Users\hazama naoya\Desktop\MyEngine\Input;C:\Users\hazama naoya\Desktop\MyEngine\Math;C:\Users\hazama naoya\Desktop\MyEngine\externals\imgui;C:\Users\hazama naoya\Desktop\MyEngine\externals\DirectXTex;C:\Users\hazama naoya\Desktop\MyEngine\GameObject;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Enemy;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Ground;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Player;C:\Users\hazama naoya\Desktop\MyEngine\Other;C:\Users\hazama naoya\Desktop\MyEngine\Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\hazama naoya\Desktop\MyEngine\Scene;C:\Users\hazama naoya\Desktop\MyEngine\2D;C:\Users\hazama naoya\Desktop\MyEngine\3D;C:\Users\hazama naoya\Desktop\MyEngine\Audio;C:\Users\hazama naoya\Desktop\MyEngine\Base;C:\Users\hazama naoya\Desktop\MyEngine\D3D12Lib;C:\Users\hazama naoya\Desktop\MyEngine\Input;C:\Users\hazama naoya\Desktop\MyEngine\Math;C:\Users\hazama naoya\Desktop\MyEngine\externals\imgui;C:\Users\hazama naoya\Desktop\MyEngine\externals\DirectXTex;C:\Users\hazama naoya\Desktop\MyEngine\GameObject;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Enemy;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Ground;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Player;C:\Users\hazama naoya\Desktop\MyEngine\Other;C:\Users\hazama naoya\Desktop\MyEngine\Collider;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -132,7 +132,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>C:\Users\hazama naoya\Desktop\MyEngine\Scene;C:\Users\hazama naoya\Desktop\MyEngine\2D;C:\Users\hazama naoya\Desktop\MyEngine\3D;C:\Users\hazama naoya\Desktop\MyEngine\Audio;C:\Users\hazama naoya\Desktop\MyEngine\Base;C:\Users\hazama naoya\Desktop\MyEngine\D3D12Lib;C:\Users\hazama naoya\Desktop\MyEngine\Input;C:\Users\hazama naoya\Desktop\MyEngine\Math;C:\Users\hazama naoya\Desktop\MyEngine\externals\imgui;C:\Users\hazama naoya\Desktop\MyEngine\externals\DirectXTex;C:\Users\hazama naoya\Desktop\MyEngine\GameObject;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Enemy;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Ground;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Player;C:\Users\hazama naoya\Desktop\MyEngine\Other;C:\Users\hazama naoya\Desktop\MyEngine\Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\hazama naoya\Desktop\MyEngine\Scene;C:\Users\hazama naoya\Desktop\MyEngine\2D;C:\Users\hazama naoya\Desktop\MyEngine\3D;C:\Users\hazama naoya\Desktop\MyEngine\Audio;C:\Users\hazama naoya\Desktop\MyEngine\Base;C:\Users\hazama naoya\Desktop\MyEngine\D3D12Lib;C:\Users\hazama naoya\Desktop\MyEngine\Input;C:\Users\hazama naoya\Desktop\MyEngine\Math;C:\Users\hazama naoya\Desktop\MyEngine\externals\imgui;C:\Users\hazama naoya\Desktop\MyEngine\externals\DirectXTex;C:\Users\hazama naoya\Desktop\MyEngine\GameObject;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Enemy;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Ground;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Player;C:\Users\hazama naoya\Desktop\MyEngine\Other;C:\Users\hazama naoya\Desktop\MyEngine\Collider;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -176,6 +176,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="GameObject\Ground\Ground.cpp" />
     <ClCompile Include="GameObject\Player\Player.cpp" />
     <ClCompile Include="GameObject\Player\PlayerBullet.cpp" />
+    <ClCompile Include="GameObject\SkyDome\Skydome.cpp" />
     <ClCompile Include="Input\Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\MathCalc.cpp" />
@@ -187,7 +188,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Other\GlobalVariables.cpp" />
     <ClCompile Include="Scene\BaseScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
+    <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
+    <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="Other\TitleCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2D\Sprite.h" />
@@ -223,6 +227,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="GameObject\Ground\Ground.h" />
     <ClInclude Include="GameObject\Player\Player.h" />
     <ClInclude Include="GameObject\Player\PlayerBullet.h" />
+    <ClInclude Include="GameObject\SkyDome\Skydome.h" />
     <ClInclude Include="Input\Input.h" />
     <ClInclude Include="Math\MathCalc.h" />
     <ClInclude Include="Math\Matrix.h" />
@@ -233,7 +238,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Other\GlobalVariables.h" />
     <ClInclude Include="Scene\BaseScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
+    <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
+    <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="Other\TitleCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

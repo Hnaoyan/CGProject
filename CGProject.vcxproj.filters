@@ -222,6 +222,18 @@
     <ClCompile Include="Collider\Collider.cpp">
       <Filter>ソース ファイル\collider</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\SkyDome\Skydome.cpp">
+      <Filter>ソース ファイル\object</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ResultScene.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TitleScene.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Other\TitleCamera.cpp">
+      <Filter>ソース ファイル\other</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -355,6 +367,18 @@
     </ClInclude>
     <ClInclude Include="Collider\CollisionConfig.h">
       <Filter>ヘッダー ファイル\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\SkyDome\Skydome.h">
+      <Filter>ヘッダー ファイル\object</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ResultScene.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TitleScene.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Other\TitleCamera.h">
+      <Filter>ヘッダー ファイル\other</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

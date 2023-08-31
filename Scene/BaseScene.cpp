@@ -1,3 +1,3 @@
 #include "BaseScene.h"
 
-int BaseScene::sceneNum = GAMESCENE;
+int BaseScene::sceneNum = TITLE;
