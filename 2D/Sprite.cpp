@@ -78,8 +78,8 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 
 	// グラフィックスパイプライン
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gPipeline{};
-	gPipeline.VS = Sprite::ShaderByteCode(vertexShaderBlob.Get());		// VertexShader
-	gPipeline.PS = Sprite::ShaderByteCode(pixelShaderBlob.Get());		// PixelShader
+	gPipeline.VS = D3D12Lib::ShaderByteCode(vertexShaderBlob.Get());		// VertexShader
+	gPipeline.PS = D3D12Lib::ShaderByteCode(pixelShaderBlob.Get());		// PixelShader
 
 	// サンプルマスクの設定
 	gPipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -252,6 +252,14 @@ bool Sprite::Initialize() {
 	return true;
 }
 
+void Sprite::SetAnchorPoint(const Vector2& anchorPoint)
+{
+	anchorpoint_ = anchorPoint;
+
+	// 頂点バッファへ転送
+	TransferVertices();
+}
+
 void Sprite::TransferVertices()
 {
 	//HRESULT result = S_FALSE;
@@ -321,6 +329,28 @@ void Sprite::Draw() {
 
 }
 
+void Sprite::SetTextureHandle(uint32_t textureHandle)
+{
+	textureHandle_ = textureHandle;
+	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
+}
+
+void Sprite::SetPosition(const Vector2& position)
+{
+	position_ = position;
+
+	// データ転送
+	TransferVertices();
+}
+
+void Sprite::SetRotation(float rotation)
+{
+	rotation_ = rotation;
+
+	// データ転送
+	TransferVertices();
+}
+
 void Sprite::PreDraw(ID3D12GraphicsCommandList* commandList) {
 	assert(Sprite::sCommandList_ == nullptr);
 
@@ -339,56 +369,4 @@ void Sprite::PostDraw() {
 	// コマンドリストを解除
 	Sprite::sCommandList_ = nullptr;
 
-}
-
-
-D3D12_SHADER_BYTECODE Sprite::ShaderByteCode(IDxcBlob* blob) {
-
-	D3D12_SHADER_BYTECODE shaderByte = { blob->GetBufferPointer(),blob->GetBufferSize() };
-	return shaderByte;
-}
-
-ComPtr<ID3D12Resource> Sprite::CreateBufferResource(size_t sizeInBytes) {
-	// nullptrチェック
-	assert(sDevice_);
-
-	HRESULT result = S_FALSE;
-	// 頂点リソース用のヒープの設定
-	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;	// UploadHeapを使う
-	// 頂点リソースの設定
-	D3D12_RESOURCE_DESC resourceDesc{};
-	// バッファリソース。テクスチャの場合はまた別の設定をする
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resourceDesc.Width = sizeInBytes;	// リソースのサイズ
-	// バッファの場合はこれらは1にする決まり
-	resourceDesc.Height = 1;
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = 1;
-	resourceDesc.SampleDesc.Count = 1;
-	// バッファの場合はこれにする決まり
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	// 実際に頂点リソースを作る
-	ID3D12Resource* resultResource = nullptr;
-	result = sDevice_->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE,
-		&resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-		IID_PPV_ARGS(&resultResource));
-	assert(SUCCEEDED(result));
-
-	return resultResource;
-}
-
-D3D12_RESOURCE_DESC Sprite::SetResourceDesc(size_t size)
-{
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resourceDesc.Width = size;	// リソースサイズ
-	// バッファの場合はこれらは1にする決まり
-	resourceDesc.Height = 1;
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = 1;
-	resourceDesc.SampleDesc.Count = 1;
-	// バッファの場合これにする決まり
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	return resourceDesc;
 }

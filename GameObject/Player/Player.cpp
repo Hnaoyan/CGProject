@@ -14,17 +14,12 @@ Player::~Player() {
 
 void Player::BehaviorJumpUpdate() 
 { 
-	fallTime_ += 1;
-	float fallSpeed = 10.0f - 9.8f * fallTime_ / 60;
-	worldTransform_.translation_.y += fallSpeed;
 
 }
 
 void Player::BehaviorJumpInitialize() 
 {
-	jumpPower_ = 10.0f;
-	fallTime_ = 0;
-	worldTransform_.translation_.y += jumpPower_;
+
 }
 
 void Player::Initialize(Model* model) 
@@ -38,24 +33,6 @@ void Player::Initialize(Model* model)
 
 void Player::Update() 
 { 
-	bullets_.remove_if([](PlayerBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
-
-	ImGui::Begin("player");
-	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.01f, -20.0f, 20.0f);
-	ImGui::DragFloat3("rotate", &worldTransform_.rotation_.x, 0.01f, -20.0f, 20.0f);
-	ImGui::DragFloat("jumpPower", &jumpPower_, 0.01f, -20.0f, 20.0f);
-	ImGui::Text("BulletCount : %d	CoolTime : %d", this->bulletCount, this->coolTime);
-	ImGui::Text("isReload : %d", this->isReload);
-	ImGui::Text("ReloadTime : %d", this->reloadCount);
-	ImGui::End();
-
-
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		// 
@@ -88,30 +65,31 @@ void Player::Update()
 
 	}
 
-
-	if (dash.isDash) {
-		dash.coolDownCount += 1;
-		if (dash.coolDownCount == 10) {
-			dash.isDash = false;
-			dash.coolDownCount = 0;
-		}
+	if (input_->GetInstance()->PressKey(DIK_W)) {
+		worldTransform_.translation_.z += 0.2f;
+	}
+	if (input_->GetInstance()->PressKey(DIK_S)) {
+		worldTransform_.translation_.z -= 0.2f;
 	}
 
+	/// カメラの更新
 	CameraUpdate();
 
+	/// ジャンプ用の処理
 	Jump();
 
+	BulletUpdate();
+
+	/// ベースの更新
 	BaseCharacter::Update();
 
+	/// 攻撃の更新
 	Attack();
-	for (PlayerBullet* bullet : bullets_) {
-		bullet->Update();
-	}
-
 }
 
 void Player::Draw(const ViewProjection& viewProjection) 
 {
+	/// ベースの描画
 	BaseCharacter::Draw(viewProjection); 
 
 	for (PlayerBullet* bullet : bullets_) {
@@ -142,79 +120,27 @@ void Player::CameraUpdate()
 
 }
 
-void Player::Attack() { 
-	XINPUT_STATE joyState;
-	// ゲームパッド未接続なら何もせずに抜ける
-	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
-		return;
-	}
-	// Rトリガーを押していたら
-	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER && !isShot && !isReload) {
-		// 弾速
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
-		
-		// 弾数の使用
-		this->bulletCount += 1;
-
-		velocity = MatrixMath::TransformNormal(velocity, worldTransform_.matWorld_);
-
-		// 弾生成
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(bulletModel_,
-			worldTransform_.translation_, velocity);
-
-		newBullet->SetRotate(this->worldTransform_.rotation_);
-
-		// 弾生成
-		bullets_.push_back(newBullet);
-		isShot = true;
-	}
-
-	if (bulletCount == 25) {
-		isReload = true;
-		bulletCount = 0;
-	}
-
-	if (isReload) {
-		const int ReloadClearCount = 200;
-		reloadCount++;
-		if (reloadCount == ReloadClearCount) {
-			isReload = false;
-			reloadCount = 0;
+void Player::BulletUpdate()
+{
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
 		}
+		return false;
+	});
+
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();
 	}
 
-	// 射撃のクールダウン
-	if (isShot) {
-		coolTime += 1;
-		if(coolTime == Interval) {
-			coolTime = 0;
-			isShot = false;
-		}
-	}
+}
+
+void Player::Attack() {
 
 }
 
 void Player::Jump() 
 {
-	XINPUT_STATE joyState;
-	// ゲームパッド未接続なら何もせずに抜ける
-	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B && !isJump_) {
-			isJump_ = true;
-			fallTime_ = 0;
-			jumpVelocity_.y = jumpPower_;
-		}
-	}
 
-	if (isJump_) {
-		this->fallTime_ += 1;
-		worldTransform_.translation_.y += jumpVelocity_.y + (-9.8f * (fallTime_) / 60.0f);
-	}
-
-	if (worldTransform_.translation_.y < 1.2f) {
-		isJump_ = false;
-		worldTransform_.translation_.y = 1.0f;
-	}
 }

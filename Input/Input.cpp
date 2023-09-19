@@ -335,9 +335,17 @@ void Input::Update()
 
 	}
 
+	POINT mousePosition;
+	// マウス座標
+	GetCursorPos(&mousePosition);
+
+	// ウィンドウ座標に変換
+	ScreenToClient(hwnd_, &mousePosition);
+	mousePosition_.x = static_cast<float>(mousePosition.x);
+	mousePosition_.y = static_cast<float>(mousePosition.y);
 }
 
-bool Input::TrigerKey(BYTE keyNumber) const
+bool Input::TriggerKey(BYTE keyNumber) const
 {
     if (key_[keyNumber] && !preKey_[keyNumber]) {
         return true;
@@ -447,6 +455,34 @@ void Input::SetupJoySticks()
 size_t Input::GetNumberOfJoysticks()
 {
 	return devJoysticks_.size();
+}
+
+bool Input::IsPressMouse(int32_t buttonNumber)
+{
+	return IsPress(mouse_, buttonNumber);
+}
+
+bool Input::IsTriggerMouse(int32_t buttonNumber)
+{
+	// 前回押してなくて、今回押していればトリガー
+	bool currentPush = IsPressMouse(buttonNumber);
+	return currentPush && !IsPress(preMouse_, buttonNumber);
+}
+
+Input::MouseMove Input::GetMouseMove()
+{
+	MouseMove tmp;
+	tmp.lX = mouse_.lX;
+	tmp.lY = mouse_.lY;
+	tmp.lZ = mouse_.lZ;
+
+	return tmp;
+}
+
+const Vector2& Input::GetMousePosition() const
+{
+	// TODO: return ステートメントをここに挿入します
+	return mousePosition_;
 }
 
 BOOL Input::EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) noexcept

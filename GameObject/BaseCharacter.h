@@ -16,16 +16,35 @@ private:
 	int collisionMask_ = 0xffffffff;
 
 protected:
+	/// <summary>
+	/// 半径
+	/// </summary>
 	float radius_ = 0;
+	/// <summary>
+	/// キャラのモデル
+	/// </summary>
 	Model* model_;
+	/// <summary>
+	/// 座標系
+	/// </summary>
 	WorldTransform worldTransform_;
 
 public:	// デフォルト関数
-
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="model"></param>
 	virtual void Initialize(Model* model);
 
+	/// <summary>
+	/// 更新処理
+	/// </summary>
 	virtual void Update();
 
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	/// <param name="viewProjection"></param>
 	virtual void Draw(const ViewProjection& viewProjection);
 
 public:	// コライダー関数

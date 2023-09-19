@@ -99,14 +99,52 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ワールド行列の設定
+	/// </summary>
+	/// <param name="wvp"></param>
 	void SetWorldMatrix(Matrix4x4 wvp) { matWorld_ = wvp; }
 
-private:		
-	static D3D12_SHADER_BYTECODE ShaderByteCode(IDxcBlob* blob);
+public:
 
-	static Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+	/// <summary>
+	/// テクスチャの設定
+	/// </summary>
+	void SetTextureHandle(uint32_t textureHandle);
 
-	D3D12_RESOURCE_DESC SetResourceDesc(size_t size);
+	uint32_t GetTextureHandle() { return textureHandle_; }
+
+	/// <summary>
+	/// 座標の設定
+	/// </summary>
+	/// <param name="position"></param>
+	void SetPosition(const Vector2& position);
+
+	const Vector2& GetPosition() { return position_; }
+
+	/// <summary>
+	/// 角度の設定
+	/// </summary>
+	/// <param name="rotation"></param>
+	void SetRotation(float rotation);
+
+	float GetRotation() { return rotation_; }
+
+	/// <summary>
+	/// アンカーポイントの設定
+	/// </summary>
+	/// <param name="anchorPoint"></param>
+	void SetAnchorPoint(const Vector2& anchorPoint);
+
+	const Vector2 GetAnchorPoint() { return anchorpoint_; }
+
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color"></param>
+	void SetColor(const Vector4& color) { color_ = color; }
+
+	const Vector4 GetColor() { return color_; }
 
 private:
 	void TransferVertices();
@@ -157,6 +195,5 @@ private:	// メンバ関数
 	bool isFlipY_ = false;
 
 	D3D12_RESOURCE_DESC resourceDesc_;
-
 };
 

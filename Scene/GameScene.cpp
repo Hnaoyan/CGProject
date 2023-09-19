@@ -55,7 +55,7 @@ void GameScene::Update() {
 	followCamera_->SetRotate(player_->GetWorldTransform().rotation_);
 	followCamera_->Update();
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	if (input_->TriggerKey(DIK_L)) {
 		if (isDebug_) {
 			isDebug_ = false;
@@ -71,9 +71,9 @@ void GameScene::Update() {
 
 	}
 	else {
-		viewProjection_.matView = followCamera_->GetView().matView;
-		viewProjection_.matProjection = followCamera_->GetView().matProjection;
-		viewProjection_.TransferMatrix();
+		//viewProjection_.matView = followCamera_->GetView().matView;
+		//viewProjection_.matProjection = followCamera_->GetView().matProjection;
+		//viewProjection_.TransferMatrix();
 	}
 
 }
@@ -104,11 +104,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+
 	player_->Draw(viewProjection_);
-
-	enemy_->Draw(viewProjection_);
-
-	//ground_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

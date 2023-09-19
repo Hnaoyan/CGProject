@@ -108,7 +108,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>C:\Users\hazama naoya\Desktop\MyEngine\Scene;C:\Users\hazama naoya\Desktop\MyEngine\2D;C:\Users\hazama naoya\Desktop\MyEngine\3D;C:\Users\hazama naoya\Desktop\MyEngine\Audio;C:\Users\hazama naoya\Desktop\MyEngine\Base;C:\Users\hazama naoya\Desktop\MyEngine\D3D12Lib;C:\Users\hazama naoya\Desktop\MyEngine\Input;C:\Users\hazama naoya\Desktop\MyEngine\Math;C:\Users\hazama naoya\Desktop\MyEngine\externals\imgui;C:\Users\hazama naoya\Desktop\MyEngine\externals\DirectXTex;C:\Users\hazama naoya\Desktop\MyEngine\GameObject;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Enemy;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Ground;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Player;C:\Users\hazama naoya\Desktop\MyEngine\Other;C:\Users\hazama naoya\Desktop\MyEngine\Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Scene;$(ProjectDir)2D;$(ProjectDir)3D;$(ProjectDir)Audio;$(ProjectDir)Base;$(ProjectDir)D3D12Lib;$(ProjectDir)Input;$(ProjectDir)Math;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)GameObject;$(ProjectDir)GameObject\Enemy;$(ProjectDir)GameObject\Ground;$(ProjectDir)GameObject\Player;$(ProjectDir)Other;$(ProjectDir)Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -132,7 +132,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>C:\Users\hazama naoya\Desktop\MyEngine\Scene;C:\Users\hazama naoya\Desktop\MyEngine\2D;C:\Users\hazama naoya\Desktop\MyEngine\3D;C:\Users\hazama naoya\Desktop\MyEngine\Audio;C:\Users\hazama naoya\Desktop\MyEngine\Base;C:\Users\hazama naoya\Desktop\MyEngine\D3D12Lib;C:\Users\hazama naoya\Desktop\MyEngine\Input;C:\Users\hazama naoya\Desktop\MyEngine\Math;C:\Users\hazama naoya\Desktop\MyEngine\externals\imgui;C:\Users\hazama naoya\Desktop\MyEngine\externals\DirectXTex;C:\Users\hazama naoya\Desktop\MyEngine\GameObject;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Enemy;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Ground;C:\Users\hazama naoya\Desktop\MyEngine\GameObject\Player;C:\Users\hazama naoya\Desktop\MyEngine\Other;C:\Users\hazama naoya\Desktop\MyEngine\Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Scene;$(ProjectDir)2D;$(ProjectDir)3D;$(ProjectDir)Audio;$(ProjectDir)Base;$(ProjectDir)D3D12Lib;$(ProjectDir)Input;$(ProjectDir)Math;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)GameObject;$(ProjectDir)GameObject\Enemy;$(ProjectDir)GameObject\Ground;$(ProjectDir)GameObject\Player;$(ProjectDir)Other;$(ProjectDir)Collider;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,6 +163,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Base\WinApp.cpp" />
     <ClCompile Include="Collider\Collider.cpp" />
     <ClCompile Include="D3D12Lib\D3D12Lib.cpp" />
+    <ClCompile Include="DebugCamera.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -174,6 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="GameObject\BaseCharacter.cpp" />
     <ClCompile Include="GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="GameObject\Ground\Ground.cpp" />
+    <ClCompile Include="GameObject\Particle\Particle.cpp" />
     <ClCompile Include="GameObject\Player\Player.cpp" />
     <ClCompile Include="GameObject\Player\PlayerBullet.cpp" />
     <ClCompile Include="Input\Input.cpp" />
@@ -209,6 +211,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Collider\Collider.h" />
     <ClInclude Include="Collider\CollisionConfig.h" />
     <ClInclude Include="D3D12Lib\D3D12Lib.h" />
+    <ClInclude Include="DebugCamera.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -221,6 +224,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="GameObject\BaseCharacter.h" />
     <ClInclude Include="GameObject\Enemy\Enemy.h" />
     <ClInclude Include="GameObject\Ground\Ground.h" />
+    <ClInclude Include="GameObject\Particle\Particle.h" />
     <ClInclude Include="GameObject\Player\Player.h" />
     <ClInclude Include="GameObject\Player\PlayerBullet.h" />
     <ClInclude Include="Input\Input.h" />
