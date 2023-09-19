@@ -201,9 +201,6 @@
     <ClCompile Include="Other\GlobalVariables.cpp">
       <Filter>ソース ファイル\other</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Player\Player.cpp">
-      <Filter>ソース ファイル\charactor</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject\BaseCharacter.cpp">
       <Filter>ソース ファイル\charactor</Filter>
     </ClCompile>
@@ -212,9 +209,6 @@
     </ClCompile>
     <ClCompile Include="GameObject\Player\PlayerBullet.cpp">
       <Filter>ソース ファイル\bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject\Enemy\Enemy.cpp">
-      <Filter>ソース ファイル\charactor</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Ground\Ground.cpp">
       <Filter>ソース ファイル\object</Filter>
@@ -332,9 +326,6 @@
     <ClInclude Include="Math\MatrixMath.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Player\Player.h">
-      <Filter>ヘッダー ファイル\charactor</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject\BaseCharacter.h">
       <Filter>ヘッダー ファイル\charactor</Filter>
     </ClInclude>
@@ -352,9 +343,6 @@
     </ClInclude>
     <ClInclude Include="GameObject\Ground\Ground.h">
       <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject\Enemy\Enemy.h">
-      <Filter>ヘッダー ファイル\charactor</Filter>
     </ClInclude>
     <ClInclude Include="Collider\Collider.h">
       <Filter>ヘッダー ファイル\collider</Filter>

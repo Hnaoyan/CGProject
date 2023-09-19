@@ -8,9 +8,6 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "FollowCamera.h"
-#include "Player.h"
-#include "Ground.h"
-#include "Enemy.h"
 #include <memory>
 #include "BaseScene.h"
 
@@ -58,24 +55,11 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 
 private:	// メンバポインタ
-	// プレイヤー
-	std::unique_ptr<Player> player_;
-	std::unique_ptr<Model> plModel_;
-	std::unique_ptr<Model> plBulletModel_;
-
-	// エネミー
-	std::unique_ptr<Enemy> enemy_;
-	std::unique_ptr<Model> eneModel_;
-
 	// カメラ
 	//std::unique_ptr<DebugCamera> debugCamera_;
 	std::unique_ptr<FollowCamera> followCamera_;
 
 	bool isDebug_ = false;
-
-	// 地面
-	std::unique_ptr<Ground> ground_;
-	std::unique_ptr<Model> groundModel_;
 
 	/// <summary>
 	/// ゲームシーン用
