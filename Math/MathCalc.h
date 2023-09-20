@@ -2,8 +2,7 @@
 #include "StructManager.h"
 #include "Vector3Math.h"
 #include "Vector4Math.h"
-#include "MatrixMath.h"
-#include "Matrix.h"
+#include "MatLib.h"
 
 class MathCalc 
 {

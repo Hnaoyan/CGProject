@@ -5,6 +5,7 @@
 #include <numbers>
 #include <cassert>
 #include "D3D12Lib.h"
+#include "MathCalc.h"
 
 using namespace Microsoft::WRL;
 
@@ -184,7 +185,7 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	assert(SUCCEEDED(result));
 
 	// 射影行列
-	sMatProjection_ = MakeOrthographicMatrix(0.0f, 0.0f, (float)window_width, (float)window_height, 0.0f, 1.0f);
+	sMatProjection_ = MatLib::MakeOrthographicMatrix(0.0f, 0.0f, (float)window_width, (float)window_height, 0.0f, 1.0f);
 
 }
 
@@ -193,7 +194,7 @@ Sprite::Sprite(uint32_t textureHandle, Vector2 position, Vector2 size, Vector4 c
 	position_ = position;
 	size_ = size;
 	anchorpoint_ = anchorpoint;
-	matWorld_ = MakeIdentity4x4();
+	matWorld_ = MatLib::MakeIdentity4x4();
 	color_ = color;
 	textureHandle_ = textureHandle;
 	isFlipX_ = isFlipX;
@@ -308,13 +309,13 @@ void Sprite::TransferVertices()
 
 void Sprite::Draw() {
 	// ワールド行列の更新
-	matWorld_ = MakeIdentity4x4();
-	matWorld_ = Multiply(matWorld_, MakeRotateZMatrix(rotation_));
-	matWorld_ = Multiply(matWorld_, MakeTranslateMatrix(Vector3(position_.x, position_.y, 0)));
+	matWorld_ = MatLib::MakeIdentity4x4();
+	matWorld_ = MatLib::Multiply(matWorld_, MatLib::MakeRotateZMatrix(rotation_));
+	matWorld_ = MatLib::Multiply(matWorld_, MatLib::MakeTranslateMatrix(Vector3(position_.x, position_.y, 0)));
 	
 	// 定数バッファにデータ転送
 	constData_->color = color_;
-	constData_->mat = Multiply(matWorld_, sMatProjection_);
+	constData_->mat = MatLib::Multiply(matWorld_, sMatProjection_);
 
 	// 頂点バッファの設定
 	sCommandList_->IASetVertexBuffers(0, 1, &vbView_);

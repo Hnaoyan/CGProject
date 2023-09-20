@@ -2,7 +2,6 @@
 #include "D3D12Lib.h"
 #include "DirectXCommon.h"
 #include <cassert>
-#include "Matrix.h"
 #include "MathCalc.h"
 #include "Vector3Math.h"
 
@@ -36,9 +35,9 @@ void ViewProjection::Map()
 
 void ViewProjection::UpdateMatrix()
 {
-	Matrix4x4 matCamera = MakeAffineMatrix(scale_, rotation_, translate_);
-	matView = MakeInverse(matCamera);
-	matProjection = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+	Matrix4x4 matCamera = MatLib::MakeAffineMatrix(scale_, rotation_, translate_);
+	matView = MatLib::MakeInverse(matCamera);
+	matProjection = MatLib::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
 	TransferMatrix();
 }
 
@@ -47,7 +46,7 @@ void ViewProjection::TransferMatrix()
 	constMap->view = matView;
 	constMap->projection = matProjection;
 
-	Matrix4x4 matTranslate = MakeTranslateMatrix(translate_);
+	Matrix4x4 matTranslate = MatLib::MakeTranslateMatrix(translate_);
 
 	constMap->cameraPos.x = matTranslate.m[3][0];
 	constMap->cameraPos.y = matTranslate.m[3][1];

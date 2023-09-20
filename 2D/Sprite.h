@@ -1,7 +1,6 @@
 #pragma once
 #include <wrl.h>
 #include "WinApp.h"
-#include "Matrix.h"
 #include "StructManager.h"
 
 #include <dxgidebug.h>

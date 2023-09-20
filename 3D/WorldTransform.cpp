@@ -2,8 +2,7 @@
 #include "D3D12Lib.h"
 #include "DirectXCommon.h"
 #include <cassert>
-#include "Matrix.h"
-#include "MatrixMath.h"
+#include "MathCalc.h"
 
 void WorldTransform::Initialize()
 {
@@ -41,7 +40,7 @@ void WorldTransform::TransferMatrix()
 
 void WorldTransform::UpdateMatrix() {
 	this->matWorld_ =
-		MatrixMath::MakeAffineMatrix(this->scale_, this->rotation_, this->translation_);
+		MatLib::MakeAffineMatrix(this->scale_, this->rotation_, this->translation_);
 
 	// 定数バッファに転送
 	TransferMatrix();

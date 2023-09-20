@@ -22,7 +22,7 @@ void DebugCamera::Update()
 		Vector2 d = { mouseMove.lX / 100.0f,mouseMove.lY / 100.0f };
 
 		Vector3 move = { -d.x,+d.y,0 };
-		move = MatrixMath::Transform(move, matRot);
+		move = MatLib::Transform(move, matRot);
 
 		viewProjection_.translate_.x += move.x;
 		viewProjection_.translate_.y += move.y;
@@ -43,9 +43,9 @@ void DebugCamera::Update()
 
 	if (dirty) {
 		// 回転行列の生成
-		Matrix4x4 matRotNew = MatrixMath::MakeIdentity4x4();
-		matRotNew = MatrixMath::Multiply(matRotNew, MatrixMath::MakeRotateXMatrix(-angle.x));
-		matRotNew = MatrixMath::Multiply(matRotNew, MatrixMath::MakeRotateYMatrix(-angle.y));
+		Matrix4x4 matRotNew = MatLib::MakeIdentity4x4();
+		matRotNew = MatLib::Multiply(matRotNew, MatLib::MakeRotateXMatrix(-angle.x));
+		matRotNew = MatLib::Multiply(matRotNew, MatLib::MakeRotateYMatrix(-angle.y));
 
 		MultiplyMatrix(matRotNew);
 	}
@@ -56,6 +56,6 @@ void DebugCamera::Update()
 
 void DebugCamera::MultiplyMatrix(const Matrix4x4& matrix)
 {
-	matRot = MatrixMath::Multiply(matrix, matRot);
+	matRot = MatLib::Multiply(matrix, matRot);
 
 }

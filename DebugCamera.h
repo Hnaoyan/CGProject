@@ -24,7 +24,7 @@ private:
 	Vector2 scale_ = { 1.0f,1.0f };
 
 	// 回転行列
-	Matrix4x4 matRot = MatrixMath::MakeIdentity4x4();
+	Matrix4x4 matRot = MatLib::MakeIdentity4x4();
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
 

@@ -1,6 +1,6 @@
 #include "FollowCamera.h"
 #include "Vector3Math.h"
-#include "MatrixMath.h"
+#include "MathCalc.h"
 #include <Input.h>
 
 void FollowCamera::Initialize() {
@@ -49,12 +49,12 @@ void FollowCamera::Update() {
 			}
 		}
 
-		Matrix4x4 rotateMatrix = MatrixMath::Multiply(
-		    MatrixMath::MakeRotateXMatrix(viewProjection_.rotation_.x),
-		    MatrixMath::Multiply(
-		        MatrixMath::MakeRotateYMatrix(viewProjection_.rotation_.y),
-		        MatrixMath::MakeRotateZMatrix(viewProjection_.rotation_.z)));
-		offset = MatrixMath::Transform(offset, rotateMatrix);
+		Matrix4x4 rotateMatrix = MatLib::Multiply(
+		    MatLib::MakeRotateXMatrix(viewProjection_.rotation_.x),
+		    MatLib::Multiply(
+		        MatLib::MakeRotateYMatrix(viewProjection_.rotation_.y),
+		        MatLib::MakeRotateZMatrix(viewProjection_.rotation_.z)));
+		offset = MatLib::Transform(offset, rotateMatrix);
 
 		// 座標をコピーしてオフセット文ずらす
 		viewProjection_.translate_ = Vector3Math::Add(target_->translation_, offset);

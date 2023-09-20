@@ -22,10 +22,19 @@ void GameScene::Initialize() {
 	baseCamera_ = std::make_unique<BaseCamera>();
 	baseCamera_->Initialize();
 
+	baseWorld_.Initialize();
+	baseWorld_.translation_ = { 0,0,0 };
+
+	model_.reset(Model::Create());
+
+	tex_ = TextureManager::Load("white1x1.png");
+
 }
 
 void GameScene::Update()
 {
+
+	baseWorld_.UpdateMatrix();
 
 	/// 当たり判定（仮
 	CheckAllCollision();
@@ -62,6 +71,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	model_->Draw(baseWorld_, viewProjection_, tex_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

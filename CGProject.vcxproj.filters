@@ -183,9 +183,6 @@
     <ClCompile Include="Math\MathCalc.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="Math\Matrix.cpp">
-      <Filter>ソース ファイル\math</Filter>
-    </ClCompile>
     <ClCompile Include="Math\Vector3Math.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
@@ -198,7 +195,7 @@
     <ClCompile Include="Scene\BaseScene.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
-    <ClCompile Include="Math\MatrixMath.cpp">
+    <ClCompile Include="Math\MatLib.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
     <ClCompile Include="Other\FollowCamera.cpp">
@@ -317,9 +314,6 @@
     <ClInclude Include="Math\MathCalc.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="Math\Matrix.h">
-      <Filter>ヘッダー ファイル\math</Filter>
-    </ClInclude>
     <ClInclude Include="Math\Vector3Math.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
@@ -332,7 +326,7 @@
     <ClInclude Include="Scene\SceneManager.h">
       <Filter>ヘッダー ファイル\scene</Filter>
     </ClInclude>
-    <ClInclude Include="Math\MatrixMath.h">
+    <ClInclude Include="Math\MatLib.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\BaseCharacter.h">

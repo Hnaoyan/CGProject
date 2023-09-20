@@ -180,8 +180,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Input\Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\MathCalc.cpp" />
-    <ClCompile Include="Math\Matrix.cpp" />
-    <ClCompile Include="Math\MatrixMath.cpp" />
+    <ClCompile Include="Math\MatLib.cpp" />
     <ClCompile Include="Math\Vector3Math.cpp" />
     <ClCompile Include="Math\Vector4Math.cpp" />
     <ClCompile Include="Other\FollowCamera.cpp" />
@@ -227,8 +226,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="GameObject\Particle\ParticleManager.h" />
     <ClInclude Include="Input\Input.h" />
     <ClInclude Include="Math\MathCalc.h" />
-    <ClInclude Include="Math\Matrix.h" />
-    <ClInclude Include="Math\MatrixMath.h" />
+    <ClInclude Include="Math\MatLib.h" />
     <ClInclude Include="Math\Vector3Math.h" />
     <ClInclude Include="Math\Vector4Math.h" />
     <ClInclude Include="Other\FollowCamera.h" />

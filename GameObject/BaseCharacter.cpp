@@ -1,5 +1,5 @@
-﻿#include "BaseCharacter.h"
-#include "MatrixMath.h"
+#include "BaseCharacter.h"
+#include "MathCalc.h"
 
 void BaseCharacter::Initialize(Model* model) {
 

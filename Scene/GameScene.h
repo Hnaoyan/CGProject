@@ -60,9 +60,17 @@ private: // メンバ変数
 private:	// メンバポインタ
 	// カメラ
 	//std::unique_ptr<DebugCamera> debugCamera_;
+	// フォローカメラ
 	std::unique_ptr<FollowCamera> followCamera_;
-
+	// ベースカメラ
 	std::unique_ptr<BaseCamera> baseCamera_;
+
+	// 仮のオブジェクト
+	std::unique_ptr<Model> model_;
+
+	WorldTransform baseWorld_;
+
+	uint32_t tex_ = 0u;
 
 	bool isDebug_ = false;
 
