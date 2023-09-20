@@ -60,7 +60,7 @@ void FollowCamera::Update() {
 		viewProjection_.translate_ = Vector3Math::Add(target_->translation_, offset);
 	}
 
-	// ビュー行列の更新
+	// ビュー行列の更新・転送
 	viewProjection_.UpdateMatrix();
-	viewProjection_.TransferMatrix();
+	//viewProjection_.TransferMatrix();
 }

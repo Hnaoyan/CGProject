@@ -228,6 +228,9 @@
     <ClCompile Include="GameObject\Particle\Particle.cpp">
       <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
+    <ClCompile Include="Camera\BaseCamera.cpp">
+      <Filter>ソース ファイル\other</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -361,6 +364,9 @@
     </ClInclude>
     <ClInclude Include="GameObject\Particle\Particle.h">
       <Filter>ヘッダー ファイル\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\BaseCamera.h">
+      <Filter>ヘッダー ファイル\other</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

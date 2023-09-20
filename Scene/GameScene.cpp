@@ -19,32 +19,19 @@ void GameScene::Initialize() {
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 
+	baseCamera_ = std::make_unique<BaseCamera>();
+	baseCamera_->Initialize();
+
 }
 
-void GameScene::Update() {
+void GameScene::Update()
+{
 
+	/// 当たり判定（仮
 	CheckAllCollision();
 
-#ifdef _DEBUG
-	if (input_->TriggerKey(DIK_L)) {
-		if (isDebug_) {
-			isDebug_ = false;
-		}
-		else {
-			isDebug_ = true;
-		}
-	}
-#endif // DEBUG
-
-	// デバックカメラか追尾カメラ
-	if (isDebug_) {
-
-	}
-	else {
-		//viewProjection_.matView = followCamera_->GetView().matView;
-		//viewProjection_.matProjection = followCamera_->GetView().matProjection;
-		//viewProjection_.TransferMatrix();
-	}
+	/// カメラ関係の更新処理
+	CameraUpdate();
 
 }
 
@@ -96,5 +83,36 @@ void GameScene::Draw() {
 
 void GameScene::CheckAllCollision()
 {
+
+}
+
+void GameScene::CameraUpdate()
+{
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_L)) {
+		if (isDebug_) {
+			isDebug_ = false;
+		}
+		else {
+			isDebug_ = true;
+		}
+	}
+#endif // DEBUG
+
+	baseCamera_->Update();
+
+	// デバックカメラか追尾カメラ
+	if (isDebug_) {
+
+	}
+	else {
+		//viewProjection_.matView = followCamera_->GetView().matView;
+		//viewProjection_.matProjection = followCamera_->GetView().matProjection;
+		//viewProjection_.TransferMatrix();
+		viewProjection_.matView = baseCamera_->GetView().matView;
+		viewProjection_.matProjection = baseCamera_->GetView().matProjection;
+		viewProjection_.TransferMatrix();
+	}
+
 
 }

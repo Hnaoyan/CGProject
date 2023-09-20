@@ -10,6 +10,7 @@
 #include "FollowCamera.h"
 #include <memory>
 #include "BaseScene.h"
+#include "BaseCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -47,6 +48,8 @@ public:
 
 	void CheckCollisionPair() {};
 
+	void CameraUpdate();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -58,6 +61,8 @@ private:	// メンバポインタ
 	// カメラ
 	//std::unique_ptr<DebugCamera> debugCamera_;
 	std::unique_ptr<FollowCamera> followCamera_;
+
+	std::unique_ptr<BaseCamera> baseCamera_;
 
 	bool isDebug_ = false;
 
