@@ -175,7 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="GameObject\BaseCharacter.cpp" />
     <ClCompile Include="GameObject\Ground\Ground.cpp" />
     <ClCompile Include="GameObject\Particle\Particle.cpp" />
-    <ClCompile Include="GameObject\Player\PlayerBullet.cpp" />
+    <ClCompile Include="GameObject\Particle\ParticleManager.cpp" />
     <ClCompile Include="Input\Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\MathCalc.cpp" />
@@ -222,7 +222,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="GameObject\BaseCharacter.h" />
     <ClInclude Include="GameObject\Ground\Ground.h" />
     <ClInclude Include="GameObject\Particle\Particle.h" />
-    <ClInclude Include="GameObject\Player\PlayerBullet.h" />
+    <ClInclude Include="GameObject\Particle\ParticleManager.h" />
     <ClInclude Include="Input\Input.h" />
     <ClInclude Include="Math\MathCalc.h" />
     <ClInclude Include="Math\Matrix.h" />

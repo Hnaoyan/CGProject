@@ -97,6 +97,12 @@
     <Filter Include="ヘッダー ファイル\collider">
       <UniqueIdentifier>{65f5ebf0-1fba-43a8-bd7f-a03653a6d319}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\particle">
+      <UniqueIdentifier>{6803bd09-3a58-42b8-9f71-3c27fd613e48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\particle">
+      <UniqueIdentifier>{a70169f4-a448-446f-baec-9f9c928d0363}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -207,9 +213,6 @@
     <ClCompile Include="GameObject\BaseBullet.cpp">
       <Filter>ソース ファイル\bullet</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject\Player\PlayerBullet.cpp">
-      <Filter>ソース ファイル\bullet</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject\Ground\Ground.cpp">
       <Filter>ソース ファイル\object</Filter>
     </ClCompile>
@@ -219,8 +222,11 @@
     <ClCompile Include="DebugCamera.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\Particle\ParticleManager.cpp">
+      <Filter>ソース ファイル\particle</Filter>
+    </ClCompile>
     <ClCompile Include="GameObject\Particle\Particle.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -332,9 +338,6 @@
     <ClInclude Include="GameObject\BaseBullet.h">
       <Filter>ヘッダー ファイル\bullet</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject\Player\PlayerBullet.h">
-      <Filter>ヘッダー ファイル\bullet</Filter>
-    </ClInclude>
     <ClInclude Include="Other\FollowCamera.h">
       <Filter>ヘッダー ファイル\other</Filter>
     </ClInclude>
@@ -353,8 +356,11 @@
     <ClInclude Include="DebugCamera.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject\Particle\ParticleManager.h">
+      <Filter>ヘッダー ファイル\particle</Filter>
+    </ClInclude>
     <ClInclude Include="GameObject\Particle\Particle.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
