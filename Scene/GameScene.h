@@ -70,6 +70,10 @@ private:	// メンバポインタ
 
 	WorldTransform baseWorld_;
 
+	uint32_t soundFan_ = 0u;
+
+	uint32_t soundT_ = 0u;
+
 	uint32_t tex_ = 0u;
 
 	bool isDebug_ = false;

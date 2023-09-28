@@ -58,12 +58,12 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	ComPtr<ID3DBlob> errorBlob;			// エラーオブジェクト
 
 	// 頂点シェーダの読み込みとコンパイル
-	vertexShaderBlob = D3D12Lib::GetInstance()->CompileShader(L"resources/shaders/Sprite.VS.hlsl",
+	vertexShaderBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/Sprite.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
 	// ピクセルシェーダの読み込みとコンパイル
-	pixelShaderBlob = D3D12Lib::GetInstance()->CompileShader(L"resources/shaders/Sprite.PS.hlsl",
+	pixelShaderBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/Sprite.PS.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 

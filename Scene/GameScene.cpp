@@ -14,7 +14,6 @@ void GameScene::Initialize() {
 
 	viewProjection_.Initialize();
 
-
 	// 追従カメラ
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
@@ -22,17 +21,28 @@ void GameScene::Initialize() {
 	baseCamera_ = std::make_unique<BaseCamera>();
 	baseCamera_->Initialize();
 
+	baseCamera_->SetPosition({ 0, 10.0f, -25.0f });
+	baseCamera_->SetRotation({ 0.3f, 0, 0 });
+
 	baseWorld_.Initialize();
 	baseWorld_.translation_ = { 0,0,0 };
+	baseWorld_.scale_ = { 1.0f,1.0f,1.0f };
 
 	model_.reset(Model::Create());
 
-	tex_ = TextureManager::Load("white1x1.png");
+
+	soundFan_ = audio_->LoadWave("fanfare.wav");
+
+	//tex_ = TextureManager::Load("white1x1.png");
 
 }
 
 void GameScene::Update()
 {
+
+	if (input_->TriggerKey(DIK_A)) {
+		audio_->PlayWave(soundFan_);
+	}
 
 	baseWorld_.UpdateMatrix();
 
@@ -71,7 +81,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	model_->Draw(baseWorld_, viewProjection_, tex_);
+	model_->Draw(baseWorld_, viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

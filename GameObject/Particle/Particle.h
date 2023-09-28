@@ -7,11 +7,11 @@ class Particle
 {
 public:
 
-	void Initialize();
+	void Initialize(Model* model,uint32_t texture);
 
 	void Update();
 
-	void Draw();
+	void Draw(ViewProjection& viewProjection);
 
 public: // 設定・取得
 	/// <summary>
@@ -24,12 +24,13 @@ public: // 設定・取得
 	/// <param name="count"></param>
 	void SetFadeTimer(int count) { fadeTime_ = count; }
 
-private:
-	std::unique_ptr<Model> model_;
-	uint32_t texture_ = 0u;
+	void SetPosition(Vector3& pos) { worldTransform_.translation_ = pos; }
 
-	Vector2 position_{};
-	Vector2 velocity_{};
+private:
+	Model* model_;
+	WorldTransform worldTransform_;
+
+	uint32_t texture_ = 0u;
 
 	bool isDead_ = false;
 

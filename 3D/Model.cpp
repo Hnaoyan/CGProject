@@ -15,7 +15,7 @@ using namespace Microsoft::WRL;
 /// <summary>
 /// 静的変数の実体化
 /// </summary>
-const std::string Model::kBaseDirectory = "resources/";
+const std::string Model::kBaseDirectory = "Resources/";
 const std::string Model::kDefaultName = "cube";
 UINT Model::sDescriptorHandleIncrementSize_ = 0;
 ID3D12GraphicsCommandList* Model::sCommandList_ = nullptr;
@@ -43,12 +43,12 @@ void Model::InitializeGraphicsPipeline()
 	ComPtr<ID3DBlob> rootSigBlob;
 
 	// 頂点シェーダの読み込みとコンパイル
-	vsBlob = D3D12Lib::GetInstance()->CompileShader(L"resources/shaders/ObjVS.hlsl",
+	vsBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/ObjVS.hlsl",
 			L"vs_6_0");
 	assert(vsBlob != nullptr);
 
 	// ピクセルシェーダの読み込みとコンパイル
-	psBlob = D3D12Lib::GetInstance()->CompileShader(L"resources/shaders/ObjPS.hlsl",
+	psBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/ObjPS.hlsl",
 		L"ps_6_0");
 	assert(psBlob != nullptr);
 

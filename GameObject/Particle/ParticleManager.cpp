@@ -1,7 +1,16 @@
 #include "ParticleManager.h"
+#include "TextureManager.h"
+
+ParticleManager* ParticleManager::GetInstance()
+{
+	static ParticleManager instance;
+	return &instance;
+}
 
 void ParticleManager::Initialize()
 {
+	model_.reset(Model::Create());
+	texture_ = TextureManager::Load("white1x1.png");
 }
 
 void ParticleManager::Update()
@@ -17,10 +26,11 @@ void ParticleManager::Update()
 		}
 		return false;
 	});
-
-
 }
 
-void ParticleManager::Draw()
+void ParticleManager::Draw(ViewProjection& viewProjection)
 {
+	for (Particle* particle : particles_) {
+		particle->Draw(viewProjection);
+	}
 }

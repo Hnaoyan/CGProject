@@ -38,6 +38,7 @@ void ViewProjection::UpdateMatrix()
 	Matrix4x4 matCamera = MatLib::MakeAffineMatrix(scale_, rotation_, translate_);
 	matView = MatLib::MakeInverse(matCamera);
 	matProjection = MatLib::MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+	fovAngleY = fov * (float)(std::numbers::pi / 180.0f);
 	TransferMatrix();
 }
 

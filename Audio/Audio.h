@@ -63,7 +63,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(const std::string& directoryPath = "resources/music/");
+	void Initialize(const std::string& directoryPath = "Resources/music/");
 
 	/// <summary>
 	/// wavファイルの読み込み
