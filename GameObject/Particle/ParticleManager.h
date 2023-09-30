@@ -23,6 +23,11 @@ public:
 	void Update();
 
 	/// <summary>
+	/// パーティクルの更新処理
+	/// </summary>
+	void ParticleUpdate();
+
+	/// <summary>
 	/// 描画処理
 	/// </summary>
 	void Draw(ViewProjection& viewProjection);
@@ -34,5 +39,13 @@ private:
 	uint32_t texture_ = 0u;
 
 	std::unique_ptr<Model> model_;
+
+
+public:
+
+	enum Type {
+
+	};
+
 };
 

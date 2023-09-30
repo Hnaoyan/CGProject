@@ -133,6 +133,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalIncludeDirectories>$(ProjectDir)Scene;$(ProjectDir)2D;$(ProjectDir)3D;$(ProjectDir)Audio;$(ProjectDir)Base;$(ProjectDir)D3D12Lib;$(ProjectDir)Input;$(ProjectDir)Math;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)GameObject;$(ProjectDir)GameObject\Enemy;$(ProjectDir)GameObject\Ground;$(ProjectDir)GameObject\Player;$(ProjectDir)Other;$(ProjectDir)Collider;$(ProjectDir)Camera;$(ProjectDir)GameObject\Particle;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

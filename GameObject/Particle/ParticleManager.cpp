@@ -15,6 +15,13 @@ void ParticleManager::Initialize()
 
 void ParticleManager::Update()
 {
+
+	// パーティクルの更新
+	ParticleUpdate();
+}
+
+void ParticleManager::ParticleUpdate()
+{
 	for (Particle* particle : particles_) {
 		particle->Update();
 	}
