@@ -1,27 +1,31 @@
 #pragma once
+#include "Framework.h"
 
-class MyGame
+class MyGame : public Framework
 {
 public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize() override;
 
 	/// <summary>
 	/// 終了
 	/// </summary>
-	void Finalize();
+	void Finalize() override;
 
 	/// <summary>
 	/// 毎フレーム更新
 	/// </summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw() override;
+
+private:
+	SceneManager* sceneManager = nullptr;
 
 };
 

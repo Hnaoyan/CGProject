@@ -1,7 +1,18 @@
 #pragma once
+#include "WinApp.h"
+#include "DirectXCommon.h"
+#include "Audio.h"
+#include "ImGuiManager.h"
+#include "SceneManager.h"
+#include "TextureManager.h"
+#include "Model.h"
+#include "Sprite.h"
+
 class Framework
 {
 public:
+	void Execute();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -35,6 +46,16 @@ public:
 protected:
 
 	bool endRequest_;
+
+protected:
+	/// <summary>
+	/// ポインタ系
+	/// </summary>
+	WinApp* winApp;
+	DirectXCommon* dxCommon;
+	Audio* audio;
+	Input* input;
+	ImGuiManager* imguiManager = nullptr;
 
 };
 
