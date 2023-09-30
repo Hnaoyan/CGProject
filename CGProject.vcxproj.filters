@@ -228,6 +228,9 @@
     <ClCompile Include="Camera\BaseCamera.cpp">
       <Filter>ソース ファイル\other</Filter>
     </ClCompile>
+    <ClCompile Include="MyGame.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -361,6 +364,9 @@
     </ClInclude>
     <ClInclude Include="Camera\BaseCamera.h">
       <Filter>ヘッダー ファイル\other</Filter>
+    </ClInclude>
+    <ClInclude Include="MyGame.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

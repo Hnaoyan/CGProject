@@ -184,6 +184,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Math\MatLib.cpp" />
     <ClCompile Include="Math\Vector3Math.cpp" />
     <ClCompile Include="Math\Vector4Math.cpp" />
+    <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="Other\FollowCamera.cpp" />
     <ClCompile Include="Other\GlobalVariables.cpp" />
     <ClCompile Include="Scene\BaseScene.cpp" />
@@ -230,6 +231,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Math\MatLib.h" />
     <ClInclude Include="Math\Vector3Math.h" />
     <ClInclude Include="Math\Vector4Math.h" />
+    <ClInclude Include="MyGame.h" />
     <ClInclude Include="Other\FollowCamera.h" />
     <ClInclude Include="Other\GlobalVariables.h" />
     <ClInclude Include="Scene\BaseScene.h" />

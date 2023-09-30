@@ -72,6 +72,8 @@ private:	// メンバポインタ
 
 	WorldTransform baseWorld_;
 
+	WorldTransform worl_[3];
+
 	uint32_t soundFan_ = 0u;
 
 	uint32_t soundT_ = 0u;

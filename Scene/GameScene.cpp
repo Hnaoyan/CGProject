@@ -30,6 +30,10 @@ void GameScene::Initialize() {
 
 	model_.reset(Model::Create());
 
+	for (int i = 0; i < 3; i++) {
+		worl_[i].Initialize();
+		worl_[i].translation_ = { 10.0f * i,0,0 };
+	}
 
 	soundFan_ = audio_->LoadWave("fanfare.wav");
 
@@ -45,6 +49,10 @@ void GameScene::Update()
 	}
 
 	baseWorld_.UpdateMatrix();
+
+	for (int i = 0; i < 3; i++) {
+		worl_[i].UpdateMatrix();
+	}
 
 	/// 当たり判定（仮
 	CheckAllCollision();
