@@ -42,7 +42,6 @@ void Framework::Initialize()
 	audio = Audio::GetInstance();
 	audio->Initialize();
 
-
 	// Imgui
 	imguiManager = ImGuiManager::GetInstance();
 	imguiManager->Initialize(dxCommon, winApp);

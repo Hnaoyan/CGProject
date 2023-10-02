@@ -10,6 +10,8 @@ void MyGame::Initialize()
 
 void MyGame::Finalize()
 {
+	// シーンのDelete
+	SafeDelete(sceneManager);
 	// 基底クラスの終了処理
 	Framework::Finalize();
 }

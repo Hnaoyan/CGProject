@@ -12,6 +12,8 @@ public:
 	virtual void Update(){};
 	virtual void Draw(){};
 
+	virtual ~BaseScene() = default;
+
 	int GetSceneNum() { return sceneNum; }
 
 protected:

@@ -163,6 +163,19 @@ private:	// メンバ関数
 	/// </summary>
 	void CreateFence();
 
+private: // メンバ関数
+	// 記録時間(FPS固定用)
+	std::chrono::steady_clock::time_point reference_;
+
+	/// <summary>
+	/// FPS固定初期化
+	/// </summary>
+	void InitializeFixFPS();
+
+	/// <summary>
+	/// FPS固定更新
+	/// </summary>
+	void UpdateFixFPS();
 
 };
 
