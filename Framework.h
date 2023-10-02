@@ -11,6 +11,9 @@
 class Framework
 {
 public:
+	/// <summary>
+	/// 全体の処理をまとめる関数
+	/// </summary>
 	void Execute();
 
 	/// <summary>
@@ -40,7 +43,9 @@ public:
 	virtual bool IsEndRequest() { return endRequest_; }
 
 public:
-
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	virtual ~Framework() = default;
 
 protected:

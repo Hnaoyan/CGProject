@@ -30,10 +30,10 @@ void GameScene::Initialize() {
 
 	model_.reset(Model::Create());
 
-	for (int i = 0; i < 3; i++) {
-		worl_[i].Initialize();
-		worl_[i].translation_ = { 10.0f * i,0,0 };
-	}
+	//for (int i = 0; i < kTestCount; i++) {
+	//	worl_[i].Initialize();
+	//	worl_[i].translation_ = { 1.0f * i,0,0 };
+	//}
 
 	soundFan_ = audio_->LoadWave("fanfare.wav");
 
@@ -44,15 +44,26 @@ void GameScene::Initialize() {
 void GameScene::Update()
 {
 
-	if (input_->TriggerKey(DIK_A)) {
-		audio_->PlayWave(soundFan_);
+	if (Input::GetInstance()->PressKey(DIK_W)) {
+		baseWorld_.translation_.z += 0.3f;
+	}
+	else if(Input::GetInstance()->PressKey(DIK_S)){
+		baseWorld_.translation_.z -= 0.3f;
+	}
+
+	if (Input::GetInstance()->PressKey(DIK_A)) {
+		baseWorld_.translation_.x -= 0.3f;
+	}
+
+	else if (Input::GetInstance()->PressKey(DIK_D)) {
+		baseWorld_.translation_.x += 0.3f;
 	}
 
 	baseWorld_.UpdateMatrix();
 
-	for (int i = 0; i < 3; i++) {
-		worl_[i].UpdateMatrix();
-	}
+	//for (int i = 0; i < kTestCount; i++) {
+	//	worl_[i].UpdateMatrix();
+	//}
 
 	/// 当たり判定（仮
 	CheckAllCollision();
@@ -90,6 +101,10 @@ void GameScene::Draw() {
 	/// </summary>
 
 	model_->Draw(baseWorld_, viewProjection_);
+
+	//for (int i = 0; i < kTestCount; i++) {
+	//	model_->Draw(worl_[i], viewProjection_);
+	//}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

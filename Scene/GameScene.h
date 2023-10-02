@@ -72,7 +72,9 @@ private:	// メンバポインタ
 
 	WorldTransform baseWorld_;
 
-	WorldTransform worl_[3];
+	const int kTestCount = 300;
+
+	WorldTransform worl_[300];
 
 	uint32_t soundFan_ = 0u;
 

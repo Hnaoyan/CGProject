@@ -53,10 +53,23 @@ public:
 	/// </summary>
 	void ClearDepthBuffer();
 
+public: // 取得・設定
+	/// <summary>
+	/// デバイス取得
+	/// </summary>
+	/// <returns></returns>
 	ID3D12Device* GetDevice() { return device_.Get(); }
 
+	/// <summary>
+	/// コマンドリスト取得
+	/// </summary>
+	/// <returns></returns>
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
 
+	/// <summary>
+	/// バッファーカウントの取得
+	/// </summary>
+	/// <returns></returns>
 	size_t GetBackBufferCount() const { return backBuffer_.size(); }
 
 private:	//メンバ関数
