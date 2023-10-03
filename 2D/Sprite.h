@@ -13,6 +13,14 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
+enum BlendMode {
+	// ブレンドなし
+	kBlendNone,
+	// 通常αブレンド。
+	kBlendNormal,
+	// 加算。
+	kBlendAdd,
+};
 
 class Sprite
 {

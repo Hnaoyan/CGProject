@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "TextureManager.h"
+#include "ImGuiManager.h"
 #include <cassert>
 
 GameScene::GameScene() {}
@@ -28,21 +29,21 @@ void GameScene::Initialize() {
 	baseWorld_.translation_ = { 0,0,0 };
 	baseWorld_.scale_ = { 1.0f,1.0f,1.0f };
 
-	model_.reset(Model::Create());
+	uint32_t texture = TextureManager::Load("uvChecker.png");
+	setColor_ = { 1.0f,1.0f,1.0f,1.0f };
+	sprite_ = Sprite::Create(texture, { 200,200 }, { 1.0f,1.0f,1.0f,1.0f }, { 0,0 }, false, false);
 
-	//for (int i = 0; i < kTestCount; i++) {
-	//	worl_[i].Initialize();
-	//	worl_[i].translation_ = { 1.0f * i,0,0 };
-	//}
-
-	soundFan_ = audio_->LoadWave("fanfare.wav");
-
-	//tex_ = TextureManager::Load("white1x1.png");
-
+	model_.reset(Model::CreateFromObj("player", true));
+	
 }
 
 void GameScene::Update()
 {
+	ImGui::Begin("color");
+	ImGui::ColorEdit4("float", &setColor_.x);
+	ImGui::End();
+	sprite_->SetColor(setColor_);
+
 
 	if (Input::GetInstance()->PressKey(DIK_W)) {
 		baseWorld_.translation_.z += 0.3f;
@@ -60,10 +61,6 @@ void GameScene::Update()
 	}
 
 	baseWorld_.UpdateMatrix();
-
-	//for (int i = 0; i < kTestCount; i++) {
-	//	worl_[i].UpdateMatrix();
-	//}
 
 	/// 当たり判定（仮
 	CheckAllCollision();
@@ -85,6 +82,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
+	sprite_->Draw();
+
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -101,10 +100,6 @@ void GameScene::Draw() {
 	/// </summary>
 
 	model_->Draw(baseWorld_, viewProjection_);
-
-	//for (int i = 0; i < kTestCount; i++) {
-	//	model_->Draw(worl_[i], viewProjection_);
-	//}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

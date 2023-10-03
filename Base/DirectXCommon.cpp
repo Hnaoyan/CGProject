@@ -14,6 +14,7 @@ void DirectXCommon::Initialize(WinApp* winApp, int32_t bufferWidth, int32_t buff
 	backBufferWidth_ = bufferWidth;
 	backBufferHeight_ = bufferHeight;
 
+	// フレーム固定の初期化
 	InitializeFixFPS();
 
 	// DXGIデバイス初期化
@@ -106,6 +107,7 @@ void DirectXCommon::PostDraw() {
 		CloseHandle(fenceEvent);
 	}
 
+	// フレーム固定の処理
 	UpdateFixFPS();
 
 	// 次のフレーム用のコマンドリストを準備

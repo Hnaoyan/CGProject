@@ -72,15 +72,9 @@ private:	// メンバポインタ
 
 	WorldTransform baseWorld_;
 
-	const int kTestCount = 300;
+	Sprite* sprite_;
 
-	WorldTransform worl_[300];
-
-	uint32_t soundFan_ = 0u;
-
-	uint32_t soundT_ = 0u;
-
-	uint32_t tex_ = 0u;
+	Vector4 setColor_;
 
 	bool isDebug_ = false;
 

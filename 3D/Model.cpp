@@ -85,6 +85,16 @@ void Model::InitializeGraphicsPipeline()
 	// レンダーターゲットのブレンド設定
 	D3D12_BLEND_DESC blenddesc{};
 	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blenddesc.RenderTarget[0].BlendEnable = TRUE;
+	/// αBlend
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+
+	// ここは基本変えない
+	blenddesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blenddesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;

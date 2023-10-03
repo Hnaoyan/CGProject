@@ -2,7 +2,7 @@
 
 void DebugCamera::Update()
 {
-	bool dirty = false;
+	bool isChenge = false;
 	Vector2 angle = { 0,0 };
 
 	// マウスの入力を取得
@@ -14,7 +14,7 @@ void DebugCamera::Update()
 
 		angle.x = -d.x * float(std::numbers::pi);
 		angle.y = -d.y * float(std::numbers::pi);
-		dirty = true;
+		isChenge = true;
 	}
 
 	// マウスの中ボタンなら平行移動
@@ -32,16 +32,16 @@ void DebugCamera::Update()
 		viewProjection_.rotation_.y += move.y;
 		viewProjection_.rotation_.z += move.z;
 
-		dirty = true;
+		isChenge = true;
 	}
 
 	if (mouseMove.lZ != 0) {
 		distance_ -= mouseMove.lZ / 100.0f;
 		distance_ = max(distance_, 1.0f);
-		dirty = true;
+		isChenge = true;
 	}
 
-	if (dirty) {
+	if (isChenge) {
 		// 回転行列の生成
 		Matrix4x4 matRotNew = MatLib::MakeIdentity4x4();
 		matRotNew = MatLib::Multiply(matRotNew, MatLib::MakeRotateXMatrix(-angle.x));
