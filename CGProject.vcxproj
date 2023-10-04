@@ -214,7 +214,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Base\WinApp.h" />
     <ClInclude Include="Camera\BaseCamera.h" />
     <ClInclude Include="Collider\Collider.h" />
-    <ClInclude Include="Collider\CollisionConfig.h" />
     <ClInclude Include="Collider\CollisionManager.h" />
     <ClInclude Include="D3D12Lib\D3D12Lib.h" />
     <ClInclude Include="DebugCamera.h" />

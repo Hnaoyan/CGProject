@@ -6,15 +6,11 @@
 #include "WorldTransform.h"
 #include "StructManager.h"
 
+#include "Collider.h"
+
 
 class BaseCharacter 
 {
-private:
-
-	int collisionAttribute_ = 0xffffffff;
-
-	int collisionMask_ = 0xffffffff;
-
 protected:
 	/// <summary>
 	/// 半径
@@ -28,6 +24,8 @@ protected:
 	/// 座標系
 	/// </summary>
 	WorldTransform worldTransform_;
+
+	Collider* collider_;
 
 public:	// デフォルト関数
 	/// <summary>
@@ -67,13 +65,4 @@ public:	// コライダー関数
 
 	const WorldTransform GetWorldTransform() { return worldTransform_; }
 
-public:
-	// 衝突マスク（自分）を取得
-	virtual int GetCollisionAttribute() { return collisionAttribute_; }
-	// 衝突マスク（自分）を設定
-	virtual void SetCollisionAttribute(int attribute) { collisionAttribute_ = attribute; }
-	// 衝突マスク（相手）を取得
-	virtual int GetCollisionMask() { return collisionMask_; }
-	// 衝突マスク（相手）を設定
-	virtual void SetCollisionMask(int mask) { collisionMask_ = mask; }
 };

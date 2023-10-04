@@ -359,9 +359,6 @@
     <ClInclude Include="Collider\Collider.h">
       <Filter>ヘッダー ファイル\collider</Filter>
     </ClInclude>
-    <ClInclude Include="Collider\CollisionConfig.h">
-      <Filter>ヘッダー ファイル\collider</Filter>
-    </ClInclude>
     <ClInclude Include="DebugCamera.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>

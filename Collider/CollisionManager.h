@@ -1,5 +1,6 @@
 #pragma once
 #include "Collider.h"
+#include "StructManager.h"
 
 #include <vector>
 
