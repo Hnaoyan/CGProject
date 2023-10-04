@@ -14,6 +14,10 @@
 
 class Input
 {
+private:
+	// ComPtrのテンプレート
+	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
 public: // インナークラス
 	struct MouseMove {
 		LONG lX;
@@ -34,7 +38,7 @@ public:
 	};
 
 	struct JoyStick {
-		Microsoft::WRL::ComPtr<IDirectInputDevice8> device_;
+		ComPtr<IDirectInputDevice8> device_;
 		int32_t deadZoneL_;
 		int32_t deadZoneR_;
 		PadType type_;
@@ -133,9 +137,9 @@ private:
 
 private:
 
-	Microsoft::WRL::ComPtr<IDirectInput8> directInput_;
-	Microsoft::WRL::ComPtr<IDirectInputDevice8> dKeyBoard_;
-	Microsoft::WRL::ComPtr<IDirectInputDevice8> dMouse_;
+	ComPtr<IDirectInput8> directInput_;
+	ComPtr<IDirectInputDevice8> dKeyBoard_;
+	ComPtr<IDirectInputDevice8> dMouse_;
 	
 	std::vector<JoyStick> devJoysticks_;
 	std::array<BYTE, 256> key_;
