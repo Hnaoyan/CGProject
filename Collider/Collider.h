@@ -1,2 +1,8 @@
 #pragma once
-class Collider {};
+
+class Collider 
+{
+public:
+	void OnCollision();
+
+};

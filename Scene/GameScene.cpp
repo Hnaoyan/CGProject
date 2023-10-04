@@ -5,7 +5,9 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene()
+{
+}
 
 void GameScene::Initialize() {
 
@@ -14,6 +16,9 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	viewProjection_.Initialize();
+
+	// 衝突マネージャー
+	colliderManager_ = std::make_unique<CollisionManager>();
 
 	// 追従カメラ
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -116,6 +121,11 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::ColliderSetting()
+{
+	
 }
 
 void GameScene::CheckAllCollision()

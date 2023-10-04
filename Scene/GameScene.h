@@ -8,6 +8,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
+#include "CollisionManager.h"
 #include "FollowCamera.h"
 #include "BaseScene.h"
 #include "BaseCamera.h"
@@ -46,6 +47,8 @@ public: // メンバ関数
 	void Draw() override;
 
 public:
+	void ColliderSetting();
+
 	void CheckAllCollision();
 
 	void CheckCollisionPair() {};
@@ -58,6 +61,9 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 
 	ViewProjection viewProjection_;
+
+private:
+	std::unique_ptr<CollisionManager> colliderManager_;
 
 private:	// メンバポインタ
 	// カメラ
