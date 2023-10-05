@@ -27,11 +27,11 @@ void Mesh::CalculateSmoothedVertexNormals()
 		std::vector<unsigned short>& v = itr->second;
 		Vector4 normal = {};
 		for (unsigned short index : v) {
-			normal = Vector4Math::Add(normal,
+			normal = VectorLib::Add(normal,
 				Vector4(vertices_[index].normal.x, vertices_[index].normal.y, vertices_[index].normal.z, 0));
 		}
 		Vector3 normalize = { normal.x,normal.y,normal.z };
-		normalize = MathCalc::Normalize(Vector3Math::Scaler(normalize, 1.0f / (float)v.size()));
+		normalize = MathCalc::Normalize(VectorLib::Scaler(normalize, 1.0f / (float)v.size()));
 		normal = Vector4(normalize.x, normalize.y, normalize.z, normal.w);
 
 		for (unsigned short index : v) {

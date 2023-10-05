@@ -3,7 +3,6 @@
 #include "DirectXCommon.h"
 #include <cassert>
 #include "MathCalc.h"
-#include "Vector3Math.h"
 
 void ViewProjection::Initialize()
 {

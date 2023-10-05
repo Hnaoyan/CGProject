@@ -1,7 +1,6 @@
 #pragma once
 #include "StructManager.h"
-#include "Vector3Math.h"
-#include "Vector4Math.h"
+#include "VectorLib.h"
 #include "MatLib.h"
 
 class MathCalc 

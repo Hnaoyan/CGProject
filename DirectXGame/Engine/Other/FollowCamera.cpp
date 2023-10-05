@@ -1,5 +1,4 @@
 #include "FollowCamera.h"
-#include "Vector3Math.h"
 #include "MathCalc.h"
 #include <Input.h>
 
@@ -57,7 +56,7 @@ void FollowCamera::Update() {
 		offset = MatLib::Transform(offset, rotateMatrix);
 
 		// 座標をコピーしてオフセット文ずらす
-		viewProjection_.translate_ = Vector3Math::Add(target_->translation_, offset);
+		viewProjection_.translate_ = VectorLib::Add(target_->translation_, offset);
 	}
 
 	// ビュー行列の更新・転送
