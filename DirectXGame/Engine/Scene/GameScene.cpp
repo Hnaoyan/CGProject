@@ -29,16 +29,18 @@ void GameScene::Initialize() {
 
 	baseCamera_->SetPosition({ 0, 10.0f, -25.0f });
 	baseCamera_->SetRotation({ 0.3f, 0, 0 });
-
-	baseWorld_.Initialize();
-	baseWorld_.translation_ = { 0,0,0 };
-	baseWorld_.scale_ = { 1.0f,1.0f,1.0f };
-
 	uint32_t texture = TextureManager::Load("uvChecker.png");
 	setColor_ = { 1.0f,1.0f,1.0f,1.0f };
 	sprite_ = Sprite::Create(texture, { 200,200 }, { 1.0f,1.0f,1.0f,1.0f }, { 0,0 }, false, false);
 
 	model_.reset(Model::CreateFromObj("player", true));
+	
+	skydomeModel_.reset(Model::CreateFromObj("skydome", true));
+	skydome_ = std::make_unique<SkyDome>();
+	skydome_->Initialize(skydomeModel_.get());
+
+	player_ = std::make_unique<Player>();
+	player_->Initialize(model_.get());
 	
 }
 
@@ -49,26 +51,13 @@ void GameScene::Update()
 	ImGui::End();
 	sprite_->SetColor(setColor_);
 
+	
+	skydome_->Update();
 
-	if (Input::GetInstance()->PressKey(DIK_W)) {
-		baseWorld_.translation_.z += 0.3f;
-	}
-	else if(Input::GetInstance()->PressKey(DIK_S)){
-		baseWorld_.translation_.z -= 0.3f;
-	}
-
-	if (Input::GetInstance()->PressKey(DIK_A)) {
-		baseWorld_.translation_.x -= 0.3f;
-	}
-
-	else if (Input::GetInstance()->PressKey(DIK_D)) {
-		baseWorld_.translation_.x += 0.3f;
-	}
-
-	baseWorld_.UpdateMatrix();
+	player_->Update();
 
 	/// 当たり判定（仮
-	CheckAllCollision();
+	colliderManager_->CheckAllCollisions();
 
 	/// カメラ関係の更新処理
 	CameraUpdate();
@@ -103,7 +92,9 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	model_->Draw(baseWorld_, viewProjection_);
+	player_->Draw(viewProjection_);
+
+	skydome_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -123,15 +114,6 @@ void GameScene::Draw() {
 #pragma endregion
 }
 
-void GameScene::ColliderSetting()
-{
-	
-}
-
-void GameScene::CheckAllCollision()
-{
-
-}
 
 void GameScene::CameraUpdate()
 {

@@ -25,7 +25,7 @@ protected:
 	/// </summary>
 	WorldTransform worldTransform_;
 
-	Collider* collider_;
+	std::unique_ptr<Collider> collider_;
 
 public:	// デフォルト関数
 	/// <summary>
@@ -45,24 +45,8 @@ public:	// デフォルト関数
 	/// <param name="viewProjection"></param>
 	virtual void Draw(const ViewProjection& viewProjection);
 
-public:	// コライダー関数
-	/// <summary>
-	/// 衝突判定の半径
-	/// </summary>
-	/// <returns></returns>
-	virtual float GetRadius() { return radius_; }
+private:
 
-	/// <summary>
-	/// 衝突判定の半径設定
-	/// </summary>
-	/// <param name="radius"></param>
-	virtual void SetRadius(float radius) { radius_ = radius; }
-
-	/// <summary>
-	/// 衝突時の処理
-	/// </summary>
-	virtual void OnCollision();
-
-	const WorldTransform GetWorldTransform() { return worldTransform_; }
+	void ColliderSetting();
 
 };

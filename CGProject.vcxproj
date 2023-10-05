@@ -108,7 +108,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)DirectXGame\Engine\GameObject;$(ProjectDir)DirectXGame\Engine\GameObject\Enemy;$(ProjectDir)DirectXGame\Engine\GameObject\Ground;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine\GameObject\Particle;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\;$(ProjectDir)DirectXGame\Application\GameObject;$(ProjectDir)DirectXGame\Application\GameObject\Enemy;$(ProjectDir)DirectXGame\Application\GameObject\Ground;$(ProjectDir)DirectXGame\Application\GameObject\Particle;$(ProjectDir)DirectXGame\Application\GameObject\SkyDome;$(ProjectDir)DirectXGame\Application\GameObject\Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,6 +148,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\SpriteCommon.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\CircleShadow.cpp" />
@@ -192,8 +193,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Scene\BaseScene.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\GameScene.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\SceneManager.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h" />
     <ClInclude Include="DirectXGame\Engine\2D\Sprite.h" />
     <ClInclude Include="DirectXGame\Engine\2D\SpriteCommon.h" />
     <ClInclude Include="DirectXGame\Engine\3D\CircleShadow.h" />
@@ -240,6 +243,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Scene\BaseScene.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\GameScene.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SceneManager.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

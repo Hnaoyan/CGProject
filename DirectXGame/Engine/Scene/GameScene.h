@@ -13,6 +13,11 @@
 #include "BaseScene.h"
 #include "BaseCamera.h"
 
+#include "Player.h"
+
+#include "Ground.h"
+#include "SkyDome.h"
+
 #include <memory>
 
 /// <summary>
@@ -46,13 +51,10 @@ public: // メンバ関数
 	/// </summary>
 	void Draw() override;
 
-public:
-	void ColliderSetting();
-
-	void CheckAllCollision();
-
-	void CheckCollisionPair() {};
-
+private:
+	/// <summary>
+	/// カメラ系の更新処理
+	/// </summary>
 	void CameraUpdate();
 
 private: // メンバ変数
@@ -75,8 +77,12 @@ private:	// メンバポインタ
 
 	// 仮のオブジェクト
 	std::unique_ptr<Model> model_;
+	std::unique_ptr<Model> skydomeModel_;
 
-	WorldTransform baseWorld_;
+	// 天球
+	std::unique_ptr<SkyDome> skydome_;
+
+	std::unique_ptr<Player> player_;
 
 	Sprite* sprite_;
 

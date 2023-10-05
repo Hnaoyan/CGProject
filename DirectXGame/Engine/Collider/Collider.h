@@ -1,4 +1,5 @@
 #pragma once
+#include "StructManager.h"
 #include <cstdint>
 
 // プレイヤーの識別番号
@@ -17,13 +18,16 @@ private:
 	// 衝突マスク（自分）
 	int collisionMark_ = 0xffffffff;
 
+	Vector3 position_ = {};
+
 public:
 	// 半径取得
 	float GetterRad() { return radius_; }
 	void SetterRad(float radius) { radius_ = radius; }
 	// 衝突時に呼ばれる関数
-	virtual void OnCollision() {};
-	//virtual Vector3 GetWorldPosition() = 0;
+	//virtual void OnCollision() {};
+	Vector3 GetWorldPosition() { return position_; }
+	void SetPosition(Vector3& pos);
 
 public:	// 取得・設定
 	virtual void SetCollisionAttribute(int attribute) { collisionAttribute_ = attribute; }

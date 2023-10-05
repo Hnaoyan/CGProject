@@ -5,6 +5,9 @@ void BaseCharacter::Initialize(Model* model) {
 
 	model_ = model;
 	worldTransform_.Initialize();
+	collider_ = std::make_unique<Collider>();
+	// コライダーの設定
+	ColliderSetting();
 }
 
 void BaseCharacter::Update() 
@@ -19,4 +22,9 @@ void BaseCharacter::Draw(const ViewProjection& viewProjection)
 
 }
 
-void BaseCharacter::OnCollision() {}
+void BaseCharacter::ColliderSetting()
+{
+	// サイズ設定
+	collider_->SetterRad(radius_);
+
+}
