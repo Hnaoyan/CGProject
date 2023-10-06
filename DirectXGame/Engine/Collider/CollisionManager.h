@@ -6,7 +6,7 @@
 
 class CollisionManager
 {
-private:
+public:
 	// リスト
 	std::list<Collider*> colliders_;
 
@@ -16,6 +16,10 @@ public:
 	/// </summary>
 	void CheckAllCollisions();
 
+	/// <summary>
+	/// リストをリセットする関数（毎フレームやれ
+	/// </summary>
+	void Reset();
 private:
 	/// <summary>
 	/// ペアの衝突確認（円同士）

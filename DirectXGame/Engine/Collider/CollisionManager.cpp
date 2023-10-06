@@ -19,6 +19,12 @@ void CollisionManager::CheckAllCollisions()
 	}
 }
 
+void CollisionManager::Reset()
+{
+	// リストの掃除
+	colliders_.clear();
+}
+
 void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
 	Vector3 pointA = colliderA->GetWorldPosition();
 	Vector3 pointB = colliderB->GetWorldPosition();

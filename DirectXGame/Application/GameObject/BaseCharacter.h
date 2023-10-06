@@ -25,6 +25,7 @@ protected:
 	/// </summary>
 	WorldTransform worldTransform_;
 
+public:
 	std::unique_ptr<Collider> collider_;
 
 public:	// デフォルト関数
