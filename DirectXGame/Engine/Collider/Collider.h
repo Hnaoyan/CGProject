@@ -25,9 +25,9 @@ public:
 	float GetterRad() { return radius_; }
 	void SetterRad(float radius) { radius_ = radius; }
 	// 衝突時に呼ばれる関数
-	//virtual void OnCollision() {};
-	Vector3 GetWorldPosition() { return position_; }
-	void SetPosition(Vector3& pos);
+	virtual void OnCollision() {};
+	virtual Vector3 GetWorldPosition() { return position_; }
+	virtual void SetPosition(Vector3& pos);
 
 public:	// 取得・設定
 	virtual void SetCollisionAttribute(int attribute) { collisionAttribute_ = attribute; }

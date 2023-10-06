@@ -18,3 +18,13 @@ void Player::Draw(const ViewProjection& viewProjection)
 	BaseCharacter::Draw(viewProjection);
 
 }
+
+void Player::OnCollision()
+{
+
+}
+
+Vector3 Player::GetWorldPosition()
+{
+	return Vector3();
+}

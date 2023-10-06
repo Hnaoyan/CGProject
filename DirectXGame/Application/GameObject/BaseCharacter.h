@@ -9,7 +9,7 @@
 #include "Collider.h"
 
 
-class BaseCharacter 
+class BaseCharacter : public Collider
 {
 protected:
 	/// <summary>
