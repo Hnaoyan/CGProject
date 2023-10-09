@@ -14,7 +14,7 @@ struct WorldTransform
 	Vector3 rotation_ = { 0,0,0 };
 	Vector3 translation_ = { 0,0,0 };
 	Matrix4x4 matWorld_;
-	WorldTransform* parent_ = nullptr;
+	const WorldTransform* parent_ = nullptr;
 
 	void Initialize();
 

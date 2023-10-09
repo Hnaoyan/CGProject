@@ -441,8 +441,6 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 				indexCountTex++;
 				faceIndexCount++;
 			}
-
-
 		}
 	}
 

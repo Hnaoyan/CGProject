@@ -27,7 +27,13 @@ public: // Vector3
 	/// <param name="v2"></param>
 	/// <returns></returns>
 	static Vector3 Subtract(const Vector3& v1, const Vector3& v2);
-
+	/// <summary>
+	/// 乗算
+	/// </summary>
+	/// <param name="scaler"></param>
+	/// <param name="v"></param>
+	/// <returns></returns>
+	static Vector3 Multiply(float scaler, const Vector3& v);
 	/// <summary>
 	/// スカラー倍
 	/// </summary>

@@ -33,6 +33,17 @@ Vector3 VectorLib::Subtract(const Vector3& v1, const Vector3& v2) {
 	return result;
 }
 
+Vector3 VectorLib::Multiply(float scaler, const Vector3& v)
+{
+	Vector3 result;
+
+	result.x = scaler * v.x;
+	result.y = scaler * v.y;
+	result.z = scaler * v.z;
+
+	return result;
+}
+
 Vector3 VectorLib::Scaler(const Vector3& v1, const float scaler) {
 	Vector3 result;
 	result.x = v1.x * scaler;

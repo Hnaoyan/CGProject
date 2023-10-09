@@ -1,12 +1,19 @@
 #pragma once
 #include "StructManager.h"
 #include <cstdint>
+#include <functional>
 
 // プレイヤーの識別番号
 const uint32_t kCollisionAttributePlayer = 0b1;
 
 // 敵の識別番号
 const uint32_t kCollisionAttributeEnemy = 0b1 << 1;
+
+// 地面
+const uint32_t kCollisionAttributeGround = 0b1 << 2;
+
+// ゴール
+const uint32_t kCollisionAttributeGoal = 0b1 << 3;
 
 class Collider 
 {
@@ -17,22 +24,29 @@ private:
 	int collisionAttribute_ = 0xffffffff;
 	// 衝突マスク（自分）
 	int collisionMark_ = 0xffffffff;
-
+	// 座標
 	Vector3 position_ = {};
 
-public:
-	// 半径取得
-	float GetterRad() { return radius_; }
-	void SetterRad(float radius) { radius_ = radius; }
-	// 衝突時に呼ばれる関数
-	virtual void OnCollision() {};
-	virtual Vector3 GetWorldPosition() { return position_; }
-	virtual void SetPosition(Vector3& pos);
+	// コールバック関数
+	std::function<void(uint32_t, Vector3*)> function_;
 
 public:	// 取得・設定
-	virtual void SetCollisionAttribute(int attribute) { collisionAttribute_ = attribute; }
-	virtual void SetCollisionMask(int mask) { collisionMark_ = mask; }
+	void SetCollisionAttribute(int attribute) { collisionAttribute_ = attribute; }
+	void SetCollisionMask(int mask) { collisionMark_ = mask; }
 
-	virtual int GetAttribute() { return collisionAttribute_; }
-	virtual int GetMask() { return collisionMark_; }
+	int GetAttribute() { return collisionAttribute_; }
+	int GetMask() { return collisionMark_; }
+
+	float GetterRad() { return radius_; }
+	Vector3 GetPosition() { return position_; }
+	void SetterRad(float radius) { radius_ = radius; }
+	void SetPosition(Vector3& pos);
+	/// <summary>
+	/// コールバック設定
+	/// </summary>
+	/// <param name="function">関数</param>
+	void SetFunction(std::function<void(uint32_t, Vector3*)> function) { function_ = function; }
+	
+	void OnCollision(uint32_t tag, Vector3* position);
+
 };

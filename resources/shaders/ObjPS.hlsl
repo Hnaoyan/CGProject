@@ -32,5 +32,5 @@ float4 main(VSOutput input) : SV_TARGET
     }
 	
 	
-        return shadecolor * texcolor;
+    return shadecolor * texcolor;
 }

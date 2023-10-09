@@ -29,35 +29,48 @@ void GameScene::Initialize() {
 
 	baseCamera_->SetPosition({ 0, 10.0f, -25.0f });
 	baseCamera_->SetRotation({ 0.3f, 0, 0 });
-	uint32_t texture = TextureManager::Load("uvChecker.png");
-	setColor_ = { 1.0f,1.0f,1.0f,1.0f };
-	sprite_ = Sprite::Create(texture, { 200,200 }, { 1.0f,1.0f,1.0f,1.0f }, { 0,0 }, false, false);
 
-	model_.reset(Model::CreateFromObj("player", true));
-	
 	skydomeModel_.reset(Model::CreateFromObj("skydome", true));
 	skydome_ = std::make_unique<SkyDome>();
 	skydome_->Initialize(skydomeModel_.get());
 
+	model_.reset(Model::Create());
 	player_ = std::make_unique<Player>();
 	player_->Initialize(model_.get());
-	
+	followCamera_->SetTarget(player_->GetWorldTransform());
+
+	modelBody_.reset(Model::CreateFromObj("C_Body", true));
+	modelL_arm_.reset(Model::CreateFromObj("C_Left", true));
+	modelR_arm_.reset(Model::CreateFromObj("C_Right", true));
+
+	std::vector<Model*> models =
+	{ modelBody_.get(),modelL_arm_.get(),modelR_arm_.get() };
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(model_.get());
+	enemy_->SetModel(models);
+
+	goalModel_.reset(Model::Create());
+	goal_ = std::make_unique<Goal>();
+	goal_->Initialize(goalModel_.get());
+
 }
 
 void GameScene::Update()
 {
-	ImGui::Begin("color");
-	ImGui::ColorEdit4("float", &setColor_.x);
-	ImGui::End();
-	sprite_->SetColor(setColor_);
 
-	
+	if (player_->GetIsDead()) {
+		player_->DeadToRestart(Vector3(0,0,0));
+	}
+
 	skydome_->Update();
+	goal_->Update();
 
 	player_->Update();
 
-	/// 当たり判定（仮
-	colliderManager_->CheckAllCollisions();
+	enemy_->Update();
+
+	CheckCollision();
 
 	/// カメラ関係の更新処理
 	CameraUpdate();
@@ -93,7 +106,9 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 
+	goal_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
@@ -129,19 +144,30 @@ void GameScene::CameraUpdate()
 #endif // DEBUG
 
 	baseCamera_->Update();
+	followCamera_->Update();
 
 	// デバックカメラか追尾カメラ
 	if (isDebug_) {
 
 	}
 	else {
-		//viewProjection_.matView = followCamera_->GetView().matView;
-		//viewProjection_.matProjection = followCamera_->GetView().matProjection;
+		//viewProjection_.matView = baseCamera_->GetView().matView;
+		//viewProjection_.matProjection = baseCamera_->GetView().matProjection;
 		//viewProjection_.TransferMatrix();
-		viewProjection_.matView = baseCamera_->GetView().matView;
-		viewProjection_.matProjection = baseCamera_->GetView().matProjection;
+		viewProjection_.matView = followCamera_->GetView().matView;
+		viewProjection_.matProjection = followCamera_->GetView().matProjection;
 		viewProjection_.TransferMatrix();
 	}
+}
 
+void GameScene::CheckCollision()
+{
+	colliderManager_->ResetList();
 
+	colliderManager_->AddList(player_->GetCollider());
+	colliderManager_->AddList(enemy_->GetCollider());
+	//colliderManager_->colliders_.push_back(goal_);
+
+	/// 当たり判定（仮
+	colliderManager_->CheckAllCollisions();
 }

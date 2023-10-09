@@ -1,21 +1,48 @@
 #pragma once
 #include "WorldTransform.h"
 #include "Model.h"
+#include "Collider.h"
 
-class Ground 
+#include <memory>
+
+class Ground
 {
 public:
 
-	void Initialize(Model* model);
+	virtual void Initialize(Model* model);
 
-	void Update();
+	virtual void Update();
 
-	void Draw(const ViewProjection& viewProjection);
+	virtual void Draw(const ViewProjection& viewProjection);
 
-private:
+	void SetPosition(const Vector3& pos);
+
+protected:
 	
 	WorldTransform worldTransform_;
 
 	Model* model_ = nullptr;
 
+	Collider collider_;
+
+};
+
+class MoveGround : public Ground 
+{
+public:
+	void Initialize(Model* model) override;
+
+	void Update() override;
+
+	void Draw(const ViewProjection& viewProjection) override;
+};
+
+class NormalGround : public Ground 
+{
+public:
+	void Initialize(Model* model) override;
+
+	void Update() override;
+
+	void Draw(const ViewProjection& viewProjection) override;
 };

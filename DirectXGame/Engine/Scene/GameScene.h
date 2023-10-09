@@ -14,8 +14,10 @@
 #include "BaseCamera.h"
 
 #include "Player.h"
+#include "Enemy.h"
+#include "Goal.h"
 
-#include "Ground.h"
+#include "GroundManager.h"
 #include "SkyDome.h"
 
 #include <memory>
@@ -57,6 +59,8 @@ private:
 	/// </summary>
 	void CameraUpdate();
 
+	void CheckCollision();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -66,6 +70,7 @@ private: // メンバ変数
 
 private:
 	std::unique_ptr<CollisionManager> colliderManager_;
+
 
 private:	// メンバポインタ
 	// カメラ
@@ -78,15 +83,17 @@ private:	// メンバポインタ
 	// 仮のオブジェクト
 	std::unique_ptr<Model> model_;
 	std::unique_ptr<Model> skydomeModel_;
-
+	std::unique_ptr<Model> goalModel_;
+	// パーツモデル
+	std::unique_ptr<Model> modelBody_;
+	std::unique_ptr<Model> modelR_arm_;
+	std::unique_ptr<Model> modelL_arm_;
 	// 天球
 	std::unique_ptr<SkyDome> skydome_;
 
 	std::unique_ptr<Player> player_;
-
-	Sprite* sprite_;
-
-	Vector4 setColor_;
+	std::unique_ptr<Enemy> enemy_;
+	std::unique_ptr<Goal> goal_;
 
 	bool isDebug_ = false;
 
