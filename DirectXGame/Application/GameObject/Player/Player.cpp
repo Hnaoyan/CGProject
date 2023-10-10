@@ -15,7 +15,7 @@ void Player::Initialize(Model* model)
 	collider_.SetCollisionAttribute(kCollisionAttributePlayer);
 	collider_.SetCollisionMask(0xffffffff - kCollisionAttributePlayer);
 	isDead_ = false;
-	isLand_ = true;
+	isLand_ = false;
 	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Player::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
 	collider_.SetFunction(f);
 }
@@ -28,25 +28,25 @@ void Player::Update()
 	ImGui::Text("%d", isDead_);
 	ImGui::End();
 	velocity_ = {};
-	isDead_ = false;
-
-	// 移動入力などの処理
-	Move();
-
+	//isDead_ = false;
+	// 基底クラスの処理
 	if (isLand_) {
 		Jump();
 	}
-	else {
-		Fall();
-	}
-	if (worldTransform_.translation_.y < 0) {
-		worldTransform_.translation_.y = 0;
-		isLand_ = true;
-		isJump_ = false;
-	}
 
-	// 基底クラスの処理
 	BaseCharacter::Update();
+	// 移動入力などの処理
+	Move();
+
+	Fall();
+
+	//else {
+	//}
+	if (worldTransform_.translation_.y < -5.0f) {
+		isDead_ = true;
+	}
+	
+	//isLand_ = false;
 
 }
 
@@ -133,16 +133,24 @@ void Player::Fall()
 	velocity_.y += (-0.1f);
 
 	worldTransform_.translation_.y += velocity_.y;
+
+	/*if (worldTransform_.translation_.y <= 0) {
+		worldTransform_.translation_.y = radius_;
+		velocity_.y = 0;
+		isLand_ = true;
+		isJump_ = false;
+	}*/
+
 }
 
 void Player::OnCollision(uint32_t tag, WorldTransform* world)
 {
 	if (tag == kCollisionAttributeEnemy || tag == kCollisionAttributeGoal) {
-		DeadToRestart(Vector3(0, 2.0f, 0));
+		DeadToRestart(Vector3(0, 1.0f, 0));
 	}
 	if (tag == kCollisionAttributeGround) {
 		Vector3 pos = { world->matWorld_.m[3][0],world->matWorld_.m[3][1],world->matWorld_.m[3][2] };
-		worldTransform_.translation_.y += pos.y + radius_;
+		worldTransform_.translation_.y = pos.y + radius_;
 		velocity_.y = 0;
 		isLand_ = true;
 		isJump_ = false;

@@ -6,7 +6,7 @@ void Enemy::Initialize(Model* model)
 	model;
 	radius_ = 1.0f;
 	//BaseCharacter::Initialize(model);
-	collider_.SetterRad(radius_);
+	collider_.SetterRad(Vector3(radius_, radius_, radius_));
 	worldTransform_.Initialize();
 	worldTransform_.translation_.z = 20.0f;
 	collider_.SetCollisionAttribute(kCollisionAttributeEnemy);

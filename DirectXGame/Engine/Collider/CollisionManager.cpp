@@ -47,21 +47,11 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 	}
 
 	AABB other1;
-	other1 = {
-		{colliderA->GetPosition().x - colliderA->GetterRad(),
-		colliderA->GetPosition().y - colliderA->GetterRad(),
-		colliderA->GetPosition().z - colliderA->GetterRad()},
-		{colliderA->GetPosition().x + colliderA->GetterRad(),
-		colliderA->GetPosition().y + colliderA->GetterRad(),
-		colliderA->GetPosition().z + colliderA->GetterRad()} };
+	other1.min = VectorLib::Subtract(colliderA->GetPosition(), colliderA->GetterRad());
+	other1.max = VectorLib::Add(colliderA->GetPosition(), colliderA->GetterRad());
 	AABB other2;
-	other2 = {
-		{colliderB->GetPosition().x - colliderB->GetterRad(),
-		colliderB->GetPosition().y - colliderB->GetterRad(),
-		colliderB->GetPosition().z - colliderB->GetterRad()},
-		{colliderB->GetPosition().x + colliderB->GetterRad(),
-		colliderB->GetPosition().y + colliderB->GetterRad(),
-		colliderB->GetPosition().z + colliderB->GetterRad()} };
+	other2.min = VectorLib::Subtract(colliderB->GetPosition(), colliderB->GetterRad());
+	other2.max = VectorLib::Add(colliderB->GetPosition(), colliderB->GetterRad());
 	// コールバック
 	if (IsAABBCollision(other1, other2)) {
 		colliderA->OnCollision(colliderB->GetAttribute(), colliderB->GetWorldAddress());

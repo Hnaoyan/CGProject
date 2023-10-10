@@ -25,6 +25,6 @@ void BaseCharacter::Draw(const ViewProjection& viewProjection)
 void BaseCharacter::ColliderSetting()
 {
 	// サイズ設定
-	collider_.SetterRad(radius_);
+	collider_.SetterRad(Vector3(radius_, radius_, radius_));
 	collider_.SetWorldAddress(&worldTransform_);
 }

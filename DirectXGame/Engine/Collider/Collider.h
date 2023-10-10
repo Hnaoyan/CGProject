@@ -16,13 +16,15 @@ const uint32_t kCollisionAttributeGround = 0b1 << 2;
 // ゴール
 const uint32_t kCollisionAttributeGoal = 0b1 << 3;
 
+const uint32_t kCollisionAttributeMoveGround = 0b1 << 4;
+
 class Collider 
 {
 private:
 	// 半径
-	float radius_;
+	//float radius_;
 
-	//Vector3 radius_;
+	Vector3 radius_;
 
 	// 衝突属性（自分）
 	int collisionAttribute_ = 0xffffffff;
@@ -43,8 +45,8 @@ public:	// 取得・設定
 	int GetAttribute() { return collisionAttribute_; }
 	int GetMask() { return collisionMark_; }
 
-	float GetterRad() { return radius_; }
-	void SetterRad(float radius) { radius_ = radius; }
+	Vector3 GetterRad() { return radius_; }
+	void SetterRad(const Vector3& radius) { radius_ = radius; }
 
 	Vector3 GetPosition() { return position_; }
 	void SetPosition(Vector3& pos);

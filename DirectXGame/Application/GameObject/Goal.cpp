@@ -6,7 +6,7 @@ void Goal::Initialize(Model* model)
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = { 0.0f,0.0f,50.0f };
 	radius_ = 1.0f;
-	SetterRad(radius_);
+	SetterRad(Vector3(radius_, radius_, radius_));
 	SetPosition(worldTransform_.translation_);
 	SetCollisionAttribute(kCollisionAttributeGoal);
 	SetWorldAddress(&worldTransform_);

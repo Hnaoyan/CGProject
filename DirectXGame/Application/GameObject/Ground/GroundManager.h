@@ -1,6 +1,7 @@
 #pragma once
 #include "Ground.h"
 #include "ViewProjection.h"
+#include "CollisionManager.h"
 
 #include <list>
 #include <memory>
@@ -17,6 +18,8 @@ private:
 
 	std::unique_ptr<Model> groundModel_;
 
+	CollisionManager* manager_;
+
 public:
 	static GroundManager* GetInstance();
 
@@ -28,8 +31,10 @@ public:
 
 	void AddList();
 
-	void AddGround(const Vector3& pos, const int type);
+	void AddGround(const Vector3& pos, const Vector3& rad, const int type);
 	
+	void SetManager(CollisionManager* manager) { manager_ = manager; }
+
 	/// <summary>
 	/// リストの取得
 	/// </summary>

@@ -42,6 +42,7 @@ void GameScene::Initialize() {
 	modelBody_.reset(Model::CreateFromObj("C_Body", true));
 	modelL_arm_.reset(Model::CreateFromObj("C_Left", true));
 	modelR_arm_.reset(Model::CreateFromObj("C_Right", true));
+	//groundModel_.reset(Model::CreateFromObj("Ground", true));
 
 	std::vector<Model*> models =
 	{ modelBody_.get(),modelL_arm_.get(),modelR_arm_.get() };
@@ -54,15 +55,26 @@ void GameScene::Initialize() {
 	goal_ = std::make_unique<Goal>();
 	goal_->Initialize(goalModel_.get());
 
+	groundManager_ = std::make_unique<GroundManager>();
+	groundManager_->Initialize();
+	groundManager_->SetManager(colliderManager_.get());
+
+	groundManager_->AddGround(Vector3(0, -0.2f, 0.0f), Vector3(5.0f, 0.2f, 5.0f), kCollisionAttributeGround);
+	groundManager_->AddGround(Vector3(0, -0.2f, 20.0f), Vector3(5.0f, 0.2f, 5.0f), kCollisionAttributeGround);
+	groundManager_->AddGround(Vector3(0, -0.2f, -10.0f), Vector3(5.0f, 0.2f, 5.0f),kCollisionAttributeGround);
+
 }
 
 void GameScene::Update()
 {
 
 	if (player_->GetIsDead()) {
-		player_->DeadToRestart(Vector3(0,0,0));
+		player_->DeadToRestart(Vector3(0,1.0f,0));
 	}
 
+	CheckCollision();
+
+	groundManager_->Update();
 	skydome_->Update();
 	goal_->Update();
 
@@ -70,7 +82,6 @@ void GameScene::Update()
 
 	enemy_->Update();
 
-	CheckCollision();
 
 	/// カメラ関係の更新処理
 	CameraUpdate();
@@ -105,11 +116,13 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	
 	player_->Draw(viewProjection_);
 	enemy_->Draw(viewProjection_);
 
 	goal_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
+	groundManager_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -167,6 +180,8 @@ void GameScene::CheckCollision()
 	colliderManager_->AddList(player_->GetCollider());
 	colliderManager_->AddList(enemy_->GetCollider());
 	colliderManager_->AddList(goal_.get());
+
+	groundManager_->AddList();
 
 	/// 当たり判定（仮
 	colliderManager_->CheckAllCollisions();

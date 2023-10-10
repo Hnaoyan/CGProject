@@ -84,16 +84,17 @@ private:	// メンバポインタ
 	std::unique_ptr<Model> model_;
 	std::unique_ptr<Model> skydomeModel_;
 	std::unique_ptr<Model> goalModel_;
+	std::unique_ptr<Model> groundModel_;
 	// パーツモデル
 	std::unique_ptr<Model> modelBody_;
 	std::unique_ptr<Model> modelR_arm_;
 	std::unique_ptr<Model> modelL_arm_;
-	// 天球
+	// オブジェクト
 	std::unique_ptr<SkyDome> skydome_;
-
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Enemy> enemy_;
 	std::unique_ptr<Goal> goal_;
+	std::unique_ptr<GroundManager> groundManager_;
 
 	bool isDebug_ = false;
 

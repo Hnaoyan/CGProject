@@ -5,12 +5,16 @@ void Ground::Initialize(Model* model)
 { 
 	model_ = model;
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {0, 0, 0};
-	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
-	SetPosition(worldTransform_.translation_);
+	collider_.SetWorldAddress(&worldTransform_);
+	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Ground::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
+	collider_.SetFunction(f);
 }
 
-void Ground::Update() { worldTransform_.UpdateMatrix(); }
+void Ground::Update() 
+{
+	collider_.SetPosition(worldTransform_.translation_);
+	worldTransform_.UpdateMatrix();
+}
 
 void Ground::Draw(const ViewProjection& viewProjection) 
 {
@@ -22,33 +26,9 @@ void Ground::SetPosition(const Vector3& pos)
 	worldTransform_.translation_ = pos;
 }
 
-void MoveGround::Initialize(Model* model)
+void Ground::OnCollision(uint32_t tag, WorldTransform* world)
 {
-	Ground::Initialize(model);
+	tag;
+	world;
 }
 
-void MoveGround::Update()
-{
-	//worldTransform_.translation_.x
-	Ground::Update();
-}
-
-void MoveGround::Draw(const ViewProjection& viewProjection)
-{
-	Ground::Draw(viewProjection);
-}
-
-void NormalGround::Initialize(Model* model)
-{
-	Ground::Initialize(model);
-}
-
-void NormalGround::Update()
-{
-	Ground::Update();
-}
-
-void NormalGround::Draw(const ViewProjection& viewProjection)
-{
-	Ground::Draw(viewProjection);
-}

@@ -9,7 +9,7 @@ GroundManager* GroundManager::GetInstance()
 
 void GroundManager::Initialize()
 {
-	groundModel_.reset(Model::CreateFromObj("ground", true));
+	groundModel_.reset(Model::CreateFromObj("Ground", true));
 }
 
 void GroundManager::Update()
@@ -28,16 +28,20 @@ void GroundManager::Draw(const ViewProjection& view)
 
 void GroundManager::AddList()
 {
-	//for (Ground* ground : grounds_) {
-
-	//}
+	for (Ground* ground : grounds_) {
+		manager_->AddList(ground->GetCollider());
+	}
 }
 
-void GroundManager::AddGround(const Vector3& pos, const int type)
+void GroundManager::AddGround(const Vector3& pos, const Vector3& rad, const int type)
 {
 	Ground* newGround = new Ground();
 	newGround->Initialize(groundModel_.get());
 	newGround->SetPosition(pos);
-	type;
+	newGround->GetCollider()->SetterRad(rad);
+	if (type == kCollisionAttributeGround) {
+		newGround->GetCollider()->SetCollisionAttribute(type);
+
+	}
 	grounds_.push_back(newGround);
 }
