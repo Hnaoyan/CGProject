@@ -166,7 +166,7 @@ void GameScene::CheckCollision()
 
 	colliderManager_->AddList(player_->GetCollider());
 	colliderManager_->AddList(enemy_->GetCollider());
-	//colliderManager_->colliders_.push_back(goal_);
+	colliderManager_->AddList(goal_.get());
 
 	/// 当たり判定（仮
 	colliderManager_->CheckAllCollisions();

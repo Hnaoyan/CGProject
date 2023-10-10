@@ -11,6 +11,9 @@ void Enemy::Initialize(Model* model)
 	worldTransform_.translation_.z = 20.0f;
 	collider_.SetCollisionAttribute(kCollisionAttributeEnemy);
 	collider_.SetCollisionMask(0xffffffff - kCollisionAttributeEnemy);
+	collider_.SetWorldAddress(&worldTransform_);
+	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Enemy::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
+	collider_.SetFunction(f);
 }
 
 void Enemy::Update()
@@ -49,8 +52,10 @@ void Enemy::SetModel(const std::vector<Model*>& models)
 	InitializeFloating();
 }
 
-void Enemy::OnCollision()
+void Enemy::OnCollision(uint32_t tag, WorldTransform* world)
 {
+	tag;
+	world;
 }
 
 Vector3 Enemy::GetWorldPosition()

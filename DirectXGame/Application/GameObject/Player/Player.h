@@ -28,7 +28,7 @@ public:
 	/// <summary>
 	/// 衝突コールバック
 	/// </summary>
-	void OnCollision();
+	void OnCollision(uint32_t tag, WorldTransform* world);
 
 	/// <summary>
 	/// ブロックと衝突時
@@ -73,7 +73,6 @@ private:
 	/// </summary>
 	void Fall();
 
-	void OnCollision(uint32_t tag, Vector3* position);
 
 private: // システム系
 
@@ -81,7 +80,7 @@ private: // システム系
 
 	bool isJump_ = false;
 
-	bool isLanding_ = false;
+	bool isLand_ = false;
 
 	bool isLerp_ = false;
 	

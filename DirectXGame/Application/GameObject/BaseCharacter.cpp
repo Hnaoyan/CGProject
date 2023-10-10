@@ -11,8 +11,8 @@ void BaseCharacter::Initialize(Model* model) {
 
 void BaseCharacter::Update() 
 {
-	collider_.SetPosition(worldTransform_.translation_);
-
+	Vector3 pos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };
+	collider_.SetPosition(pos);
 	worldTransform_.UpdateMatrix();
 }
 
@@ -26,5 +26,5 @@ void BaseCharacter::ColliderSetting()
 {
 	// サイズ設定
 	collider_.SetterRad(radius_);
-
+	collider_.SetWorldAddress(&worldTransform_);
 }

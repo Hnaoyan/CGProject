@@ -1,5 +1,6 @@
 #pragma once
 #include "StructManager.h"
+#include "WorldTransform.h"
 #include <cstdint>
 #include <functional>
 
@@ -20,6 +21,9 @@ class Collider
 private:
 	// 半径
 	float radius_;
+
+	//Vector3 radius_;
+
 	// 衝突属性（自分）
 	int collisionAttribute_ = 0xffffffff;
 	// 衝突マスク（自分）
@@ -28,7 +32,9 @@ private:
 	Vector3 position_ = {};
 
 	// コールバック関数
-	std::function<void(uint32_t, Vector3*)> function_;
+	std::function<void(uint32_t, WorldTransform*)> function_;
+
+	WorldTransform* worldTransform_;
 
 public:	// 取得・設定
 	void SetCollisionAttribute(int attribute) { collisionAttribute_ = attribute; }
@@ -38,15 +44,26 @@ public:	// 取得・設定
 	int GetMask() { return collisionMark_; }
 
 	float GetterRad() { return radius_; }
-	Vector3 GetPosition() { return position_; }
 	void SetterRad(float radius) { radius_ = radius; }
+
+	Vector3 GetPosition() { return position_; }
 	void SetPosition(Vector3& pos);
+
+	// ワールドトランスフォーム
+	WorldTransform* GetWorldAddress() { return worldTransform_; }
+	void SetWorldAddress(WorldTransform* worldTransform) { worldTransform_ = worldTransform; }
+
 	/// <summary>
 	/// コールバック設定
 	/// </summary>
 	/// <param name="function">関数</param>
-	void SetFunction(std::function<void(uint32_t, Vector3*)> function) { function_ = function; }
+	void SetFunction(std::function<void(uint32_t, WorldTransform*)> function) { function_ = function; }
 	
-	void OnCollision(uint32_t tag, Vector3* position);
+	/// <summary>
+	/// コールバックを呼び出す関数
+	/// </summary>
+	/// <param name="tag"></param>
+	/// <param name="position"></param>
+	void OnCollision(uint32_t tag, WorldTransform* world);
 
 };

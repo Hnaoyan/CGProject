@@ -32,7 +32,9 @@ protected:
 	/// 速さ
 	/// </summary>
 	Vector3 velocity_;
-
+	/// <summary>
+	/// コライダー
+	/// </summary>
 	Collider collider_;
 
 public:	// デフォルト関数
@@ -53,6 +55,10 @@ public:	// デフォルト関数
 	/// <param name="viewProjection"></param>
 	virtual void Draw(const ViewProjection& viewProjection);
 
+	/// <summary>
+	/// 死亡フラグの取得
+	/// </summary>
+	/// <returns></returns>
 	bool GetIsDead() { return isDead_; }
 
 	/// <summary>

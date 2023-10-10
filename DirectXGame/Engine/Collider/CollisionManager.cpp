@@ -46,68 +46,26 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		return;
 	}
 
-	if (colliderA->GetAttribute() == kCollisionAttributeGround) {
-		AABB ground;
-		ground = { {colliderA->GetPosition().x - colliderA->GetterRad(),0,
-			colliderA->GetPosition().z - colliderA->GetterRad()},
-			{colliderA->GetPosition().x + colliderA->GetterRad(),0,
-			colliderA->GetPosition().z + colliderA->GetterRad()} };
-		AABB other;
-		other = {
-			{colliderB->GetPosition().x - colliderB->GetterRad(),
-			colliderB->GetPosition().y - colliderB->GetterRad() / 2,
-			colliderB->GetPosition().z - colliderB->GetterRad()},
-			{colliderB->GetPosition().x + colliderB->GetterRad(),
-			colliderB->GetPosition().y + colliderB->GetterRad() / 2,
-			colliderB->GetPosition().z + colliderB->GetterRad()} };
-		// コールバック
-		if (IsAABBCollision(ground, other)) {
-			//colliderB->OnCollisionObject();
-		}
-	}
-	else if (colliderB->GetAttribute() == kCollisionAttributeGround) {
-		AABB other;
-		other = {
-			{colliderA->GetPosition().x - colliderA->GetterRad(),
-			colliderA->GetPosition().y - colliderA->GetterRad()/2,
-			colliderA->GetPosition().z - colliderA->GetterRad()},
-			{colliderA->GetPosition().x + colliderA->GetterRad(),
-			colliderA->GetPosition().y + colliderA->GetterRad() / 2,
-			colliderA->GetPosition().z + colliderA->GetterRad()} };
-
-		AABB ground;
-		ground = { {colliderB->GetPosition().x - colliderB->GetterRad(),0,
-			colliderB->GetPosition().z - colliderB->GetterRad()},
-			{colliderB->GetPosition().x + colliderB->GetterRad(),0,
-			colliderB->GetPosition().z + colliderB->GetterRad()} };
-		// コールバック
-		if (IsAABBCollision(ground, other)) {
-			//colliderA->OnCollisionObject();
-		}
-	}
-	else {
-		AABB other1;
-		other1 = {
-			{colliderA->GetPosition().x - colliderA->GetterRad(),
-			colliderA->GetPosition().y - colliderA->GetterRad(),
-			colliderA->GetPosition().z - colliderA->GetterRad()},
-			{colliderA->GetPosition().x + colliderA->GetterRad(),
-			colliderA->GetPosition().y + colliderA->GetterRad(),
-			colliderA->GetPosition().z + colliderA->GetterRad()} };
-		AABB other2;
-		other2 = {
-			{colliderB->GetPosition().x - colliderB->GetterRad(),
-			colliderB->GetPosition().y - colliderB->GetterRad(),
-			colliderB->GetPosition().z - colliderB->GetterRad()},
-			{colliderB->GetPosition().x + colliderB->GetterRad(),
-			colliderB->GetPosition().y + colliderB->GetterRad(),
-			colliderB->GetPosition().z + colliderB->GetterRad()} };
-		// コールバック
-		if (IsAABBCollision(other1, other2)) {
-			//colliderA->GetPosition();
-			//colliderB->GetPosition();
-		}
-
+	AABB other1;
+	other1 = {
+		{colliderA->GetPosition().x - colliderA->GetterRad(),
+		colliderA->GetPosition().y - colliderA->GetterRad(),
+		colliderA->GetPosition().z - colliderA->GetterRad()},
+		{colliderA->GetPosition().x + colliderA->GetterRad(),
+		colliderA->GetPosition().y + colliderA->GetterRad(),
+		colliderA->GetPosition().z + colliderA->GetterRad()} };
+	AABB other2;
+	other2 = {
+		{colliderB->GetPosition().x - colliderB->GetterRad(),
+		colliderB->GetPosition().y - colliderB->GetterRad(),
+		colliderB->GetPosition().z - colliderB->GetterRad()},
+		{colliderB->GetPosition().x + colliderB->GetterRad(),
+		colliderB->GetPosition().y + colliderB->GetterRad(),
+		colliderB->GetPosition().z + colliderB->GetterRad()} };
+	// コールバック
+	if (IsAABBCollision(other1, other2)) {
+		colliderA->OnCollision(colliderB->GetAttribute(), colliderB->GetWorldAddress());
+		colliderB->OnCollision(colliderA->GetAttribute(), colliderA->GetWorldAddress());
 	}
 }
 

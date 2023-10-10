@@ -38,5 +38,9 @@ public:	// デフォルト関数
 	/// <param name="viewProjection"></param>
 	void Draw(const ViewProjection& viewProjection);
 
+	/// <summary>
+	/// 衝突コールバック
+	/// </summary>
+	void OnCollision(uint32_t tag, WorldTransform* world);
 };
 
