@@ -16,6 +16,8 @@ public:
 	virtual void Draw(const ViewProjection& viewProjection);
 
 	void SetPosition(const Vector3& pos);
+
+	void SetScale(const Vector3& scale);
 	/// <summary>
 	/// WorldTransformの取得
 	/// </summary>

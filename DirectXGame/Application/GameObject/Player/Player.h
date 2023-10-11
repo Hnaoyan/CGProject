@@ -84,6 +84,8 @@ private: // システム系
 
 	bool isLerp_ = false;
 	
+	float jumpPower_ = 0.75f;
+
 	float lerp_t_ = 0;
 };
 

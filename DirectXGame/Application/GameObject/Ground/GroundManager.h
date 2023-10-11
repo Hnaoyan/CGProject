@@ -29,9 +29,9 @@ public:
 
 	void Draw(const ViewProjection& view);
 
-	void AddList();
+	void AddGround(const Vector3& pos, const Vector3& rad, const Vector3& scale);
 
-	void AddGround(const Vector3& pos, const Vector3& rad, const int type);
+	void AddMoveGround(const Vector3& pos, const Vector3& rad, const Vector3& scale);
 	
 	void SetManager(CollisionManager* manager) { manager_ = manager; }
 

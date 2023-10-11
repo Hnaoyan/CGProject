@@ -52,6 +52,7 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 	AABB other2;
 	other2.min = VectorLib::Subtract(colliderB->GetPosition(), colliderB->GetterRad());
 	other2.max = VectorLib::Add(colliderB->GetPosition(), colliderB->GetterRad());
+
 	// コールバック
 	if (IsAABBCollision(other1, other2)) {
 		colliderA->OnCollision(colliderB->GetAttribute(), colliderB->GetWorldAddress());

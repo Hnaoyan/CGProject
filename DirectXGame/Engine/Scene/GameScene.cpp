@@ -42,7 +42,6 @@ void GameScene::Initialize() {
 	modelBody_.reset(Model::CreateFromObj("C_Body", true));
 	modelL_arm_.reset(Model::CreateFromObj("C_Left", true));
 	modelR_arm_.reset(Model::CreateFromObj("C_Right", true));
-	//groundModel_.reset(Model::CreateFromObj("Ground", true));
 
 	std::vector<Model*> models =
 	{ modelBody_.get(),modelL_arm_.get(),modelR_arm_.get() };
@@ -59,9 +58,12 @@ void GameScene::Initialize() {
 	groundManager_->Initialize();
 	groundManager_->SetManager(colliderManager_.get());
 
-	groundManager_->AddGround(Vector3(0, -0.2f, 0.0f), Vector3(5.0f, 0.2f, 5.0f), kCollisionAttributeGround);
-	groundManager_->AddGround(Vector3(0, -0.2f, 20.0f), Vector3(5.0f, 0.2f, 5.0f), kCollisionAttributeGround);
-	groundManager_->AddGround(Vector3(0, -0.2f, -10.0f), Vector3(5.0f, 0.2f, 5.0f),kCollisionAttributeGround);
+	Vector3 groundRad = { 10.0f,0.2f,10.0f };
+
+	groundManager_->AddGround(Vector3(0, -0.2f, 0.0f), groundRad, Vector3(2.0f,1.0f,2.0f));
+	groundManager_->AddGround(Vector3(0, -0.2f, 40.0f), groundRad,Vector3(2.0f,1.0f,2.0f));
+	groundManager_->AddMoveGround(Vector3(0, -0.4f, 20.0f),
+		Vector3(5.0f, groundRad.y, 5.0f), Vector3(1.0f, 1.0f, 1.0f));
 
 }
 
@@ -72,7 +74,6 @@ void GameScene::Update()
 		player_->DeadToRestart(Vector3(0,1.0f,0));
 	}
 
-	CheckCollision();
 
 	groundManager_->Update();
 	skydome_->Update();
@@ -81,6 +82,7 @@ void GameScene::Update()
 	player_->Update();
 
 	enemy_->Update();
+	CheckCollision();
 
 
 	/// カメラ関係の更新処理
@@ -181,7 +183,9 @@ void GameScene::CheckCollision()
 	colliderManager_->AddList(enemy_->GetCollider());
 	colliderManager_->AddList(goal_.get());
 
-	groundManager_->AddList();
+	for (Ground* ground : groundManager_->GetList()) {
+		colliderManager_->AddList(ground->GetCollider());
+	}
 
 	/// 当たり判定（仮
 	colliderManager_->CheckAllCollisions();
