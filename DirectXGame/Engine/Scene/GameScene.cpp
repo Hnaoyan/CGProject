@@ -30,9 +30,9 @@ void GameScene::Initialize() {
 	baseCamera_->SetPosition({ 0, 10.0f, -25.0f });
 	baseCamera_->SetRotation({ 0.3f, 0, 0 });
 
-	skydomeModel_.reset(Model::CreateFromObj("skydome", true));
-	skydome_ = std::make_unique<SkyDome>();
-	skydome_->Initialize(skydomeModel_.get());
+	//skydomeModel_.reset(Model::CreateFromObj("skydome", true));
+	//skydome_ = std::make_unique<SkyDome>();
+	//skydome_->Initialize(skydomeModel_.get());
 
 	model_.reset(Model::Create());
 	player_ = std::make_unique<Player>();
@@ -76,7 +76,7 @@ void GameScene::Update()
 
 
 	groundManager_->Update();
-	skydome_->Update();
+	//skydome_->Update();
 	goal_->Update();
 
 	player_->Update();
@@ -123,7 +123,7 @@ void GameScene::Draw() {
 	enemy_->Draw(viewProjection_);
 
 	goal_->Draw(viewProjection_);
-	skydome_->Draw(viewProjection_);
+	//skydome_->Draw(viewProjection_);
 	groundManager_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
