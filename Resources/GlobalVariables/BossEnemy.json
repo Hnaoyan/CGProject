@@ -1,0 +1,15 @@
+{
+    "BossEnemy": {
+        "kColliderSize_": [
+            20.0,
+            2.0
+        ],
+        "kDropBlockInterval_": 300,
+        "kInitialHp_": 10,
+        "kInitialPosition_": [
+            10.0,
+            39.0,
+            -1.0
+        ]
+    }
+}

@@ -52,10 +52,24 @@ public: // 設定・取得
 	/// </summary>
 	/// <param name="range"></param>
 	void SetFov(float range) { fov_ = range; }
+
+	/// <summary>
+	/// シェイクなどで移動したカメラを初期位置に戻す
+	/// </summary>
+	void ResetPosition();
+
+	/// <summary>
+	/// 初期座標取得
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetInitPosition() { return initPosition_; }
+
 #pragma endregion
 private:
 
 	ViewProjection viewProjection_;
+
+	Vector3 initPosition_;
 
 	float fov_ = 45.0f;
 };

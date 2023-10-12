@@ -1,42 +1,21 @@
 #pragma once
 #include "WorldTransform.h"
 #include "Model.h"
-#include "Collider.h"
 
-#include <memory>
-
-class Ground
+class Ground 
 {
 public:
 
-	virtual void Initialize(Model* model);
+	void Initialize(Model* model);
 
-	virtual void Update();
+	void Update();
 
-	virtual void Draw(const ViewProjection& viewProjection);
+	void Draw(const ViewProjection& viewProjection);
 
-	void SetPosition(const Vector3& pos);
-
-	void SetScale(const Vector3& scale);
-	/// <summary>
-	/// WorldTransformの取得
-	/// </summary>
-	/// <returns></returns>
-	WorldTransform* GetWorldTransform() { return &worldTransform_; }
-	/// <summary>
-	/// 衝突コールバック
-	/// </summary>
-	void OnCollision(uint32_t tag, WorldTransform* world);
-
-	Collider* GetCollider() { return &collider_; }
-
-protected:
+private:
 	
 	WorldTransform worldTransform_;
 
 	Model* model_ = nullptr;
 
-	Collider collider_;
-
 };
-

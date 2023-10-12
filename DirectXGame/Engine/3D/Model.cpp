@@ -20,7 +20,8 @@ const std::string Model::kDefaultName = "cube";
 UINT Model::sDescriptorHandleIncrementSize_ = 0;
 ID3D12GraphicsCommandList* Model::sCommandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Model::sRootSignature_;
-ComPtr<ID3D12PipelineState> Model::sPipelineState_;
+//ComPtr<ID3D12PipelineState> Model::sPipelineState_;
+std::array<ComPtr<ID3D12PipelineState>, size_t(Model::BlendMode::kCountOfBlendMode)> Model::sPipelineStates_;
 std::unique_ptr<LightGroup> Model::lightGroup_;
 
 void Model::StaticInitialize()
@@ -80,24 +81,8 @@ void Model::InitializeGraphicsPipeline()
 	// デプスステンシルステート
 	gpipeline.DepthStencilState.DepthEnable = true;
 	gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	//gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-	// レンダーターゲットのブレンド設定
-	D3D12_BLEND_DESC blenddesc{};
-	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blenddesc.RenderTarget[0].BlendEnable = TRUE;
-	/// αBlend
-	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-
-	// ここは基本変えない
-	blenddesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blenddesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blenddesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-
-	// ブレンドステート
-	gpipeline.BlendState = blenddesc;
 
 	// 深度バッファのフォーマット
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
@@ -132,7 +117,6 @@ void Model::InitializeGraphicsPipeline()
 	samplerDesc[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 	samplerDesc[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 
-
 	// ルートシグネチャの設定
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -159,11 +143,84 @@ void Model::InitializeGraphicsPipeline()
 
 	gpipeline.pRootSignature = sRootSignature_.Get();
 
+	// ブレンド設定
+	// ブレンドなし
+	D3D12_BLEND_DESC blenddesc{};
+	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blenddesc.RenderTarget[0].BlendEnable = false;
+	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
-	result = DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
-		&gpipeline, IID_PPV_ARGS(&sPipelineState_));
+	result =
+		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kNone)]));
 	assert(SUCCEEDED(result));
 
+	// αブレンド
+	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blenddesc.RenderTarget[0].BlendEnable = TRUE;
+	// ここは基本変えない
+	blenddesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blenddesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	// ブレンドステート
+	gpipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
+		&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kNormal)]));
+	assert(SUCCEEDED(result));
+
+	// 加算合成
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;	
+	// ブレンドステート
+	gpipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kAdd)]));
+	assert(SUCCEEDED(result));
+
+	// 減算合成
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	// ブレンドステート
+	gpipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kSubtract)]));
+	assert(SUCCEEDED(result));
+
+	// 乗算合成
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
+	// ブレンドステート
+	gpipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kMultiply)]));
+	assert(SUCCEEDED(result));
+	
+	// スクリーン合成
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	// ブレンドステート
+	gpipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kScreen)]));
+	assert(SUCCEEDED(result));
 }
 
 Model* Model::Create()
@@ -171,6 +228,15 @@ Model* Model::Create()
 	// メモリ確保
 	Model* instance = new Model;
 	instance->Initialize(kDefaultName, false);
+	return instance;
+}
+
+Model* Model::CreatePlane()
+{
+	// メモリ確保
+	Model* instance = new Model;
+	std::string planeName = "plane";
+	instance->Initialize(planeName, false);
 	return instance;
 }
 
@@ -191,8 +257,8 @@ void Model::PreDraw(ID3D12GraphicsCommandList* commandList)
 	// コマンドリストをセット
 	sCommandList_ = commandList;
 
-	// パイプラインステートの設定
-	commandList->SetPipelineState(sPipelineState_.Get());
+	//// パイプラインステートの設定
+	//commandList->SetPipelineState(sPipelineStates_[size_t(BlendMode::kNormal)].Get());
 	// ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(sRootSignature_.Get());
 	// プリミティブ形状を設定
@@ -203,6 +269,55 @@ void Model::PostDraw()
 {
 	// コマンドリストの解除
 	sCommandList_ = nullptr;
+}
+
+void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
+{
+	// パイプラインステートの設定
+	sCommandList_->SetPipelineState(sPipelineStates_[size_t(blendMode_)].Get());
+
+	// ライト
+	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
+
+	// CBV（ワールド行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(
+		static_cast<UINT>(RootParameter::kWorldTransform),
+		worldTransform.constBuff_->GetGPUVirtualAddress());
+
+	// CBV（ビュープロジェクション行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(
+		static_cast<UINT>(RootParameter::kViewProjection),
+		viewProjection.constBuff_->GetGPUVirtualAddress());
+
+	// 全メッシュを描画
+	for (auto& mesh : meshes_) {
+		mesh->Draw(
+			sCommandList_, (UINT)RootParameter::kMaterial,
+			(UINT)RootParameter::kTexture);
+	}
+}
+
+void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle)
+{
+	// パイプラインステートの設定
+	sCommandList_->SetPipelineState(sPipelineStates_[size_t(blendMode_)].Get());
+
+	// ライト
+	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
+
+	// CBV（ワールド行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kWorldTransform),
+		worldTransform.constBuff_->GetGPUVirtualAddress());
+
+	// CBV（ビュープロジェクション行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kViewProjection),
+		viewProjection.constBuff_->GetGPUVirtualAddress());
+	// 全メッシュを描画
+	for (auto& mesh : meshes_) {
+		mesh->Draw(
+			sCommandList_, (UINT)RootParameter::kMaterial,
+			(UINT)RootParameter::kTexture, textureHandle);
+	}
 }
 
 Model::~Model()
@@ -250,6 +365,22 @@ void Model::Initialize(const std::string& modelName, bool smoothing)
 
 	// テクスチャの読み込み
 	LoadTextures();
+
+	blendMode_ = BlendMode::kNormal;
+}
+
+void Model::SetAlphaValue(float alpha)
+{
+	// マテリアルの数値を定数バッファに反映
+	for (auto& m : materials_) {
+		m.second->SetAlpha(alpha);
+		m.second->Update();
+	}
+}
+
+void Model::SetBlendMode(BlendMode mode)
+{
+	blendMode_ = mode;
 }
 
 void Model::LoadModel(const std::string& modelName, bool smoothing)
@@ -441,6 +572,8 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 				indexCountTex++;
 				faceIndexCount++;
 			}
+
+
 		}
 	}
 
@@ -564,48 +697,5 @@ void Model::LoadTextures()
 			material->LoadTexture("white1x1.png");
 			textureIndex++;
 		}
-	}
-}
-
-void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
-{
-	// ライト
-	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
-
-	// CBV（ワールド行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(
-		static_cast<UINT>(RootParameter::kWorldTransform),
-		worldTransform.constBuff_->GetGPUVirtualAddress());
-
-	// CBV（ビュープロジェクション行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(
-		static_cast<UINT>(RootParameter::kViewProjection),
-		viewProjection.constBuff_->GetGPUVirtualAddress());
-
-	// 全メッシュを描画
-	for (auto& mesh : meshes_) {
-		mesh->Draw(
-			sCommandList_, (UINT)RootParameter::kMaterial,
-			(UINT)RootParameter::kTexture);
-	}
-}
-
-void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle)
-{
-	// ライト
-	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
-
-	// CBV（ワールド行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kWorldTransform),
-		worldTransform.constBuff_->GetGPUVirtualAddress());
-
-	// CBV（ビュープロジェクション行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(static_cast<UINT>(RootParameter::kViewProjection),
-		viewProjection.constBuff_->GetGPUVirtualAddress());
-	// 全メッシュを描画
-	for (auto& mesh : meshes_) {
-		mesh->Draw(
-			sCommandList_, (UINT)RootParameter::kMaterial,
-			(UINT)RootParameter::kTexture, textureHandle);
 	}
 }

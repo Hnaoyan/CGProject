@@ -70,6 +70,11 @@ void WinApp::CreateGameWindow(const wchar_t* title, UINT windowStyle, int32_t cl
 	ShowWindow(hwnd_, SW_SHOW);
 }
 
+void WinApp::InitializeRandomizer()
+{
+	srand(static_cast<unsigned int>(time(nullptr)));
+}
+
 bool WinApp::ProcessMessage() {
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ

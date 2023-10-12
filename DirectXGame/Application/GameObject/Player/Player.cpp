@@ -1,169 +1,448 @@
 #include "Player.h"
-#include "MathCalc.h"
-#include "ImGuiManager.h"
-
 #include <algorithm>
+#include "Input.h"
+
+#include "Application/GameObject/Area/Area.h"
+#include "Application/GameObject/BlockManager/BlockManager.h"
+#include "Application/Others/Math2d/Math2d.h"
+#include <GlobalVariables.h>
+#include <imgui.h>
 
 void Player::Initialize(Model* model)
 {
-	// システム系
-	input_ = Input::GetInstance();
 
-	// モデル読み込み
-	radius_ = 1.0f;
-	BaseCharacter::Initialize(model);
-	collider_.SetCollisionAttribute(kCollisionAttributePlayer);
-	collider_.SetCollisionMask(0xffffffff - kCollisionAttributePlayer);
-	isDead_ = false;
-	isLand_ = false;
-	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Player::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
-	collider_.SetFunction(f);
-	worldTransform_.translation_.y = 2.0f;
+	// ワールドトランスフォーム
+	worldTransform_.Initialize();
+
+	// モデル
+	model_ = model;
+
+#pragma region 調整項目クラス
+	// 調整項目クラスのインスタンス取得
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	// グループ名設定
+	const char* groupName = "Player";
+	// 指定した名前でグループ追加
+	globalVariables->CreateGroup(groupName);
+
+	// メンバ変数の調整したい項目をグローバル変数に追加
+
+	globalVariables->AddItem(groupName, "kJumpVelocity_", kJumpVelocity_);
+	globalVariables->AddItem(groupName, "kMidairJumpVelocity_", kMidairJumpVelocity_);
+	globalVariables->AddItem(groupName, "kMoveVelocityMax_", kMoveVelocityMax_);
+	globalVariables->AddItem(groupName, "kFallingAcceleration_", kFallingAcceleration_);
+	globalVariables->AddItem(groupName, "kColliderSize_", kColliderSize_);
+	globalVariables->AddItem(groupName, "kInitialPosition_", kInitialPosition_);
+	globalVariables->AddItem(groupName, "kInitialHp_", static_cast<int>(kInitialHp_));
+	globalVariables->AddItem(groupName, "kKnockBackBossEnemy_", kKnockBackBossEnemy_);
+
+	ApplyGlobalVariables();
+
+#pragma endregion
+
+	Setting();
+
 }
 
 void Player::Update()
 {
-	ImGui::Begin("player");
-	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.1f, -20.0f, 20.0f);
-	ImGui::DragFloat3("rot", &worldTransform_.rotation_.x, 0.1f, -20.0f, 20.0f);
-	ImGui::Text("%d", isLand_);
-	ImGui::End();
-	//velocity_ = {};
-	// 基底クラスの処理
-	if (isLand_) {
+
+#ifdef _DEBUG
+	ApplyGlobalVariables();
+#endif // _DEBUG
+
+	Move();
+	
+	Falling();
+	// 着地していない
+	if (!islanding_ && !isMidairJump_) {
+		MidairJump();
+	}
+
+	// 着地している
+	if(islanding_) {
+		// 黄色線より高い
+		if (area_->kYellowLine_ <= worldTransform_.matWorld_.m[3][1]) {
+			amazingCondition_ = true;
+		}
+		// ジャンプ
 		Jump();
 	}
 
-	BaseCharacter::Update();
-	// 移動入力などの処理
-	Move();
+	worldTransform_.UpdateMatrix();
 
-	Fall();
+	Vector2 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] };
+	collider_.Update(position);
 
-	if (worldTransform_.translation_.y < -15.0f) {
-		isDead_ = true;
-	}
-	
-	//worldTransform_.parent_ = nullptr;
-	//isLand_ = false;
+	//着地判定
+	islanding_ = false;
+
+	// デモ用
+	Demo();
 
 }
 
 void Player::Draw(const ViewProjection& viewProjection)
 {
-	// ベースの描画
-	BaseCharacter::Draw(viewProjection);
+
+	model_->Draw(worldTransform_, viewProjection);
 
 }
 
-void Player::OnCollisionObject()
+void Player::Setting()
 {
-	worldTransform_.translation_.y = 0;
-	velocity_.y = 0;
-	isJump_ = false;
-	isLand_ = true;
+
+	// ワールドトランスフォーム
+	worldTransform_.translation_ = kInitialPosition_;
+	worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
+	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
+	worldTransform_.UpdateMatrix();
+
+	// 速度
+	velocity_ = { 0.0f ,0.0f };
+
+	// 加速度
+	acceleration_ = { 0.0f ,0.0f };
+
+	// コライダー
+	Vector2 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] };
+	collider_.Initialize(&worldTransform_, kColliderSize_);
+	collider_.SetCollisionAttribute(CollisionAttribute::player);
+	collider_.SetCollisionMask(0xffffffff - CollisionAttribute::player);
+	//コールバック設定
+	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Player::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
+	collider_.SetFunction(f);
+
+	//着地判定
+	islanding_ = false;
+
+	//空中ジャンプしたか
+	isMidairJump_ = false;
+
+	// 大技を放てるか？
+	amazingCondition_ = false;
+
+	// HP
+	hp_ = kInitialHp_;
+
+	// ゲームオーバーフラグ
+	gameOver_ = false;
+
 }
 
-Vector3 Player::GetWorldPosition()
+void Player::OnCollision(uint32_t collisonObj, WorldTransform* worldTransform)
 {
-	Vector3 worldPos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };
-	return worldPos;
+
+	//エネミー関連でない
+	if (!(collisonObj & CollisionAttribute::blockEnemyAttack) && !(collisonObj & CollisionAttribute::bossEnemy)) {
+		OnCollisionBlock(worldTransform);
+	}
+	// ボスエネミー
+	else if (collisonObj & CollisionAttribute::bossEnemy) {
+		//ダメージ
+		Damage();
+		worldTransform_.translation_.y -= kKnockBackBossEnemy_;
+		worldTransform_.UpdateMatrix();
+		// コライダー
+		Vector2 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] };
+		collider_.Update(position);
+	}
+	// 他はダメージ受ける
+	else {
+		//ダメージ
+		Damage();
+	}
+
+}
+
+void Player::Demo()
+{
+
+	ImGui::Begin("player");
+	ImGui::Text("LeftMove : [A]Key or [Left]key");
+	ImGui::Text("RightMove : [D]Key or [Right]key");
+	ImGui::Text("Jump and AirJump : [SPACE]key");
+	ImGui::Text("playerHP : %d", hp_);
+	ImGui::Text("Reset : [R]Key");
+	ImGui::End();
+
 }
 
 void Player::Move()
 {
-	XINPUT_STATE joyState;
-	if (input_->GetInstance()->GetJoystickState(0, joyState)) {
-		const float threshold = 0.7f;
-		bool isMoving = false;
+	
+	// 入力デバイスインスタンス取得
+	Input* input = Input::GetInstance();
 
-		Vector3 moved = {
-			(float)joyState.Gamepad.sThumbLX / SHRT_MAX,0,
-			(float)joyState.Gamepad.sThumbLY / SHRT_MAX};
-		if (MathCalc::Length(moved) > threshold) {
-			isMoving = true;
-		}
-		if (isMoving) {
-			// 速さ
-			const float speed = 0.3f;
-			// 移動量
-			Vector3 move = {
-				(float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed,0.0f,
-				(float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed };
-			Vector3 normal= VectorLib::Scaler(MathCalc::Normalize(move), speed);
-			velocity_.x = normal.x;
-			velocity_.z = normal.z;
-			// 向きの処理
-			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
-			float length = sqrtf(move.x * move.x + move.z * move.z);
-			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
-			// 移動処理
+	//キーボード
+
+	//左移動
+	if ((input->PressKey(DIK_LEFT) || input->PressKey(DIK_A)) &&
+		!(input->PressKey(DIK_RIGHT) || input->PressKey(DIK_D))) {
+		velocity_.x = -kMoveVelocityMax_;
+	}
+	//右移動
+	else if ((input->PressKey(DIK_RIGHT) || input->PressKey(DIK_D)) &&
+		!(input->PressKey(DIK_LEFT) || input->PressKey(DIK_A))) {
+		velocity_.x = kMoveVelocityMax_;
+	}
+	//移動しない
+	else {
+
+		//ゲームパッド
+
+		XINPUT_STATE joyState;
+
+		if (input->GetJoystickState(0, joyState)) {
+			//移動
+			velocity_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * kMoveVelocityMax_;
 		}
 		else {
-			worldTransform_.rotation_.y = 0;
-			velocity_.x = 0;
-			velocity_.z = 0;
+			velocity_.x = 0.0f;
 		}
-		worldTransform_.translation_.x += velocity_.x;
-		worldTransform_.translation_.z += velocity_.z;
+
 	}
+
+	//ワールドトランスフォーム変更
+	worldTransform_.translation_.x += velocity_.x;
+
+	// 移動制限
+	worldTransform_.translation_.x = 
+		std::clamp(worldTransform_.translation_.x,
+		area_->kPositionMin_.x + collider_.GetSize().x / 2.0f,
+		area_->kPositionMax_.x - collider_.GetSize().x / 2.0f);
+
 }
 
 void Player::Jump()
 {
-	XINPUT_STATE joyState;
-	// ジャンプ入力
-	if (input_->GetInstance()->GetJoystickState(0, joyState))
-	{
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && !isJump_) {
-			isJump_ = true;
-		}
-	}
 
-	if (isJump_) {
-		isLand_ = false;
-		velocity_.y = jumpPower_;
-		worldTransform_.translation_.y += velocity_.y;
-	}
+	// 入力デバイスインスタンス取得
+	Input* input = Input::GetInstance();
 
-}
+	//ジャンプしたか
+	bool isJump = false;
 
-void Player::Fall()
-{
-	velocity_.y += (-0.05f);
-
-	worldTransform_.translation_.y += velocity_.y;
-}
-
-void Player::OnCollision(uint32_t tag, WorldTransform* world)
-{
-	if (tag == kCollisionAttributeEnemy || tag == kCollisionAttributeGoal) {
-		DeadToRestart(Vector3(0, 1.0f, 0));
-	}
-	if (tag == kCollisionAttributeGround) {
-		Vector3 pos = { world->matWorld_.m[3][0],world->matWorld_.m[3][1],world->matWorld_.m[3][2] };
-		worldTransform_.translation_.y = pos.y + radius_;
-		velocity_.y = 0;
-		isLand_ = true;
-		isJump_ = false;
-	}
-	if(tag == kCollisionAttributeMoveGround){
-		Vector3 pos = { world->matWorld_.m[3][0],world->matWorld_.m[3][1],world->matWorld_.m[3][2] };
-		worldTransform_.translation_.y = pos.y + radius_;
-		if (worldTransform_.parent_ == nullptr) {
-			worldTransform_.parent_ = world;
-		}
-		velocity_.y = 0;
-		isLand_ = true;
-		isJump_ = false;
+	//キーボード
+	if (input->TriggerKey(DIK_SPACE)) {
+		isJump = true;
 	}
 	else {
-		worldTransform_.parent_ = nullptr;
+
+		//ゲームパッド
+
+		XINPUT_STATE joyState;
+		XINPUT_STATE preJoyState;
+
+		if (input->GetJoystickState(0, joyState) && input->GetJoystickStatePrevious(0, preJoyState)) {
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A && !(preJoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+				isJump = true;
+			}
+		}
+
 	}
+
+	//ジャンプしていたら
+	if (isJump) {
+
+		islanding_ = false;
+
+		velocity_.y = kJumpVelocity_;
+
+		//ワールドトランスフォーム変更
+		worldTransform_.translation_.y += velocity_.y;
+		if (worldTransform_.translation_.y >= area_->kPositionMax_.y - collider_.GetSize().y / 2.0f) {
+			worldTransform_.translation_.y = area_->kPositionMax_.y - collider_.GetSize().y / 2.0f;
+		}
+
+		//ブロックマネージャーに発射するよう伝える
+		blockManager_->BlockFiring();
+
+	}
+
 }
 
-void Player::DeadToRestart(const Vector3& startPoint)
+void Player::MidairJump()
 {
-	worldTransform_.translation_ = startPoint;
-	isDead_ = false;
+
+	// 入力デバイスインスタンス取得
+	Input* input = Input::GetInstance();
+
+	//ジャンプしたか
+	bool isJump = false;
+
+	//キーボード
+	if (input->TriggerKey(DIK_SPACE)) {
+		isJump = true;
+	}
+	else {
+
+		//ゲームパッド
+
+		XINPUT_STATE joyState;
+		XINPUT_STATE preJoyState;
+
+		if (input->GetJoystickState(0, joyState) && input->GetJoystickStatePrevious(0, preJoyState)) {
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A && !(preJoyState.Gamepad.wButtons & XINPUT_GAMEPAD_A)) {
+				isJump = true;
+			}
+		}
+
+	}
+
+	//ジャンプしていたら
+	if (isJump) {
+
+		isMidairJump_ = true;
+
+		velocity_.y = kMidairJumpVelocity_;
+
+		//ワールドトランスフォーム変更
+		worldTransform_.translation_.y += velocity_.y;
+		if (worldTransform_.translation_.y >= area_->kPositionMax_.y - collider_.GetSize().y / 2.0f) {
+			worldTransform_.translation_.y = area_->kPositionMax_.y - collider_.GetSize().y / 2.0f;
+		}
+
+	}
+
+}
+
+void Player::Falling()
+{
+
+	velocity_.y += kFallingAcceleration_;
+		
+	//ワールドトランスフォーム変更
+	worldTransform_.translation_.y += velocity_.y;
+
+	if (worldTransform_.translation_.y <= area_->kPositionMin_.y + collider_.GetSize().y / 2.0f) {
+		FallToTheBottom();
+	}
+
+}
+
+void Player::FallToTheBottom()
+{
+
+	islanding_ = true;
+	isMidairJump_ = false;
+	worldTransform_.translation_.y = area_->kPositionMin_.y + collider_.GetSize().y / 2.0f;
+	velocity_.y = 0.0f;
+
+	if (amazingCondition_) {
+		amazingCondition_ = false;
+		// 大技
+		blockManager_->AmazingBlockFiring(worldTransform_.matWorld_.m[3][1]);
+	}
+
+}
+
+void Player::OnCollisionBlock(WorldTransform* worldTransform)
+{
+
+	//どこの面と当たったか
+
+	Vector2 playerPos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] };
+	Vector2 blockPos = { worldTransform->matWorld_.m[3][0],worldTransform->matWorld_.m[3][1] };
+
+	Vector2 playerLT = { playerPos.x - collider_.GetSize().x / 2.0f,
+		playerPos.y + collider_.GetSize().y / 2.0f };
+	Vector2 playerLB = { playerPos.x - collider_.GetSize().x / 2.0f,
+		playerPos.y - collider_.GetSize().y / 2.0f };
+	Vector2 playerRT = { playerPos.x + collider_.GetSize().x / 2.0f,
+		playerPos.y + collider_.GetSize().y / 2.0f };
+	Vector2 playerRB = { playerPos.x + collider_.GetSize().x / 2.0f,
+		playerPos.y - collider_.GetSize().y / 2.0f };
+
+	Vector2 move = { (collider_.GetSize().x + blockManager_->GetColliderSize().x) / 2.0f,
+		(collider_.GetSize().y + blockManager_->GetColliderSize().y) / 2.0f };
+
+	//下
+	if (Math2d::segmentsCrossing(playerPos, blockPos, playerLB, playerRB)) {
+		worldTransform_.translation_.y = blockPos.y + move.y;
+		worldTransform_.UpdateMatrix();
+		Vector2 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] };
+		collider_.Update(position);
+		islanding_ = true;
+		isMidairJump_ = false;
+		velocity_.y = 0.0f;
+		if (amazingCondition_) {
+			amazingCondition_ = false;
+			// 大技
+			blockManager_->AmazingBlockFiring(worldTransform_.matWorld_.m[3][1]);
+		}
+	}
+	//上
+	else if (Math2d::segmentsCrossing(playerPos, blockPos, playerLT, playerRT)) {
+		worldTransform_.translation_.y = blockPos.y - move.y;
+		worldTransform_.UpdateMatrix();
+		Vector2 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] };
+		collider_.Update(position);
+		velocity_.y = 0.0f;
+	}
+	//左
+	else if (Math2d::segmentsCrossing(playerPos, blockPos, playerLT, playerLB)) {
+		worldTransform_.translation_.x = blockPos.x + move.x;
+		worldTransform_.UpdateMatrix();
+		Vector2 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] };
+		collider_.Update(position);
+		velocity_.x = 0.0f;
+	}
+	//右
+	else if (Math2d::segmentsCrossing(playerPos, blockPos, playerRT, playerRB)) {
+		worldTransform_.translation_.x = blockPos.x - move.x;
+		worldTransform_.UpdateMatrix();
+		Vector2 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] };
+		collider_.Update(position);
+		velocity_.x = 0.0f;
+	}
+	//内包してたら
+	else {
+		worldTransform_.translation_.y = blockPos.y + move.y;
+		worldTransform_.UpdateMatrix();
+		Vector2 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] };
+		collider_.Update(position);
+		islanding_ = true;
+		isMidairJump_ = false;
+		velocity_.y = 0.0f;
+		if (amazingCondition_) {
+			amazingCondition_ = false;
+			// 大技
+			blockManager_->AmazingBlockFiring(worldTransform_.matWorld_.m[3][1]);
+		}
+	}
+
+}
+
+void Player::Damage()
+{
+
+	// hp減らす
+	hp_--;
+
+	// ゲームオーバーか
+	if (hp_ <= 0) {
+		hp_ = 0;
+		gameOver_ = true;
+	}
+
+}
+
+void Player::ApplyGlobalVariables()
+{
+
+	// 調整項目クラスのインスタンス取得
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	// グループ名の設定
+	const char* groupName = "Player";
+
+	kJumpVelocity_ = globalVariables->GetFloatValue(groupName, "kJumpVelocity_");
+	kMidairJumpVelocity_ = globalVariables->GetFloatValue(groupName, "kMidairJumpVelocity_");
+	kMoveVelocityMax_ = globalVariables->GetFloatValue(groupName, "kMoveVelocityMax_");
+	kFallingAcceleration_ = globalVariables->GetFloatValue(groupName, "kFallingAcceleration_");
+	kColliderSize_ = globalVariables->GetVector2Value(groupName, "kColliderSize_");
+	kInitialPosition_ = globalVariables->GetVector3Value(groupName, "kInitialPosition_");
+	kInitialHp_ = static_cast<int>(globalVariables->GetIntValue(groupName, "kInitialHp_"));
+	kKnockBackBossEnemy_ = globalVariables->GetFloatValue(groupName, "kKnockBackBossEnemy_");
+
 }

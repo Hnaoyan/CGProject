@@ -9,13 +9,9 @@
 #include "Collider.h"
 
 
-class BaseCharacter
+class BaseCharacter 
 {
 protected:
-	/// <summary>
-	/// 死亡フラグ
-	/// </summary>
-	bool isDead_ = false;
 	/// <summary>
 	/// 半径
 	/// </summary>
@@ -28,14 +24,8 @@ protected:
 	/// 座標系
 	/// </summary>
 	WorldTransform worldTransform_;
-	/// <summary>
-	/// 速さ
-	/// </summary>
-	Vector3 velocity_;
-	/// <summary>
-	/// コライダー
-	/// </summary>
-	Collider collider_;
+
+	Collider* collider_;
 
 public:	// デフォルト関数
 	/// <summary>
@@ -55,20 +45,24 @@ public:	// デフォルト関数
 	/// <param name="viewProjection"></param>
 	virtual void Draw(const ViewProjection& viewProjection);
 
+public:	// コライダー関数
 	/// <summary>
-	/// 死亡フラグの取得
+	/// 衝突判定の半径
 	/// </summary>
 	/// <returns></returns>
-	bool GetIsDead() { return isDead_; }
+	virtual float GetRadius() { return radius_; }
 
 	/// <summary>
-	/// コライダーの取得
+	/// 衝突判定の半径設定
 	/// </summary>
-	/// <returns></returns>
-	Collider* GetCollider() { return &collider_; }
+	/// <param name="radius"></param>
+	virtual void SetRadius(float radius) { radius_ = radius; }
 
-private:
+	/// <summary>
+	/// 衝突時の処理
+	/// </summary>
+	virtual void OnCollision();
 
-	void ColliderSetting();
+	const WorldTransform GetWorldTransform() { return worldTransform_; }
 
 };

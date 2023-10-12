@@ -12,15 +12,17 @@
 #include "FollowCamera.h"
 #include "BaseScene.h"
 #include "BaseCamera.h"
-
-#include "Player.h"
-#include "Enemy.h"
-#include "Goal.h"
-
-#include "GroundManager.h"
-#include "SkyDome.h"
+#include "EffectManager.h"
 
 #include <memory>
+
+// ゲームシーン用
+#include "Player.h"
+#include "Area.h"
+#include "BlockManager.h"
+#include "BossEnemy.h"
+#include "UIManager.h"
+#include "ParticleManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -31,12 +33,12 @@ public: // メンバ関数
 	/// <summary>
 	/// コンストクラタ
 	/// </summary>
-	GameScene();
+	GameScene() {};
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~GameScene();
+	~GameScene() {};
 
 	/// <summary>
 	/// 初期化
@@ -53,13 +55,27 @@ public: // メンバ関数
 	/// </summary>
 	void Draw() override;
 
-private:
+public: // メンバ関数
+
 	/// <summary>
-	/// カメラ系の更新処理
+	/// カメラ更新
 	/// </summary>
 	void CameraUpdate();
 
-	void CheckCollision();
+	/// <summary>
+	/// 衝突確認
+	/// </summary>
+	void CollisionCheak();
+
+	/// <summary>
+	/// リセット
+	/// </summary>
+	void Reset();
+
+	/// <summary>
+	/// モデル読み込み場所
+	/// </summary>
+	static void ModelSetting();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -68,37 +84,51 @@ private: // メンバ変数
 
 	ViewProjection viewProjection_;
 
-private:
-	std::unique_ptr<CollisionManager> colliderManager_;
-
-
 private:	// メンバポインタ
 	// カメラ
 	//std::unique_ptr<DebugCamera> debugCamera_;
-	// フォローカメラ
-	std::unique_ptr<FollowCamera> followCamera_;
 	// ベースカメラ
 	std::unique_ptr<BaseCamera> baseCamera_;
 
-	// 仮のオブジェクト
-	std::unique_ptr<Model> model_;
-	std::unique_ptr<Model> skydomeModel_;
-	std::unique_ptr<Model> goalModel_;
-	// パーツモデル
-	std::unique_ptr<Model> modelBody_;
-	std::unique_ptr<Model> modelR_arm_;
-	std::unique_ptr<Model> modelL_arm_;
-	// オブジェクト
-	std::unique_ptr<SkyDome> skydome_;
-	std::unique_ptr<Player> player_;
-	std::unique_ptr<Enemy> enemy_;
-	std::unique_ptr<Goal> goal_;
-	std::unique_ptr<GroundManager> groundManager_;
-
 	bool isDebug_ = false;
+
+	// 衝突マネージャー
+	std::unique_ptr<CollisionManager> collisionManager;
 
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+
+	//エリア
+	std::unique_ptr<Area> area_;
+	std::unique_ptr<Model> areaModel_;
+	std::unique_ptr<Model> yellowLineModel_;
+
+	// プレイヤー
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Model> playerModel_;
+
+	//ブロック
+	std::unique_ptr<BlockManager> blockManager_;
+	std::unique_ptr<Model> blockModel_;
+	std::vector<uint32_t> blockTextureHandles_;
+	std::unique_ptr<Model> warningModel_;
+
+	// ボスエネミー
+	std::unique_ptr<BossEnemy> bossEnemy_;
+	std::unique_ptr<Model> bossEnemyModel_;
+
+	// マネージャ系
+	std::unique_ptr<EffectManager> effectManager_;
+	std::unique_ptr<UIManager> uiManager_;
+	std::unique_ptr<ParticleManager> particleManager_;
+
+	std::unique_ptr<Sprite> sprite_;
+	Vector2 size_;
+
+	bool isShake_ = false;
+	int shakeTime_ = 0;
+	Vector3 cameraVect_ = {};
+
 };
 

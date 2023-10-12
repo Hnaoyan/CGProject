@@ -1,0 +1,16 @@
+{
+    "EffectManager": {
+        "HitStopEndTimer": 5,
+        "ShakeEndTimer": 20,
+        "ShakeIntMax": 3,
+        "ShakeIntMin": 1,
+        "ShakeVectMax": [
+            1.0,
+            1.0
+        ],
+        "ShakeVectMin": [
+            0.5,
+            0.5
+        ]
+    }
+}

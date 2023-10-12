@@ -1,149 +1,42 @@
 #pragma once
-#include "Collider.h"
-#include "StructManager.h"
-#include "Model.h"
-
 #include <list>
-#include <memory>
+#include <StructManager.h>
 
+#include "Application/Others/RectangleCollider/RectangleCollider.h"
+
+/// <summary>
+/// コリジョンマネージャー
+/// </summary>
 class CollisionManager
 {
-public:
-	// リスト
-	std::list<Collider*> colliders_;
-	
-	// デバッグ用モデル
-	std::unique_ptr<Model> sphereModel_;
-
-public:
+public: // メンバ関数
 	/// <summary>
-	/// すべてのオブジェクトの衝突処理
+	/// リストクリア関数
 	/// </summary>
-	void CheckAllCollisions();
+	void ListClear();
 
 	/// <summary>
-	/// リストをリセット
+	/// リストにコライダーを登録する関数
 	/// </summary>
-	void ResetList();
+	/// <param name="collider">登録するコライダー</param>
+	void ListRegister(RectangleCollider* collider);
 
 	/// <summary>
-	/// リストに追加
+	/// 全ての衝突判定を検証する関数
 	/// </summary>
-	/// <param name="collider"></param>
-	void AddList(Collider* collider);
+	void CheakAllCollision();
 
-
-private:
-	/// <summary>
-	/// ペアの衝突確認（円同士）
-	/// </summary>
-	/// <param name="colliderA"></param>
-	/// <param name="colliderB"></param>
-	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
-
-
-public:
-	static CollisionManager* GetInstance();
-
-	CollisionManager() {};
-	~CollisionManager() = default;
-
-public: // サブクラス
-#pragma region 構造体サブクラス
-	struct Sphere {
-		Vector3 center;	// 中心点
-		float radius;	// 半径
-	};
-
-	struct Line {
-		Vector3 origin;	// 始点
-		Vector3 diff;	// 終点への差分ベクトル
-	};
-
-	struct Ray {
-		Vector3 origin;	// 始点
-		Vector3 diff;	// 終点への差分ベクトル
-	};
-
-	struct Segment {
-		Vector3 origin;	// 始点
-		Vector3 diff;	// 終点への差分ベクトル
-	};
-
-	struct Plane {
-		Vector3 normal;	// 法線
-		float distance;	// 距離
-	};
-
-	struct Triangle {
-		Vector3 vertices[3];
-	};
-
-	struct AABB {
-		Vector3 min;	// 最小点
-		Vector3 max;	// 最大点
-	};
-#pragma endregion
-
-private: // 衝突判定を取得する関数
-#pragma region 衝突の判定取得関数
-	/// <summary>
-	/// 球と球の衝突判定
-	/// </summary>
-	/// <param name="sp1"></param>
-	/// <param name="sp2"></param>
-	/// <returns></returns>
-	static bool IsCollision(const Sphere& sp1, const Sphere& sp2);
+private: // メンバ関数
 
 	/// <summary>
-	/// 球と平面の衝突判定
+	/// 衝突判定検証
 	/// </summary>
-	/// <param name="sp1"></param>
-	/// <param name="plane"></param>
-	/// <returns></returns>
-	static bool IsCollision(const Sphere& sp1, const Plane& plane);
+	void CheckCollision(RectangleCollider* colliderA, RectangleCollider* colliderB);
 
-	/// <summary>
-	/// 線と平面の衝突判定
-	/// </summary>
-	/// <param name="segment"></param>
-	/// <param name="plane"></param>
-	/// <returns></returns>
-	static bool IsCollision(const Segment& segment, const Plane& plane);
+private: // メンバ変数
 
-	/// <summary>
-	/// 線と三角形の衝突判定
-	/// </summary>
-	/// <param name="triangle"></param>
-	/// <param name="segment"></param>
-	/// <returns></returns>
-	static bool IsCollision(const Triangle& triangle, const Segment& segment);
-
-	/// <summary>
-	/// AABB同士の衝突判定
-	/// </summary>
-	/// <param name="aabb1"></param>
-	/// <param name="aabb2"></param>
-	/// <returns></returns>
-	static bool IsAABBCollision(const AABB& aabb1, const AABB& aabb2);
-
-	/// <summary>
-	/// AABBと球の衝突判定
-	/// </summary>
-	/// <param name="aabb"></param>
-	/// <param name="sphere"></param>
-	/// <returns></returns>
-	static bool IsCollision(const AABB& aabb, const Sphere& sphere);
-
-	/// <summary>
-	/// AABBと線の衝突判定
-	/// </summary>
-	/// <param name="aabb"></param>
-	/// <param name="segment"></param>
-	/// <returns></returns>
-	static bool IsCollision(const AABB& aabb, const Segment& segment);
-
-#pragma endregion
+	// コライダーリスト
+	std::list<RectangleCollider*> colliders_;
 
 };
 

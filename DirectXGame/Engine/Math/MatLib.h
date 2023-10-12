@@ -84,4 +84,6 @@ public:
 
 	static Vector3 TransformNormal(const Vector3& v, const Matrix4x4& mat);
 
+	static Matrix4x4 MakeBillBoard(const Vector3& target, const Vector3& eye, const Vector3& up);
+
 };

@@ -1,0 +1,10 @@
+{
+    "Block": {
+        "kBaseFireBlockSpeed_": 0.05000000074505806,
+        "kBaseScaffoldBlockGenerateInterval_": 300,
+        "kColliderSize_": [
+            2.0,
+            2.0
+        ]
+    }
+}

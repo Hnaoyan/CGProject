@@ -1,91 +1,198 @@
 #pragma once
-#include "BaseCharacter.h"
-#include "Input.h"
+#include "WorldTransform.h"
+#include "ViewProjection.h"
+#include "Model.h"
 
-#include <optional>
-#include <functional>
+#include "EffectManager.h"
+#include "Application/Others/RectangleCollider/RectangleCollider.h"
 
-class Player : public BaseCharacter
+// 前方宣言
+class Area;
+class BlockManager;
+
+/// <summary>
+/// プレイヤー
+/// </summary>
+class Player
 {
-public:
+
+public: // メンバ関数
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="model"></param>
-	void Initialize(Model* model) override;
+	/// <param name="model">モデル</param>
+	void Initialize(Model* model);
 
 	/// <summary>
-	/// 更新処理
+	/// 更新
 	/// </summary>
-	void Update() override;
+	void Update();
 
 	/// <summary>
-	/// 描画処理
+	/// 描画
 	/// </summary>
-	/// <param name="viewProjection"></param>
-	void Draw(const ViewProjection& viewProjection) override;
+	/// <param name="viewProjection">ビュープロジェクション</param>
+	void Draw(const ViewProjection& viewProjection);
 
 	/// <summary>
-	/// 衝突コールバック
+	/// 設定
 	/// </summary>
-	void OnCollision(uint32_t tag, WorldTransform* world);
+	void Setting();
 
 	/// <summary>
-	/// ブロックと衝突時
+	/// 衝突を検出したら呼び出されるコールバック関数
 	/// </summary>
-	void OnCollisionObject();
+	/// <param name="collisonObj">衝突したOBJ</param>
+	void OnCollision(uint32_t collisonObj, WorldTransform* worldTransform);
 
 	/// <summary>
-	/// 座標取得
+	/// デモ用
 	/// </summary>
-	/// <returns></returns>
-	Vector3 GetWorldPosition();
+	void Demo();
+
+	Vector3 GetPosition() { return worldTransform_.translation_; }
+
+private: //メンバ関数
 
 	/// <summary>
-	/// WorldTransformの取得
-	/// </summary>
-	/// <returns></returns>
-	WorldTransform* GetWorldTransform() { return &worldTransform_; }
-
-public:
-	/// <summary>
-	/// 死亡時のリスタート関数（外部で呼び出す予定
-	/// </summary>
-	/// <param name="startPoint"></param>
-	void DeadToRestart(const Vector3& startPoint);
-	
-	bool GetIsDead() { return isDead_; }
-
-private:
-
-	/// <summary>
-	/// 移動の更新
+	/// 移動
 	/// </summary>
 	void Move();
 
 	/// <summary>
-	/// ジャンプの更新
+	/// ジャンプ
 	/// </summary>
 	void Jump();
 
 	/// <summary>
-	/// 落下の更新
+	/// 空中ジャンプ
 	/// </summary>
-	void Fall();
+	void MidairJump();
 
+	/// <summary>
+	/// 落下
+	/// </summary>
+	void Falling();
 
-private: // システム系
+	/// <summary>
+	/// 底に落ちる
+	/// </summary>
+	void FallToTheBottom();
 
-	Input* input_ = nullptr;
+	/// <summary>
+	/// 足場ブロックと衝突
+	/// </summary>
+	void OnCollisionBlock(WorldTransform* worldTransform);
 
-	bool isJump_ = false;
+	/// <summary>
+	/// ダメージ
+	/// </summary>
+	void Damage();
 
-	bool isLand_ = false;
+	/// <summary>
+	/// 調整項目適用関数
+	/// </summary>
+	void ApplyGlobalVariables();
 
-	bool isLerp_ = false;
+public: // アクセッサ
+
+	/// <summary>
+	/// エリアセッター
+	/// </summary>
+	void SetArea(Area* area) { area_ = area; }
+
+	/// <summary>
+	/// ブロックマネージャーセッター
+	/// </summary>
+	void SetBlockManager(BlockManager* blockManager) { blockManager_ = blockManager; }
+
+	/// <summary>
+	/// エフェクトマネージャーの設定
+	/// </summary>
+	/// <param name="effectManager"></param>
+	void SetEffectManager(EffectManager* effectManager) { effectManager_ = effectManager; }
+
+	/// <summary>
+	/// コライダーアドレスゲッター
+	/// </summary>
+	/// <returns></returns>
+	RectangleCollider* GetColliderAddress() { return &collider_; }
+
+	/// <summary>
+	/// ゲームオーバーフラグゲッター
+	/// </summary>
+	/// <returns></returns>
+	bool GetGameOver() { return gameOver_; }
+
+private: // メンバ変数
+
+	//ワールドトランスフォーム
+	WorldTransform worldTransform_;
+
+	// モデル
+	Model* model_ = nullptr;
+
+	// 速度
+	Vector2 velocity_;
+
+	// 加速度
+	Vector2 acceleration_;
+
+	// コライダー
+	RectangleCollider collider_;
+
+	//着地判定
+	bool islanding_;
+
+	// 空中ジャンプしたか
+	bool isMidairJump_;
+
+	// 大技を放てるか？
+	bool amazingCondition_;
+
+	// HP
+	int32_t hp_;
+
+	// ゲームオーバーフラグ
+	bool gameOver_;
+
+private: // ポインタ
+
+	//エリア
+	Area* area_ = nullptr;
 	
-	float jumpPower_ = 0.75f;
+	// ブロックマネージャー
+	BlockManager* blockManager_ = nullptr;
 
-	float lerp_t_ = 0;
+	// エフェクトマネージャー
+	EffectManager* effectManager_ = nullptr;
+
+private: // メンバ定数
+
+	// ジャンプの初速度
+	float kJumpVelocity_ = 1.5f;
+
+	// 空中ジャンプの初速度
+	float kMidairJumpVelocity_ = 1.5f;
+
+	// 最大移動速度
+	float kMoveVelocityMax_ = 0.5f;
+
+	// 落下加速度
+	float kFallingAcceleration_ = -0.1f;
+
+	// コライダーサイズ
+	Vector2 kColliderSize_ = { 2.0f, 2.0f };
+
+	// 初期位置
+	Vector3 kInitialPosition_ = { 0.0f, 10.0f,0.0f };
+
+	// 初期Hp
+	uint32_t kInitialHp_ = 3;
+
+	// ボスエネミーのノックバック
+	float kKnockBackBossEnemy_ = 4.0f;
+
 };
 

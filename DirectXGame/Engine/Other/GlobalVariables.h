@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <variant>
 #include <map>
@@ -56,7 +56,7 @@ public:
 	/// <param name="key"></param>
 	/// <param name="value"></param>
 	void SetValue(const std::string& groupName, const std::string& key, float value);
-
+	
 	/// <summary>
 	/// 値のセット(Vector2)
 	/// </summary>
@@ -88,7 +88,7 @@ public:
 	/// <param name="key"></param>
 	/// <param name="value"></param>
 	void AddItem(const std::string& groupName, const std::string& key, float value);
-
+	
 	/// <summary>
 	/// 項目の追加(Vector2)
 	/// </summary>

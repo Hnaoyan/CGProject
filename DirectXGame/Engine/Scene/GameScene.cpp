@@ -2,12 +2,11 @@
 #include "TextureManager.h"
 #include "ImGuiManager.h"
 #include <cassert>
+#include <functional>
+#include "VectorLib.h"
+#include "EffectManager.h"
 
-GameScene::GameScene() {}
-
-GameScene::~GameScene()
-{
-}
+using namespace std;
 
 void GameScene::Initialize() {
 
@@ -17,77 +16,121 @@ void GameScene::Initialize() {
 
 	viewProjection_.Initialize();
 
-	// 衝突マネージャー
-	colliderManager_ = std::make_unique<CollisionManager>();
-
-	// 追従カメラ
-	followCamera_ = std::make_unique<FollowCamera>();
-	followCamera_->Initialize();
-
-	baseCamera_ = std::make_unique<BaseCamera>();
+	baseCamera_ = make_unique<BaseCamera>();
 	baseCamera_->Initialize();
 
-	baseCamera_->SetPosition({ 0, 10.0f, -25.0f });
-	baseCamera_->SetRotation({ 0.3f, 0, 0 });
+	baseCamera_->SetPosition({ 10.0f, 20.0f, -70.0f });
+	baseCamera_->SetRotation({ 0.0f, 0.0f, 0.0f });
 
-	skydomeModel_.reset(Model::CreateFromObj("skydome", true));
-	skydome_ = std::make_unique<SkyDome>();
-	skydome_->Initialize(skydomeModel_.get());
+	collisionManager = make_unique<CollisionManager>();
 
-	model_.reset(Model::Create());
-	player_ = std::make_unique<Player>();
-	player_->Initialize(model_.get());
-	followCamera_->SetTarget(player_->GetWorldTransform());
+	// ゲームシーン用
 
-	modelBody_.reset(Model::CreateFromObj("C_Body", true));
-	modelL_arm_.reset(Model::CreateFromObj("C_Left", true));
-	modelR_arm_.reset(Model::CreateFromObj("C_Right", true));
+	//エリア
+	areaModel_.reset(Model::CreateFromObj("area", true));
+	yellowLineModel_.reset(Model::CreateFromObj("yellowLine", true));;
+	area_ = make_unique<Area>();
+	area_->Initialize(areaModel_.get(), yellowLineModel_.get());
 
-	std::vector<Model*> models =
-	{ modelBody_.get(),modelL_arm_.get(),modelR_arm_.get() };
+	// プレイヤー
+	playerModel_.reset(Model::CreateFromObj("player", true));
+	player_ = make_unique<Player>();
+	player_->Initialize(playerModel_.get());
+	player_->SetArea(area_.get());
 
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize(model_.get());
-	enemy_->SetModel(models);
+	//ブロック
+	blockModel_.reset(Model::CreateFromObj("block", true));
+	uint32_t blockTextureHandleScaffold = TextureManager::Load("./Resources/block/block_00.png");
+	uint32_t blockTextureHandleScaffoldColor = TextureManager::Load("./Resources/block/block_01.png");
+	uint32_t blockTextureHandlePlayerAttack = TextureManager::Load("./Resources/block/block_01.png");
+	uint32_t blockTextureHandleEnemyAttack = TextureManager::Load("./Resources/block/block_01.png");
+	blockTextureHandles_.push_back(blockTextureHandleScaffold);
+	blockTextureHandles_.push_back(blockTextureHandleScaffoldColor);
+	blockTextureHandles_.push_back(blockTextureHandlePlayerAttack);
+	blockTextureHandles_.push_back(blockTextureHandleEnemyAttack);
+	
+	warningModel_.reset(Model::CreateFromObj("warning", true));
 
-	goalModel_.reset(Model::Create());
-	goal_ = std::make_unique<Goal>();
-	goal_->Initialize(goalModel_.get());
+	blockManager_ = make_unique<BlockManager>();
+	blockManager_->Initialize(blockModel_.get(), blockTextureHandles_, warningModel_.get());
+	blockManager_->SetArea(area_.get());
+	// エフェクト
+	effectManager_ = make_unique<EffectManager>();
+	effectManager_->Initialize();
+	// パーティクルエフェクト
+	particleManager_ = make_unique<ParticleManager>();
+	particleManager_->Initialize(baseCamera_->GetViewPlayer());
 
-	groundManager_ = std::make_unique<GroundManager>();
-	groundManager_->Initialize();
-	groundManager_->SetManager(colliderManager_.get());
+	// マネージャーの設定
+	player_->SetBlockManager(blockManager_.get());
+	player_->SetEffectManager(effectManager_.get());
 
-	Vector3 groundRad = { 10.0f,0.2f,10.0f };
+	// ボスエネミー
+	bossEnemyModel_.reset(Model::CreateFromObj("boss", true));
+	bossEnemy_ = make_unique<BossEnemy>();
+	bossEnemy_->Initialize(bossEnemyModel_.get(), blockManager_.get(), effectManager_.get());
+	bossEnemy_->SetParticleManager(particleManager_.get());
+	
+	uint32_t sprite = TextureManager::Load("uvChecker.png");
+	string spName_ = "UV";
+	uint32_t ui = TextureManager::Load("white1x1.png");
+	string uiName_ = "white";
+	uiManager_ = make_unique<UIManager>();
+	uiManager_->AddUI(sprite, { 200,100 }, { 0.0f,0.0f }, spName_);
+	uiManager_->AddUI(ui, { 100,50 }, { 0.5f,0.5f }, uiName_);
 
-	groundManager_->AddGround(Vector3(0, -0.2f, 0.0f), groundRad, Vector3(2.0f,1.0f,2.0f));
-	groundManager_->AddGround(Vector3(0, -0.2f, 40.0f), groundRad,Vector3(2.0f,1.0f,2.0f));
-	groundManager_->AddMoveGround(Vector3(0, -0.4f, 20.0f),
-		Vector3(5.0f, groundRad.y, 5.0f), Vector3(1.0f, 1.0f, 1.0f));
 
 }
 
 void GameScene::Update()
 {
-
-	if (player_->GetIsDead()) {
-		player_->DeadToRestart(Vector3(0,1.0f,0));
-	}
-
-
-	groundManager_->Update();
-	skydome_->Update();
-	goal_->Update();
-
-	player_->Update();
-
-	enemy_->Update();
-	CheckCollision();
-
-
 	/// カメラ関係の更新処理
 	CameraUpdate();
 
+	effectManager_->Update();
+
+	particleManager_->Update();
+
+	if (input_->TriggerKey(DIK_9)) {
+		particleManager_->RandomRespown(player_->GetPosition());
+	}
+
+	// ブロックの死亡確認
+	blockManager_->DeleteBlock();
+
+	if(effectManager_->IsStop()){
+		// ヒットストップ関係の時間処理
+		effectManager_->HitStopUpdate();
+	}
+	else {
+		// プレイヤー
+		player_->Update();
+		// ブロックマネージャー
+		blockManager_->Update();
+		// ボスエネミー
+		bossEnemy_->Update();
+	}
+
+	// ゲームオーバーか
+	if (blockManager_->GetGameOver() || player_->GetGameOver()) {
+		ImGui::Begin("GameOver");
+		ImGui::Text("GameOver");
+		if (blockManager_->GetGameOver()) {
+			ImGui::Text("blockLimit");
+		}
+		if (player_->GetGameOver()) {
+			ImGui::Text("playerDead");
+		}
+		ImGui::End();
+	}
+
+	// 衝突判定
+	CollisionCheak();
+
+	// リセット
+	if (input_->TriggerKey(DIK_R)) {
+		Reset();
+	}
 }
 
 void GameScene::Draw() {
@@ -103,6 +146,7 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 
+	//uiManager_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -117,14 +161,14 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-
 	
-	player_->Draw(viewProjection_);
-	enemy_->Draw(viewProjection_);
 
-	goal_->Draw(viewProjection_);
-	skydome_->Draw(viewProjection_);
-	groundManager_->Draw(viewProjection_);
+	area_->Draw(viewProjection_);
+	player_->Draw(viewProjection_);
+	blockManager_->Draw(viewProjection_);
+	bossEnemy_->Draw(viewProjection_);
+
+	particleManager_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -144,49 +188,83 @@ void GameScene::Draw() {
 #pragma endregion
 }
 
-
 void GameScene::CameraUpdate()
 {
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_L)) {
-		if (isDebug_) {
-			isDebug_ = false;
-		}
-		else {
-			isDebug_ = true;
-		}
+		//if (isDebug_) {
+		//	isDebug_ = false;
+		//}
+		//else {
+		//	isDebug_ = true;
+		//}
+		//cameraVect_ = baseCamera_->GetView().translate_;
+		effectManager_->SetIsShake(true);
+	}
+	if (input_->TriggerKey(DIK_J)) {
+		effectManager_->SetIsStop(true);
 	}
 #endif // DEBUG
 
+	if (effectManager_->IsShake()) {
+		effectManager_->ShakeUpdate();
+		baseCamera_->SetPosition(EffectManager::ShakeUpdate(baseCamera_->GetInitPosition(), kFloatType));
+	}
+	else {
+		baseCamera_->ResetPosition();
+	}
+
 	baseCamera_->Update();
-	followCamera_->Update();
 
 	// デバックカメラか追尾カメラ
 	if (isDebug_) {
 
 	}
 	else {
-		//viewProjection_.matView = baseCamera_->GetView().matView;
-		//viewProjection_.matProjection = baseCamera_->GetView().matProjection;
-		//viewProjection_.TransferMatrix();
-		viewProjection_.matView = followCamera_->GetView().matView;
-		viewProjection_.matProjection = followCamera_->GetView().matProjection;
+		viewProjection_.matView = baseCamera_->GetView().matView;
+		viewProjection_.matProjection = baseCamera_->GetView().matProjection;
 		viewProjection_.TransferMatrix();
 	}
+
+
 }
 
-void GameScene::CheckCollision()
+void GameScene::CollisionCheak()
 {
-	colliderManager_->ResetList();
 
-	colliderManager_->AddList(player_->GetCollider());
-	colliderManager_->AddList(enemy_->GetCollider());
-	colliderManager_->AddList(goal_.get());
+	// リストをクリア
+	collisionManager->ListClear();
 
-	for (Ground* ground : groundManager_->GetList()) {
-		colliderManager_->AddList(ground->GetCollider());
+	// コライダーをリストに登録
+	//プレイヤー
+	collisionManager->ListRegister(player_->GetColliderAddress());
+	//ブロック
+	for (Block* block : blockManager_->GetBlocks()) {
+		collisionManager->ListRegister(block->GetColliderAddress());
 	}
+	//ボスエネミー
+	collisionManager->ListRegister(bossEnemy_->GetColliderAddress());
 
-	/// 当たり判定（仮
-	colliderManager_->CheckAllCollisions();
+	// 当たり判定を取る
+	collisionManager->CheakAllCollision();
+
+}
+
+void GameScene::Reset()
+{
+
+	// プレイヤー
+	player_->Setting();
+
+	// ブロックマネージャー
+	blockManager_->Setting();
+
+	// ボスエネミー
+	bossEnemy_->Setting();
+
+}
+
+void GameScene::ModelSetting()
+{
+
 }

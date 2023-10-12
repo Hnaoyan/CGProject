@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "BaseScene.h"
+#include "TitleScene.h"
 #include "GameScene.h"
 
 class SceneManager {

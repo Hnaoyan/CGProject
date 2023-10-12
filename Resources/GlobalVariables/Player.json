@@ -1,0 +1,19 @@
+{
+    "Player": {
+        "kColliderSize_": [
+            2.0,
+            2.0
+        ],
+        "kFallingAcceleration_": -0.10000000149011612,
+        "kInitialHp_": 3,
+        "kInitialPosition_": [
+            0.0,
+            10.0,
+            0.0
+        ],
+        "kJumpVelocity_": 1.5,
+        "kKnockBackBossEnemy_": 4.0,
+        "kMidairJumpVelocity_": 1.5,
+        "kMoveVelocityMax_": 0.5
+    }
+}

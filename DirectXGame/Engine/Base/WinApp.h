@@ -3,6 +3,9 @@
 #include <Windows.h>
 #include <cstdint>
 #include<format>
+#include <ctime>
+#include <cstdlib>
+
 
 void Log(const std::string& message);
 
@@ -45,6 +48,8 @@ public:
 	/// <param name="clientHeight">ウィンドウのクライアント領	域の縦幅</param>
 	void CreateGameWindow(const wchar_t* title = L"DirectXTitle", UINT windowStyle = WS_OVERLAPPEDWINDOW,
 		int32_t clientWidth = kClientWidth, int32_t clientHeight = kClientHeight);
+
+	void InitializeRandomizer();
 
 	/// <summary>
 	/// メッセージの処理

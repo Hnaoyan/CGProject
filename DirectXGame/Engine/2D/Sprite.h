@@ -1,5 +1,6 @@
 #pragma once
 #include <wrl.h>
+#include <array>
 #include "WinApp.h"
 #include "StructManager.h"
 
@@ -13,15 +14,6 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
-enum BlendMode {
-	// ブレンドなし
-	kBlendNone,
-	// 通常αブレンド。
-	kBlendNormal,
-	// 加算。
-	kBlendAdd,
-};
-
 class Sprite
 {
 public:	// サブクラス
@@ -34,6 +26,16 @@ public:	// サブクラス
 	struct ConstBufferData {
 		Vector4 color;
 		Matrix4x4 mat;
+	};
+
+	enum class BlendMode : int {
+		kNone,
+		kNormal,
+		kAdd,
+		kSubtract,
+		kMultiply,
+		kScreen,
+		kCountOfBlendMode,
 	};
 
 public:	// 静的メンバ関数
@@ -72,7 +74,11 @@ private:	// 静的メンバ変数
 
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
 
-	static Microsoft::WRL::ComPtr<ID3D12PipelineState> gPipelineState_;
+	// パイプラインステートオブジェ
+	static std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
+		size_t(BlendMode::kCountOfBlendMode)> sPipelineStates_;
+
+	//static Microsoft::WRL::ComPtr<ID3D12PipelineState> gPipelineState_;
 	// デスクリプタサイズ
 	static UINT sDescriptorHandleIncrementSize_;
 
@@ -130,6 +136,14 @@ public:
 	const Vector2& GetPosition() { return position_; }
 
 	/// <summary>
+	/// サイズの設定
+	/// </summary>
+	/// <param name="size"></param>
+	void SetSize(const Vector2& size);
+
+	const Vector2& GetSize() { return size_; }
+
+	/// <summary>
 	/// 角度の設定
 	/// </summary>
 	/// <param name="rotation"></param>
@@ -152,6 +166,8 @@ public:
 	void SetColor(const Vector4& color) { color_ = color; }
 
 	const Vector4 GetColor() { return color_; }
+
+	void SetBlendMode(BlendMode mode) { blendMode_ = mode; }
 
 private:
 	void TransferVertices();
@@ -189,11 +205,11 @@ private:	// メンバ関数
 	// 色
 	Vector4 color_ = { 1,1,1,1 };
 
+	// 回転角
 	float rotation_ = 0;
 
 	// テクスチャの始点
 	Vector2 texBase_{ 0,0 };
-
 	// テクスチャのサイズ
 	Vector2 texSize_ = { 100.0f,100.0f };
 	// 左右反転
@@ -201,6 +217,8 @@ private:	// メンバ関数
 	// 上下反転
 	bool isFlipY_ = false;
 
-	D3D12_RESOURCE_DESC resourceDesc_;
+	D3D12_RESOURCE_DESC resourceDesc_{};
+
+	BlendMode blendMode_ = BlendMode::kNormal;
 };
 

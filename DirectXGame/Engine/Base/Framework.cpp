@@ -29,6 +29,7 @@ void Framework::Initialize()
 	// WindowsApp
 	winApp = WinApp::GetInstance();
 	winApp->CreateGameWindow();
+	winApp->InitializeRandomizer();
 
 	// DirectX
 	dxCommon = DirectXCommon::GetInstance();

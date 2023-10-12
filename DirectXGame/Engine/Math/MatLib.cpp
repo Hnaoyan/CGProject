@@ -1,4 +1,7 @@
-#include "MatLib.h"
+﻿#include "MatLib.h"
+#include "VectorLib.h"
+#include "MathCalc.h"
+
 #include <cmath>
 #include <cassert>
 
@@ -309,4 +312,22 @@ Vector3 MatLib::TransformNormal(const Vector3& v, const Matrix4x4& mat)
 	    v.x * mat.m[0][1] + v.y * mat.m[1][1] + v.z * mat.m[2][1],
 	    v.x * mat.m[0][2] + v.y * mat.m[1][2] + v.z * mat.m[2][2]};
 	return result;
+}
+
+Matrix4x4 MatLib::MakeBillBoard(const Vector3& target, const Vector3& eye, const Vector3& up)
+{
+	// 回転行列
+	// X軸
+	Vector3 zAxis = MathCalc::Normalize(VectorLib::Subtract(target,eye));
+	// Y軸
+	Vector3 xAxis = MathCalc::Normalize(MathCalc::Cross(up, zAxis));
+	// Z軸
+	Vector3 yAxis = MathCalc::Cross(zAxis, xAxis);
+
+	return {
+		xAxis.x,xAxis.y,xAxis.z,0.0f,
+		yAxis.x,yAxis.y,yAxis.z,0.0f,
+		zAxis.x,zAxis.y,zAxis.z,0.0f,
+		0.0f,0.0f,0.0f,1.0f
+	};
 }
