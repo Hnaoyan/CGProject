@@ -4,7 +4,7 @@ void Goal::Initialize(Model* model)
 {
 	model_ = model;
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = { 0.0f,0.0f,50.0f };
+	worldTransform_.translation_ = { 0.0f,1.0f,70.0f };
 	radius_ = 1.0f;
 	SetterRad(Vector3(radius_, radius_, radius_));
 	SetPosition(worldTransform_.translation_);

@@ -45,6 +45,12 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 	if (colliderA->GetAttribute() == colliderB->GetAttribute()) {
 		return;
 	}
+	if ((colliderA->GetAttribute() == kCollisionAttributeGround &&
+		colliderB->GetAttribute() == kCollisionAttributeMoveGround) ||
+		(colliderA->GetAttribute() == kCollisionAttributeMoveGround &&
+			colliderB->GetAttribute() == kCollisionAttributeGround)) {
+		return;
+	}
 
 	AABB other1;
 	other1.min = VectorLib::Subtract(colliderA->GetPosition(), colliderA->GetterRad());

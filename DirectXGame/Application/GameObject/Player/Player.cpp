@@ -18,35 +18,37 @@ void Player::Initialize(Model* model)
 	isLand_ = false;
 	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Player::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
 	collider_.SetFunction(f);
-	worldTransform_.translation_.y = 2.0f;
+	DeadToRestart(Vector3(0, 1.0f, 0));
 }
 
 void Player::Update()
 {
+#ifdef _DEBUG
 	ImGui::Begin("player");
 	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.1f, -20.0f, 20.0f);
+	Vector3 pos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] ,worldTransform_.matWorld_.m[3][2] };
+	ImGui::DragFloat3("matPos", &pos.x, 0.01f, -20.0f, 20.0f);
 	ImGui::DragFloat3("rot", &worldTransform_.rotation_.x, 0.1f, -20.0f, 20.0f);
 	ImGui::Text("%d", isLand_);
 	ImGui::End();
-	//velocity_ = {};
-	// 基底クラスの処理
+#endif // _DEBUG
+
+	// ジャンプ
 	if (isLand_) {
 		Jump();
 	}
-
+	// 更新処理
 	BaseCharacter::Update();
 	// 移動入力などの処理
 	Move();
-
+	// 落下
 	Fall();
 
+	// 死亡判定
 	if (worldTransform_.translation_.y < -15.0f) {
 		isDead_ = true;
 	}
 	
-	//worldTransform_.parent_ = nullptr;
-	//isLand_ = false;
-
 }
 
 void Player::Draw(const ViewProjection& viewProjection)
@@ -58,10 +60,6 @@ void Player::Draw(const ViewProjection& viewProjection)
 
 void Player::OnCollisionObject()
 {
-	worldTransform_.translation_.y = 0;
-	velocity_.y = 0;
-	isJump_ = false;
-	isLand_ = true;
 }
 
 Vector3 Player::GetWorldPosition()
@@ -135,27 +133,30 @@ void Player::Fall()
 	worldTransform_.translation_.y += velocity_.y;
 }
 
+void Player::Ground()
+{
+	velocity_.y = 0;
+	isLand_ = true;
+	isJump_ = false;
+}
+
 void Player::OnCollision(uint32_t tag, WorldTransform* world)
 {
 	if (tag == kCollisionAttributeEnemy || tag == kCollisionAttributeGoal) {
 		DeadToRestart(Vector3(0, 1.0f, 0));
 	}
-	if (tag == kCollisionAttributeGround) {
+	else if (tag == kCollisionAttributeMoveGround) {
 		Vector3 pos = { world->matWorld_.m[3][0],world->matWorld_.m[3][1],world->matWorld_.m[3][2] };
 		worldTransform_.translation_.y = pos.y + radius_;
-		velocity_.y = 0;
-		isLand_ = true;
-		isJump_ = false;
+		// 親子関係
+		worldTransform_.parent_ = world;
+		isParent_ = true;
+		Ground();
 	}
-	if(tag == kCollisionAttributeMoveGround){
+	else if (tag == kCollisionAttributeGround) {
 		Vector3 pos = { world->matWorld_.m[3][0],world->matWorld_.m[3][1],world->matWorld_.m[3][2] };
 		worldTransform_.translation_.y = pos.y + radius_;
-		if (worldTransform_.parent_ == nullptr) {
-			worldTransform_.parent_ = world;
-		}
-		velocity_.y = 0;
-		isLand_ = true;
-		isJump_ = false;
+		Ground();
 	}
 	else {
 		worldTransform_.parent_ = nullptr;

@@ -1,13 +1,15 @@
 #include "Enemy.h"
 #include <numbers>
+#include "ImGuiManager.h"
 
 void Enemy::Initialize(Model* model)
 {
 	model;
 	radius_ = 1.0f;
-	//BaseCharacter::Initialize(model);
+	isLeft_ = false;
 	worldTransform_.Initialize();
-	worldTransform_.translation_.z = 20.0f;
+	worldTransform_.translation_.x = 0;
+	worldTransform_.translation_.z = 40.0f;
 	collider_.SetterRad(Vector3(radius_, radius_, radius_));
 	collider_.SetCollisionAttribute(kCollisionAttributeEnemy);
 	collider_.SetCollisionMask(0xffffffff - kCollisionAttributeEnemy);
@@ -19,6 +21,8 @@ void Enemy::Initialize(Model* model)
 void Enemy::Update()
 {
 	UpdateFloating();
+
+	Move();
 
 	BaseCharacter::Update();	
 	worldBody_.UpdateMatrix();
@@ -32,6 +36,38 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 	models_[BODY]->Draw(worldBody_, viewProjection);
 	models_[L_ARM]->Draw(worldL_arm_, viewProjection);
 	models_[R_ARM]->Draw(worldR_arm_, viewProjection);
+}
+
+void Enemy::Move()
+{
+	//float speed = 0.05f;
+	Vector3 move{};
+	
+	ImGui::Begin("state");
+	ImGui::Text("%d", isLeft_);
+	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.01f, -10.0f, 10.0f);
+	ImGui::End();
+	
+	//if (worldTransform_.translation_.x > 5.0f)
+	//{
+
+	//}
+
+	//if (isLeft_) 
+	//{
+	//	move = { speed,0,0 };
+	//}
+	//else
+	//{
+	//	move = { -speed,0,0 };
+	//}
+
+	//worldTransform_.translation_.x += move.x;
+
+	worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
+	float length = sqrtf(move.x * move.x + move.z * move.z);
+	worldTransform_.rotation_.x = std::atan2f(-move.y, length);
+
 }
 
 void Enemy::SetModel(const std::vector<Model*>& models)

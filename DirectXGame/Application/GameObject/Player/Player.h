@@ -47,6 +47,9 @@ public:
 	/// <returns></returns>
 	WorldTransform* GetWorldTransform() { return &worldTransform_; }
 
+	void SetViewProjection(const ViewProjection* viewProjection) {
+		viewProjection_ = viewProjection;
+	}
 public:
 	/// <summary>
 	/// 死亡時のリスタート関数（外部で呼び出す予定
@@ -73,6 +76,10 @@ private:
 	/// </summary>
 	void Fall();
 
+	/// <summary>
+	/// 着地時の処理
+	/// </summary>
+	void Ground();
 
 private: // システム系
 
@@ -82,10 +89,14 @@ private: // システム系
 
 	bool isLand_ = false;
 
-	bool isLerp_ = false;
+	bool isParent_ = false;
 	
 	float jumpPower_ = 0.75f;
 
 	float lerp_t_ = 0;
+
+	// カメラのビュープロジェクション
+	const ViewProjection* viewProjection_ = nullptr;
+
 };
 

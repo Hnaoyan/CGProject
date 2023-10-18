@@ -3,7 +3,14 @@
 #include "ImGuiManager.h"
 #include <cassert>
 
-GameScene::GameScene() {}
+GameScene::GameScene() 
+{
+	model_.reset(Model::Create());
+	modelBody_.reset(Model::CreateFromObj("C_Body", true));
+	modelL_arm_.reset(Model::CreateFromObj("C_Left", true));
+	modelR_arm_.reset(Model::CreateFromObj("C_Right", true));
+	goalModel_.reset(Model::Create());
+}
 
 GameScene::~GameScene()
 {
@@ -30,18 +37,15 @@ void GameScene::Initialize() {
 	baseCamera_->SetPosition({ 0, 10.0f, -25.0f });
 	baseCamera_->SetRotation({ 0.3f, 0, 0 });
 
-	//skydomeModel_.reset(Model::CreateFromObj("skydome", true));
-	//skydome_ = std::make_unique<SkyDome>();
-	//skydome_->Initialize(skydomeModel_.get());
+	skydomeModel_.reset(Model::CreateFromObj("skydome", true));
+	skydome_ = std::make_unique<SkyDome>();
+	skydome_->Initialize(skydomeModel_.get());
 
-	model_.reset(Model::Create());
 	player_ = std::make_unique<Player>();
 	player_->Initialize(model_.get());
 	followCamera_->SetTarget(player_->GetWorldTransform());
+	player_->SetViewProjection(followCamera_->GetViewPlayer());
 
-	modelBody_.reset(Model::CreateFromObj("C_Body", true));
-	modelL_arm_.reset(Model::CreateFromObj("C_Left", true));
-	modelR_arm_.reset(Model::CreateFromObj("C_Right", true));
 
 	std::vector<Model*> models =
 	{ modelBody_.get(),modelL_arm_.get(),modelR_arm_.get() };
@@ -50,7 +54,6 @@ void GameScene::Initialize() {
 	enemy_->Initialize(model_.get());
 	enemy_->SetModel(models);
 
-	goalModel_.reset(Model::Create());
 	goal_ = std::make_unique<Goal>();
 	goal_->Initialize(goalModel_.get());
 
@@ -62,6 +65,8 @@ void GameScene::Initialize() {
 
 	groundManager_->AddGround(Vector3(0, -0.2f, 0.0f), groundRad, Vector3(2.0f,1.0f,2.0f));
 	groundManager_->AddGround(Vector3(0, -0.2f, 40.0f), groundRad,Vector3(2.0f,1.0f,2.0f));
+	groundManager_->AddGround(Vector3(0, -0.2f, 70.0f), groundRad, Vector3(2.0f, 1.0f, 2.0f));
+
 	groundManager_->AddMoveGround(Vector3(0, -0.4f, 20.0f),
 		Vector3(5.0f, groundRad.y, 5.0f), Vector3(1.0f, 1.0f, 1.0f));
 
@@ -76,15 +81,14 @@ void GameScene::Update()
 
 
 	groundManager_->Update();
-	//skydome_->Update();
+	skydome_->Update();
 	goal_->Update();
 
 	player_->Update();
-
 	enemy_->Update();
+
+	// 衝突処理
 	CheckCollision();
-
-
 	/// カメラ関係の更新処理
 	CameraUpdate();
 
@@ -123,7 +127,7 @@ void GameScene::Draw() {
 	enemy_->Draw(viewProjection_);
 
 	goal_->Draw(viewProjection_);
-	//skydome_->Draw(viewProjection_);
+	skydome_->Draw(viewProjection_);
 	groundManager_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
@@ -166,9 +170,6 @@ void GameScene::CameraUpdate()
 
 	}
 	else {
-		//viewProjection_.matView = baseCamera_->GetView().matView;
-		//viewProjection_.matProjection = baseCamera_->GetView().matProjection;
-		//viewProjection_.TransferMatrix();
 		viewProjection_.matView = followCamera_->GetView().matView;
 		viewProjection_.matProjection = followCamera_->GetView().matProjection;
 		viewProjection_.TransferMatrix();
@@ -177,8 +178,10 @@ void GameScene::CameraUpdate()
 
 void GameScene::CheckCollision()
 {
+	// 初期化
 	colliderManager_->ResetList();
 
+	// 追加
 	colliderManager_->AddList(player_->GetCollider());
 	colliderManager_->AddList(enemy_->GetCollider());
 	colliderManager_->AddList(goal_.get());

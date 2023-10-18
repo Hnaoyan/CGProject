@@ -15,12 +15,12 @@ void Ground::Update()
 {
 	if (collider_.GetAttribute() == kCollisionAttributeMoveGround) {
 		worldTransform_.translation_.x += 0.01f;
-		//worldTransform_.matWorld_.m[3][0] += 0.01f;
 	}
-	worldTransform_.parent_ = nullptr;
+	//collider_.SetPosition(worldTransform_.translation_);
+	worldTransform_.UpdateMatrix();
 	Vector3 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };
 	collider_.SetPosition(position);
-	worldTransform_.UpdateMatrix();
+
 	//worldTransform_.parent_ = nullptr;
 }
 
@@ -43,7 +43,8 @@ void Ground::OnCollision(uint32_t tag, WorldTransform* world)
 {
 	if (collider_.GetAttribute() == kCollisionAttributeMoveGround &&
 		tag == kCollisionAttributePlayer) {
-		worldTransform_.parent_ = world;
+		//worldTransform_.parent_ = world;
+		world;
 	}
 }
 

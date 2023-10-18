@@ -21,6 +21,8 @@ public:
 	/// <param name="viewProjection"></param>
 	void Draw(const ViewProjection& viewProjection) override;
 
+	void Move();
+
 public:
 
 	void SetModel(const std::vector<Model*>& models);
@@ -61,5 +63,8 @@ private:
 		L_ARM,
 		R_ARM,
 	};
+
+	bool isLeft_ = false;
+
 };
 
