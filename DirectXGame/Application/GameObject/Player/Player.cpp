@@ -48,7 +48,6 @@ void Player::Update()
 	if (worldTransform_.translation_.y < -15.0f) {
 		isDead_ = true;
 	}
-	
 }
 
 void Player::Draw(const ViewProjection& viewProjection)
@@ -145,7 +144,7 @@ void Player::OnCollision(uint32_t tag, WorldTransform* world)
 	if (tag == kCollisionAttributeEnemy || tag == kCollisionAttributeGoal) {
 		DeadToRestart(Vector3(0, 1.0f, 0));
 	}
-	else if (tag == kCollisionAttributeMoveGround) {
+	if (tag == kCollisionAttributeMoveGround) {
 		Vector3 pos = { world->matWorld_.m[3][0],world->matWorld_.m[3][1],world->matWorld_.m[3][2] };
 		worldTransform_.translation_.y = pos.y + radius_;
 		// 親子関係
@@ -153,13 +152,13 @@ void Player::OnCollision(uint32_t tag, WorldTransform* world)
 		isParent_ = true;
 		Ground();
 	}
-	else if (tag == kCollisionAttributeGround) {
+	else {
+		//worldTransform_.parent_ = nullptr;
+	}
+	if (tag == kCollisionAttributeGround) {
 		Vector3 pos = { world->matWorld_.m[3][0],world->matWorld_.m[3][1],world->matWorld_.m[3][2] };
 		worldTransform_.translation_.y = pos.y + radius_;
 		Ground();
-	}
-	else {
-		worldTransform_.parent_ = nullptr;
 	}
 }
 
