@@ -20,6 +20,8 @@ private:
 	/// </summary>
 	WorldTransform worldTransform_;
 
+	uint32_t textureHandle_ = 0u;
+
 public:	// デフォルト関数
 	/// <summary>
 	/// 初期化

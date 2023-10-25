@@ -1,6 +1,7 @@
 #include "FollowCamera.h"
 #include "MathCalc.h"
 #include <Input.h>
+#include "imgui.h"
 
 void FollowCamera::Initialize() {
 	// ビュープロジェクションの初期化
@@ -45,7 +46,13 @@ void FollowCamera::Update() {
 	}
 
 	// 座標をコピーしてオフセット文ずらす
-	viewProjection_.translate_ = VectorLib::Add(target_->translation_, SetOffset());
+	Vector3 worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
+	viewProjection_.translate_ = VectorLib::Add(worldPosition, SetOffset());
+
+	ImGui::Begin("camera");
+	ImGui::DragFloat3("pos", &viewProjection_.translate_.x, 0.01f, -100.0f, 100.0f);
+	ImGui::Text("%f : %f : %f", target_->translation_.x, target_->translation_.y, target_->translation_.z);
+	ImGui::End();
 
 	// ビュー行列の更新・転送
 	viewProjection_.UpdateMatrix();

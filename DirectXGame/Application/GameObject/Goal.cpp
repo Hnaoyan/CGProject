@@ -1,4 +1,5 @@
 #include "Goal.h"
+#include "TextureManager.h"
 
 void Goal::Initialize(Model* model)
 {
@@ -13,7 +14,7 @@ void Goal::Initialize(Model* model)
 	// バインド
 	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Goal::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
 	SetFunction(f);
-
+	textureHandle_ = TextureManager::Load("white1x1.png");
 }
 
 void Goal::Update()
@@ -23,7 +24,7 @@ void Goal::Update()
 
 void Goal::Draw(const ViewProjection& viewProjection)
 {
-	model_->Draw(worldTransform_, viewProjection);
+	model_->Draw(worldTransform_, viewProjection,textureHandle_);
 }
 
 void Goal::OnCollision(uint32_t tag, WorldTransform* world)

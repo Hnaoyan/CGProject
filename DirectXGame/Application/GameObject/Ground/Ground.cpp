@@ -9,19 +9,24 @@ void Ground::Initialize(Model* model)
 	collider_.SetWorldAddress(&worldTransform_);
 	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Ground::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
 	collider_.SetFunction(f);
+	velocity_ = { 0.01f,0,0 };
 }
 
 void Ground::Update() 
 {
 	if (collider_.GetAttribute() == kCollisionAttributeMoveGround) {
-		worldTransform_.translation_.x += 0.01f;
+		if (worldTransform_.translation_.x >= 5.0f) {
+			velocity_.x *= -1.0f;
+		}
+		if (worldTransform_.translation_.x <= -5.0f) {
+			velocity_.x *= 1.0f;
+		}
+		worldTransform_.translation_.x += velocity_.x;
 	}
-	//collider_.SetPosition(worldTransform_.translation_);
 	worldTransform_.UpdateMatrix();
 	Vector3 position = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };
 	collider_.SetPosition(position);
 
-	//worldTransform_.parent_ = nullptr;
 }
 
 void Ground::Draw(const ViewProjection& viewProjection) 

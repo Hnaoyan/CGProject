@@ -70,15 +70,18 @@ void GameScene::Initialize() {
 	groundManager_->AddMoveGround(Vector3(0, -0.4f, 20.0f),
 		Vector3(5.0f, groundRad.y, 5.0f), Vector3(1.0f, 1.0f, 1.0f));
 
+	groundManager_->Update();
 }
 
 void GameScene::Update()
 {
+	// 衝突処理
+	CheckCollision();
+
 
 	if (player_->GetIsDead()) {
 		player_->DeadToRestart(Vector3(0,1.0f,0));
 	}
-
 
 	groundManager_->Update();
 	skydome_->Update();
@@ -86,9 +89,6 @@ void GameScene::Update()
 
 	player_->Update();
 	enemy_->Update();
-
-	// 衝突処理
-	CheckCollision();
 	/// カメラ関係の更新処理
 	CameraUpdate();
 

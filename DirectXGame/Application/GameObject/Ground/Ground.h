@@ -38,5 +38,6 @@ protected:
 
 	Collider collider_;
 
+	Vector3 velocity_;
 };
 

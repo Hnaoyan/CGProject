@@ -6,7 +6,6 @@ void Enemy::Initialize(Model* model)
 {
 	model;
 	radius_ = 1.0f;
-	isLeft_ = false;
 	worldTransform_.Initialize();
 	worldTransform_.translation_.x = 0;
 	worldTransform_.translation_.z = 40.0f;
@@ -16,6 +15,9 @@ void Enemy::Initialize(Model* model)
 	collider_.SetWorldAddress(&worldTransform_);
 	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Enemy::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
 	collider_.SetFunction(f);
+
+	MoveInitialize();
+
 }
 
 void Enemy::Update()
@@ -40,33 +42,34 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 
 void Enemy::Move()
 {
-	//float speed = 0.05f;
-	Vector3 move{};
 	
 	ImGui::Begin("state");
 	ImGui::Text("%d", isLeft_);
 	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.01f, -10.0f, 10.0f);
 	ImGui::End();
 	
-	//if (worldTransform_.translation_.x > 5.0f)
-	//{
+	float returnPositionX = 3.0f;
 
-	//}
+	if (isLeft_) 
+	{
+		if (worldTransform_.translation_.x < -returnPositionX) {
+			isLeft_ = false;
+			velocity_.x *= -1.0f;
+		}
+	}
+	else
+	{
+		if (worldTransform_.translation_.x > returnPositionX) {
+			isLeft_ = true;
+			velocity_.x *= -1.0f;
+		}
+	}
 
-	//if (isLeft_) 
-	//{
-	//	move = { speed,0,0 };
-	//}
-	//else
-	//{
-	//	move = { -speed,0,0 };
-	//}
+	worldTransform_.translation_.x += velocity_.x;
 
-	//worldTransform_.translation_.x += move.x;
-
-	worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
-	float length = sqrtf(move.x * move.x + move.z * move.z);
-	worldTransform_.rotation_.x = std::atan2f(-move.y, length);
+	worldTransform_.rotation_.y = std::atan2f(velocity_.x, velocity_.z);
+	float length = sqrtf(velocity_.x * velocity_.x + velocity_.z * velocity_.z);
+	worldTransform_.rotation_.x = std::atan2f(-velocity_.y, length);
 
 }
 
@@ -119,4 +122,10 @@ void Enemy::UpdateFloating()
 void Enemy::InitializeFloating()
 {
 	floatingParameter_ = 0.0f;
+}
+
+void Enemy::MoveInitialize()
+{
+	isLeft_ = false;
+	velocity_ = { 0.1f,0,0 };
 }

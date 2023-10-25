@@ -41,6 +41,8 @@ public:
 
 	void InitializeFloating();
 
+	void MoveInitialize();
+
 private:
 	// モデルデータ配列
 	std::vector<Model*> models_;
@@ -65,6 +67,8 @@ private:
 	};
 
 	bool isLeft_ = false;
+
+	Vector3 velocity_ = {};
 
 };
 

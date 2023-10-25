@@ -28,7 +28,7 @@ public:
 	/// <summary>
 	/// 衝突コールバック
 	/// </summary>
-	void OnCollision(uint32_t tag, WorldTransform* world);
+	void OnCollision(uint32_t tag, WorldTransform* targetWorldTransform);
 
 	/// <summary>
 	/// ブロックと衝突時

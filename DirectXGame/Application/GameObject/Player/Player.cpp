@@ -76,7 +76,7 @@ void Player::Move()
 
 		Vector3 moved = {
 			(float)joyState.Gamepad.sThumbLX / SHRT_MAX,0,
-			(float)joyState.Gamepad.sThumbLY / SHRT_MAX};
+			(float)joyState.Gamepad.sThumbLY / SHRT_MAX };
 		if (MathCalc::Length(moved) > threshold) {
 			isMoving = true;
 		}
@@ -87,7 +87,7 @@ void Player::Move()
 			Vector3 move = {
 				(float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed,0.0f,
 				(float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed };
-			Vector3 normal= VectorLib::Scaler(MathCalc::Normalize(move), speed);
+			Vector3 normal = VectorLib::Scaler(MathCalc::Normalize(move), speed);
 			velocity_.x = normal.x;
 			velocity_.z = normal.z;
 			// 向きの処理
@@ -114,6 +114,10 @@ void Player::Jump()
 	{
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && !isJump_) {
 			isJump_ = true;
+			worldTransform_.parent_ = nullptr;
+			Vector3 worldPosition = GetWorldPosition();
+			worldTransform_.translation_ = worldPosition;
+			worldTransform_.UpdateMatrix();
 		}
 	}
 
@@ -127,9 +131,11 @@ void Player::Jump()
 
 void Player::Fall()
 {
-	velocity_.y += (-0.05f);
+	if (!worldTransform_.parent_) {
+		velocity_.y += (-0.05f);
 
-	worldTransform_.translation_.y += velocity_.y;
+		worldTransform_.translation_.y += velocity_.y;
+	}
 }
 
 void Player::Ground()
@@ -139,31 +145,45 @@ void Player::Ground()
 	isJump_ = false;
 }
 
-void Player::OnCollision(uint32_t tag, WorldTransform* world)
+void Player::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 {
 	if (tag == kCollisionAttributeEnemy || tag == kCollisionAttributeGoal) {
 		DeadToRestart(Vector3(0, 1.0f, 0));
 	}
-	if (tag == kCollisionAttributeMoveGround) {
-		Vector3 pos = { world->matWorld_.m[3][0],world->matWorld_.m[3][1],world->matWorld_.m[3][2] };
-		worldTransform_.translation_.y = pos.y + radius_;
-		// 親子関係
-		worldTransform_.parent_ = world;
-		isParent_ = true;
+	else if (tag == kCollisionAttributeGround) {
+		Vector3 groundWorldPosition = { 
+			targetWorldTransform->matWorld_.m[3][0],targetWorldTransform->matWorld_.m[3][1],
+			targetWorldTransform->matWorld_.m[3][2] };
+		worldTransform_.translation_.y = groundWorldPosition.y + radius_;
+		Ground();
+		//worldTransform_.parent_ = nullptr;
+	}
+	else if (tag == kCollisionAttributeMoveGround) {
+		if (!worldTransform_.parent_) {
+			Vector3 groundWorldPosition = {
+				targetWorldTransform->matWorld_.m[3][0],targetWorldTransform->matWorld_.m[3][1],
+				targetWorldTransform->matWorld_.m[3][2] };
+			Vector3 playerWorldPosition = GetWorldPosition();
+			worldTransform_.translation_ = VectorLib::Subtract(playerWorldPosition, groundWorldPosition);
+			// 親子関係
+			worldTransform_.parent_ = targetWorldTransform;
+		}
+
+		if (worldTransform_.translation_.y < 0.f) {
+			worldTransform_.translation_.y = radius_;
+		}
 		Ground();
 	}
 	else {
-		//worldTransform_.parent_ = nullptr;
+		worldTransform_.parent_ = nullptr;
 	}
-	if (tag == kCollisionAttributeGround) {
-		Vector3 pos = { world->matWorld_.m[3][0],world->matWorld_.m[3][1],world->matWorld_.m[3][2] };
-		worldTransform_.translation_.y = pos.y + radius_;
-		Ground();
-	}
+	worldTransform_.UpdateMatrix();
 }
 
 void Player::DeadToRestart(const Vector3& startPoint)
 {
+	worldTransform_.parent_ = nullptr;
 	worldTransform_.translation_ = startPoint;
+	worldTransform_.UpdateMatrix();
 	isDead_ = false;
 }
