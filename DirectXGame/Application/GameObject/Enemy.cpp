@@ -91,10 +91,10 @@ void Enemy::SetModel(const std::vector<Model*>& models)
 	InitializeFloating();
 }
 
-void Enemy::OnCollision(uint32_t tag, WorldTransform* world)
+void Enemy::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 {
 	tag;
-	world;
+	targetWorldTransform;
 }
 
 Vector3 Enemy::GetWorldPosition()

@@ -24,6 +24,7 @@ void FollowCamera::Update() {
 
 			//destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
 			viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
+			viewProjection_.rotation_.x += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * rotateSpeed;
 			
 			// スティックの入力がなくなったらリセット
 			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
@@ -63,7 +64,7 @@ void FollowCamera::Reset()
 	if (target_) {
 		// 追従対象・角度初期化
 		//interTarget_ = target_->translation_;
-		viewProjection_.rotation_.y = 0;
+		viewProjection_.rotation_ = {};
 	}
 }
 

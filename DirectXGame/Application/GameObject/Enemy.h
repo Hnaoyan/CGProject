@@ -30,7 +30,7 @@ public:
 	/// <summary>
 	/// 衝突コールバック
 	/// </summary>
-	void OnCollision(uint32_t tag, WorldTransform* world);
+	void OnCollision(uint32_t tag, WorldTransform* targetWorldTransform);
 	/// <summary>
 	/// 座標取得
 	/// </summary>

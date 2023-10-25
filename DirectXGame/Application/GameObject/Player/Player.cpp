@@ -57,10 +57,6 @@ void Player::Draw(const ViewProjection& viewProjection)
 
 }
 
-void Player::OnCollisionObject()
-{
-}
-
 Vector3 Player::GetWorldPosition()
 {
 	Vector3 worldPos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };

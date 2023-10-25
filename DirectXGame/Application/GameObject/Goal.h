@@ -43,6 +43,6 @@ public:	// デフォルト関数
 	/// <summary>
 	/// 衝突コールバック
 	/// </summary>
-	void OnCollision(uint32_t tag, WorldTransform* world);
+	void OnCollision(uint32_t tag, WorldTransform* targetWorldTransform);
 };
 

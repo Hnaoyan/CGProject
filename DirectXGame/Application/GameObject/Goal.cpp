@@ -27,8 +27,8 @@ void Goal::Draw(const ViewProjection& viewProjection)
 	model_->Draw(worldTransform_, viewProjection,textureHandle_);
 }
 
-void Goal::OnCollision(uint32_t tag, WorldTransform* world)
+void Goal::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 {
 	tag;
-	world;
+	targetWorldTransform;
 }

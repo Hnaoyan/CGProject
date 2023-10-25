@@ -31,11 +31,6 @@ public:
 	void OnCollision(uint32_t tag, WorldTransform* targetWorldTransform);
 
 	/// <summary>
-	/// ブロックと衝突時
-	/// </summary>
-	void OnCollisionObject();
-
-	/// <summary>
 	/// 座標取得
 	/// </summary>
 	/// <returns></returns>
@@ -57,6 +52,10 @@ public:
 	/// <param name="startPoint"></param>
 	void DeadToRestart(const Vector3& startPoint);
 	
+	/// <summary>
+	/// 死亡時のフラグ取得
+	/// </summary>
+	/// <returns></returns>
 	bool GetIsDead() { return isDead_; }
 
 private:

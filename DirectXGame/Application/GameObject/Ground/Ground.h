@@ -15,7 +15,7 @@ public:
 
 	virtual void Draw(const ViewProjection& viewProjection);
 
-	void SetPosition(const Vector3& pos);
+	void SetPosition(const Vector3& position);
 
 	void SetScale(const Vector3& scale);
 	/// <summary>
@@ -26,7 +26,7 @@ public:
 	/// <summary>
 	/// 衝突コールバック
 	/// </summary>
-	void OnCollision(uint32_t tag, WorldTransform* world);
+	void OnCollision(uint32_t tag, WorldTransform* targetWorldTransform);
 
 	Collider* GetCollider() { return &collider_; }
 

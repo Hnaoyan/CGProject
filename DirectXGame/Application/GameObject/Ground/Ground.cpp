@@ -34,9 +34,9 @@ void Ground::Draw(const ViewProjection& viewProjection)
 	model_->Draw(worldTransform_, viewProjection);
 }
 
-void Ground::SetPosition(const Vector3& pos)
+void Ground::SetPosition(const Vector3& position)
 {
-	worldTransform_.translation_ = pos;
+	worldTransform_.translation_ = position;
 }
 
 void Ground::SetScale(const Vector3& scale)
@@ -44,12 +44,11 @@ void Ground::SetScale(const Vector3& scale)
 	worldTransform_.scale_ = scale;
 }
 
-void Ground::OnCollision(uint32_t tag, WorldTransform* world)
+void Ground::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 {
 	if (collider_.GetAttribute() == kCollisionAttributeMoveGround &&
 		tag == kCollisionAttributePlayer) {
-		//worldTransform_.parent_ = world;
-		world;
+		targetWorldTransform;
 	}
 }
 

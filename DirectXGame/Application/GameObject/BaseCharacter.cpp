@@ -14,9 +14,6 @@ void BaseCharacter::Update()
 	worldTransform_.UpdateMatrix();
 	Vector3 pos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };
 	collider_.SetPosition(pos);
-	if (worldTransform_.parent_) {
-		//worldTransform_.translation_ = VectorLib::Subtract(worldTransform_.translation_, worldTransform_.parent_->translation_);
-	}
 }
 
 void BaseCharacter::Draw(const ViewProjection& viewProjection) 
