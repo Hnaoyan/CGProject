@@ -259,7 +259,8 @@ void Input::Initialize()
 	notificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
 	notificationFilter.dbcc_size = sizeof(notificationFilter);
 
-	HDEVNOTIFY notifyResult = RegisterDeviceNotification(
+	HDEVNOTIFY notifyResult;
+	notifyResult = RegisterDeviceNotification(
 		hwnd_, &notificationFilter,
 		DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
 	assert(!!notifyResult);

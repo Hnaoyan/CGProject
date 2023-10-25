@@ -29,7 +29,8 @@ void WorldTransform::CreateConstBuffer()
 
 void WorldTransform::Map()
 {
-	HRESULT result = constBuff_->Map(0, nullptr, (void**)&constMap);
+	HRESULT result;
+	result = constBuff_->Map(0, nullptr, (void**)&constMap);
 	assert(SUCCEEDED(result));
 }
 

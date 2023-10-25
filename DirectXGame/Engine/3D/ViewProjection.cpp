@@ -28,7 +28,8 @@ void ViewProjection::CreateConstBuffer()
 
 void ViewProjection::Map()
 {
-	HRESULT result = constBuff_->Map(0, nullptr, (void**)&constMap);
+	HRESULT result;
+	result = constBuff_->Map(0, nullptr, (void**)&constMap);
 	assert(SUCCEEDED(result));
 }
 
