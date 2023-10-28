@@ -38,7 +38,7 @@ void FollowCamera::Update() {
 			reset_t_ += 0.1f;
 			if (reset_t_ <= 1.0f) {
 				viewProjection_.rotation_.y =
-					MathCalc::Lerp(viewProjection_.rotation_.y, target_->rotation_.y, reset_t_);
+					MathCalc::EaseInCubicF(viewProjection_.rotation_.y, target_->rotation_.y, reset_t_);
 				reset_t_ = 0;
 				isReset_ = false;
 			}

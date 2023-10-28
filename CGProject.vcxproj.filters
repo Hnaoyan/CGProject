@@ -222,10 +222,10 @@
     <ClCompile Include="DirectXGame\Engine\Camera\BaseCamera.cpp">
       <Filter>ソース ファイル\other</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Base\MyGame.cpp">
+    <ClCompile Include="DirectXGame\Engine\FrameWork\MyGame.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Base\Framework.cpp">
+    <ClCompile Include="DirectXGame\Engine\FrameWork\Framework.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\2D\SpriteCommon.cpp">
@@ -383,13 +383,13 @@
     <ClInclude Include="DirectXGame\Engine\Camera\BaseCamera.h">
       <Filter>ヘッダー ファイル\other</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Base\MyGame.h">
+    <ClInclude Include="DirectXGame\Engine\FrameWork\MyGame.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\2D\SpriteCommon.h">
       <Filter>ヘッダー ファイル\2D</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Base\Framework.h">
+    <ClInclude Include="DirectXGame\Engine\FrameWork\Framework.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Collider\CollisionManager.h">

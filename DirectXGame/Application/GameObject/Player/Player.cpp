@@ -11,13 +11,19 @@ void Player::Initialize(Model* model)
 
 	// モデル読み込み
 	radius_ = 1.0f;
+	// ベースの初期化
 	BaseCharacter::Initialize(model);
-	collider_.SetCollisionAttribute(kCollisionAttributePlayer);
-	collider_.SetCollisionMask(0xffffffff - kCollisionAttributePlayer);
+	// フラグ初期化
 	isDead_ = false;
 	isLand_ = false;
+
+	// コライダーの設定
+	collider_.SetCollisionAttribute(kCollisionAttributePlayer);
+	collider_.SetCollisionMask(0xffffffff - kCollisionAttributePlayer);
+	// 関数バインド
 	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Player::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
 	collider_.SetFunction(f);
+	// リスタート関数
 	DeadToRestart(Vector3(0, 1.0f, 0));
 }
 
@@ -32,6 +38,10 @@ void Player::Update()
 	ImGui::Text("%d", isLand_);
 	ImGui::End();
 #endif // _DEBUG
+	// 死亡判定
+	if (worldTransform_.translation_.y < -15.0f) {
+		isDead_ = true;
+	}
 
 	// ジャンプ
 	if (isLand_) {
@@ -39,15 +49,13 @@ void Player::Update()
 	}
 	// 更新処理
 	BaseCharacter::Update();
-	// 移動入力などの処理
-	Move();
+
+	// 移動
+	BehaviorRootUpdate();
+
 	// 落下
 	Fall();
 
-	// 死亡判定
-	if (worldTransform_.translation_.y < -15.0f) {
-		isDead_ = true;
-	}
 }
 
 void Player::Draw(const ViewProjection& viewProjection)
@@ -67,15 +75,19 @@ void Player::Move()
 {
 	XINPUT_STATE joyState;
 	if (input_->GetInstance()->GetJoystickState(0, joyState)) {
+		// 閾値
 		const float threshold = 0.7f;
 		bool isMoving = false;
 
+		// 移動量計算
 		Vector3 moved = {
 			(float)joyState.Gamepad.sThumbLX / SHRT_MAX,0,
 			(float)joyState.Gamepad.sThumbLY / SHRT_MAX };
 		if (MathCalc::Length(moved) > threshold) {
 			isMoving = true;
 		}
+
+		// 移動処理
 		if (isMoving) {
 			// 速さ
 			const float speed = 0.3f;
@@ -90,7 +102,6 @@ void Player::Move()
 			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
-			// 移動処理
 		}
 		else {
 			worldTransform_.rotation_.y = 0;
@@ -139,6 +150,25 @@ void Player::Ground()
 	velocity_.y = 0;
 	isLand_ = true;
 	isJump_ = false;
+}
+
+void Player::BehaviorRootUpdate()
+{
+	// 移動処理
+	Move();
+
+}
+
+void Player::BehaviorDashInitialize()
+{
+	workDash_.dashParameter_ = 0;
+	//worldTransform_.rotation_.y;
+
+
+}
+
+void Player::BehaviorDashUpdate()
+{
 }
 
 void Player::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)

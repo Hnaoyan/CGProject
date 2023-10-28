@@ -79,6 +79,40 @@ private:
 	/// 着地時の処理
 	/// </summary>
 	void Ground();
+private:
+	/// <summary>
+	/// 通常状態の初期化
+	/// </summary>
+	void BehaviorRootInitialize();
+
+	/// <summary>
+	/// 通常状態の更新
+	/// </summary>
+	void BehaviorRootUpdate();
+
+	/// <summary>
+	/// ダッシュの初期化
+	/// </summary>
+	void BehaviorDashInitialize();
+
+	/// <summary>
+	/// ダッシュの更新
+	/// </summary>
+	void BehaviorDashUpdate();
+
+private:
+
+	enum class Behavior {
+		kRoot,
+		kAttack,
+		kDash,
+	};
+
+	struct WorkDash {
+		uint32_t dashParameter_ = 0;
+	};
+
+	WorkDash workDash_;
 
 private: // システム系
 
@@ -87,8 +121,6 @@ private: // システム系
 	bool isJump_ = false;
 
 	bool isLand_ = false;
-
-	bool isParent_ = false;
 	
 	float jumpPower_ = 0.75f;
 
