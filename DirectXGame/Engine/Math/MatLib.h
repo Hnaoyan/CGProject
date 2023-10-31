@@ -1,7 +1,7 @@
 #pragma once
 #include "StructManager.h"
 
-class MatLib 
+class MatLib
 {
 public:
 	/// <summary>
@@ -19,7 +19,7 @@ public:
 	/// <param name="translate"></param>
 	/// <returns></returns>
 	static Matrix4x4
-	    MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+		MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 	/// <summary>
 	/// X軸行列計算
 	/// </summary>
@@ -72,16 +72,18 @@ public:
 	static Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 
 	static Matrix4x4
-	    MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
+		MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
 
 	static Matrix4x4 MakeOrthographicMatrix(
-	    float left, float top, float right, float bottom, float nearClip, float farClip);
+		float left, float top, float right, float bottom, float nearClip, float farClip);
 
 	static Matrix4x4 MakeViewportMatrix(
-	    float left, float top, float width, float height, float minDepth, float maxDepth);
+		float left, float top, float width, float height, float minDepth, float maxDepth);
 
 	static Vector3 GetWorldPosition(const Matrix4x4& matWorld);
 
 	static Vector3 TransformNormal(const Vector3& v, const Matrix4x4& mat);
+
+	static Matrix4x4 MakeBillBoard(const Vector3& target, const Vector3& eye, const Vector3& up);
 
 };

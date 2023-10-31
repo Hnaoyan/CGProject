@@ -85,9 +85,11 @@ private:	// メンバポインタ
 	std::unique_ptr<Model> skydomeModel_;
 	std::unique_ptr<Model> goalModel_;
 	// パーツモデル
+	std::unique_ptr<Model> modelHead_;
 	std::unique_ptr<Model> modelBody_;
 	std::unique_ptr<Model> modelR_arm_;
 	std::unique_ptr<Model> modelL_arm_;
+	std::unique_ptr<Model> modelWeapon_;
 	// オブジェクト
 	std::unique_ptr<SkyDome> skydome_;
 	std::unique_ptr<Player> player_;

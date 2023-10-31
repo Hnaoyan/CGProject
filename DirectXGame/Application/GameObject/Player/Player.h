@@ -12,7 +12,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model"></param>
-	void Initialize(Model* model) override;
+	void Initialize(const std::vector<Model*>& models);
 
 	/// <summary>
 	/// 更新処理
@@ -31,6 +31,11 @@ public:
 	void OnCollision(uint32_t tag, WorldTransform* targetWorldTransform);
 
 	/// <summary>
+	/// 設定
+	/// </summary>
+	void Setting();
+
+	/// <summary>
 	/// 座標取得
 	/// </summary>
 	/// <returns></returns>
@@ -42,9 +47,30 @@ public:
 	/// <returns></returns>
 	WorldTransform* GetWorldTransform() { return &worldTransform_; }
 
+	/// <summary>
+	/// viewの設定
+	/// </summary>
+	/// <param name="viewProjection"></param>
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
+private:
+	// モデルデータ配列
+	std::vector<Model*> models_;
+	// モデルデータ識別
+	enum ModelPart {
+		BODY,
+		//HEAD,
+		L_ARM,
+		R_ARM,
+		WEAPON,
+	};
+
+	WorldTransform worldTransformBody_;
+	WorldTransform worldTransformL_Arm_;
+	WorldTransform worldTransformR_Arm_;
+
+
 public:
 	/// <summary>
 	/// 死亡時のリスタート関数（外部で呼び出す予定
@@ -63,12 +89,12 @@ private:
 	/// <summary>
 	/// 移動の更新
 	/// </summary>
-	void Move();
+	void ProcessMovement();
 
 	/// <summary>
 	/// ジャンプの更新
 	/// </summary>
-	void Jump();
+	void ProcessJump();
 
 	/// <summary>
 	/// 落下の更新
@@ -79,11 +105,17 @@ private:
 	/// 着地時の処理
 	/// </summary>
 	void Ground();
+
+	/// <summary>
+	/// 調整項目用関数
+	/// </summary>
+	void ApplyGlobalVariables();
+
 private:
 	/// <summary>
 	/// 通常状態の初期化
 	/// </summary>
-	void BehaviorRootInitialize();
+	//void BehaviorRootInitialize();
 
 	/// <summary>
 	/// 通常状態の更新
@@ -101,12 +133,24 @@ private:
 	void BehaviorDashUpdate();
 
 private:
-
+	/// <summary>
+	/// 状態管理
+	/// </summary>
 	enum class Behavior {
 		kRoot,
 		kAttack,
 		kDash,
 	};
+
+	/// <summary>
+	/// 状態の変数
+	/// </summary>
+	Behavior behavior_ = Behavior::kRoot;
+
+	/// <summary>
+	/// 次の動きのリクエスト
+	/// </summary>
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
 	struct WorkDash {
 		uint32_t dashParameter_ = 0;

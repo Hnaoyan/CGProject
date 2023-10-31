@@ -41,14 +41,14 @@ void GameScene::Initialize() {
 	skydome_ = std::make_unique<SkyDome>();
 	skydome_->Initialize(skydomeModel_.get());
 
-	player_ = std::make_unique<Player>();
-	player_->Initialize(model_.get());
-	followCamera_->SetTarget(player_->GetWorldTransform());
-	player_->SetViewProjection(followCamera_->GetViewPlayer());
-
 
 	std::vector<Model*> models =
 	{ modelBody_.get(),modelL_arm_.get(),modelR_arm_.get() };
+
+	player_ = std::make_unique<Player>();
+	player_->Initialize(models);
+	followCamera_->SetTarget(player_->GetWorldTransform());
+	player_->SetViewProjection(followCamera_->GetViewPlayer());
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize(model_.get());

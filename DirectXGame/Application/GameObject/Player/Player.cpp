@@ -1,18 +1,28 @@
 #include "Player.h"
 #include "MathCalc.h"
 #include "ImGuiManager.h"
+#include "GlobalVariables.h"
 
 #include <algorithm>
 
-void Player::Initialize(Model* model)
+void Player::Initialize(const std::vector<Model*>& models)
 {
 	// システム系
 	input_ = Input::GetInstance();
-
+	
 	// モデル読み込み
 	radius_ = 1.0f;
 	// ベースの初期化
-	BaseCharacter::Initialize(model);
+	models_ = models;
+	
+	worldTransform_.Initialize();
+	worldTransformBody_.Initialize();
+	worldTransformL_Arm_.Initialize();
+	worldTransformR_Arm_.Initialize();
+
+	// サイズ設定
+	collider_.SetterRad(Vector3(radius_, radius_, radius_));
+	collider_.SetWorldAddress(&worldTransform_);
 	// フラグ初期化
 	isDead_ = false;
 	isLand_ = false;
@@ -23,8 +33,16 @@ void Player::Initialize(Model* model)
 	// 関数バインド
 	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Player::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
 	collider_.SetFunction(f);
-	// リスタート関数
-	DeadToRestart(Vector3(0, 1.0f, 0));
+
+	worldTransformBody_.parent_ = &worldTransform_;
+	worldTransformL_Arm_.parent_ = &worldTransformBody_;
+	worldTransformR_Arm_.parent_ = &worldTransformBody_;
+
+	worldTransformL_Arm_.translation_ = { -0.4f, 1.5f, -0.15f };
+	worldTransformR_Arm_.translation_ = { 0.4f, 1.5f, -0.15f };
+
+	// 設定
+	Setting();
 }
 
 void Player::Update()
@@ -42,27 +60,47 @@ void Player::Update()
 	if (worldTransform_.translation_.y < -15.0f) {
 		isDead_ = true;
 	}
-
-	// ジャンプ
-	if (isLand_) {
-		Jump();
+	// リクエストの受付
+	if (behaviorRequest_) {
+		// 行動変更
+		behavior_ = behaviorRequest_.value();
+		// 初期化
+		switch (behavior_) {
+		case Player::Behavior::kRoot:
+			//BehaviorRootInitialize();
+			break;
+		case Player::Behavior::kAttack:
+			//BehaviorAttackInitialize();
+			break;
+		case Player::Behavior::kDash:
+			BehaviorDashInitialize();
+			break;
+		}
+		// リクエストをリセット
+		behaviorRequest_ = std::nullopt;
 	}
-	// 更新処理
-	BaseCharacter::Update();
 
 	// 移動
 	BehaviorRootUpdate();
-
 	// 落下
 	Fall();
 
+	// 更新
+	BaseCharacter::Update();
+	worldTransformBody_.UpdateMatrix();
+	worldTransformL_Arm_.UpdateMatrix();
+	worldTransformR_Arm_.UpdateMatrix();
 }
 
 void Player::Draw(const ViewProjection& viewProjection)
 {
 	// ベースの描画
-	BaseCharacter::Draw(viewProjection);
+	//BaseCharacter::Draw(viewProjection);
 
+	//model_->Draw(worldTransform_, viewProjection);
+	models_[BODY]->Draw(worldTransformBody_, viewProjection);
+	models_[L_ARM]->Draw(worldTransformL_Arm_, viewProjection);
+	models_[R_ARM]->Draw(worldTransformR_Arm_, viewProjection);
 }
 
 Vector3 Player::GetWorldPosition()
@@ -71,13 +109,16 @@ Vector3 Player::GetWorldPosition()
 	return worldPos;
 }
 
-void Player::Move()
+void Player::ProcessMovement()
 {
+	// 移動
 	XINPUT_STATE joyState;
 	if (input_->GetInstance()->GetJoystickState(0, joyState)) {
 		// 閾値
 		const float threshold = 0.7f;
 		bool isMoving = false;
+
+		//float angle = 0;
 
 		// 移動量計算
 		Vector3 moved = {
@@ -86,7 +127,6 @@ void Player::Move()
 		if (MathCalc::Length(moved) > threshold) {
 			isMoving = true;
 		}
-
 		// 移動処理
 		if (isMoving) {
 			// 速さ
@@ -99,41 +139,46 @@ void Player::Move()
 			velocity_.x = normal.x;
 			velocity_.z = normal.z;
 			// 向きの処理
+			//angle = std::atan2f(move.x, move.z);
 			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 		}
 		else {
-			worldTransform_.rotation_.y = 0;
+			//worldTransform_.rotation_.y = 0;
 			velocity_.x = 0;
 			velocity_.z = 0;
 		}
+		//worldTransform_.rotation_.y=MathCalc::LerpShortAngle(worldTransform_.rotation_.y,angle,)
+
+		// 座標更新
 		worldTransform_.translation_.x += velocity_.x;
 		worldTransform_.translation_.z += velocity_.z;
 	}
+
 }
 
-void Player::Jump()
+void Player::ProcessJump()
 {
-	XINPUT_STATE joyState;
-	// ジャンプ入力
-	if (input_->GetInstance()->GetJoystickState(0, joyState))
-	{
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && !isJump_) {
-			isJump_ = true;
-			worldTransform_.parent_ = nullptr;
-			Vector3 worldPosition = GetWorldPosition();
-			worldTransform_.translation_ = worldPosition;
-			worldTransform_.UpdateMatrix();
+	if (isLand_) {
+		XINPUT_STATE joyState;
+		// ジャンプ入力
+		if (input_->GetInstance()->GetJoystickState(0, joyState))
+		{
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && !isJump_) {
+				isJump_ = true;
+				worldTransform_.parent_ = nullptr;
+				Vector3 worldPosition = GetWorldPosition();
+				worldTransform_.translation_ = worldPosition;
+				// ジャンプ時の初速度
+				isLand_ = false;
+				velocity_.y = jumpPower_;
+				worldTransform_.translation_.y += velocity_.y;
+				// 更新
+				worldTransform_.UpdateMatrix();
+			}
 		}
 	}
-
-	if (isJump_) {
-		isLand_ = false;
-		velocity_.y = jumpPower_;
-		worldTransform_.translation_.y += velocity_.y;
-	}
-
 }
 
 void Player::Fall()
@@ -152,10 +197,25 @@ void Player::Ground()
 	isJump_ = false;
 }
 
+void Player::ApplyGlobalVariables()
+{
+}
+
 void Player::BehaviorRootUpdate()
 {
+	// ジャンプの処理
+	ProcessJump();
 	// 移動処理
-	Move();
+	ProcessMovement();
+
+	XINPUT_STATE joyState;
+
+	if (input_->GetInstance()->GetJoystickState(0, joyState))
+	{
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
+			behaviorRequest_ = Behavior::kDash;
+		}
+	}
 
 }
 
@@ -204,6 +264,21 @@ void Player::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 		worldTransform_.parent_ = nullptr;
 	}
 	worldTransform_.UpdateMatrix();
+}
+
+void Player::Setting()
+{
+	//// グローバル変数のjson
+	//GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	//// グループ名
+	//const char* groupName = "Player";
+	//// グループを追加
+	//GlobalVariables::GetInstance()->CreateGroup(groupName);
+
+
+	// リスタート関数
+	DeadToRestart(Vector3(0, 1.0f, 0));
+
 }
 
 void Player::DeadToRestart(const Vector3& startPoint)

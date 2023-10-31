@@ -1,5 +1,6 @@
 #pragma once
 #include "StructManager.h"
+#include "ViewProjection.h"
 #include <wrl.h>
 #include <d3d12.h>
 
@@ -13,8 +14,10 @@ struct WorldTransform
 	Vector3 scale_ = { 1,1,1 };
 	Vector3 rotation_ = { 0,0,0 };
 	Vector3 translation_ = { 0,0,0 };
-	Matrix4x4 matWorld_;
-	const WorldTransform* parent_ = nullptr;
+	Matrix4x4 matWorld_ = {};
+	WorldTransform* parent_ = nullptr;
+	ViewProjection* view_ = nullptr;
+	bool isBillBoard_ = false;
 
 	void Initialize();
 
@@ -26,5 +29,6 @@ struct WorldTransform
 
 	void TransferMatrix();
 
+	void BillBoardSetting(ViewProjection* view, bool billBoardFlag);
 };
 

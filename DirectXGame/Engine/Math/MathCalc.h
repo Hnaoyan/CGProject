@@ -40,7 +40,9 @@ public:
 	static Vector3 Normalize(const Vector3& v);
 
 	static Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+	static float Lerp(const float a, const float b, float t);
 	static Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t);
+	static float LerpShortAngle(float a, float b, float t);
 
 #pragma region float Easing
 	static float EaseInQuadF(float t, float start, float end);
