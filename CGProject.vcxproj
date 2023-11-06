@@ -195,7 +195,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\FrameWork\MyGame.cpp" />
     <ClCompile Include="DirectXGame\Engine\Other\FollowCamera.cpp" />
     <ClCompile Include="DirectXGame\Engine\Other\GlobalVariables.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Scene\BaseScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\BaseScene.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\GameScene.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\SceneManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp" />
@@ -241,7 +241,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\FrameWork\MyGame.h" />
     <ClInclude Include="DirectXGame\Engine\Other\FollowCamera.h" />
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h" />
-    <ClInclude Include="DirectXGame\Engine\Scene\BaseScene.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\BaseScene.h" />
     <ClInclude Include="DirectXGame\Application\Scene\GameScene.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SceneManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h" />

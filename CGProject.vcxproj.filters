@@ -162,7 +162,7 @@
     <ClCompile Include="DirectXGame\Engine\Scene\SceneManager.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Scene\BaseScene.cpp">
+    <ClCompile Include="DirectXGame\Application\Scene\BaseScene.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Math\MatLib.cpp">
@@ -293,7 +293,7 @@
     <ClInclude Include="DirectXGame\Engine\Math\MathCalc.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Scene\BaseScene.h">
+    <ClInclude Include="DirectXGame\Application\Scene\BaseScene.h">
       <Filter>ヘッダー ファイル\scene</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Scene\SceneManager.h">
