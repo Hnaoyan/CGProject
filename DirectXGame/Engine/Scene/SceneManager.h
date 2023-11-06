@@ -3,6 +3,10 @@
 #include "BaseScene.h"
 #include "GameScene.h"
 
+enum Scene {
+	TITLE, GAMESCENE, CLEAR,
+};
+
 class SceneManager {
 private:
 	std::unique_ptr<BaseScene> sceneArray_[3];

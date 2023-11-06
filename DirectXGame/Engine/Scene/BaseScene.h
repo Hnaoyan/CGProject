@@ -1,9 +1,5 @@
 #pragma once
 
-enum Scene {
-	TITLE,GAMESCENE,CLEAR,
-};
-
 class BaseScene 
 {
 public: // 仮想関数
