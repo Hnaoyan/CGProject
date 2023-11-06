@@ -1,7 +1,7 @@
 #include "FollowCamera.h"
 #include "MathCalc.h"
 #include <Input.h>
-#include "imgui.h"
+#include <ImGuiManager.h>
 
 void FollowCamera::Initialize() {
 	// ビュープロジェクションの初期化
