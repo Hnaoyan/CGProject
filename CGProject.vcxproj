@@ -174,7 +174,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Base\ImGuiManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Base\StringManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Base\TextureManager.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Base\WinApp.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Base\WindowAPI.cpp" />
     <ClCompile Include="DirectXGame\Engine\Camera\BaseCamera.cpp" />
     <ClCompile Include="DirectXGame\Engine\Collider\Collider.cpp" />
     <ClCompile Include="DirectXGame\Engine\Collider\CollisionManager.cpp" />
@@ -221,7 +221,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Base\StringManager.h" />
     <ClInclude Include="DirectXGame\Engine\Base\StructManager.h" />
     <ClInclude Include="DirectXGame\Engine\Base\TextureManager.h" />
-    <ClInclude Include="DirectXGame\Engine\Base\WinApp.h" />
+    <ClInclude Include="DirectXGame\Engine\Base\WindowAPI.h" />
     <ClInclude Include="DirectXGame\Engine\Camera\BaseCamera.h" />
     <ClInclude Include="DirectXGame\Engine\Collider\Collider.h" />
     <ClInclude Include="DirectXGame\Engine\Collider\CollisionManager.h" />

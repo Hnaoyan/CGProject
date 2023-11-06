@@ -1,5 +1,5 @@
 #pragma once
-#include "WinApp.h"
+#include "WindowAPI.h"
 #include "DirectXCommon.h"
 #include "Audio.h"
 #include "ImGuiManager.h"
@@ -56,7 +56,7 @@ protected:
 	/// <summary>
 	/// ポインタ系
 	/// </summary>
-	WinApp* winApp;
+	WindowAPI* winApp;
 	DirectXCommon* dxCommon;
 	Audio* audio;
 	Input* input;

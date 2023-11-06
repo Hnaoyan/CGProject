@@ -8,7 +8,7 @@ DirectXCommon* DirectXCommon::GetInstance() {
 	return &instance;
 }
 
-void DirectXCommon::Initialize(WinApp* winApp, int32_t bufferWidth, int32_t bufferHeight) {
+void DirectXCommon::Initialize(WindowAPI* winApp, int32_t bufferWidth, int32_t bufferHeight) {
 	assert(winApp);
 	winApp_ = winApp;
 	backBufferWidth_ = bufferWidth;

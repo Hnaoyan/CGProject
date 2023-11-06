@@ -6,7 +6,7 @@
 
 void Log(const std::string& message);
 
-class WinApp 
+class WindowAPI 
 {
 public:
 	// クライアント領域のサイズ
@@ -30,10 +30,11 @@ public:	// メンバ関数
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns></returns>
-	static WinApp* GetInstance();
+	static WindowAPI* GetInstance();
 
-	WinApp(){};
-	~WinApp() {};
+private:
+	WindowAPI(){};
+	~WindowAPI() {};
 
 public:
 	/// <summary>
