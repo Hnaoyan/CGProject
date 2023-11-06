@@ -1,4 +1,4 @@
-#include "WinApp.h"
+#include "WindowAPI.h"
 
 #include "imgui.h"
 #include "imgui_impl_dx12.h"
@@ -10,7 +10,7 @@ void Log(const std::string& message) {
 	OutputDebugStringA(message.c_str());
 }
 
-LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+LRESULT WindowAPI::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
 		return true;
 	}
@@ -29,9 +29,9 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 }
 
-const wchar_t WinApp::kWindowClassName[] = L"DirectXTitle";
+const wchar_t WindowAPI::kWindowClassName[] = L"DirectXTitle";
 
-void WinApp::CreateGameWindow(const wchar_t* title, UINT windowStyle, int32_t clientWidth, int32_t clientHeight) {
+void WindowAPI::CreateGameWindow(const wchar_t* title, UINT windowStyle, int32_t clientWidth, int32_t clientHeight) {
 	// COM初期化
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
@@ -70,7 +70,7 @@ void WinApp::CreateGameWindow(const wchar_t* title, UINT windowStyle, int32_t cl
 	ShowWindow(hwnd_, SW_SHOW);
 }
 
-bool WinApp::ProcessMessage() {
+bool WindowAPI::ProcessMessage() {
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ
 	// Windowにメッセージが来てたら最優先で処理
@@ -85,7 +85,7 @@ bool WinApp::ProcessMessage() {
 	return false;
 }
 
-WinApp* WinApp::GetInstance() {
-	static WinApp instance;
+WindowAPI* WindowAPI::GetInstance() {
+	static WindowAPI instance;
 	return &instance;
 }

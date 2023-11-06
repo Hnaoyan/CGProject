@@ -27,7 +27,7 @@ void Framework::Execute()
 void Framework::Initialize()
 {
 	// WindowsApp
-	winApp = WinApp::GetInstance();
+	winApp = WindowAPI::GetInstance();
 	winApp->CreateGameWindow();
 
 	// DirectX
@@ -51,7 +51,7 @@ void Framework::Initialize()
 	TextureManager::Load("white1x1.png");
 
 	// スプライトインスタンス
-	Sprite::StaticInitialize(dxCommon->GetDevice(), (int)WinApp::kClientWidth, (int)WinApp::kClientHeight);
+	Sprite::StaticInitialize(dxCommon->GetDevice(), (int)WindowAPI::kClientWidth, (int)WindowAPI::kClientHeight);
 
 	// モデルインスタンス
 	Model::StaticInitialize();

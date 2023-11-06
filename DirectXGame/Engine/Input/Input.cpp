@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "WinApp.h"
+#include "WindowAPI.h"
 #include <cassert>
 
 #include <XInput.h>
@@ -47,7 +47,6 @@ namespace {
 		// COM needs to be initialized on this thread before the enumeration.
 
 		// So we can call VariantClear() later, even if we never had a successful
-		// IWbemClassObject::Get().
 		VARIANT var = {};
 		VariantInit(&var);
 
@@ -219,7 +218,7 @@ Input::~Input() {
 
 void Input::Initialize()
 {
-    WinApp* winApp = WinApp::GetInstance();
+    WindowAPI* winApp = WindowAPI::GetInstance();
     hwnd_ = winApp->GetHwnd();
 
     HRESULT result = S_FALSE;

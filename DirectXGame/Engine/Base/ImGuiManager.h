@@ -1,6 +1,6 @@
 #pragma once
 #include "DirectXCommon.h"
-#include "WinApp.h"
+#include "WindowAPI.h"
 #include "imgui_impl_dx12.h"
 #include "imgui_impl_win32.h"
 
@@ -18,7 +18,7 @@ public:
 	/// </summary>
 	/// <param name="dxCommon"></param>
 	/// <param name="winApp"></param>
-	void Initialize(DirectXCommon* dxCommon,WinApp* winApp);
+	void Initialize(DirectXCommon* dxCommon,WindowAPI* winApp);
 
 	/// <summary>
 	/// Imgui開始

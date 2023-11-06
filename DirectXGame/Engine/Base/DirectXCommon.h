@@ -8,7 +8,7 @@
 #include <chrono>
 
 #include <wrl.h>
-#include "WinApp.h"
+#include "WindowAPI.h"
 
 #include <dxcapi.h>
 #pragma comment(lib, "dxcompiler.lib")
@@ -31,7 +31,7 @@ public:
 	/// <param name="winApp">winAppの受け取り</param>
 	/// <param name="bufferWidth">画面の横幅</param>
 	/// <param name="bufferHeight">画面の縦幅</param>
-	void Initialize(WinApp* winApp, int32_t bufferWidth = WinApp::kClientWidth, int32_t bufferHeight = WinApp::kClientHeight);
+	void Initialize(WindowAPI* winApp, int32_t bufferWidth = WindowAPI::kClientWidth, int32_t bufferHeight = WindowAPI::kClientHeight);
 
 	/// <summary>
 	/// 描画前処理
@@ -122,7 +122,7 @@ private:	//メンバ関数
 
 private:	// メンバ変数
 	// ウィンドウズアプリケーション管理
-	WinApp* winApp_;
+	WindowAPI* winApp_;
 
 	// Direct3D関連のポインタ
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;

@@ -153,7 +153,7 @@
     <ClCompile Include="DirectXGame\Engine\Base\TextureManager.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Base\WinApp.cpp">
+    <ClCompile Include="DirectXGame\Engine\Base\WindowAPI.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Math\MathCalc.cpp">
@@ -287,7 +287,7 @@
     <ClInclude Include="DirectXGame\Engine\Base\TextureManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Base\WinApp.h">
+    <ClInclude Include="DirectXGame\Engine\Base\WindowAPI.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Math\MathCalc.h">
