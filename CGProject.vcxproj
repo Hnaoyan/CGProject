@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)Generated\Outputs$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Generated\Obj$(ProjectName)$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Generated\Outputs\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)Generated\Outputs$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Generated\Obj$(ProjectName)$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Generated\Outputs\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Generated\Obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,7 +116,8 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\imgui;$(ProjectDir)DirectXGame;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Effect;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Particle;$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\FrameWork;$(ProjectDir)DirectXGame\Engine\UI;$(ProjectDir)DirectXGame\Application;$(ProjectDir)DirectXGame\Application\GameObject;$(ProjectDir)DirectXGame\Application\GameObject\Area;$(ProjectDir)DirectXGame\Application\GameObject\Block;$(ProjectDir)DirectXGame\Application\GameObject\BlockManager;$(ProjectDir)DirectXGame\Application\GameObject\BossEnemy;$(ProjectDir)DirectXGame\Application\GameObject\Player;$(ProjectDir)DirectXGame\Application\GameObject\PlayerAttack;$(ProjectDir)DirectXGame\Application\GameObject\Other;$(ProjectDir)DirectXGame\Application\GameObject\Ground;$(ProjectDir)DirectXGame\Application\GameObject\Particle;$(ProjectDir)DirectXGame\Application\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ImGui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\imgui;$(ProjectDir)DirectXGame;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Effect;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Particle;$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\FrameWork;$(ProjectDir)DirectXGame\Engine\UI;$(ProjectDir)DirectXGame\Application;$(ProjectDir)DirectXGame\Application\Scene;$(ProjectDir)DirectXGame\Application\GameObject;$(ProjectDir)DirectXGame\Application\GameObject\Area;$(ProjectDir)DirectXGame\Application\GameObject\Block;$(ProjectDir)DirectXGame\Application\GameObject\BlockManager;$(ProjectDir)DirectXGame\Application\GameObject\BossEnemy;$(ProjectDir)DirectXGame\Application\GameObject\Player;$(ProjectDir)DirectXGame\Application\GameObject\PlayerAttack;$(ProjectDir)DirectXGame\Application\GameObject\Other;$(ProjectDir)DirectXGame\Application\GameObject\Ground;$(ProjectDir)DirectXGame\Application\GameObject\Particle;$(ProjectDir)DirectXGame\Application\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,8 +141,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\imgui;$(ProjectDir)DirectXGame;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Effect;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Particle;$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\FrameWork;$(ProjectDir)DirectXGame\Engine\UI;$(ProjectDir)DirectXGame\Application;$(ProjectDir)DirectXGame\Application\GameObject;$(ProjectDir)DirectXGame\Application\GameObject\Area;$(ProjectDir)DirectXGame\Application\GameObject\Block;$(ProjectDir)DirectXGame\Application\GameObject\BlockManager;$(ProjectDir)DirectXGame\Application\GameObject\BossEnemy;$(ProjectDir)DirectXGame\Application\GameObject\Player;$(ProjectDir)DirectXGame\Application\GameObject\PlayerAttack;$(ProjectDir)DirectXGame\Application\GameObject\Other;$(ProjectDir)DirectXGame\Application\GameObject\Ground;$(ProjectDir)DirectXGame\Application\GameObject\Particle;$(ProjectDir)DirectXGame\Application\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ImGui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\imgui;$(ProjectDir)DirectXGame;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Effect;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Particle;$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\FrameWork;$(ProjectDir)DirectXGame\Engine\UI;$(ProjectDir)DirectXGame\Application;$(ProjectDir)DirectXGame\Application\Scene;$(ProjectDir)DirectXGame\Application\GameObject;$(ProjectDir)DirectXGame\Application\GameObject\Area;$(ProjectDir)DirectXGame\Application\GameObject\Block;$(ProjectDir)DirectXGame\Application\GameObject\BlockManager;$(ProjectDir)DirectXGame\Application\GameObject\BossEnemy;$(ProjectDir)DirectXGame\Application\GameObject\Player;$(ProjectDir)DirectXGame\Application\GameObject\PlayerAttack;$(ProjectDir)DirectXGame\Application\GameObject\Other;$(ProjectDir)DirectXGame\Application\GameObject\Ground;$(ProjectDir)DirectXGame\Application\GameObject\Particle;$(ProjectDir)DirectXGame\Application\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,7 +159,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectXGame\Application\GameObject\BlockManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\SpriteCommon.cpp" />
@@ -179,13 +181,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\D3D12Lib\D3D12Lib.cpp" />
     <ClCompile Include="DirectXGame\Engine\Camera\DebugCamera.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy.cpp" />
-    <ClCompile Include="externals\imgui\imgui.cpp" />
-    <ClCompile Include="externals\imgui\imgui_demo.cpp" />
-    <ClCompile Include="externals\imgui\imgui_draw.cpp" />
-    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="externals\imgui\imgui_tables.cpp" />
-    <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="DirectXGame\Engine\FrameWork\Framework.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BaseBullet.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BaseCharacter.cpp" />
@@ -200,8 +195,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\FrameWork\MyGame.cpp" />
     <ClCompile Include="DirectXGame\Engine\Other\FollowCamera.cpp" />
     <ClCompile Include="DirectXGame\Engine\Other\GlobalVariables.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Scene\BaseScene.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Scene\GameScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\BaseScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\GameScene.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\SceneManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Ground\GroundManager.cpp" />
@@ -209,7 +204,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\TimeCall\TimedCall.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectXGame\Application\GameObject\BlockManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h" />
     <ClInclude Include="DirectXGame\Engine\2D\Sprite.h" />
     <ClInclude Include="DirectXGame\Engine\2D\SpriteCommon.h" />
@@ -234,14 +228,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\D3D12Lib\D3D12Lib.h" />
     <ClInclude Include="DirectXGame\Engine\Camera\DebugCamera.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy.h" />
-    <ClInclude Include="externals\imgui\imconfig.h" />
-    <ClInclude Include="externals\imgui\imgui.h" />
-    <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
-    <ClInclude Include="externals\imgui\imgui_internal.h" />
-    <ClInclude Include="externals\imgui\imstb_rectpack.h" />
-    <ClInclude Include="externals\imgui\imstb_textedit.h" />
-    <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="DirectXGame\Engine\FrameWork\Framework.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BaseBullet.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BaseCharacter.h" />
@@ -255,8 +241,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\FrameWork\MyGame.h" />
     <ClInclude Include="DirectXGame\Engine\Other\FollowCamera.h" />
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h" />
-    <ClInclude Include="DirectXGame\Engine\Scene\BaseScene.h" />
-    <ClInclude Include="DirectXGame\Engine\Scene\GameScene.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\BaseScene.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\GameScene.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SceneManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Ground\GroundManager.h" />
@@ -264,11 +250,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\TimeCall\TimedCall.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="externals\imgui\LICENSE.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
+    <ProjectReference Include="ImGui\ImGui.vcxproj">
+      <Project>{b48432a6-d5bd-4431-b42c-77277efc54c9}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
