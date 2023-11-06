@@ -132,7 +132,7 @@
     <ClCompile Include="DirectXGame\Engine\D3D12Lib\D3D12Lib.cpp">
       <Filter>ソース ファイル\D3D12Lib</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Scene\GameScene.cpp">
+    <ClCompile Include="DirectXGame\Application\Scene\GameScene.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Input\Input.cpp">
@@ -287,7 +287,7 @@
     <ClInclude Include="DirectXGame\Engine\D3D12Lib\D3D12Lib.h">
       <Filter>ヘッダー ファイル\D3D12Lib</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Scene\GameScene.h">
+    <ClInclude Include="DirectXGame\Application\Scene\GameScene.h">
       <Filter>ヘッダー ファイル\scene</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Input\Input.h">
