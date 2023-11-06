@@ -32,6 +32,7 @@ public:	// メンバ関数
 	/// <returns></returns>
 	static WinApp* GetInstance();
 
+private:
 	WinApp(){};
 	~WinApp() {};
 
