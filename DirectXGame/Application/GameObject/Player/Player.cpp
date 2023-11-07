@@ -231,6 +231,39 @@ void Player::BehaviorDashUpdate()
 {
 }
 
+void Player::BehaviorAttackInitialize()
+{
+	worldTransformL_Arm_.rotation_.x = 3.0f;
+	worldTransformR_Arm_.rotation_.x = 3.0f;
+	worldTransformWeapon_.rotation_ = {};
+	attackState_ = Attack::kDown;
+	workAttack_.stunDuration_ = 0;
+}
+
+void Player::BehaviorAttackUpdate()
+{
+	switch (attackState_) {
+	//---攻撃の振りおろし処理---//
+	case Player::Attack::kDown:
+		worldTransformWeapon_.rotation_.x += 0.02f;
+		worldTransformL_Arm_.rotation_.x += 0.02f;
+		worldTransformR_Arm_.rotation_.x += 0.02f;
+		if (worldTransformWeapon_.rotation_.x > 1.5f) {
+			attackState_ = Attack::kStop;
+		}
+		break;
+	//---硬直処理---//
+	case Player::Attack::kStop:
+		workAttack_.stunDuration_++;
+		//硬直終了判定
+		if (workAttack_.stunDuration_ == workAttack_.maxStunDuration_) {
+			attackState_ = Attack::kDown;
+			behaviorRequest_ = Behavior::kRoot;
+		}
+		break;
+	}
+}
+
 void Player::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 {
 	if (tag == kCollisionAttributeEnemy || tag == kCollisionAttributeGoal) {

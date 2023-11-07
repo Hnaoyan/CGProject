@@ -69,6 +69,7 @@ private:
 	WorldTransform worldTransformBody_;
 	WorldTransform worldTransformL_Arm_;
 	WorldTransform worldTransformR_Arm_;
+	WorldTransform worldTransformWeapon_;
 
 
 public:
@@ -132,6 +133,16 @@ private:
 	/// </summary>
 	void BehaviorDashUpdate();
 
+	/// <summary>
+	/// 攻撃の初期化
+	/// </summary>
+	void BehaviorAttackInitialize();
+
+	/// <summary>
+	/// 攻撃の更新
+	/// </summary>
+	void BehaviorAttackUpdate();
+
 private:
 	/// <summary>
 	/// 状態管理
@@ -152,11 +163,29 @@ private:
 	/// </summary>
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
+private: // ダッシュ
+
 	struct WorkDash {
 		uint32_t dashParameter_ = 0;
 	};
 
 	WorkDash workDash_;
+
+private: // 攻撃
+
+	enum class Attack {
+		kDown,
+		kStop,
+	};
+
+	Attack attackState_;
+
+	struct WorkAttack {
+		uint32_t maxStunDuration_ = 60;
+		uint32_t stunDuration_ = 0;
+	};
+
+	WorkAttack workAttack_;
 
 private: // システム系
 
