@@ -22,17 +22,24 @@ void FollowCamera::Update() {
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			float rotateSpeed = 0.02f;
 
-			//destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
-			viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
+			destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
+			//viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
 			viewProjection_.rotation_.x += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * rotateSpeed;
-			
+			defaultRate_t_ = 0;
 			// スティックの入力がなくなったらリセット
 			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 				Reset();
 			}
 		}
-		//viewProjection_.rotation_.y =
-		//	MathCalc::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, 0.5f);
+		if (defaultRate_t_ >= 1.0f) {
+			defaultRate_t_ = 1.0f;
+		}
+		else {
+			defaultRate_t_ += 1.0f / 30.0f;
+		}
+
+		viewProjection_.rotation_.y =
+			MathCalc::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, defaultRate_t_);
 
 		if (isReset_) {
 			reset_t_ += 0.1f;
@@ -45,11 +52,19 @@ void FollowCamera::Update() {
 		}
 		// 座標をコピーしてオフセット文ずらす
 		Vector3 worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
+
+		//if (target_) {
+		//	interTarget_ = MathCalc::Lerp(interTarget_, target_->translation_, defaultRate_t_);
+		//}
+
+		//Vector3 off = SetOffset();
+
 		viewProjection_.translate_ = VectorLib::Add(worldPosition, SetOffset());
 
 		ImGui::Begin("camera");
 		ImGui::DragFloat3("pos", &viewProjection_.translate_.x, 0.01f, -100.0f, 100.0f);
 		ImGui::Text("%f : %f : %f", target_->translation_.x, target_->translation_.y, target_->translation_.z);
+		ImGui::Text("rate_t : %f", defaultRate_t_);
 		ImGui::End();
 
 	}
@@ -61,15 +76,16 @@ void FollowCamera::Reset()
 {
 	if (target_) {
 		// 追従対象・角度初期化
+		//viewProjection_.rotation_.y = 0;
 		interTarget_ = target_->translation_;
 		viewProjection_.rotation_.y = target_->rotation_.y;
 	}
 
-	destinationAngleY_ = viewProjection_.rotation_.y;
+	//destinationAngleY_ = viewProjection_.rotation_.y;
 	// 追従対象からのオフセット
-	Vector3 offset = SetOffset();
+	offset = SetOffset();
 	viewProjection_.translate_ = VectorLib::Add(interTarget_, offset);
-
+	defaultRate_t_ = 0;
 }
 
 Vector3 FollowCamera::SetOffset() const

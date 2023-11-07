@@ -183,6 +183,7 @@ private: // 攻撃
 	struct WorkAttack {
 		uint32_t maxStunDuration_ = 60;
 		uint32_t stunDuration_ = 0;
+		bool isNow_ = false;
 	};
 
 	WorkAttack workAttack_;
@@ -190,6 +191,8 @@ private: // 攻撃
 private: // システム系
 
 	Input* input_ = nullptr;
+
+	Vector3 moveDirection_ = {};
 
 	bool isJump_ = false;
 

@@ -334,13 +334,13 @@ Matrix4x4 MatLib::MakeBillBoard(const Vector3& target, const Vector3& eye, const
 
 Matrix4x4 MatLib::DirectToDirect(const Vector3& from, const Vector3& to)
 {
-	// cos
-	float cosine = MathCalc::Dot(from, to);
-	// sin
-	float sine = MathCalc::Length(MathCalc::Cross(from, to));
-	// normalize
-	Vector3 normal = MathCalc::Normalize(MathCalc::Cross(from, to));
-
+	//// cos
+	//float cosine = MathCalc::Dot(from, to);
+	//// sin
+	//float sine = MathCalc::Length(MathCalc::Cross(from, to));
+	//// normalize
+	//Vector3 normal = MathCalc::Normalize(MathCalc::Cross(from, to));
+	from, to;
 
 	return Matrix4x4();
 }

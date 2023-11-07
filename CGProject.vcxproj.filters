@@ -198,7 +198,7 @@
     <ClCompile Include="DirectXGame\Engine\Camera\BaseCamera.cpp">
       <Filter>ソース ファイル\other</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\FrameWork\MyGame.cpp">
+    <ClCompile Include="DirectXGame\MyGame.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\FrameWork\Framework.cpp">
@@ -332,7 +332,7 @@
     <ClInclude Include="DirectXGame\Engine\Camera\BaseCamera.h">
       <Filter>ヘッダー ファイル\other</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\FrameWork\MyGame.h">
+    <ClInclude Include="DirectXGame\MyGame.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\2D\SpriteCommon.h">

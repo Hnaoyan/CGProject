@@ -9,6 +9,7 @@ GameScene::GameScene()
 	modelBody_.reset(Model::CreateFromObj("C_Body", true));
 	modelL_arm_.reset(Model::CreateFromObj("C_Left", true));
 	modelR_arm_.reset(Model::CreateFromObj("C_Right", true));
+	modelWeapon_.reset(Model::CreateFromObj("hammer", true));
 	goalModel_.reset(Model::Create());
 }
 
@@ -42,7 +43,7 @@ void GameScene::Initialize() {
 
 
 	std::vector<Model*> models =
-	{ modelBody_.get(),modelL_arm_.get(),modelR_arm_.get() };
+	{ modelBody_.get(),modelL_arm_.get(),modelR_arm_.get(),modelWeapon_.get()};
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize(models);
@@ -60,11 +61,11 @@ void GameScene::Initialize() {
 	groundManager_->Initialize();
 	groundManager_->SetManager(colliderManager_.get());
 
-	Vector3 groundRad = { 10.0f,0.2f,10.0f };
+	Vector3 groundRad = { 20.0f,0.2f,20.0f };
 
-	groundManager_->AddGround(Vector3(0, -0.2f, 0.0f), groundRad, Vector3(2.0f, 1.0f, 2.0f));
-	groundManager_->AddGround(Vector3(0, -0.2f, 40.0f), groundRad, Vector3(2.0f, 1.0f, 2.0f));
-	groundManager_->AddGround(Vector3(0, -0.2f, 70.0f), groundRad, Vector3(2.0f, 1.0f, 2.0f));
+	groundManager_->AddGround(Vector3(0, -0.2f, 0.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
+	groundManager_->AddGround(Vector3(0, -0.2f, 40.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
+	groundManager_->AddGround(Vector3(0, -0.2f, 70.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
 
 	groundManager_->AddMoveGround(Vector3(0, -0.4f, 20.0f),
 		Vector3(5.0f, groundRad.y, 5.0f), Vector3(1.0f, 1.0f, 1.0f));

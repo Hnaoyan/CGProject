@@ -19,6 +19,7 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformBody_.Initialize();
 	worldTransformL_Arm_.Initialize();
 	worldTransformR_Arm_.Initialize();
+	worldTransformWeapon_.Initialize();
 
 	// サイズ設定
 	collider_.SetterRad(Vector3(radius_, radius_, radius_));
@@ -37,7 +38,9 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformBody_.parent_ = &worldTransform_;
 	worldTransformL_Arm_.parent_ = &worldTransformBody_;
 	worldTransformR_Arm_.parent_ = &worldTransformBody_;
+	worldTransformWeapon_.parent_ = &worldTransformBody_;
 
+	worldTransformBody_.translation_ = { 0,-0.4f,0 };
 	worldTransformL_Arm_.translation_ = { -0.4f, 1.5f, -0.15f };
 	worldTransformR_Arm_.translation_ = { 0.4f, 1.5f, -0.15f };
 
@@ -67,7 +70,7 @@ void Player::Update()
 		// 初期化
 		switch (behavior_) {
 		case Player::Behavior::kRoot:
-			//BehaviorRootInitialize();
+			BehaviorRootInitialize();
 			break;
 		case Player::Behavior::kAttack:
 			BehaviorAttackInitialize();
@@ -104,6 +107,7 @@ void Player::Update()
 	worldTransformBody_.UpdateMatrix();
 	worldTransformL_Arm_.UpdateMatrix();
 	worldTransformR_Arm_.UpdateMatrix();
+	worldTransformWeapon_.UpdateMatrix();
 }
 
 void Player::Draw(const ViewProjection& viewProjection)
@@ -115,6 +119,9 @@ void Player::Draw(const ViewProjection& viewProjection)
 	models_[BODY]->Draw(worldTransformBody_, viewProjection);
 	models_[L_ARM]->Draw(worldTransformL_Arm_, viewProjection);
 	models_[R_ARM]->Draw(worldTransformR_Arm_, viewProjection);
+	if (workAttack_.isNow_) {
+		models_[WEAPON]->Draw(worldTransformWeapon_, viewProjection);
+	}
 }
 
 Vector3 Player::GetWorldPosition()
@@ -147,15 +154,18 @@ void Player::ProcessMovement()
 			Vector3 move = {
 				(float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed,0.0f,
 				(float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed };
+			moveDirection_= {
+				(float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed,0.0f,
+				(float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed };
 			Vector3 normal = VectorLib::Scaler(MathCalc::Normalize(move), speed);
 			// 移動速度
 			velocity_.x = normal.x;
 			velocity_.z = normal.z;
 			// 向きの処理
-			rotateLerp_t_ = 0;
+			//rotateLerp_t_ = 0;
 			// 目標角度
-			destinationAngleY_ = std::atan2f(move.x, move.z);
-			//worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
+			//destinationAngleY_ = std::atan2f(move.x, move.z);
+			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 		}
@@ -165,16 +175,23 @@ void Player::ProcessMovement()
 			velocity_.z = 0;
 		}
 
-		if (++rotateLerp_t_ >= 1.0f) {
-			rotateLerp_t_ = 1.0f;
-		}
-
-		worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, rotateLerp_t_);
+		//if (rotateLerp_t_ >= 1.0f) {
+		//	rotateLerp_t_ = 1.0f;
+		//}
+		//else {
+		//	rotateLerp_t_ += 0.1f;
+		//}
+		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, rotateLerp_t_);
 
 		// 座標更新
 		worldTransform_.translation_.x += velocity_.x;
 		worldTransform_.translation_.z += velocity_.z;
 	}
+
+	ImGui::Begin("rotatePlayer");
+	ImGui::Text("Lerp_t : %d", rotateLerp_t_);
+	ImGui::Text("AngleY : %.2f worldRotationY : %f", destinationAngleY_, worldTransform_.rotation_.y);
+	ImGui::End();
 
 }
 
@@ -223,6 +240,7 @@ void Player::ApplyGlobalVariables()
 
 void Player::BehaviorRootInitialize()
 {
+	workAttack_.isNow_ = false;
 }
 
 void Player::BehaviorRootUpdate()
@@ -236,7 +254,7 @@ void Player::BehaviorRootUpdate()
 
 	if (input_->GetInstance()->GetJoystickState(0, joyState))
 	{
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
 			behaviorRequest_ = Behavior::kDash;
 		}
 	}
@@ -246,29 +264,23 @@ void Player::BehaviorRootUpdate()
 			behaviorRequest_ = Behavior::kAttack;
 		}
 	}
-
-#ifdef _DEBUG
-	ImGui::Begin("State");
-	ImGui::Text("state: %d", behavior_);
-	ImGui::End();
-#endif // _DEBUG
-
-
 }
 
 void Player::BehaviorDashInitialize()
 {
 	workDash_.dashParameter_ = 0;
 	//worldTransform_.rotation_.y;
-
-
 }
 
 void Player::BehaviorDashUpdate()
 {
+	// 移動処理
+	//Vector3 moveDirect = { std::cosf(worldTransform_.rotation_.y) ,0 ,std::sinf(worldTransform_.rotation_.y) };
+	Vector3 moveDirect = VectorLib::Scaler(MathCalc::Normalize(moveDirection_), 0.75f);
+	worldTransform_.translation_ = VectorLib::Add(worldTransform_.translation_, moveDirect);
 
 	// ダッシュ時間<Frame>
-	const uint32_t behaviorDashTime = 60;
+	const uint32_t behaviorDashTime = 15;
 
 	// 既定の時間経過で元にもどる
 	if (++workDash_.dashParameter_ >= behaviorDashTime) {
@@ -283,6 +295,7 @@ void Player::BehaviorAttackInitialize()
 	worldTransformWeapon_.rotation_ = {};
 	attackState_ = Attack::kDown;
 	workAttack_.stunDuration_ = 0;
+	workAttack_.isNow_ = true;
 }
 
 void Player::BehaviorAttackUpdate()
