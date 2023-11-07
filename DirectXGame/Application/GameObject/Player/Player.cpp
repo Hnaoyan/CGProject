@@ -80,8 +80,22 @@ void Player::Update()
 		behaviorRequest_ = std::nullopt;
 	}
 
+	// 状態に応じた処理
+	switch (behavior_)
+	{
+	case Player::Behavior::kRoot:
+		BehaviorRootUpdate();
+		break;
+	case Player::Behavior::kAttack:
+		BehaviorAttackUpdate();
+		break;
+	case Player::Behavior::kDash:
+		BehaviorDashUpdate();
+		break;
+	}
+
 	// 移動
-	BehaviorRootUpdate();
+	//BehaviorRootUpdate();
 	// 落下
 	Fall();
 
@@ -118,8 +132,6 @@ void Player::ProcessMovement()
 		const float threshold = 0.7f;
 		bool isMoving = false;
 
-		//float angle = 0;
-
 		// 移動量計算
 		Vector3 moved = {
 			(float)joyState.Gamepad.sThumbLX / SHRT_MAX,0,
@@ -136,11 +148,14 @@ void Player::ProcessMovement()
 				(float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed,0.0f,
 				(float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed };
 			Vector3 normal = VectorLib::Scaler(MathCalc::Normalize(move), speed);
+			// 移動速度
 			velocity_.x = normal.x;
 			velocity_.z = normal.z;
 			// 向きの処理
-			//angle = std::atan2f(move.x, move.z);
-			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
+			rotateLerp_t_ = 0;
+			// 目標角度
+			destinationAngleY_ = std::atan2f(move.x, move.z);
+			//worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 		}
@@ -149,7 +164,12 @@ void Player::ProcessMovement()
 			velocity_.x = 0;
 			velocity_.z = 0;
 		}
-		//worldTransform_.rotation_.y=MathCalc::LerpShortAngle(worldTransform_.rotation_.y,angle,)
+
+		if (++rotateLerp_t_ >= 1.0f) {
+			rotateLerp_t_ = 1.0f;
+		}
+
+		worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, rotateLerp_t_);
 
 		// 座標更新
 		worldTransform_.translation_.x += velocity_.x;
@@ -217,6 +237,19 @@ void Player::BehaviorRootUpdate()
 		}
 	}
 
+	if (input_->GetInstance()->GetJoystickState(0, joyState) || input_->TriggerKey(DIK_SPACE)) {
+		if (joyState.Gamepad.bRightTrigger) {
+			behaviorRequest_ = Behavior::kAttack;
+		}
+	}
+
+#ifdef _DEBUG
+	ImGui::Begin("State");
+	ImGui::Text("state: %d", behavior_);
+	ImGui::End();
+#endif // _DEBUG
+
+
 }
 
 void Player::BehaviorDashInitialize()
@@ -229,6 +262,14 @@ void Player::BehaviorDashInitialize()
 
 void Player::BehaviorDashUpdate()
 {
+
+	// ダッシュ時間<Frame>
+	const uint32_t behaviorDashTime = 60;
+
+	// 既定の時間経過で元にもどる
+	if (++workDash_.dashParameter_ >= behaviorDashTime) {
+		behaviorRequest_ = Behavior::kRoot;
+	}
 }
 
 void Player::BehaviorAttackInitialize()

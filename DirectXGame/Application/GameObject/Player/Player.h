@@ -197,7 +197,9 @@ private: // システム系
 	
 	float jumpPower_ = 0.75f;
 
-	float lerp_t_ = 0;
+	float rotateLerp_t_ = 0;
+
+	float destinationAngleY_ = 0;
 
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
