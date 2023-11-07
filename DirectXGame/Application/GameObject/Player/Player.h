@@ -116,7 +116,7 @@ private:
 	/// <summary>
 	/// 通常状態の初期化
 	/// </summary>
-	//void BehaviorRootInitialize();
+	void BehaviorRootInitialize();
 
 	/// <summary>
 	/// 通常状態の更新

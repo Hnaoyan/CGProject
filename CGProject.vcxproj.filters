@@ -168,7 +168,7 @@
     <ClCompile Include="DirectXGame\Engine\Math\MatLib.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Other\FollowCamera.cpp">
+    <ClCompile Include="DirectXGame\Application\GameObject\Player\FollowCamera.cpp">
       <Filter>ソース ファイル\other</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Other\GlobalVariables.cpp">
@@ -308,7 +308,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\BaseBullet.h">
       <Filter>ヘッダー ファイル\bullet</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Other\FollowCamera.h">
+    <ClInclude Include="DirectXGame\Application\GameObject\Player\FollowCamera.h">
       <Filter>ヘッダー ファイル\other</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h">

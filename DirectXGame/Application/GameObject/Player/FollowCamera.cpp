@@ -61,9 +61,15 @@ void FollowCamera::Reset()
 {
 	if (target_) {
 		// 追従対象・角度初期化
-		//interTarget_ = target_->translation_;
-		viewProjection_.rotation_ = {};
+		interTarget_ = target_->translation_;
+		viewProjection_.rotation_.y = target_->rotation_.y;
 	}
+
+	destinationAngleY_ = viewProjection_.rotation_.y;
+	// 追従対象からのオフセット
+	Vector3 offset = SetOffset();
+	viewProjection_.translate_ = VectorLib::Add(interTarget_, offset);
+
 }
 
 Vector3 FollowCamera::SetOffset() const
@@ -78,4 +84,9 @@ Vector3 FollowCamera::SetOffset() const
 			MatLib::MakeRotateZMatrix(viewProjection_.rotation_.z)));
 	Offset = MatLib::Transform(Offset, rotateMatrix);
 	return Offset;
+}
+
+void FollowCamera::SetTarget(const WorldTransform* target) {
+	target_ = target;
+	Reset();
 }

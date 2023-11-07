@@ -84,6 +84,21 @@ public:
 
 	static Vector3 TransformNormal(const Vector3& v, const Matrix4x4& mat);
 
+	/// <summary>
+	/// ビルボード計算用
+	/// </summary>
+	/// <param name="target"></param>
+	/// <param name="eye"></param>
+	/// <param name="up"></param>
+	/// <returns></returns>
 	static Matrix4x4 MakeBillBoard(const Vector3& target, const Vector3& eye, const Vector3& up);
+
+	/// <summary>
+	/// 任意軸の回転行列を求める計算
+	/// </summary>
+	/// <param name="from"></param>
+	/// <param name="to"></param>
+	/// <returns></returns>
+	static Matrix4x4 DirectToDirect(const Vector3& from, const Vector3& to);
 
 };

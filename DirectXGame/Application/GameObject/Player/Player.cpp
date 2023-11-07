@@ -70,7 +70,7 @@ void Player::Update()
 			//BehaviorRootInitialize();
 			break;
 		case Player::Behavior::kAttack:
-			//BehaviorAttackInitialize();
+			BehaviorAttackInitialize();
 			break;
 		case Player::Behavior::kDash:
 			BehaviorDashInitialize();
@@ -221,6 +221,10 @@ void Player::ApplyGlobalVariables()
 {
 }
 
+void Player::BehaviorRootInitialize()
+{
+}
+
 void Player::BehaviorRootUpdate()
 {
 	// ジャンプの処理
@@ -298,6 +302,8 @@ void Player::BehaviorAttackUpdate()
 		workAttack_.stunDuration_++;
 		//硬直終了判定
 		if (workAttack_.stunDuration_ == workAttack_.maxStunDuration_) {
+			worldTransformL_Arm_.rotation_.x = 0;
+			worldTransformR_Arm_.rotation_.x = 0;
 			attackState_ = Attack::kDown;
 			behaviorRequest_ = Behavior::kRoot;
 		}
