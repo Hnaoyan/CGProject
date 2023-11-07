@@ -25,21 +25,15 @@ void FollowCamera::Update() {
 			destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
 			//viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
 			viewProjection_.rotation_.x += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * rotateSpeed;
-			defaultRate_t_ = 0;
+
 			// スティックの入力がなくなったらリセット
 			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 				Reset();
 			}
 		}
-		if (defaultRate_t_ >= 1.0f) {
-			defaultRate_t_ = 1.0f;
-		}
-		else {
-			defaultRate_t_ += 1.0f / 30.0f;
-		}
-
+		
 		viewProjection_.rotation_.y =
-			MathCalc::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, defaultRate_t_);
+			MathCalc::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, 1.0f / 30.0f);
 
 		if (isReset_) {
 			reset_t_ += 0.1f;
@@ -78,10 +72,11 @@ void FollowCamera::Reset()
 		// 追従対象・角度初期化
 		//viewProjection_.rotation_.y = 0;
 		interTarget_ = target_->translation_;
-		viewProjection_.rotation_.y = target_->rotation_.y;
+		//viewProjection_.rotation_.y = target_->rotation_.y;
 	}
 
 	//destinationAngleY_ = viewProjection_.rotation_.y;
+	//destinationAngleY_ = 0;
 	// 追従対象からのオフセット
 	offset = SetOffset();
 	viewProjection_.translate_ = VectorLib::Add(interTarget_, offset);

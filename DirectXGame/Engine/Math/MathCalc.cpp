@@ -100,11 +100,29 @@ Vector3 MathCalc::Slerp(const Vector3& v1, const Vector3& v2, float t) {
 
 float MathCalc::LerpShortAngle(float a, float b, float t)
 {
-	// 角度差分
+	//// 角度差分
+	//float diff = b - a;
+	//diff = std::fmodf(diff, 2.0f);
+	//diff = std::fmodf(diff, 1.0f);
+	//diff = Lerp(a, diff, t);
+	//return diff;
+	 // 角度差分
 	float diff = b - a;
-	diff = std::fmodf(diff, 2.0f);
-	diff = std::fmodf(diff, 1.0f);
-	diff = Lerp(a, diff, t);
+
+	// 角度を正規化
+	while (diff >= 360.0f) {
+		diff -= 360.0f;
+	}
+	while (diff < 0.0f) {
+		diff += 360.0f;
+	}
+
+	// 補間率を0から1の範囲に制約
+	t = std::clamp(t, 0.0f, 1.0f);
+
+	// 角度を補間
+	diff = Lerp(a, a + diff, t);
+
 	return diff;
 }
 
