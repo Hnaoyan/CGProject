@@ -61,14 +61,17 @@ void GameScene::Initialize() {
 	groundManager_->Initialize();
 	groundManager_->SetManager(colliderManager_.get());
 
-	Vector3 groundRad = { 20.0f,0.2f,20.0f };
+	Vector3 groundRad = { 5.0f,0.2f,5.0f };
+	float scale = 10.0f;
+	groundRad.x *= scale;
+	groundRad.z *= scale;
 
-	groundManager_->AddGround(Vector3(0, -0.2f, 0.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
-	groundManager_->AddGround(Vector3(0, -0.2f, 40.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
-	groundManager_->AddGround(Vector3(0, -0.2f, 70.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
+	groundManager_->AddGround(Vector3(0, -0.2f, 10.0f), groundRad, Vector3(scale, 1.0f, scale));
+	//groundManager_->AddGround(Vector3(0, -0.2f, 40.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
+	//groundManager_->AddGround(Vector3(0, -0.2f, 70.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
 
-	groundManager_->AddMoveGround(Vector3(0, -0.4f, 20.0f),
-		Vector3(5.0f, groundRad.y, 5.0f), Vector3(1.0f, 1.0f, 1.0f));
+	//groundManager_->AddMoveGround(Vector3(0, -0.4f, 20.0f),
+	//	Vector3(5.0f, groundRad.y, 5.0f), Vector3(1.0f, 1.0f, 1.0f));
 
 	groundManager_->Update();
 }
