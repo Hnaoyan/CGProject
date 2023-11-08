@@ -1,4 +1,5 @@
 #include "MyGame.h"
+#include "GlobalVariables.h"
 
 void MyGame::Initialize()
 {
@@ -27,6 +28,11 @@ void MyGame::Update()
 	input->Update();
 	// ImGui受付開始
 	imguiManager->Begin();
+#ifdef _DEBUG
+	// json更新
+	GlobalVariables::GetInstance()->Update();
+#endif // _DEBUG
+
 	// ゲームシーン更新処理
 	sceneManager->Update();
 }
