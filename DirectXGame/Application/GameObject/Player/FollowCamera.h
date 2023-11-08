@@ -44,10 +44,7 @@ private:
 	ViewProjection viewProjection_;
 
 	// デフォルトのオフセット
-	Vector3 defaultOffset = { 0.0f, 2.0f, -20.0f };
-
-	// カメラまでのオフセット
-	Vector3 offset;
+	Vector3 defaultOffset = {};
 
 	// 追従対象の残像座標
 	Vector3 interTarget_ = {};

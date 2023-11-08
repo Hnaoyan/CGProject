@@ -167,6 +167,7 @@ private: // ダッシュ
 
 	struct WorkDash {
 		uint32_t dashParameter_ = 0;
+		int dashTime_ = 15;
 	};
 
 	WorkDash workDash_;
@@ -181,7 +182,7 @@ private: // 攻撃
 	Attack attackState_;
 
 	struct WorkAttack {
-		uint32_t maxStunDuration_ = 60;
+		uint32_t maxStunDuration_ = 20;
 		uint32_t stunDuration_ = 0;
 		bool isNow_ = false;
 	};

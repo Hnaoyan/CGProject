@@ -46,16 +46,28 @@ void Player::Initialize(const std::vector<Model*>& models)
 
 	// 設定
 	Setting();
+
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+	// グループを追加
+	GlobalVariables::GetInstance()->CreateGroup(groupName);
+	globalVariables->AddItem(groupName, "dashValue", workDash_.dashTime_);
+
+	ApplyGlobalVariables();
+
 }
 
 void Player::Update()
 {
+	// ImGui
+	ApplyGlobalVariables();
 #ifdef _DEBUG
-	ImGui::Begin("player");
+	ImGui::Begin("player_test");
 	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.1f, -20.0f, 20.0f);
 	Vector3 pos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] ,worldTransform_.matWorld_.m[3][2] };
 	ImGui::DragFloat3("matPos", &pos.x, 0.01f, -20.0f, 20.0f);
 	ImGui::DragFloat3("rot", &worldTransform_.rotation_.x, 0.1f, -20.0f, 20.0f);
+	ImGui::DragInt("dashValue", &workDash_.dashTime_, 0.1f, 5, 60);
 	ImGui::Text("%d", isLand_);
 	ImGui::End();
 #endif // _DEBUG
@@ -112,10 +124,6 @@ void Player::Update()
 
 void Player::Draw(const ViewProjection& viewProjection)
 {
-	// ベースの描画
-	//BaseCharacter::Draw(viewProjection);
-
-	//model_->Draw(worldTransform_, viewProjection);
 	models_[BODY]->Draw(worldTransformBody_, viewProjection);
 	models_[L_ARM]->Draw(worldTransformL_Arm_, viewProjection);
 	models_[R_ARM]->Draw(worldTransformR_Arm_, viewProjection);
@@ -161,10 +169,8 @@ void Player::ProcessMovement()
 			// 移動速度
 			velocity_.x = normal.x;
 			velocity_.z = normal.z;
-			// 向きの処理
-			//rotateLerp_t_ = 0;
 			// 目標角度
-			//destinationAngleY_ = std::atan2f(move.x, move.z);
+			destinationAngleY_ = std::atan2f(move.x, move.z);
 			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
@@ -175,23 +181,19 @@ void Player::ProcessMovement()
 			velocity_.z = 0;
 		}
 
-		//if (rotateLerp_t_ >= 1.0f) {
-		//	rotateLerp_t_ = 1.0f;
-		//}
-		//else {
-		//	rotateLerp_t_ += 0.1f;
-		//}
-		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, rotateLerp_t_);
+		worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 1.0f/30.0f);
 
 		// 座標更新
 		worldTransform_.translation_.x += velocity_.x;
 		worldTransform_.translation_.z += velocity_.z;
 	}
 
+#ifdef _DEBUG
 	ImGui::Begin("rotatePlayer");
 	ImGui::Text("Lerp_t : %d", rotateLerp_t_);
-	ImGui::Text("AngleY : %.2f worldRotationY : %f", destinationAngleY_, worldTransform_.rotation_.y);
+	ImGui::Text("AngleY : %.2f worldRotationY : %.2f", destinationAngleY_, worldTransform_.rotation_.y);
 	ImGui::End();
+#endif // _DEBUG
 
 }
 
@@ -236,6 +238,11 @@ void Player::Ground()
 
 void Player::ApplyGlobalVariables()
 {
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+	// 移動量
+	workDash_.dashTime_ = globalVariables->GetIntValue(groupName, "dashValue");
+
 }
 
 void Player::BehaviorRootInitialize()
@@ -276,11 +283,14 @@ void Player::BehaviorDashUpdate()
 {
 	// 移動処理
 	//Vector3 moveDirect = { std::cosf(worldTransform_.rotation_.y) ,0 ,std::sinf(worldTransform_.rotation_.y) };
-	Vector3 moveDirect = VectorLib::Scaler(MathCalc::Normalize(moveDirection_), 0.75f);
-	worldTransform_.translation_ = VectorLib::Add(worldTransform_.translation_, moveDirect);
+	Vector3 moveDirect = VectorLib::Scaler(MathCalc::Normalize(moveDirection_), 0.2f);
+	velocity_ = VectorLib::Add(velocity_, moveDirect);
+
+	worldTransform_.translation_.x += velocity_.x;
+	worldTransform_.translation_.z += velocity_.z;
 
 	// ダッシュ時間<Frame>
-	const uint32_t behaviorDashTime = 15;
+	const uint32_t behaviorDashTime = workDash_.dashTime_;
 
 	// 既定の時間経過で元にもどる
 	if (++workDash_.dashParameter_ >= behaviorDashTime) {
