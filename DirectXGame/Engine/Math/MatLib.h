@@ -99,6 +99,14 @@ public:
 	/// <param name="from"></param>
 	/// <param name="to"></param>
 	/// <returns></returns>
-	static Matrix4x4 DirectToDirect(const Vector3& from, const Vector3& to);
+	static Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
+
+	/// <summary>
+	/// 任意軸回転行列の作成
+	/// </summary>
+	/// <param name="axis"></param>
+	/// <param name="angle"></param>
+	/// <returns></returns>
+	static Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
 
 };

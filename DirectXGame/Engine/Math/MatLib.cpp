@@ -332,15 +332,33 @@ Matrix4x4 MatLib::MakeBillBoard(const Vector3& target, const Vector3& eye, const
 	};
 }
 
-Matrix4x4 MatLib::DirectToDirect(const Vector3& from, const Vector3& to)
+Matrix4x4 MatLib::DirectionToDirection(const Vector3& from, const Vector3& to)
 {
-	//// cos
-	//float cosine = MathCalc::Dot(from, to);
-	//// sin
-	//float sine = MathCalc::Length(MathCalc::Cross(from, to));
-	//// normalize
-	//Vector3 normal = MathCalc::Normalize(MathCalc::Cross(from, to));
-	from, to;
+	// cos
+	float cosine = MathCalc::Dot(from, to);
+	// sin
+	float sine = MathCalc::Length(MathCalc::Cross(from, to));
+	// normalize
+	Vector3 normal = MathCalc::Normalize(MathCalc::Cross(from, to));
 
+	Matrix4x4 result = MakeIdentity4x4();
+	result.m[0][0] = std::powf(normal.x, 2) * (1 - cosine) + cosine;
+	result.m[0][1] = (normal.x * normal.y) * (1 - cosine) + (normal.z * sine);
+	result.m[0][2] = (normal.x * normal.z) * (1 - cosine) - (normal.y * sine);
+
+	result.m[1][0] = (normal.x * normal.y) * (1 - cosine) - (normal.z * sine);
+	result.m[1][1] = std::powf(normal.y, 2) * (1 - cosine) + cosine;
+	result.m[1][2] = (normal.y * normal.z) * (1 - cosine) + normal.x * sine;
+
+	result.m[2][0] = (normal.x * normal.z) * (1 - cosine) + (normal.y * sine);
+	result.m[2][1] = (normal.y * normal.z) * (1 - cosine) - (normal.x * sine);
+	result.m[2][2] = std::powf(normal.z, 2) * (1 - cosine) + cosine;
+
+	return result;
+}
+
+Matrix4x4 MatLib::MakeRotateAxisAngle(const Vector3& axis, float angle)
+{
+	axis, angle;
 	return Matrix4x4();
 }
