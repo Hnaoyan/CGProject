@@ -20,7 +20,7 @@ void FollowCamera::Update() {
 		Vector3 worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
 
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-			interTarget_ = MathCalc::Lerp(interTarget_, worldPosition, 0.01f);
+			interTarget_ = MathCalc::Lerp(interTarget_, worldPosition, 0.0001f);
 		}
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			float rotateSpeed = 0.02f;
@@ -66,20 +66,6 @@ void FollowCamera::Update() {
 	}
 	// ビュー行列の更新・転送
 	viewProjection_.UpdateMatrix();
-
-	//Vector3 from0 = MathCalc::Normalize(Vector3{ 1.0f,0.7f,0.5f });
-	//Vector3 to0 = VectorLib::Scaler(from0, -1.0f);
-	//Vector3 from1 = MathCalc::Normalize(Vector3{ -0.6f,0.9f,0.2f });
-	//Vector3 to1 = MathCalc::Normalize(Vector3{ 0.4f,0.7f,-0.5f });
-
-	//Matrix4x4 rot = MatLib::DirectionToDirection(MathCalc::Normalize(Vector3{ 1.0f,0,0 }), MathCalc::Normalize(Vector3{ -1.0f,0,0 }));
-
-	//ImGui::Begin("Mat");
-	//ImGui::Text("%.2f : %.2f : %.2f : %.2f", rot.m[0][0], rot.m[0][1], rot.m[0][2], rot.m[0][3]);
-	//ImGui::Text("%.2f : %.2f : %.2f : %.2f", rot.m[1][0], rot.m[1][1], rot.m[1][2], rot.m[1][3]);
-	//ImGui::Text("%.2f : %.2f : %.2f : %.2f", rot.m[2][0], rot.m[2][1], rot.m[2][2], rot.m[2][3]);
-	//ImGui::Text("%.2f : %.2f : %.2f : %.2f", rot.m[3][0], rot.m[3][1], rot.m[3][2], rot.m[3][3]);
-	//ImGui::End();
 }
 
 void FollowCamera::Reset()

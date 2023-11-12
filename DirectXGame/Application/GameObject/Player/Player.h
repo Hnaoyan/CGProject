@@ -208,5 +208,6 @@ private: // システム系
 	// カメラのビュープロジェクション
 	const ViewProjection* viewProjection_ = nullptr;
 
+	std::unique_ptr<Model> deModel_;
 };
 

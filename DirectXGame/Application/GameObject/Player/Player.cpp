@@ -14,6 +14,7 @@ void Player::Initialize(const std::vector<Model*>& models)
 	radius_ = 1.0f;
 	// ベースの初期化
 	models_ = models;
+	deModel_.reset(Model::Create());
 	
 	worldTransform_.Initialize();
 	worldTransformBody_.Initialize();
@@ -130,6 +131,7 @@ void Player::Draw(const ViewProjection& viewProjection)
 	if (workAttack_.isNow_) {
 		models_[WEAPON]->Draw(worldTransformWeapon_, viewProjection);
 	}
+	deModel_->Draw(worldTransformWeapon_, viewProjection);
 }
 
 Vector3 Player::GetWorldPosition()
