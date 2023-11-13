@@ -22,10 +22,13 @@ void FollowCamera::Update() {
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			float rotateSpeed = 0.02f;
 
-			viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
-			viewProjection_.rotation_.x += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * rotateSpeed;
+			destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
+			//viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
+			//viewProjection_.rotation_.x += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * rotateSpeed;
 
 		}
+
+		viewProjection_.rotation_.y = MathCalc::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, 0.1f);
 
 		interTarget_ = MathCalc::Lerp(interTarget_, worldPosition, 0.1f);
 		Vector3 offset = SetOffset();
