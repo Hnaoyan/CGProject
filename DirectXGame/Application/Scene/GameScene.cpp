@@ -31,12 +31,6 @@ void GameScene::Initialize() {
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 
-	baseCamera_ = std::make_unique<BaseCamera>();
-	baseCamera_->Initialize();
-
-	baseCamera_->SetPosition({ 0, 10.0f, -25.0f });
-	baseCamera_->SetRotation({ 0.3f, 0, 0 });
-
 	skydomeModel_.reset(Model::CreateFromObj("skydome", true));
 	skydome_ = std::make_unique<SkyDome>();
 	skydome_->Initialize(skydomeModel_.get());
@@ -164,7 +158,6 @@ void GameScene::CameraUpdate()
 	}
 #endif // DEBUG
 
-	baseCamera_->Update();
 	followCamera_->Update();
 
 	// デバックカメラか追尾カメラ

@@ -1,6 +1,7 @@
 #include "MathCalc.h"
 #include <cmath>
 #include <algorithm>
+#include <numbers>
 
 Vector3 MathCalc::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	Vector3 result{
@@ -102,9 +103,9 @@ float MathCalc::LerpShortAngle(float a, float b, float t)
 {
 	// 角度差分
 	float diff = b - a;
-	diff = std::fmodf(diff, 2.0f * (3.14f));
+	diff = std::fmodf(diff, 2.0f * float(std::numbers::pi));
 	// 角度を[-PI, +PI]に補正
-	diff = std::fmodf(diff + (3.14f), 2.0f * (3.14f)) - (3.14f);
+	diff = std::fmodf(diff + (float(std::numbers::pi)), 2.0f * (float(std::numbers::pi))) - (float(std::numbers::pi));
 	diff = Lerp(a, diff, t);
 	return diff;
 	// // 角度差分

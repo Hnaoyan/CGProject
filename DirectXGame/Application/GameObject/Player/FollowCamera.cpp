@@ -18,10 +18,8 @@ void FollowCamera::Update() {
 	if (target_) {
 		// 座標をコピーしてオフセット分ずらす
 		Vector3 worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
+		interTarget_ = MathCalc::Lerp(interTarget_, worldPosition, 0.0001f);
 
-		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-			interTarget_ = MathCalc::Lerp(interTarget_, worldPosition, 0.0001f);
-		}
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			float rotateSpeed = 0.02f;
 
@@ -47,13 +45,6 @@ void FollowCamera::Update() {
 				isReset_ = false;
 			}
 		}
-
-		//if (target_) {
-		//	interTarget_ = MathCalc::Lerp(interTarget_, worldPosition, defaultRate_t_);
-		//}
-
-		//Vector3 off = SetOffset();
-		//viewProjection_.translate_ = VectorLib::Add(interTarget_, SetOffset());
 
 		viewProjection_.translate_ = VectorLib::Add(worldPosition, SetOffset());
 
