@@ -28,6 +28,8 @@ public:
 
 	void Reset();
 
+	void ApplyGlobalVariables();
+
 public:
 	enum class CameraView {
 		kNormal,
@@ -54,13 +56,9 @@ private:
 
 	Vector3 defaultTranslate_;
 
-	float defaultRate_t_ = 0;
+	float delayRate_ = 0.1f;
 
 private:
 	Vector3 SetOffset() const;
-
-	bool isReset_ = false;
-
-	float reset_t_ = 0;
 
 };
