@@ -52,6 +52,19 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		return;
 	}
 
+	// 攻撃の途中抜け
+	//if (colliderA->GetAttribute() == kCollisionAttributeWeapon) {
+	//	if (colliderB->GetAttribute() != kCollisionAttributeEnemy) {
+	//		return;
+	//	}
+	//}
+
+	//if (colliderB->GetAttribute() == kCollisionAttributeWeapon) {
+	//	if (colliderA->GetAttribute() != kCollisionAttributeEnemy) {
+	//		return;
+	//	}
+	//}
+
 	AABB other1;
 	other1.min = VectorLib::Subtract(colliderA->GetPosition(), colliderA->GetterRad());
 	other1.max = VectorLib::Add(colliderA->GetPosition(), colliderA->GetterRad());

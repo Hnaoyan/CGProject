@@ -85,7 +85,11 @@ void GameScene::Update()
 	goal_->Update();
 
 	player_->Update();
+	//if (player_->GetIsAttack()) {
+	//	enemy_->SetIsDead(true);
+	//}
 	enemy_->Update();
+
 	/// カメラ関係の更新処理
 	CameraUpdate();
 }
@@ -120,8 +124,9 @@ void GameScene::Draw() {
 
 
 	player_->Draw(viewProjection_);
-	enemy_->Draw(viewProjection_);
-
+	if (!enemy_->GetIsDead()) {
+		enemy_->Draw(viewProjection_);
+	}
 	goal_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
 	groundManager_->Draw(viewProjection_);
@@ -178,12 +183,18 @@ void GameScene::CheckCollision()
 
 	// 追加
 	colliderManager_->AddList(player_->GetCollider());
-	colliderManager_->AddList(enemy_->GetCollider());
+	if (player_->GetIsAttack()) {
+		colliderManager_->AddList(player_->GetWeapon());
+	}
+	if (!enemy_->GetIsDead()) {
+		colliderManager_->AddList(enemy_->GetCollider());
+	}
 	colliderManager_->AddList(goal_.get());
 
 	for (Ground* ground : groundManager_->GetList()) {
 		colliderManager_->AddList(ground->GetCollider());
 	}
+
 
 	/// 当たり判定（仮
 	colliderManager_->CheckAllCollisions();

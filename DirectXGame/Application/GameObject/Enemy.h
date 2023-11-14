@@ -43,6 +43,10 @@ public:
 
 	void MoveInitialize();
 
+	void SetIsDead(bool isDead) { isDead_ = isDead; }
+
+	bool GetIsDead() { return isDead_; }
+	
 private:
 	// モデルデータ配列
 	std::vector<Model*> models_;

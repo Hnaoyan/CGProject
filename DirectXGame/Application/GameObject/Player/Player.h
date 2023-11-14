@@ -1,5 +1,6 @@
 #pragma once
 #include "BaseCharacter.h"
+#include "Weapon.h"
 #include "Input.h"
 
 #include <optional>
@@ -47,6 +48,8 @@ public:
 	/// <returns></returns>
 	WorldTransform* GetWorldTransform() { return &worldTransform_; }
 
+	Weapon* GetWeapon() { return weapon_.get(); }
+
 	/// <summary>
 	/// viewの設定
 	/// </summary>
@@ -70,7 +73,9 @@ private:
 	WorldTransform worldTransformL_Arm_;
 	WorldTransform worldTransformR_Arm_;
 	WorldTransform worldTransformWeapon_;
+	WorldTransform worldAttackCollider_;
 
+	std::unique_ptr<Weapon> weapon_;
 
 public:
 	/// <summary>
@@ -84,6 +89,8 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool GetIsDead() { return isDead_; }
+
+	bool GetIsAttack() { return workAttack_.isNow_; }
 
 private:
 
@@ -143,6 +150,8 @@ private:
 	/// </summary>
 	void BehaviorAttackUpdate();
 
+	void CollisionUpdate();
+
 private:
 	/// <summary>
 	/// 状態管理
@@ -167,7 +176,7 @@ private: // ダッシュ
 
 	struct WorkDash {
 		uint32_t dashParameter_ = 0;
-		int dashTime_ = 15;
+		int dashTime_ = 0;
 	};
 
 	WorkDash workDash_;
@@ -182,7 +191,7 @@ private: // 攻撃
 	Attack attackState_;
 
 	struct WorkAttack {
-		uint32_t maxStunDuration_ = 20;
+		uint32_t maxStunDuration_ = 15;
 		uint32_t stunDuration_ = 0;
 		bool isNow_ = false;
 	};

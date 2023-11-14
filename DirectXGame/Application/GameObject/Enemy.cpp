@@ -17,7 +17,7 @@ void Enemy::Initialize(Model* model)
 	collider_.SetFunction(f);
 
 	MoveInitialize();
-
+	isDead_ = false;
 }
 
 void Enemy::Update()
@@ -43,9 +43,11 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 void Enemy::Move()
 {
 	
-	ImGui::Begin("state");
-	ImGui::Text("%d", isLeft_);
-	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.01f, -10.0f, 10.0f);
+	ImGui::Begin("Enemy	");
+	ImGui::Text("%d : isLeft", isLeft_);
+	ImGui::Text("%d : isDead", isDead_);
+	Vector3 pos = collider_.GetPosition();
+	ImGui::DragFloat3("pos", &pos.x, 0.01f, -10.0f, 10.0f);
 	ImGui::End();
 	
 	float returnPositionX = 3.0f;
@@ -93,8 +95,11 @@ void Enemy::SetModel(const std::vector<Model*>& models)
 
 void Enemy::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 {
-	tag;
+	//tag;
 	targetWorldTransform;
+	if (tag == kCollisionAttributeWeapon) {
+		isDead_ = true;
+	}
 }
 
 Vector3 Enemy::GetWorldPosition()

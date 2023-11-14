@@ -18,6 +18,9 @@ const uint32_t kCollisionAttributeGoal = 0b1 << 3;
 
 const uint32_t kCollisionAttributeMoveGround = 0b1 << 4;
 
+// 武器の識別番号
+const uint32_t kCollisionAttributeWeapon = 0b1 << 5;
+
 class Collider 
 {
 private:

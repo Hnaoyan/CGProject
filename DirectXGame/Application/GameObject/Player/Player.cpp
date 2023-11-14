@@ -15,12 +15,16 @@ void Player::Initialize(const std::vector<Model*>& models)
 	// ベースの初期化
 	models_ = models;
 	deModel_.reset(Model::Create());
+
+	weapon_ = std::make_unique<Weapon>();
+	weapon_->Initialize();
 	
 	worldTransform_.Initialize();
 	worldTransformBody_.Initialize();
 	worldTransformL_Arm_.Initialize();
 	worldTransformR_Arm_.Initialize();
 	worldTransformWeapon_.Initialize();
+	worldAttackCollider_.Initialize();
 
 	// サイズ設定
 	collider_.SetterRad(Vector3(radius_, radius_, radius_));
@@ -40,14 +44,14 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformL_Arm_.parent_ = &worldTransformBody_;
 	worldTransformR_Arm_.parent_ = &worldTransformBody_;
 	worldTransformWeapon_.parent_ = &worldTransformBody_;
+	//worldAttackCollider_.parent_ = &worldTransform_;
 
 	worldTransformBody_.translation_ = { 0,-0.4f,0 };
 	worldTransformL_Arm_.translation_ = { -0.4f, 1.5f, -0.15f };
 	worldTransformR_Arm_.translation_ = { 0.4f, 1.5f, -0.15f };
 
-	// 設定
-	Setting();
 
+#ifdef _DEBUG
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "Player";
 	// グループを追加
@@ -56,6 +60,10 @@ void Player::Initialize(const std::vector<Model*>& models)
 
 	ApplyGlobalVariables();
 
+#endif // _DEBUG
+
+	// 設定
+	Setting();
 }
 
 void Player::Update()
@@ -68,7 +76,6 @@ void Player::Update()
 	Vector3 pos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] ,worldTransform_.matWorld_.m[3][2] };
 	ImGui::DragFloat3("matPos", &pos.x, 0.01f, -20.0f, 20.0f);
 	ImGui::DragFloat3("rot", &worldTransform_.rotation_.x, 0.1f, -20.0f, 20.0f);
-	ImGui::DragInt("dashValue", &workDash_.dashTime_, 0.1f, 5, 60);
 	ImGui::Text("%d", isLand_);
 	ImGui::End();
 #endif // _DEBUG
@@ -110,8 +117,6 @@ void Player::Update()
 		break;
 	}
 
-	// 移動
-	//BehaviorRootUpdate();
 	// 落下
 	Fall();
 
@@ -121,6 +126,7 @@ void Player::Update()
 	worldTransformL_Arm_.UpdateMatrix();
 	worldTransformR_Arm_.UpdateMatrix();
 	worldTransformWeapon_.UpdateMatrix();
+	CollisionUpdate();
 }
 
 void Player::Draw(const ViewProjection& viewProjection)
@@ -131,7 +137,7 @@ void Player::Draw(const ViewProjection& viewProjection)
 	if (workAttack_.isNow_) {
 		models_[WEAPON]->Draw(worldTransformWeapon_, viewProjection);
 	}
-	deModel_->Draw(worldTransformWeapon_, viewProjection);
+	deModel_->Draw(weapon_->GetWorldTransform(), viewProjection);
 }
 
 Vector3 Player::GetWorldPosition()
@@ -164,9 +170,6 @@ void Player::ProcessMovement()
 			Vector3 move = {
 				(float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed,0.0f,
 				(float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed };
-			moveDirection_= {
-				(float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed,0.0f,
-				(float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed };
 			// 回転行列の合成
 			Matrix4x4 rotateMatrix = MatLib::Multiply(
 				MatLib::MakeRotateXMatrix(viewProjection_->rotation_.x),
@@ -174,6 +177,8 @@ void Player::ProcessMovement()
 					MatLib::MakeRotateYMatrix(viewProjection_->rotation_.y),
 					MatLib::MakeRotateZMatrix(viewProjection_->rotation_.z)));
 			move = MatLib::Transform(move, rotateMatrix);
+			// 方向取得（仮
+			moveDirection_ = move;
 
 			Vector3 normal = VectorLib::Scaler(MathCalc::Normalize(move), speed);
 			// 移動速度
@@ -186,12 +191,11 @@ void Player::ProcessMovement()
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 		}
 		else {
-			//worldTransform_.rotation_.y = 0;
 			velocity_.x = 0;
 			velocity_.z = 0;
 		}
 
-		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 1.0f/30.0f);
+		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 0.3f);
 
 		// 座標更新
 		worldTransform_.translation_.x += velocity_.x;
@@ -286,14 +290,19 @@ void Player::BehaviorRootUpdate()
 void Player::BehaviorDashInitialize()
 {
 	workDash_.dashParameter_ = 0;
-	//worldTransform_.rotation_.y;
 }
 
 void Player::BehaviorDashUpdate()
 {
 	// 移動処理
-	//Vector3 moveDirect = { std::cosf(worldTransform_.rotation_.y) ,0 ,std::sinf(worldTransform_.rotation_.y) };
-	Vector3 moveDirect = VectorLib::Scaler(MathCalc::Normalize(moveDirection_), 0.2f);
+	// 方向取得
+	float x = std::cosf(worldTransform_.rotation_.x) * std::sinf(worldTransform_.rotation_.y);
+	float y = -std::sinf(worldTransform_.rotation_.x);
+	float z = std::cosf(worldTransform_.rotation_.x) * std::cosf(worldTransform_.rotation_.y);
+
+	Vector3 moveDirect = { x ,y ,z };
+	moveDirect = VectorLib::Scaler(MathCalc::Normalize(moveDirect), 0.2f);
+
 	velocity_ = VectorLib::Add(velocity_, moveDirect);
 
 	worldTransform_.translation_.x += velocity_.x;
@@ -323,9 +332,9 @@ void Player::BehaviorAttackUpdate()
 	switch (attackState_) {
 	//---攻撃の振りおろし処理---//
 	case Player::Attack::kDown:
-		worldTransformWeapon_.rotation_.x += 0.02f;
-		worldTransformL_Arm_.rotation_.x += 0.02f;
-		worldTransformR_Arm_.rotation_.x += 0.02f;
+		worldTransformWeapon_.rotation_.x += 0.05f;
+		worldTransformL_Arm_.rotation_.x += 0.05f;
+		worldTransformR_Arm_.rotation_.x += 0.05f;
 		if (worldTransformWeapon_.rotation_.x > 1.5f) {
 			attackState_ = Attack::kStop;
 		}
@@ -342,6 +351,27 @@ void Player::BehaviorAttackUpdate()
 		}
 		break;
 	}
+}
+
+void Player::CollisionUpdate()
+{
+	// 方向取得
+	float x = std::cosf(worldTransform_.rotation_.x) * std::sinf(worldTransform_.rotation_.y);
+	float y = -std::sinf(worldTransform_.rotation_.x);
+	float z = std::cosf(worldTransform_.rotation_.x) * std::cosf(worldTransform_.rotation_.y);
+
+	float distance = 3.0f;
+
+	Vector3 worldPosition = GetWorldPosition();
+
+	Vector3 collisionPoint = {
+		worldPosition.x + x * distance,
+		worldPosition.y + y * distance,
+		worldPosition.z + z * distance,
+	};
+
+	weapon_->SetWorldPosition(collisionPoint);
+	weapon_->Update();
 }
 
 void Player::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
@@ -381,14 +411,6 @@ void Player::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 
 void Player::Setting()
 {
-	//// グローバル変数のjson
-	//GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	//// グループ名
-	//const char* groupName = "Player";
-	//// グループを追加
-	//GlobalVariables::GetInstance()->CreateGroup(groupName);
-
-
 	// リスタート関数
 	DeadToRestart(Vector3(0, 1.0f, 0));
 

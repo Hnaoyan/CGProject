@@ -5,6 +5,8 @@ void MyGame::Initialize()
 {
 	// 基底クラスの初期化
 	Framework::Initialize();
+	// グローバル変数の外部管理
+	GlobalVariables::GetInstance()->LoadFiles();
 	// シーンの初期化
 	sceneManager = new SceneManager();
 }
