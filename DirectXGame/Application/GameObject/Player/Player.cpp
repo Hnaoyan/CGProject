@@ -167,6 +167,14 @@ void Player::ProcessMovement()
 			moveDirection_= {
 				(float)joyState.Gamepad.sThumbLX / SHRT_MAX * speed,0.0f,
 				(float)joyState.Gamepad.sThumbLY / SHRT_MAX * speed };
+			// 回転行列の合成
+			Matrix4x4 rotateMatrix = MatLib::Multiply(
+				MatLib::MakeRotateXMatrix(viewProjection_->rotation_.x),
+				MatLib::Multiply(
+					MatLib::MakeRotateYMatrix(viewProjection_->rotation_.y),
+					MatLib::MakeRotateZMatrix(viewProjection_->rotation_.z)));
+			move = MatLib::Transform(move, rotateMatrix);
+
 			Vector3 normal = VectorLib::Scaler(MathCalc::Normalize(move), speed);
 			// 移動速度
 			velocity_.x = normal.x;
@@ -183,7 +191,7 @@ void Player::ProcessMovement()
 			velocity_.z = 0;
 		}
 
-		worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 1.0f/30.0f);
+		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 1.0f/30.0f);
 
 		// 座標更新
 		worldTransform_.translation_.x += velocity_.x;

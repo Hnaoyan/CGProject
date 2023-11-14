@@ -76,6 +76,7 @@ Vector3 MathCalc::Lerp(const Vector3& v1, const Vector3& v2, float t) {
 
 	result.x = (1.0f - t) * v1.x + t * v2.x;
 	result.y = (1.0f - t) * v1.y + t * v2.y;
+	result.z = (1.0f - t) * v1.z + t * v2.z;
 
 	return result;
 }
