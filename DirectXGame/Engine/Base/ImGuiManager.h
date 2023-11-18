@@ -1,4 +1,3 @@
-#pragma once
 #include "DirectXCommon.h"
 #include "WindowAPI.h"
 #include "imgui_impl_dx12.h"
@@ -50,6 +49,8 @@ private:
 	ImGuiManager() = default;
 	~ImGuiManager() = default;
 
+	ImGuiManager(const ImGuiManager&) = delete;
+	const ImGuiManager& operator = (const ImGuiManager&) = delete;
 
 };
 

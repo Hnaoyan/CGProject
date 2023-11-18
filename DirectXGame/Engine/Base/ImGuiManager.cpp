@@ -15,9 +15,14 @@ void ImGuiManager::Initialize(DirectXCommon* dxCommon, WindowAPI* winApp)
 	dxCommon_ = dxCommon;
 
 	D3D12_DESCRIPTOR_HEAP_DESC srvDescriptorHeapDesc{};
+	//srvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	//srvDescriptorHeapDesc.NumDescriptors = 128;
+	//srvDescriptorHeapDesc.Flags = true ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
 	srvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	srvDescriptorHeapDesc.NumDescriptors = 128;
-	srvDescriptorHeapDesc.Flags = true ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	srvDescriptorHeapDesc.NumDescriptors = 1;
+	srvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
 	result = dxCommon_->GetDevice()->CreateDescriptorHeap(&srvDescriptorHeapDesc, IID_PPV_ARGS(&srvDescriptorHeap_));
 	assert(SUCCEEDED(result));
 	
@@ -32,6 +37,12 @@ void ImGuiManager::Initialize(DirectXCommon* dxCommon, WindowAPI* winApp)
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, srvDescriptorHeap_.Get(),
 		srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart());
+
+	ImGui::CreateContext();
+	auto& io = ImGui::GetIO();
+
+	// 
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 }
 
