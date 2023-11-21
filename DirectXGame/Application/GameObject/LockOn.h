@@ -14,6 +14,8 @@ public:
 
 	void Update(const std::list<std::unique_ptr<Enemy>>& enemies,const ViewProjection& viewProjection);
 
+	void SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection);
+
 	void Draw();
 
 private:
