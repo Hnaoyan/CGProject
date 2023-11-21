@@ -183,9 +183,9 @@ void GameScene::CheckCollision()
 
 	// 追加
 	colliderManager_->AddList(player_->GetCollider());
-	if (player_->GetIsAttack()) {
-		colliderManager_->AddList(player_->GetWeapon());
-	}
+	//if (player_->GetIsAttack()) {
+	//	colliderManager_->AddList(player_->GetWeapon());
+	//}
 	if (!enemy_->GetIsDead()) {
 		colliderManager_->AddList(enemy_->GetCollider());
 	}

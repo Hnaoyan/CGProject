@@ -90,7 +90,7 @@ public:
 	/// <returns></returns>
 	bool GetIsDead() { return isDead_; }
 
-	bool GetIsAttack() { return workAttack_.isNow_; }
+	//ool GetIsAttack() { return workAttack_.isNow_; }
 
 private:
 
@@ -191,12 +191,38 @@ private: // 攻撃
 	Attack attackState_;
 
 	struct WorkAttack {
-		uint32_t maxStunDuration_ = 15;
-		uint32_t stunDuration_ = 0;
-		bool isNow_ = false;
+		uint32_t attackParameter_ = 0;
+		int32_t comboIndex_ = 0;
+		int32_t inComboPhase_ = 0;
+		bool comboNext_ = false;
+
 	};
 
 	WorkAttack workAttack_;
+
+	// 攻撃用定数
+	struct ConstAttack {
+		// 振りかぶりの時間<frame>
+		uint32_t anticipationTime_;
+		// ための時間<frame>
+		uint32_t chargeTime_;
+		// 攻撃振りの時間<frame>
+		uint32_t swingTime_;
+		// 硬直時間<frame>
+		uint32_t recoveryTime_;
+		// 振りかぶりの移動速さ
+		float anticipationSpeed_;
+		// ための移動速さ
+		float chargeSpeed_;
+		// 攻撃振りの移動速さ
+		float swingSpeed_;
+	};
+
+	// コンボの数
+	static const int ComboNum = 3;
+
+	// コンボ定数表
+	static const std::array<ConstAttack, ComboNum> kConstAttacks_;
 
 private: // システム系
 

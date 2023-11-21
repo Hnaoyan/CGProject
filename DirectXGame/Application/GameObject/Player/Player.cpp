@@ -134,7 +134,7 @@ void Player::Draw(const ViewProjection& viewProjection)
 	models_[BODY]->Draw(worldTransformBody_, viewProjection);
 	models_[L_ARM]->Draw(worldTransformL_Arm_, viewProjection);
 	models_[R_ARM]->Draw(worldTransformR_Arm_, viewProjection);
-	if (workAttack_.isNow_) {
+	if (behavior_ == Behavior::kAttack) {
 		models_[WEAPON]->Draw(worldTransformWeapon_, viewProjection);
 	}
 	deModel_->Draw(weapon_->GetWorldTransform(), viewProjection);
@@ -261,7 +261,7 @@ void Player::ApplyGlobalVariables()
 
 void Player::BehaviorRootInitialize()
 {
-	workAttack_.isNow_ = false;
+	//workAttack_ = false;
 }
 
 void Player::BehaviorRootUpdate()
@@ -323,8 +323,7 @@ void Player::BehaviorAttackInitialize()
 	worldTransformR_Arm_.rotation_.x = 3.0f;
 	worldTransformWeapon_.rotation_ = {};
 	attackState_ = Attack::kDown;
-	workAttack_.stunDuration_ = 0;
-	workAttack_.isNow_ = true;
+	workAttack_.attackParameter_ = 0;
 }
 
 void Player::BehaviorAttackUpdate()
@@ -341,9 +340,10 @@ void Player::BehaviorAttackUpdate()
 		break;
 	//---硬直処理---//
 	case Player::Attack::kStop:
-		workAttack_.stunDuration_++;
+		workAttack_.attackParameter_++;
 		//硬直終了判定
-		if (workAttack_.stunDuration_ == workAttack_.maxStunDuration_) {
+		const float kMaxDuration = 30;
+		if (workAttack_.attackParameter_ == kMaxDuration) {
 			worldTransformL_Arm_.rotation_.x = 0;
 			worldTransformR_Arm_.rotation_.x = 0;
 			attackState_ = Attack::kDown;
@@ -351,6 +351,50 @@ void Player::BehaviorAttackUpdate()
 		}
 		break;
 	}
+
+	//XINPUT_STATE joyStatePre;
+	XINPUT_STATE joyState;
+
+	// コンボ上限に達していない
+	if (workAttack_.comboIndex_ < ComboNum) {
+
+		//
+		if (input_->GetInstance()->GetJoystickState(0, joyState)) {
+			// 攻撃トリガー
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+				// コンボ有効
+				workAttack_.comboNext_ = true;
+			}
+		}
+
+	}
+
+	// 既定の時間経過で通常行動に戻る
+	if (++workAttack_.attackParameter_ >= 1) {
+		// コンボ継続なら次のコンボに進む
+		if (workAttack_.comboNext_) {
+			// フラグリセット
+			workAttack_.comboNext_ = false;
+
+		}
+		// コンボ継続でないなら攻撃を終了してルートビヘイビアに戻る
+		else {
+			behaviorRequest_ = Behavior::kRoot;
+		}
+	}
+
+	// コンボ段階によってモーションを分岐
+	switch (workAttack_.comboIndex_)
+	{
+	case 0:
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	}
+
+
 }
 
 void Player::CollisionUpdate()
