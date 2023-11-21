@@ -150,6 +150,10 @@ private:
 	/// </summary>
 	void BehaviorAttackUpdate();
 
+	void BehaviorJumpInitialize();
+
+	void BehaviorJumpUpdate();
+
 	void CollisionUpdate();
 
 private:
@@ -160,6 +164,7 @@ private:
 		kRoot,
 		kAttack,
 		kDash,
+		kJump,
 	};
 
 	/// <summary>

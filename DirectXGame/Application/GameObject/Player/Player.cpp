@@ -177,13 +177,12 @@ void Player::ProcessMovement()
 					MatLib::MakeRotateYMatrix(viewProjection_->rotation_.y),
 					MatLib::MakeRotateZMatrix(viewProjection_->rotation_.z)));
 			move = MatLib::Transform(move, rotateMatrix);
-			// 方向取得（仮
-			moveDirection_ = move;
 
 			Vector3 normal = VectorLib::Scaler(MathCalc::Normalize(move), speed);
 			// 移動速度
-			velocity_.x = normal.x;
-			velocity_.z = normal.z;
+			//velocity_.x = normal.x;
+			//velocity_.z = normal.z;
+			velocity_ = normal;
 			// 目標角度
 			destinationAngleY_ = std::atan2f(move.x, move.z);
 			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
@@ -285,6 +284,13 @@ void Player::BehaviorRootUpdate()
 			behaviorRequest_ = Behavior::kAttack;
 		}
 	}
+
+	if (input_->GetInstance()->GetJoystickState(0, joyState)) {
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) {
+			//behaviorRequest_ = Behavior::kJump;
+		}
+	}
+
 }
 
 void Player::BehaviorDashInitialize()
@@ -394,6 +400,32 @@ void Player::BehaviorAttackUpdate()
 		break;
 	}
 
+
+}
+
+void Player::BehaviorJumpInitialize()
+{
+	worldTransformBody_.translation_.y = 0;
+	worldTransformL_Arm_.rotation_.x = 0;
+	worldTransformR_Arm_.rotation_.x = 0;
+
+	// ジャンプ初速
+	const float kJumpFirstSpeed = 1.0f;
+	// ジャンプ初速を与える
+	velocity_ = { 0.0f,kJumpFirstSpeed,0.0f };
+
+}
+
+void Player::BehaviorJumpUpdate()
+{
+	// 移動
+	worldTransform_.translation_ = VectorLib::Add(worldTransform_.translation_, velocity_);
+	// 重力加速度
+	const float kGravityAcceleration = 0.05f;
+	// 加速度ベクトル
+	Vector3 accelerationVector = { 0,-kGravityAcceleration,0 };
+
+	velocity_ = VectorLib::Add(velocity_, accelerationVector);
 
 }
 

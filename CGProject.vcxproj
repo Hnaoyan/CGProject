@@ -203,6 +203,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\Goal.cpp" />
     <ClCompile Include="DirectXGame\Engine\TimeCall\TimedCall.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Weapon.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h" />
@@ -250,6 +251,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Goal.h" />
     <ClInclude Include="DirectXGame\Engine\TimeCall\TimedCall.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Weapon.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\LockOn.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
