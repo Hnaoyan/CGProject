@@ -339,26 +339,75 @@ Matrix4x4 MatLib::DirectionToDirection(const Vector3& from, const Vector3& to)
 	// sin
 	float sine = MathCalc::Length(MathCalc::Cross(from, to));
 	// normalize
-	Vector3 normal = MathCalc::Normalize(MathCalc::Cross(from, to));
-
+	Vector3 axisNormal = {};
+	Vector3 fromMinus = VectorLib::Scaler(from, -1.0f);
+	if (fromMinus.x == to.x && fromMinus.y == to.y && fromMinus.z == to.z) {
+		if (from.x != 0 || from.y != 0) {
+			axisNormal = { from.y,-from.x,0 };
+		}
+		else if (from.x != 0 || from.z != 0) {
+			axisNormal = { from.z,0,-from.x };
+		}
+	}
+	else {
+		axisNormal = MathCalc::Normalize(MathCalc::Cross(from, to));
+	}
 	Matrix4x4 result = MakeIdentity4x4();
-	result.m[0][0] = std::powf(normal.x, 2) * (1 - cosine) + cosine;
-	result.m[0][1] = (normal.x * normal.y) * (1 - cosine) + (normal.z * sine);
-	result.m[0][2] = (normal.x * normal.z) * (1 - cosine) - (normal.y * sine);
+	result.m[0][0] = std::powf(axisNormal.x, 2) * (1 - cosine) + cosine;
+	result.m[0][1] = axisNormal.x * axisNormal.y * (1 - cosine) + axisNormal.z * sine;
+	result.m[0][2] = axisNormal.x * axisNormal.z * (1 - cosine) - axisNormal.y * sine;
 
-	result.m[1][0] = (normal.x * normal.y) * (1 - cosine) - (normal.z * sine);
-	result.m[1][1] = std::powf(normal.y, 2) * (1 - cosine) + cosine;
-	result.m[1][2] = (normal.y * normal.z) * (1 - cosine) + normal.x * sine;
+	result.m[1][0] = axisNormal.x * axisNormal.y * (1 - cosine) - axisNormal.z * sine;
+	result.m[1][1] = std::powf(axisNormal.y, 2) * (1 - cosine) + cosine;
+	result.m[1][2] = axisNormal.y * axisNormal.z * (1 - cosine) + axisNormal.x * sine;
 
-	result.m[2][0] = (normal.x * normal.z) * (1 - cosine) + (normal.y * sine);
-	result.m[2][1] = (normal.y * normal.z) * (1 - cosine) - (normal.x * sine);
-	result.m[2][2] = std::powf(normal.z, 2) * (1 - cosine) + cosine;
+	result.m[2][0] = axisNormal.x * axisNormal.z * (1 - cosine) + axisNormal.y * sine;
+	result.m[2][1] = axisNormal.y * axisNormal.z * (1 - cosine) - axisNormal.x * sine;
+	result.m[2][2] = std::powf(axisNormal.z, 2) * (1 - cosine) + cosine;
 
 	return result;
 }
 
 Matrix4x4 MatLib::MakeRotateAxisAngle(const Vector3& axis, float angle)
 {
-	axis, angle;
-	return Matrix4x4();
+	Matrix4x4 rotation = MakeIdentity4x4();
+	rotation.m[0][0] = std::powf(axis.x, 2) * (1 - std::cosf(angle)) + std::cosf(angle);
+	rotation.m[0][1] = axis.x * axis.y * (1 - std::cosf(angle)) + (axis.z * std::sinf(angle));
+	rotation.m[0][2] = axis.x * axis.z * (1 - std::cosf(angle)) - (axis.y * std::sinf(angle));
+
+	rotation.m[1][0] = axis.x * axis.y * (1 - std::cosf(angle)) - (axis.z * std::sinf(angle));
+	rotation.m[1][1] = std::powf(axis.y, 2) * (1 - std::cosf(angle)) + (std::cosf(angle));
+	rotation.m[1][2] = axis.y * axis.z * (1 - std::cosf(angle)) + (axis.x * std::sinf(angle));
+
+	rotation.m[2][0] = axis.x * axis.z * (1 - std::cosf(angle)) + (axis.y * std::sinf(angle));
+	rotation.m[2][1] = axis.y * axis.z * (1 - std::cosf(angle)) - (axis.x * std::sinf(angle));
+	rotation.m[2][2] = std::powf(axis.z, 2) * (1 - std::cosf(angle)) + std::cosf(angle);
+
+	return rotation;
+}
+
+Matrix4x4 MatLib::MakeRotateMatrix(const Quaternion& quaternion)
+{
+	Matrix4x4 result = MakeIdentity4x4();
+	result.m[0][0] = std::powf(quaternion.w, 2) + std::powf(quaternion.x, 2) - std::powf(quaternion.y, 2) - std::powf(quaternion.z, 2);
+	result.m[0][1] = 2 * (quaternion.x * quaternion.y + quaternion.w * quaternion.z);
+	result.m[0][2] = 2 * (quaternion.x * quaternion.z - quaternion.w * quaternion.y);
+	result.m[1][0] = 2 * (quaternion.x * quaternion.y - quaternion.w * quaternion.z);
+	result.m[1][1] = std::powf(quaternion.w, 2) - std::powf(quaternion.x, 2) + std::powf(quaternion.y, 2) - std::powf(quaternion.z, 2);
+	result.m[1][2] = 2 * (quaternion.y * quaternion.z + quaternion.w * quaternion.x);
+	result.m[2][0] = 2 * (quaternion.x * quaternion.z + quaternion.w * quaternion.y);
+	result.m[2][1] = 2 * (quaternion.y * quaternion.z - quaternion.w * quaternion.x);
+	result.m[2][2] = std::powf(quaternion.w, 2) - std::powf(quaternion.x, 2) - std::powf(quaternion.y, 2) + std::powf(quaternion.z, 2);
+	return result;
+}
+
+Vector3 MatLib::RotateVector(const Vector3& vector, const Quaternion& quaternion)
+{
+	Vector3 result{};
+	Quaternion r = { vector.x,vector.y,vector.z,0 };
+	Quaternion normalize = QuatLib::Normalize(quaternion);
+	Quaternion rotateQuat = QuatLib::Multiply(QuatLib::Multiply(normalize, r), QuatLib::Conjugate(normalize));
+	result = { rotateQuat.x,rotateQuat.y,rotateQuat.z };
+
+	return result;
 }

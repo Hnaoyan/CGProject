@@ -188,6 +188,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\Particle\Particle.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Particle\ParticleManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Input\Input.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\QuatLib.cpp" />
     <ClCompile Include="DirectXGame\main.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\MathCalc.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\MatLib.cpp" />
@@ -240,6 +241,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Input\Input.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MathCalc.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MatLib.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\QuatLib.h" />
     <ClInclude Include="DirectXGame\Engine\Math\VectorLib.h" />
     <ClInclude Include="DirectXGame\MyGame.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\FollowCamera.h" />
