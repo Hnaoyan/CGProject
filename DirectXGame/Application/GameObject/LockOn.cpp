@@ -83,8 +83,8 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 bool LockOn::OutOfRange(const ViewProjection& viewProjection)
 {
 	//Vector3 positionWorld= target_->GetWorldPosition();
-	
-
+	viewProjection;
+	return false;
 }
 
 void LockOn::Draw()
