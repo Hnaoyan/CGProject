@@ -16,6 +16,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Goal.h"
+#include "LockOn.h"
 
 #include "GroundManager.h"
 #include "SkyDome.h"
@@ -96,6 +97,10 @@ private:	// メンバポインタ
 	std::unique_ptr<Enemy> enemy_;
 	std::unique_ptr<Goal> goal_;
 	std::unique_ptr<GroundManager> groundManager_;
+
+	std::list<std::unique_ptr<Enemy>> enemies_;
+
+	std::unique_ptr<LockOn> lockOn_;
 
 	bool isDebug_ = false;
 

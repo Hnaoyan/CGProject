@@ -1,20 +1,42 @@
 #include "LockOn.h"
 #include "TextureManager.h"
 #include "StructManager.h"
+#include "TextureManager.h"
 #include "MathCalc.h"
+#include "WindowAPI.h"
+#include "Input.h"
 
 void LockOn::Initialize()
 {
+	uint32_t texture = TextureManager::Load("lockOn.png");
+	position_ = { (float)WindowAPI::kClientWidth / 2 , (float)WindowAPI::kClientHeight / 2 };
+	this->lockOnMark_.reset(Sprite::Create(texture, position_, { 1,1,1,1 }, { 0.5f,0.5f }, false, false));
+
 }
 
 void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection)
 {
-	//if (target_) {
+	XINPUT_STATE joyState;
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+			SearchEnemy(enemies, viewProjection);
+		}
 
-	//}
-	enemies;
-	viewProjection;
-	SearchEnemy(enemies, viewProjection);
+		// ロックオン解除
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
+			target_ = nullptr;
+		}
+		// 範囲外判定
+		else if (OutOfRange(viewProjection)) {
+			target_ = nullptr;
+		}
+
+	}
+
+	if (target_) {
+		//Vector3 positionWorld = target_->GetWorldPositionTarget();
+	}
+
 }
 
 void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection)
@@ -55,6 +77,13 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		target_ = targets.front().second;
 	}
 
+
+}
+
+bool LockOn::OutOfRange(const ViewProjection& viewProjection)
+{
+	//Vector3 positionWorld= target_->GetWorldPosition();
+	
 
 }
 

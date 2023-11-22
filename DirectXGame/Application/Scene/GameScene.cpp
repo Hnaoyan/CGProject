@@ -48,6 +48,20 @@ void GameScene::Initialize() {
 	enemy_->Initialize(model_.get());
 	enemy_->SetModel(models);
 
+
+
+	for (int i = 0; i < 5; i++) {
+		std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
+		enemy->Initialize(model_.get());
+		enemy->SetModel(models);
+		enemy->SetPosition(Vector3{ float(3 * i),0.0f,45.0f });
+		enemies_.push_back(std::move(enemy));
+	}
+	
+
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Initialize();
+
 	goal_ = std::make_unique<Goal>();
 	goal_->Initialize(goalModel_.get());
 
@@ -85,13 +99,21 @@ void GameScene::Update()
 	goal_->Update();
 
 	player_->Update();
-	//if (player_->GetIsAttack()) {
-	//	enemy_->SetIsDead(true);
+
+	//for (Enemy* enemy : enemies_) {
+	//	enemy->Update();
 	//}
-	enemy_->Update();
+
+	for (auto itr = enemies_.begin(), end_ = enemies_.end(); itr != end_; itr++) {
+		itr->get()->Update();
+	}
+
 
 	/// カメラ関係の更新処理
 	CameraUpdate();
+
+	lockOn_->Update(enemies_, viewProjection_);
+
 }
 
 void GameScene::Draw() {
@@ -100,50 +122,47 @@ void GameScene::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 #pragma region 背景スプライト描画
-	// 背景スプライト描画前処理
+	// 描画前処理
 	Sprite::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに背景スプライトの描画処理を追加できる
-	/// </summary>
 
-
-	// スプライト描画後処理
+	// 描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
 	dxCommon_->ClearDepthBuffer();
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
-	// 3Dオブジェクト描画前処理
+	// 描画前処理
 	Model::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに3Dオブジェクトの描画処理を追加できる
-	/// </summary>
-
-
 	player_->Draw(viewProjection_);
-	if (!enemy_->GetIsDead()) {
-		enemy_->Draw(viewProjection_);
+	//if (!enemy_->GetIsDead()) {
+	//	enemy_->Draw(viewProjection_);
+	//}
+	for (auto itr = enemies_.begin(), end_ = enemies_.end(); itr != end_; itr++) {
+		itr->get()->Draw(viewProjection_);
 	}
+	//for (Enemy* enemy : enemies_) {
+	//	enemy->Draw(viewProjection_);
+	//}
+
 	goal_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
 	groundManager_->Draw(viewProjection_);
 
-	// 3Dオブジェクト描画後処理
+	// 描画後処理
 	Model::PostDraw();
 #pragma endregion
 
 #pragma region 前景スプライト描画
-	// 前景スプライト描画前処理
+	// 描画前処理
 	Sprite::PreDraw(commandList);
 
-	/// <summary>
-	/// ここに前景スプライトの描画処理を追加できる
-	/// </summary>
+	lockOn_->Draw();
 
-	// スプライト描画後処理
+
+	// 描画後処理
 	Sprite::PostDraw();
 
 #pragma endregion

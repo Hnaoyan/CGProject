@@ -71,4 +71,8 @@ private:
 
 	void ColliderSetting();
 
+public:
+
+	void SetPosition(const Vector3& position) { worldTransform_.translation_ = position; }
+
 };

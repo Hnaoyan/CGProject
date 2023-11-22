@@ -37,6 +37,9 @@ public:
 	/// <returns></returns>
 	Vector3 GetWorldPosition();
 
+	const Vector3& GetWorldPositionTarget() const
+	{ return Vector3{ worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] ,worldTransform_.matWorld_.m[3][2] }; }
+
 	void UpdateFloating();
 
 	void InitializeFloating();

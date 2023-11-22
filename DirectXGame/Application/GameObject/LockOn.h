@@ -16,6 +16,8 @@ public:
 
 	void SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection);
 
+	bool OutOfRange(const ViewProjection& viewProjection);
+
 	void Draw();
 
 private:
@@ -28,5 +30,8 @@ private:
 	float maxDistance_ = 30.0f;
 
 	float angleRange_ = 20.0f;
+
+	Vector2 position_ = {};
+
 };
 
