@@ -21,8 +21,27 @@ public:
 	/// </summary>
 	void Draw() override;
 
+private:
+	/// <summary>
+	/// 4x4行列表示
+	/// </summary>
+	/// <param name="matrix"></param>
+	/// <param name="tag"></param>
 	void ImGuiMatrixPrintf(const Matrix4x4& matrix, const char* tag);
 
+	/// <summary>
+	/// Vector3表示
+	/// </summary>
+	/// <param name="vector"></param>
+	/// <param name="tag"></param>
+	void ImGuiVector3Printf(const Vector3& vector, const char* tag);
+
+	/// <summary>
+	/// Quaternion表示
+	/// </summary>
+	/// <param name="quat"></param>
+	/// <param name="tag"></param>
+	void ImGuiQuaternionPrintf(const Quaternion& quat, const char* tag);
 
 };
 
