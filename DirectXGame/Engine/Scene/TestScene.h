@@ -1,5 +1,6 @@
 #pragma once
 #include "IScene.h"
+#include "MathCalc.h"
 
 
 class TestScene : public IScene
@@ -19,6 +20,8 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw() override;
+
+	void ImGuiMatrixPrintf(const Matrix4x4& matrix, const char* tag);
 
 
 };
