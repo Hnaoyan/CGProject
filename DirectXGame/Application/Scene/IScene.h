@@ -1,6 +1,6 @@
 #pragma once
 
-class BaseScene 
+class IScene 
 {
 public: // 仮想関数
 	/// <summary>
@@ -18,7 +18,7 @@ public: // 仮想関数
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	virtual ~BaseScene() = default;
+	virtual ~IScene() = default;
 
 public: // 取得・設定
 	/// <summary>

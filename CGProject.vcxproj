@@ -195,7 +195,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\MyGame.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\FollowCamera.cpp" />
     <ClCompile Include="DirectXGame\Engine\Other\GlobalVariables.cpp" />
-    <ClCompile Include="DirectXGame\Application\Scene\BaseScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\IScene.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\GameScene.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\SceneManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp" />
@@ -204,6 +204,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\TimeCall\TimedCall.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Weapon.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Scene\TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h" />
@@ -243,7 +244,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\MyGame.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\FollowCamera.h" />
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h" />
-    <ClInclude Include="DirectXGame\Application\Scene\BaseScene.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\IScene.h" />
     <ClInclude Include="DirectXGame\Application\Scene\GameScene.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SceneManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h" />
@@ -252,6 +253,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\TimeCall\TimedCall.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Weapon.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\LockOn.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\TestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

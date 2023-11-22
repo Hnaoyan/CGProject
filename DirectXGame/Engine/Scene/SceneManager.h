@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
-#include "BaseScene.h"
+#include "IScene.h"
+#include "TestScene.h"
 #include "GameScene.h"
 
 enum Scene {
@@ -9,7 +10,7 @@ enum Scene {
 
 class SceneManager {
 private:
-	std::unique_ptr<BaseScene> sceneArray_[3];
+	std::unique_ptr<IScene> sceneArray_[3];
 
 	int sceneNum_;
 	int prevSceneNum_;

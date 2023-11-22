@@ -162,7 +162,7 @@
     <ClCompile Include="DirectXGame\Engine\Scene\SceneManager.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\Scene\BaseScene.cpp">
+    <ClCompile Include="DirectXGame\Application\Scene\IScene.cpp">
       <Filter>ソース ファイル\scene</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Math\MatLib.cpp">
@@ -237,6 +237,9 @@
     <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\Scene\TestScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Engine\D3D12Lib\D3D12Lib.h">
@@ -299,7 +302,7 @@
     <ClInclude Include="DirectXGame\Engine\Math\MathCalc.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\Scene\BaseScene.h">
+    <ClInclude Include="DirectXGame\Application\Scene\IScene.h">
       <Filter>ヘッダー ファイル\scene</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Scene\SceneManager.h">
@@ -375,6 +378,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\LockOn.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Scene\TestScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

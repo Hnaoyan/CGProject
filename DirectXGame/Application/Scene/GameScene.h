@@ -10,7 +10,7 @@
 
 #include "CollisionManager.h"
 #include "FollowCamera.h"
-#include "BaseScene.h"
+#include "IScene.h"
 #include "BaseCamera.h"
 
 #include "Player.h"
@@ -26,7 +26,7 @@
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene : public BaseScene {
+class GameScene : public IScene {
 
 public: // メンバ関数
 	/// <summary>

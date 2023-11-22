@@ -2,7 +2,7 @@
 
 SceneManager::SceneManager() 
 { 
-	sceneArray_[TITLE] = std::make_unique<GameScene>();
+	sceneArray_[TITLE] = std::make_unique<TestScene>();
 	sceneArray_[GAMESCENE] = std::make_unique<GameScene>();
 	sceneArray_[CLEAR] = std::make_unique<GameScene>();
 
