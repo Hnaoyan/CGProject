@@ -206,6 +206,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Weapon.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\TestScene.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector3.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector2.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h" />
@@ -256,6 +259,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Weapon.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\LockOn.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\TestScene.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector3.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector2.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

@@ -20,6 +20,21 @@ void TestScene::Update()
 	this->ImGuiVector3Printf(rotateByQuat,"Quat");
 	this->ImGuiVector3Printf(rotateByMatrix, "Matrix");
 	this->ImGuiQuaternionPrintf(rotation, "test");
+
+
+	Vector3 a = { 1,1,1 };
+	Vector3 b = { 2,2,2 };
+
+	Vector3 Add_ab = a + b;
+	Vector3 Sub_ab = a - b;
+	Vector3 Mul_ab = a * b;
+	Vector3 Div_ab = a / b;
+
+	this->ImGuiVector3Printf(Add_ab, "Add");
+	this->ImGuiVector3Printf(Sub_ab, "Sub");
+	this->ImGuiVector3Printf(Mul_ab, "Mul");
+	this->ImGuiVector3Printf(Div_ab, "Div");
+
 }
 
 void TestScene::Draw()
