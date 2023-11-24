@@ -20,6 +20,8 @@ public:
 
 	void Draw();
 
+	Vector3 WorldToScreen(const Vector3& position, const ViewProjection& viewProjection);
+
 private:
 	std::unique_ptr<Sprite> lockOnMark_;
 
@@ -27,7 +29,7 @@ private:
 
 	float minDistance_ = 10.0f;
 
-	float maxDistance_ = 30.0f;
+	float maxDistance_ = 50.0f;
 
 	float angleRange_ = 20.0f;
 

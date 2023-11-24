@@ -83,6 +83,8 @@ void Player::Update()
 	if (worldTransform_.translation_.y < -15.0f) {
 		isDead_ = true;
 	}
+	velocity_.x = 0;
+	velocity_.z = 0;
 	// リクエストの受付
 	if (behaviorRequest_) {
 		// 行動変更
@@ -136,8 +138,8 @@ void Player::Draw(const ViewProjection& viewProjection)
 	models_[R_ARM]->Draw(worldTransformR_Arm_, viewProjection);
 	if (behavior_ == Behavior::kAttack) {
 		models_[WEAPON]->Draw(worldTransformWeapon_, viewProjection);
+		deModel_->Draw(weapon_->GetWorldTransform(), viewProjection);
 	}
-	deModel_->Draw(weapon_->GetWorldTransform(), viewProjection);
 }
 
 Vector3 Player::GetWorldPosition()
@@ -180,8 +182,6 @@ void Player::ProcessMovement()
 
 			Vector3 normal = VectorLib::Scaler(MathCalc::Normalize(move), speed);
 			// 移動速度
-			//velocity_.x = normal.x;
-			//velocity_.z = normal.z;
 			velocity_ = normal;
 			// 目標角度
 			destinationAngleY_ = std::atan2f(move.x, move.z);
@@ -189,10 +189,14 @@ void Player::ProcessMovement()
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 		}
-		else {
-			velocity_.x = 0;
-			velocity_.z = 0;
-		}
+		ImGui::Begin("moving");
+		ImGui::DragFloat3("joy", &moved.x, 0.01f, -100, 100);
+		ImGui::End();
+
+		//else {
+		//	velocity_.x = 0;
+		//	velocity_.z = 0;
+		//}
 
 		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 0.3f);
 
@@ -375,19 +379,19 @@ void Player::BehaviorAttackUpdate()
 
 	}
 
-	// 既定の時間経過で通常行動に戻る
-	if (++workAttack_.attackParameter_ >= 1) {
-		// コンボ継続なら次のコンボに進む
-		if (workAttack_.comboNext_) {
-			// フラグリセット
-			workAttack_.comboNext_ = false;
+	//// 既定の時間経過で通常行動に戻る
+	//if (++workAttack_.attackParameter_ >= 1) {
+	//	// コンボ継続なら次のコンボに進む
+	//	if (workAttack_.comboNext_) {
+	//		// フラグリセット
+	//		workAttack_.comboNext_ = false;
 
-		}
-		// コンボ継続でないなら攻撃を終了してルートビヘイビアに戻る
-		else {
-			behaviorRequest_ = Behavior::kRoot;
-		}
-	}
+	//	}
+	//	// コンボ継続でないなら攻撃を終了してルートビヘイビアに戻る
+	//	else {
+	//		//behaviorRequest_ = Behavior::kRoot;
+	//	}
+	//}
 
 	// コンボ段階によってモーションを分岐
 	switch (workAttack_.comboIndex_)

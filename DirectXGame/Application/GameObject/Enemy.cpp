@@ -24,7 +24,7 @@ void Enemy::Update()
 {
 	UpdateFloating();
 
-	Move();
+	//Move();
 
 	BaseCharacter::Update();	
 	worldBody_.UpdateMatrix();
