@@ -50,6 +50,9 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformL_Arm_.translation_ = { -0.4f, 1.5f, -0.15f };
 	worldTransformR_Arm_.translation_ = { 0.4f, 1.5f, -0.15f };
 
+	attackMotions_.push_back(std::bind(&Player::AttackCombo1, this));
+	attackMotions_.push_back(std::bind(&Player::AttackCombo2, this));
+	attackMotions_.push_back(std::bind(&Player::AttackCombo3, this));
 
 #ifdef _DEBUG
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
@@ -75,16 +78,27 @@ void Player::Update()
 	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.1f, -20.0f, 20.0f);
 	Vector3 pos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] ,worldTransform_.matWorld_.m[3][2] };
 	ImGui::DragFloat3("matPos", &pos.x, 0.01f, -20.0f, 20.0f);
-	ImGui::DragFloat3("rot", &worldTransform_.rotation_.x, 0.1f, -20.0f, 20.0f);
+	ImGui::DragFloat3("velo", &velocity_.x, 0.1f, -20.0f, 20.0f);
+	//ImGui::DragFloat3("velo", &velocity_.x, 0.1f, -20.0f, 20.0f);
 	ImGui::Text("%d", isLand_);
 	ImGui::End();
 #endif // _DEBUG
+
+#ifdef _DEBUG
+
+	ImGui::Begin("attack");
+	ImGui::Text("param : %d", static_cast<int>(workAttack_.attackParameter_));
+	ImGui::Text("comboNex : %d", static_cast<int>(workAttack_.comboNext_));
+	ImGui::Text("comboInd : %d", workAttack_.comboIndex_);
+	ImGui::End();
+
+#endif // _DEBUG
+
 	// 死亡判定
 	if (worldTransform_.translation_.y < -15.0f) {
 		isDead_ = true;
 	}
-	velocity_.x = 0;
-	velocity_.z = 0;
+
 	// リクエストの受付
 	if (behaviorRequest_) {
 		// 行動変更
@@ -142,14 +156,10 @@ void Player::Draw(const ViewProjection& viewProjection)
 	}
 }
 
-Vector3 Player::GetWorldPosition()
-{
-	Vector3 worldPos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };
-	return worldPos;
-}
-
 void Player::ProcessMovement()
 {
+	velocity_.x = 0;
+	velocity_.z = 0;
 	// 移動
 	XINPUT_STATE joyState;
 	if (input_->GetInstance()->GetJoystickState(0, joyState)) {
@@ -182,7 +192,9 @@ void Player::ProcessMovement()
 
 			Vector3 normal = VectorLib::Scaler(MathCalc::Normalize(move), speed);
 			// 移動速度
-			velocity_ = normal;
+			//velocity_ = normal;
+			velocity_.x = normal.x;
+			velocity_.z = normal.z;
 			// 目標角度
 			destinationAngleY_ = std::atan2f(move.x, move.z);
 			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
@@ -192,11 +204,6 @@ void Player::ProcessMovement()
 		ImGui::Begin("moving");
 		ImGui::DragFloat3("joy", &moved.x, 0.01f, -100, 100);
 		ImGui::End();
-
-		//else {
-		//	velocity_.x = 0;
-		//	velocity_.z = 0;
-		//}
 
 		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 0.3f);
 
@@ -333,11 +340,15 @@ void Player::BehaviorAttackInitialize()
 	worldTransformR_Arm_.rotation_.x = 3.0f;
 	worldTransformWeapon_.rotation_ = {};
 	attackState_ = Attack::kDown;
-	workAttack_.attackParameter_ = 0;
+	workAttack_ = {};
 }
 
 void Player::BehaviorAttackUpdate()
 {
+
+	// フレームカウント
+	workAttack_.attackParameter_++;
+
 	switch (attackState_) {
 	//---攻撃の振りおろし処理---//
 	case Player::Attack::kDown:
@@ -346,13 +357,13 @@ void Player::BehaviorAttackUpdate()
 		worldTransformR_Arm_.rotation_.x += 0.05f;
 		if (worldTransformWeapon_.rotation_.x > 1.5f) {
 			attackState_ = Attack::kStop;
+			workAttack_.attackParameter_ = 0;
 		}
 		break;
 	//---硬直処理---//
 	case Player::Attack::kStop:
-		workAttack_.attackParameter_++;
 		//硬直終了判定
-		const float kMaxDuration = 30;
+		const float kMaxDuration = 15;
 		if (workAttack_.attackParameter_ == kMaxDuration) {
 			worldTransformL_Arm_.rotation_.x = 0;
 			worldTransformR_Arm_.rotation_.x = 0;
@@ -362,14 +373,14 @@ void Player::BehaviorAttackUpdate()
 		break;
 	}
 
-	//XINPUT_STATE joyStatePre;
+	XINPUT_STATE joyStatePre;
 	XINPUT_STATE joyState;
 
 	// コンボ上限に達していない
 	if (workAttack_.comboIndex_ < ComboNum) {
 
 		//
-		if (input_->GetInstance()->GetJoystickState(0, joyState)) {
+		if (input_->GetInstance()->GetJoystickState(0, joyState) && input_->GetInstance()->GetJoystickState(0, joyStatePre)) {
 			// 攻撃トリガー
 			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
 				// コンボ有効
@@ -379,31 +390,37 @@ void Player::BehaviorAttackUpdate()
 
 	}
 
-	//// 既定の時間経過で通常行動に戻る
-	//if (++workAttack_.attackParameter_ >= 1) {
-	//	// コンボ継続なら次のコンボに進む
-	//	if (workAttack_.comboNext_) {
-	//		// フラグリセット
-	//		workAttack_.comboNext_ = false;
+	// 既定の時間経過で通常行動に戻る
+	if (workAttack_.attackParameter_ <= 30) {
+		// コンボ継続なら次のコンボに進む
+		if (workAttack_.comboNext_) {
+			// フラグリセット
+			workAttack_.comboNext_ = false;
 
-	//	}
-	//	// コンボ継続でないなら攻撃を終了してルートビヘイビアに戻る
-	//	else {
-	//		//behaviorRequest_ = Behavior::kRoot;
-	//	}
-	//}
+			workAttack_.comboIndex_++;
 
-	// コンボ段階によってモーションを分岐
-	switch (workAttack_.comboIndex_)
-	{
-	case 0:
-		break;
-	case 1:
-		break;
-	case 2:
-		break;
+		}
+		// コンボ継続でないなら攻撃を終了してルートビヘイビアに戻る
+		else {
+			//behaviorRequest_ = Behavior::kRoot;
+		}
 	}
 
+	//// コンボ段階によってモーションを分岐
+	//switch (workAttack_.comboIndex_)
+	//{
+	//case 0:
+
+	//	break;
+	//case 1:
+
+	//	break;
+	//case 2:
+
+	//	break;
+	//}
+	// 番号に合わせた攻撃処理
+	//attackMotions_[workAttack_.comboIndex_]();
 
 }
 
@@ -416,20 +433,19 @@ void Player::BehaviorJumpInitialize()
 	// ジャンプ初速
 	const float kJumpFirstSpeed = 1.0f;
 	// ジャンプ初速を与える
-	velocity_ = { 0.0f,kJumpFirstSpeed,0.0f };
-
+	velocity_.y = kJumpFirstSpeed;
 }
 
 void Player::BehaviorJumpUpdate()
 {
-	// 移動
-	worldTransform_.translation_ = VectorLib::Add(worldTransform_.translation_, velocity_);
 	// 重力加速度
 	const float kGravityAcceleration = 0.05f;
 	// 加速度ベクトル
 	Vector3 accelerationVector = { 0,-kGravityAcceleration,0 };
 
 	velocity_ = VectorLib::Add(velocity_, accelerationVector);
+	// 移動
+	worldTransform_.translation_ = VectorLib::Add(worldTransform_.translation_, velocity_);
 
 }
 

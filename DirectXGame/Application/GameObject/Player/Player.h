@@ -40,7 +40,10 @@ public:
 	/// 座標取得
 	/// </summary>
 	/// <returns></returns>
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() {
+		Vector3 worldPos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };
+		return worldPos;
+	}
 
 	/// <summary>
 	/// WorldTransformの取得
@@ -224,10 +227,20 @@ private: // 攻撃
 	};
 
 	// コンボの数
-	static const int ComboNum = 3;
+	static const int ComboNum = 20;
 
 	// コンボ定数表
 	static const std::array<ConstAttack, ComboNum> kConstAttacks_;
+
+	std::vector<std::function<void()>> attackMotions_;
+
+private:
+	void AttackCombo1() {};
+	void AttackCombo2() {};
+	void AttackCombo3() {};
+
+
+
 
 private: // システム系
 
