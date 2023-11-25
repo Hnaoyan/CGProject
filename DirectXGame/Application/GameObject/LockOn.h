@@ -29,7 +29,7 @@ private:
 
 	float minDistance_ = 10.0f;
 
-	float maxDistance_ = 50.0f;
+	float maxDistance_ = 30.0f;
 
 	float angleRange_ = 20.0f;
 

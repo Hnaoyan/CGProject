@@ -32,7 +32,7 @@ void FollowCamera::Update() {
 		Vector3 worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
 
 		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-			float rotateSpeed = 0.02f;
+			float rotateSpeed = 0.075f;
 
 			destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
 			//viewProjection_.rotation_.x += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * rotateSpeed;

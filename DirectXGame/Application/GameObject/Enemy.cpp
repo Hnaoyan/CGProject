@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include <numbers>
 #include "ImGuiManager.h"
+#include "MathCalc.h"
 
 void Enemy::Initialize(Model* model)
 {
@@ -34,6 +35,14 @@ void Enemy::Update()
 
 void Enemy::Draw(const ViewProjection& viewProjection)
 {
+
+	// ワールド→ビュー座標変換
+	Vector3 positionWorld = GetWorldPosition();
+	Vector3 positionView = MatLib::TransformNormal(positionWorld, viewProjection.matView);
+	ImGui::Begin("Enemy");
+	ImGui::DragFloat3("view", &positionView.x, 0.01f, -1000, 1000);
+	ImGui::End();
+
 	//BaseCharacter::Draw(viewProjection);
 	models_[BODY]->Draw(worldBody_, viewProjection);
 	models_[L_ARM]->Draw(worldL_arm_, viewProjection);
@@ -50,7 +59,7 @@ void Enemy::Move()
 	ImGui::DragFloat3("pos", &pos.x, 0.01f, -10.0f, 10.0f);
 	ImGui::End();
 	
-	float returnPositionX = 3.0f;
+	float returnPositionX = 6.0f;
 
 	if (isLeft_) 
 	{

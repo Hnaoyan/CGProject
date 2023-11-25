@@ -5,6 +5,15 @@
 
 #include <algorithm>
 
+const std::array<Player::ConstAttack, Player::ComboNum>Player::kConstAttacks_ = {
+	{
+		// 振りかぶり・攻撃前硬直・振りの時間・硬直・各フェーズの移動速度
+		{0,0,20,0,0.0f,0.0f,0.15f},
+		{15,10,15,0,0.2f,0.0f,0.0f},
+		{15,10,15,30,0.2f,0.0f,0.0f},
+	}
+};
+
 void Player::Initialize(const std::vector<Model*>& models)
 {
 	// システム系
@@ -373,11 +382,13 @@ void Player::BehaviorAttackUpdate()
 		break;
 	}
 
+	this->kConstAttacks_[workAttack_.comboIndex_].anticipationSpeed_;
+
 	XINPUT_STATE joyStatePre;
 	XINPUT_STATE joyState;
 
 	// コンボ上限に達していない
-	if (workAttack_.comboIndex_ < ComboNum) {
+	if (workAttack_.comboIndex_ < ComboNum && !workAttack_.comboNext_) {
 
 		//
 		if (input_->GetInstance()->GetJoystickState(0, joyState) && input_->GetInstance()->GetJoystickState(0, joyStatePre)) {
@@ -419,6 +430,7 @@ void Player::BehaviorAttackUpdate()
 
 	//	break;
 	//}
+	
 	// 番号に合わせた攻撃処理
 	//attackMotions_[workAttack_.comboIndex_]();
 

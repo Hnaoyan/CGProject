@@ -43,6 +43,8 @@ public:
 		return tmp;
 	}
 
+	WorldTransform GetTransform() const { return worldTransform_; }
+
 	void UpdateFloating();
 
 	void InitializeFloating();

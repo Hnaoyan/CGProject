@@ -22,10 +22,10 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			SearchEnemy(enemies, viewProjection);
 		}
 
-		//// ロックオン解除
-		//if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
-		//	target_ = nullptr;
-		//}
+		// ロックオン解除
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
+			target_ = nullptr;
+		}
 		//// 範囲外判定
 		//else if (OutOfRange(viewProjection)) {
 		//	target_ = nullptr;
@@ -35,7 +35,10 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 	if (target_) {
 		// 敵のロックオン座標取得
-		Vector3 positionWorld = target_->GetWorldPositionTarget();
+		//Vector3 positionWorld = target_->GetWorldPositionTarget();
+		Vector3 local = { 0,1.0f,0 };
+		Vector3 positionWorld = MatLib::Transform(local, target_->GetTransform().matWorld_);
+
 		// ワールド座標から返還
 		Vector3 positionScreen = this->WorldToScreen(positionWorld, viewProjection);
 
@@ -60,7 +63,7 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		Vector3 positionWorld = enemy->GetWorldPosition();
 
 		// ワールド→ビュー座標変換
-		Vector3 positionView = MathCalc::TransformNormal(positionWorld, viewProjection.matView);
+		Vector3 positionView = MatLib::TransformNormal(positionWorld, viewProjection.matView);
 
 		// 距離条件チェック
 		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
