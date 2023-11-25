@@ -1,6 +1,10 @@
 #pragma once
 #include "IScene.h"
 #include "MathCalc.h"
+#include "Model.h"
+#include "ViewProjection.h"
+#include "WorldTransform.h"
+#include <memory>
 
 
 class TestScene : public IScene
@@ -42,6 +46,12 @@ private:
 	/// <param name="quat"></param>
 	/// <param name="tag"></param>
 	void ImGuiQuaternionPrintf(const Quaternion& quat, const char* tag);
+
+private:
+	WorldTransform testTransform_;
+	ViewProjection view_;
+
+	std::unique_ptr<Model> testModel_;
 
 };
 

@@ -1,8 +1,14 @@
 #include "TestScene.h"
 #include "imgui.h"
+#include "DirectXCommon.h"
 
 void TestScene::Initialize()
 {
+	testTransform_.Initialize();
+	view_.Initialize();
+
+	testModel_.reset(Model::Create());
+
 }
 
 void TestScene::Update()
@@ -35,10 +41,28 @@ void TestScene::Update()
 	this->ImGuiVector3Printf(Mul_ab, "Mul");
 	this->ImGuiVector3Printf(Div_ab, "Div");
 
+	testTransform_.UpdateMatrix();
+	view_.ImGuiWidget();
+	view_.UpdateMatrix();
+
 }
 
 void TestScene::Draw()
 {
+
+	// コマンドリストの取得
+	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+
+#pragma region 3Dオブジェクト描画
+	// 描画前処理
+	Model::PreDraw(commandList);
+
+	testModel_->Draw(testTransform_, view_);
+
+	// 描画後処理
+	Model::PostDraw();
+#pragma endregion
+
 }
 
 void TestScene::ImGuiMatrixPrintf(const Matrix4x4& matrix, const char* tag)

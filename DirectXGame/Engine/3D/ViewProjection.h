@@ -61,5 +61,7 @@ struct ViewProjection
 	/// </summary>
 	/// <param name="range"></param>
 	void SetFov(float range) { fov = range; }
+
+	void ImGuiWidget();
 };
 

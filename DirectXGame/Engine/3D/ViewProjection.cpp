@@ -3,6 +3,7 @@
 #include "DirectXCommon.h"
 #include <cassert>
 #include "MathCalc.h"
+#include "imgui.h"
 
 void ViewProjection::Initialize()
 {
@@ -52,5 +53,16 @@ void ViewProjection::TransferMatrix()
 	constMap->cameraPos.x = matTranslate.m[3][0];
 	constMap->cameraPos.y = matTranslate.m[3][1];
 	constMap->cameraPos.z = matTranslate.m[3][2];
+
+}
+
+void ViewProjection::ImGuiWidget()
+{
+
+	ImGui::Begin("ViewParam");
+	float posValue = 500.0f;
+	ImGui::DragFloat3("position", &this->translate_.x, 0.01f, -posValue, posValue);
+	ImGui::DragFloat3("rotate", &this->rotation_.x, 0.01f, -5.0f, 5.0f);
+	ImGui::End();
 
 }
