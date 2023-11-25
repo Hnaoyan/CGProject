@@ -27,7 +27,7 @@ public:
 
 private:
 	// ライトの方向
-	Vector4 lightDir_ = { 1,0,0,0 };
+	Vector4 lightDir_ = { 1,1,0,0 };
 	// ライトの色
 	Vector3 lightColor_ = { 1,1,1 };
 	// ライトのフラグ
