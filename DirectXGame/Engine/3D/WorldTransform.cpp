@@ -4,6 +4,7 @@
 #include <cassert>
 #include "MathCalc.h"
 #include <numbers>
+#include "imgui.h"
 
 void WorldTransform::Initialize()
 {
@@ -49,6 +50,17 @@ void WorldTransform::BillBoardSetting(ViewProjection* view, bool billBoardFlag)
 	view_ = view;
 	// ビルボードの切り替え
 	isBillBoard_ = billBoardFlag;
+}
+
+void WorldTransform::ImGuiWidget()
+{
+
+	ImGui::Begin("WorldTransform");
+	float posValue = 500.0f;
+	ImGui::DragFloat3("position", &this->translation_.x, 0.01f, -posValue, posValue);
+	ImGui::DragFloat3("rotate", &this->rotation_.x, 0.01f, -5.0f, 5.0f);
+	ImGui::End();
+
 }
 
 

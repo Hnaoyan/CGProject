@@ -41,6 +41,7 @@ void TestScene::Update()
 	this->ImGuiVector3Printf(Mul_ab, "Mul");
 	this->ImGuiVector3Printf(Div_ab, "Div");
 
+	testTransform_.ImGuiWidget();
 	testTransform_.UpdateMatrix();
 	view_.ImGuiWidget();
 	view_.UpdateMatrix();

@@ -30,5 +30,7 @@ struct WorldTransform
 	void TransferMatrix();
 
 	void BillBoardSetting(ViewProjection* view, bool billBoardFlag);
+
+	void ImGuiWidget();
 };
 
