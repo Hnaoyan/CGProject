@@ -83,6 +83,7 @@ void GameScene::Initialize() {
 
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
+	//followCamera_->SetLockOn(lockOn_.get());
 
 	goal_ = std::make_unique<Goal>();
 	goal_->Initialize(goalModel_.get());
@@ -224,9 +225,9 @@ void GameScene::CheckCollision()
 
 	// 追加
 	colliderManager_->AddList(player_->GetCollider());
-	//if (player_->GetIsAttack()) {
-	//	colliderManager_->AddList(player_->GetWeapon());
-	//}
+	if (player_->GetIsAttack()) {
+		colliderManager_->AddList(player_->GetWeapon());
+	}
 	if (!enemy_->GetIsDead()) {
 		colliderManager_->AddList(enemy_->GetCollider());
 	}

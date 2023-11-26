@@ -8,7 +8,7 @@
 const std::array<Player::ConstAttack, Player::ComboNum>Player::kConstAttacks_ = {
 	{
 		// 振りかぶり・攻撃前硬直・振りの時間・硬直・各フェーズの移動速度
-		{0,0,20,0,0.0f,0.0f,0.15f},
+		{0,0,20,0,0.0f,0.0f,0.05f},
 		{15,10,15,0,0.2f,0.0f,0.0f},
 		{15,10,15,30,0.2f,0.0f,0.0f},
 	}
@@ -53,7 +53,6 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformL_Arm_.parent_ = &worldTransformBody_;
 	worldTransformR_Arm_.parent_ = &worldTransformBody_;
 	worldTransformWeapon_.parent_ = &worldTransformBody_;
-	//worldAttackCollider_.parent_ = &worldTransform_;
 
 	worldTransformBody_.translation_ = { 0,-0.4f,0 };
 	worldTransformL_Arm_.translation_ = { -0.4f, 1.5f, -0.15f };
@@ -92,7 +91,6 @@ void Player::Update()
 	ImGui::Text("%d", isLand_);
 	ImGui::End();
 #endif // _DEBUG
-
 #ifdef _DEBUG
 
 	ImGui::Begin("attack");
@@ -345,8 +343,8 @@ void Player::BehaviorDashUpdate()
 
 void Player::BehaviorAttackInitialize()
 {
-	worldTransformL_Arm_.rotation_.x = 3.0f;
-	worldTransformR_Arm_.rotation_.x = 3.0f;
+	worldTransformL_Arm_.rotation_.x = 3.14f;
+	worldTransformR_Arm_.rotation_.x = 3.14f;
 	worldTransformWeapon_.rotation_ = {};
 	attackState_ = Attack::kDown;
 	workAttack_ = {};
@@ -354,33 +352,23 @@ void Player::BehaviorAttackInitialize()
 
 void Player::BehaviorAttackUpdate()
 {
+#ifdef _DEBUG
+	ImGui::Begin("kConstAT");
+	ImGui::Text("ATime : %d", kConstAttacks_[workAttack_.comboIndex_].anticipationTime_);
+	ImGui::Text("CTime : %d", kConstAttacks_[workAttack_.comboIndex_].chargeTime_);
+	ImGui::Text("STime : %d", kConstAttacks_[workAttack_.comboIndex_].swingTime_);
+	ImGui::Text("RTime : %d", kConstAttacks_[workAttack_.comboIndex_].recoveryTime_);
+	ImGui::Text("ASpeed : %.2f", kConstAttacks_[workAttack_.comboIndex_].anticipationSpeed_);
+	ImGui::Text("CSpeed : %.2f", kConstAttacks_[workAttack_.comboIndex_].chargeSpeed_);
+	ImGui::Text("SSpeed : %f", kConstAttacks_[workAttack_.comboIndex_].swingSpeed_);
+	ImGui::End();
+#endif // _DEBUG
 
 	// フレームカウント
 	workAttack_.attackParameter_++;
 
-	switch (attackState_) {
-	//---攻撃の振りおろし処理---//
-	case Player::Attack::kDown:
-		worldTransformWeapon_.rotation_.x += 0.05f;
-		worldTransformL_Arm_.rotation_.x += 0.05f;
-		worldTransformR_Arm_.rotation_.x += 0.05f;
-		if (worldTransformWeapon_.rotation_.x > 1.5f) {
-			attackState_ = Attack::kStop;
-			workAttack_.attackParameter_ = 0;
-		}
-		break;
-	//---硬直処理---//
-	case Player::Attack::kStop:
-		//硬直終了判定
-		const float kMaxDuration = 15;
-		if (workAttack_.attackParameter_ == kMaxDuration) {
-			worldTransformL_Arm_.rotation_.x = 0;
-			worldTransformR_Arm_.rotation_.x = 0;
-			attackState_ = Attack::kDown;
-			behaviorRequest_ = Behavior::kRoot;
-		}
-		break;
-	}
+	// 番号に合わせた攻撃処理
+	attackMotions_[workAttack_.comboIndex_]();
 
 	this->kConstAttacks_[workAttack_.comboIndex_].anticipationSpeed_;
 
@@ -388,7 +376,7 @@ void Player::BehaviorAttackUpdate()
 	XINPUT_STATE joyState;
 
 	// コンボ上限に達していない
-	if (workAttack_.comboIndex_ < ComboNum && !workAttack_.comboNext_) {
+	if (workAttack_.comboIndex_ < (ComboNum - 1) && !workAttack_.comboNext_) {
 
 		//
 		if (input_->GetInstance()->GetJoystickState(0, joyState) && input_->GetInstance()->GetJoystickState(0, joyStatePre)) {
@@ -402,38 +390,27 @@ void Player::BehaviorAttackUpdate()
 	}
 
 	// 既定の時間経過で通常行動に戻る
-	if (workAttack_.attackParameter_ <= 30) {
+	if (workAttack_.attackParameter_ >= 30) {
 		// コンボ継続なら次のコンボに進む
 		if (workAttack_.comboNext_) {
 			// フラグリセット
 			workAttack_.comboNext_ = false;
-
+			// 順番
 			workAttack_.comboIndex_++;
+
+			workAttack_.attackParameter_ = 0;
+
+			// パーツごとの初期化
+			worldTransformL_Arm_.rotation_.x = 3.14f;
+			worldTransformR_Arm_.rotation_.x = 3.14f;
+			worldTransformWeapon_.rotation_ = {};
 
 		}
 		// コンボ継続でないなら攻撃を終了してルートビヘイビアに戻る
 		else {
-			//behaviorRequest_ = Behavior::kRoot;
+			behaviorRequest_ = Behavior::kRoot;
 		}
 	}
-
-	//// コンボ段階によってモーションを分岐
-	//switch (workAttack_.comboIndex_)
-	//{
-	//case 0:
-
-	//	break;
-	//case 1:
-
-	//	break;
-	//case 2:
-
-	//	break;
-	//}
-	
-	// 番号に合わせた攻撃処理
-	//attackMotions_[workAttack_.comboIndex_]();
-
 }
 
 void Player::BehaviorJumpInitialize()
@@ -530,4 +507,47 @@ void Player::DeadToRestart(const Vector3& startPoint)
 	worldTransform_.translation_ = startPoint;
 	worldTransform_.UpdateMatrix();
 	isDead_ = false;
+}
+
+void Player::AttackCombo1() 
+{
+
+	switch (attackState_) {
+		//---攻撃の振りおろし処理---//
+	case Player::Attack::kDown:
+		worldTransformWeapon_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
+		worldTransformL_Arm_.rotation_.x += 0.05f;
+		worldTransformR_Arm_.rotation_.x += 0.05f;
+		if (worldTransformWeapon_.rotation_.x > 1.5f) {
+			attackState_ = Attack::kStop;
+			workAttack_.attackParameter_ = 0;
+		}
+		break;
+		//---硬直処理---//
+	case Player::Attack::kStop:
+		//硬直終了判定
+		const float kMaxDuration = 15;
+		if (workAttack_.attackParameter_ == kMaxDuration) {
+			worldTransformL_Arm_.rotation_.x = 0;
+			worldTransformR_Arm_.rotation_.x = 0;
+			attackState_ = Attack::kDown;
+			behaviorRequest_ = Behavior::kRoot;
+		}
+		break;
+	}
+
+}
+
+void Player::AttackCombo2() 
+{
+	countTimer_++;
+	if (countTimer_ > kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
+
+	}
+
+}
+
+void Player::AttackCombo3() 
+{
+
 }

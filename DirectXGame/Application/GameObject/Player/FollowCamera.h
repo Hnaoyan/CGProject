@@ -1,6 +1,10 @@
 #pragma once
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "LockOn.h"
+
+// 前方宣言
+class LockOn;
 
 class FollowCamera {
 public:
@@ -60,5 +64,12 @@ private:
 
 private:
 	Vector3 SetOffset() const;
+
+private:
+	// ロックオン
+	const LockOn* lockOn_ = nullptr;
+
+public:
+	void SetLockOn(LockOn* lockOn) { lockOn_ = lockOn; }
 
 };

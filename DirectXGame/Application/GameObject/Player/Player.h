@@ -93,10 +93,10 @@ public:
 	/// <returns></returns>
 	bool GetIsDead() { return isDead_; }
 
-	//ool GetIsAttack() { return workAttack_.isNow_; }
+	bool GetIsAttack() { return behavior_ == Behavior::kAttack; }
 
 private:
-
+#pragma region 基本動作
 	/// <summary>
 	/// 移動の更新
 	/// </summary>
@@ -121,8 +121,10 @@ private:
 	/// 調整項目用関数
 	/// </summary>
 	void ApplyGlobalVariables();
+#pragma endregion
 
 private:
+#pragma region Behaviorごとの関数
 	/// <summary>
 	/// 通常状態の初期化
 	/// </summary>
@@ -156,6 +158,8 @@ private:
 	void BehaviorJumpInitialize();
 
 	void BehaviorJumpUpdate();
+
+#pragma endregion
 
 	void CollisionUpdate();
 
@@ -198,6 +202,7 @@ private: // 攻撃
 
 	Attack attackState_;
 
+	// 攻撃用ワーク
 	struct WorkAttack {
 		uint32_t attackParameter_ = 0;
 		int32_t comboIndex_ = 0;
@@ -220,27 +225,35 @@ private: // 攻撃
 		uint32_t recoveryTime_;
 		// 振りかぶりの移動速さ
 		float anticipationSpeed_;
-		// ための移動速さ
+		// ための速さ
 		float chargeSpeed_;
-		// 攻撃振りの移動速さ
+		// 攻撃振りの速さ
 		float swingSpeed_;
 	};
 
 	// コンボの数
-	static const int ComboNum = 20;
+	static const int ComboNum = 3;
+
+	int countTimer_ = 0;
 
 	// コンボ定数表
 	static const std::array<ConstAttack, ComboNum> kConstAttacks_;
 
 	std::vector<std::function<void()>> attackMotions_;
 
-private:
-	void AttackCombo1() {};
-	void AttackCombo2() {};
-	void AttackCombo3() {};
-
-
-
+private: // 攻撃の関数
+	/// <summary>
+	/// １段目
+	/// </summary>
+	void AttackCombo1();
+	/// <summary>
+	/// 2段目
+	/// </summary>
+	void AttackCombo2();
+	/// <summary>
+	/// ３段目
+	/// </summary>
+	void AttackCombo3();
 
 private: // システム系
 

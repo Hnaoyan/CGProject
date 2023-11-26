@@ -18,22 +18,30 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 {
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
-			SearchEnemy(enemies, viewProjection);
-		}
 
-		// ロックオン解除
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
-			target_ = nullptr;
+		if (target_) {
+			// C.
+			// ロックオン解除
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
+				target_ = nullptr;
+			}
+			// 範囲外判定
+			else if (OutOfRange(viewProjection)) {
+				target_ = nullptr;
+			}
 		}
-		//// 範囲外判定
-		//else if (OutOfRange(viewProjection)) {
-		//	target_ = nullptr;
-		//}
+		else
+		{
+			// A.
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
+				SearchEnemy(enemies, viewProjection);
+			}
+		}
 
 	}
 
 	if (target_) {
+		// B.
 		// 敵のロックオン座標取得
 		//Vector3 positionWorld = target_->GetWorldPositionTarget();
 		Vector3 local = { 0,1.0f,0 };
@@ -60,7 +68,7 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 	// 全ての敵に対して順にロックオン判定
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
 		// 敵のロックオン座標取得
-		Vector3 positionWorld = enemy->GetWorldPosition();
+		Vector3 positionWorld = enemy->GetWorldPositionTarget();
 
 		// ワールド→ビュー座標変換
 		Vector3 positionView = MatLib::TransformNormal(positionWorld, viewProjection.matView);
@@ -139,4 +147,13 @@ Vector3 LockOn::WorldToScreen(const Vector3& position, const ViewProjection& vie
 		MatLib::Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
 
 	return Vector3(MatLib::Transform(position,matViewProjection));
+}
+
+Vector3 LockOn::GetTargetPosition() const
+{
+	if (target_) {
+		return target_->GetWorldPositionTarget();
+	}
+
+	return Vector3();
 }
