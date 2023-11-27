@@ -375,26 +375,21 @@ void Player::BehaviorAttackUpdate()
 	ImGui::End();
 #endif // _DEBUG
 
-	if (lockOn_ && lockOn_->ExistTarget()) {
+	if (lockOn_->GetTarget() && lockOn_->ExistTarget()) {
 		// ロックオン座標
 		Vector3 lockOnPoint = lockOn_->GetTargetPosition();
 		// 追従対象からロックオン対象へのベクトル
 		Vector3 sub = lockOnPoint - GetWorldPosition();
 		sub = MathCalc::Normalize(sub);
-
-
-		// 距離
-		float distance = MathCalc::Length(sub);
-		// しきい
-		const float threshold = 0.2f;
-		if (distance > threshold) {
-			// Y軸周り角度
-			worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
-
-			
-
-		}
-
+		//// 距離
+		//float distance = MathCalc::Length(sub);
+		//// しきい
+		//const float threshold = 0.2f;
+		//if (distance > threshold) {
+		//	// Y軸周り角度
+		//	
+		//}
+		worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
 	}
 
 	// フレームカウント
@@ -437,7 +432,6 @@ void Player::BehaviorAttackUpdate()
 			worldTransformL_Arm_.rotation_.x = 3.14f;
 			worldTransformR_Arm_.rotation_.x = 3.14f;
 			worldTransformWeapon_.rotation_ = {};
-
 		}
 		// コンボ継続でないなら攻撃を終了してルートビヘイビアに戻る
 		else {
@@ -564,7 +558,6 @@ void Player::AttackCombo1()
 			worldTransformL_Arm_.rotation_.x = 0;
 			worldTransformR_Arm_.rotation_.x = 0;
 			attackState_ = Attack::kDown;
-			behaviorRequest_ = Behavior::kRoot;
 		}
 		break;
 	}
@@ -573,10 +566,31 @@ void Player::AttackCombo1()
 
 void Player::AttackCombo2() 
 {
-	//countTimer_++;
+	countTimer_++;
 	//if (countTimer_ > kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
 
 	//}
+
+	switch (workAttack_.inComboPhase_)
+	{
+	case 0:
+
+		if (countTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
+			// フェーズチェンジ
+			workAttack_.inComboPhase_++;
+			countTimer_ = 0;
+		}
+
+		break;
+
+	case 1:
+
+
+		if (countTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
+			workAttack_.inComboPhase_++;
+		}
+		break;
+	}
 
 }
 
