@@ -38,8 +38,9 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 
 	// ワールド→ビュー座標変換
 	Vector3 positionWorld = GetWorldPosition();
-	Vector3 positionView = MatLib::TransformNormal(positionWorld, viewProjection.matView);
+	Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
 	ImGui::Begin("Enemy");
+	ImGui::Text("I");
 	ImGui::DragFloat3("view", &positionView.x, 0.01f, -1000, 1000);
 	ImGui::End();
 

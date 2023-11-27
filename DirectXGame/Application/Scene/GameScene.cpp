@@ -83,7 +83,8 @@ void GameScene::Initialize() {
 
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
-	//followCamera_->SetLockOn(lockOn_.get());
+	followCamera_->SetLockOn(lockOn_.get());
+	player_->SetLockOn(lockOn_.get());
 
 	goal_ = std::make_unique<Goal>();
 	goal_->Initialize(goalModel_.get());
@@ -98,11 +99,6 @@ void GameScene::Initialize() {
 	groundRad.z *= scale;
 
 	groundManager_->AddGround(Vector3(0, -0.2f, 10.0f), groundRad, Vector3(scale, 1.0f, scale));
-	//groundManager_->AddGround(Vector3(0, -0.2f, 40.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
-	//groundManager_->AddGround(Vector3(0, -0.2f, 70.0f), groundRad, Vector3(4.0f, 1.0f, 4.0f));
-
-	//groundManager_->AddMoveGround(Vector3(0, -0.4f, 20.0f),
-	//	Vector3(5.0f, groundRad.y, 5.0f), Vector3(1.0f, 1.0f, 1.0f));
 
 	groundManager_->Update();
 }
@@ -135,7 +131,7 @@ void GameScene::Update()
 	/// カメラ関係の更新処理
 	CameraUpdate();
 
-	lockOn_->Update(enemies_, viewProjection_);
+	lockOn_->Update(enemies_, followCamera_->GetView());
 
 }
 
@@ -166,9 +162,6 @@ void GameScene::Draw() {
 	for (auto itr = enemies_.begin(), end_ = enemies_.end(); itr != end_; itr++) {
 		itr->get()->Draw(viewProjection_);
 	}
-	//for (Enemy* enemy : enemies_) {
-	//	enemy->Draw(viewProjection_);
-	//}
 
 	goal_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);

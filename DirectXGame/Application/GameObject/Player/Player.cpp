@@ -208,6 +208,17 @@ void Player::ProcessMovement()
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 		}
+		else if (lockOn_ && lockOn_->ExistTarget()) {
+			// ロックオン座標
+			Vector3 lockOnPoint = lockOn_->GetTargetPosition();
+			// 追従対象からロックオン対象へのベクトル
+			Vector3 sub = lockOnPoint - GetWorldPosition();
+			sub = MathCalc::Normalize(sub);
+
+			// Y軸周り角度
+			worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
+
+		}
 		ImGui::Begin("moving");
 		ImGui::DragFloat3("joy", &moved.x, 0.01f, -100, 100);
 		ImGui::End();
@@ -363,6 +374,28 @@ void Player::BehaviorAttackUpdate()
 	ImGui::Text("SSpeed : %f", kConstAttacks_[workAttack_.comboIndex_].swingSpeed_);
 	ImGui::End();
 #endif // _DEBUG
+
+	if (lockOn_ && lockOn_->ExistTarget()) {
+		// ロックオン座標
+		Vector3 lockOnPoint = lockOn_->GetTargetPosition();
+		// 追従対象からロックオン対象へのベクトル
+		Vector3 sub = lockOnPoint - GetWorldPosition();
+		sub = MathCalc::Normalize(sub);
+
+
+		// 距離
+		float distance = MathCalc::Length(sub);
+		// しきい
+		const float threshold = 0.2f;
+		if (distance > threshold) {
+			// Y軸周り角度
+			worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
+
+			
+
+		}
+
+	}
 
 	// フレームカウント
 	workAttack_.attackParameter_++;
@@ -540,10 +573,10 @@ void Player::AttackCombo1()
 
 void Player::AttackCombo2() 
 {
-	countTimer_++;
-	if (countTimer_ > kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
+	//countTimer_++;
+	//if (countTimer_ > kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
 
-	}
+	//}
 
 }
 

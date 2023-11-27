@@ -9,16 +9,32 @@
 class LockOn
 {
 public:
-
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Initialize();
-
+	/// <summary>
+	/// 更新
+	/// </summary>
+	/// <param name="enemies"></param>
+	/// <param name="viewProjection"></param>
 	void Update(const std::list<std::unique_ptr<Enemy>>& enemies,const ViewProjection& viewProjection);
-
-	void SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection);
-
-	bool OutOfRange(const ViewProjection& viewProjection);
-
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
+	/// <summary>
+	/// 検索
+	/// </summary>
+	/// <param name="enemies"></param>
+	/// <param name="viewProjection"></param>
+	void SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection);
+	/// <summary>
+	/// 範囲外か確認
+	/// </summary>
+	/// <param name="viewProjection"></param>
+	/// <returns></returns>
+	bool OutOfRange(const ViewProjection& viewProjection);
 
 	Vector3 WorldToScreen(const Vector3& position, const ViewProjection& viewProjection);
 
@@ -31,7 +47,7 @@ private:
 
 	float minDistance_ = 10.0f;
 
-	float maxDistance_ = 30.0f;
+	float maxDistance_ = 50.0f;
 
 	float angleRange_ = 20.0f * kDegreeToRadian;
 
@@ -39,6 +55,7 @@ private:
 
 public:
 	Vector3 GetTargetPosition() const;
+	const Enemy* GetTarget() const { return target_; }
 	bool ExistTarget() const { return target_ ? true : false; }
 };
 

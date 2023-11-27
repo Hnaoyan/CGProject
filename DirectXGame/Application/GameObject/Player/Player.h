@@ -2,9 +2,12 @@
 #include "BaseCharacter.h"
 #include "Weapon.h"
 #include "Input.h"
+#include "LockOn.h"
 
 #include <optional>
 #include <functional>
+
+class LockOn;
 
 class Player : public BaseCharacter
 {
@@ -162,6 +165,14 @@ private:
 #pragma endregion
 
 	void CollisionUpdate();
+
+private:
+
+	const LockOn* lockOn_ = nullptr;
+
+public:
+
+	void SetLockOn(LockOn* lockOn) { lockOn_ = lockOn; }
 
 private:
 	/// <summary>

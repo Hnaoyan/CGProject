@@ -43,7 +43,10 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	if (target_) {
 		// B.
 		// 敵のロックオン座標取得
-		//Vector3 positionWorld = target_->GetWorldPositionTarget();
+		//Vector3 positionWorld = {
+		//	target_->GetTransform().matWorld_.m[3][0],
+		//	target_->GetTransform().matWorld_.m[3][1],
+		//	target_->GetTransform().matWorld_.m[3][2] };
 		Vector3 local = { 0,1.0f,0 };
 		Vector3 positionWorld = MatLib::Transform(local, target_->GetTransform().matWorld_);
 
@@ -68,24 +71,27 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 	// 全ての敵に対して順にロックオン判定
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
 		// 敵のロックオン座標取得
-		Vector3 positionWorld = enemy->GetWorldPositionTarget();
+		Vector3 positionWorld = { 
+			enemy->GetTransform().matWorld_.m[3][0],
+			enemy->GetTransform().matWorld_.m[3][1],
+			enemy->GetTransform().matWorld_.m[3][2] };
+		Vector3 local = { 0,1.0f,0 };
+		positionWorld = MatLib::Transform(local, enemy->GetTransform().matWorld_);
 
 		// ワールド→ビュー座標変換
-		Vector3 positionView = MatLib::TransformNormal(positionWorld, viewProjection.matView);
+		Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
 
 		// 距離条件チェック
 		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 
 			// カメラ前方との角度を計算
-			float arcTangent = std::atan2f(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
+			float arcTangent = std::atan2(std::sqrt(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
 
 			// 角度条件チェック
-			if (std::fabsf(arcTangent) <= angleRange_) {
+			if (std::fabs(arcTangent) <= angleRange_) {
 				targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
 			}
-
 		}
-
 	}
 
 	// 対象をリセット
@@ -96,8 +102,6 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		// ソートの結果一番近い敵をロックオン対象に設定
 		target_ = targets.front().second;
 	}
-
-
 }
 
 bool LockOn::OutOfRange(const ViewProjection& viewProjection)
@@ -107,9 +111,12 @@ bool LockOn::OutOfRange(const ViewProjection& viewProjection)
 	}
 
 	// 敵のロックオン座標取得
-	Vector3 positionWorld = target_->GetWorldPositionTarget();
+	Vector3 positionWorld = {
+		target_->GetTransform().matWorld_.m[3][0],
+		target_->GetTransform().matWorld_.m[3][1],
+		target_->GetTransform().matWorld_.m[3][2] };
 	// ワールド座標から返還
-	Vector3 positionView = MathCalc::TransformNormal(positionWorld, viewProjection.matView);
+	Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
 
 
 	// 距離条件チェック
@@ -152,7 +159,7 @@ Vector3 LockOn::WorldToScreen(const Vector3& position, const ViewProjection& vie
 Vector3 LockOn::GetTargetPosition() const
 {
 	if (target_) {
-		return target_->GetWorldPositionTarget();
+		return Vector3{ target_->GetTransform().matWorld_.m[3][0],target_->GetTransform().matWorld_.m[3][1],target_->GetTransform().matWorld_.m[3][2] };
 	}
 
 	return Vector3();
