@@ -174,6 +174,15 @@ Model* Model::Create()
 	return instance;
 }
 
+Model* Model::CreatePlane()
+{
+	// メモリ確保
+	Model* instance = new Model;
+	std::string planeName = "plane";
+	instance->Initialize(planeName, false);
+	return instance;
+}
+
 Model* Model::CreateFromObj(const std::string& modelName, bool smoothing)
 {
 	// メモリ

@@ -77,6 +77,12 @@ public:
 	static Model* Create();
 
 	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	static Model* CreatePlane();
+
+	/// <summary>
 	/// OBJファイルからメッシュ生成
 	/// </summary>
 	/// <param name="modelName"></param>

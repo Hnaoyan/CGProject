@@ -192,7 +192,7 @@
     <ClCompile Include="DirectXGame\Application\GameObject\Particle\ParticleManager.cpp">
       <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Particle\Particle.cpp">
+    <ClCompile Include="DirectXGame\Application\GameObject\Particle\IParticle.cpp">
       <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Camera\BaseCamera.cpp">
@@ -347,7 +347,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\Particle\ParticleManager.h">
       <Filter>ヘッダー ファイル\particle</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Particle\Particle.h">
+    <ClInclude Include="DirectXGame\Application\GameObject\Particle\IParticle.h">
       <Filter>ヘッダー ファイル\particle</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Camera\BaseCamera.h">

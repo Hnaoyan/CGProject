@@ -185,7 +185,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\BaseBullet.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BaseCharacter.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Ground\Ground.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Particle\Particle.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\Particle\IParticle.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Particle\ParticleManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Input\Input.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\QuatLib.cpp" />
@@ -239,7 +239,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\BaseBullet.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BaseCharacter.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Ground\Ground.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Particle\Particle.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Particle\IParticle.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Particle\ParticleManager.h" />
     <ClInclude Include="DirectXGame\Engine\Input\Input.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MathCalc.h" />

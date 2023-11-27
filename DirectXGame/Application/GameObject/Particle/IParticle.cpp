@@ -1,6 +1,6 @@
-#include "Particle.h"
+#include "IParticle.h"
 
-void Particle::Initialize(Model* model, uint32_t texture) 
+void IParticle::Initialize(Model* model, uint32_t texture) 
 {
 	// モデル設定
 	model_ = model;
@@ -10,7 +10,7 @@ void Particle::Initialize(Model* model, uint32_t texture)
 	worldTransform_.Initialize();
 }
 
-void Particle::Update() 
+void IParticle::Update()
 {
 
 	worldTransform_.UpdateMatrix();
@@ -18,7 +18,7 @@ void Particle::Update()
 }
 
 
-void Particle::Draw(ViewProjection& viewProjection) 
+void IParticle::Draw(ViewProjection& viewProjection)
 {
 	model_->Draw(worldTransform_, viewProjection, texture_);
 }

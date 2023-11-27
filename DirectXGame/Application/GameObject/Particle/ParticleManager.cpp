@@ -9,7 +9,8 @@ ParticleManager* ParticleManager::GetInstance()
 
 void ParticleManager::Initialize()
 {
-	model_.reset(Model::Create());
+	cubeModel_.reset(Model::Create());
+	planeModel_.reset(Model::CreatePlane());
 	texture_ = TextureManager::Load("white1x1.png");
 }
 
@@ -22,11 +23,11 @@ void ParticleManager::Update()
 
 void ParticleManager::ParticleUpdate()
 {
-	for (Particle* particle : particles_) {
+	for (IParticle* particle : particles_) {
 		particle->Update();
 	}
 	// リストの削除
-	particles_.remove_if([](Particle* particle) {
+	particles_.remove_if([](IParticle* particle) {
 		if (particle->IsDead()) {
 			delete particle;
 			return true;
@@ -37,7 +38,17 @@ void ParticleManager::ParticleUpdate()
 
 void ParticleManager::Draw(ViewProjection& viewProjection)
 {
-	for (Particle* particle : particles_) {
+	for (IParticle* particle : particles_) {
 		particle->Draw(viewProjection);
 	}
+}
+
+void ParticleManager::AddParitcle()
+{
+
+	IParticle* newParticle = new IParticle();
+	uint32_t texture = TextureManager::Load("white1x1.png");
+	newParticle->Initialize(planeModel_.get(), texture);
+	particles_.push_back(newParticle);
+
 }

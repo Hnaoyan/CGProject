@@ -9,6 +9,7 @@
 #include "WorldTransform.h"
 
 #include "CollisionManager.h"
+#include "ParticleManager.h"
 #include "FollowCamera.h"
 #include "IScene.h"
 #include "BaseCamera.h"
@@ -97,6 +98,7 @@ private:	// メンバポインタ
 	std::unique_ptr<Enemy> enemy_;
 	std::unique_ptr<Goal> goal_;
 	std::unique_ptr<GroundManager> groundManager_;
+	std::unique_ptr<ParticleManager> particleManager_;
 
 	std::list<std::unique_ptr<Enemy>> enemies_;
 

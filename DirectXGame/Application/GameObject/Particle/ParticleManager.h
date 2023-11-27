@@ -1,6 +1,6 @@
 #pragma once
 #include "StructManager.h"
-#include "Particle.h"
+#include "IParticle.h"
 #include <list>
 
 class ParticleManager
@@ -34,15 +34,17 @@ public:
 
 private:
 
-	std::list<Particle*> particles_;
+	std::list<IParticle*> particles_;
 
 	uint32_t texture_ = 0u;
 
-	std::unique_ptr<Model> model_;
+	std::unique_ptr<Model> cubeModel_;
+	std::unique_ptr<Model> planeModel_;
 
 
 public:
 
+	void AddParitcle();
 	enum Type {
 
 	};

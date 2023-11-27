@@ -27,6 +27,9 @@ void GameScene::Initialize() {
 	// 衝突マネージャー
 	colliderManager_ = std::make_unique<CollisionManager>();
 
+	particleManager_ = std::make_unique<ParticleManager>();
+	particleManager_->Initialize();
+
 	// 追従カメラ
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
