@@ -2,11 +2,13 @@
 #include "WindowAPI.h"
 #include "DirectXCommon.h"
 #include "Audio.h"
+#include "AudioManager.h"
 #include "ImGuiManager.h"
 #include "SceneManager.h"
 #include "TextureManager.h"
 #include "Model.h"
 #include "Sprite.h"
+#include <memory>
 
 class Framework
 {
@@ -62,6 +64,7 @@ protected:
 	Input* input;
 	ImGuiManager* imguiManager = nullptr;
 
+	std::unique_ptr<AudioManager> audioManager_;
 };
 
 

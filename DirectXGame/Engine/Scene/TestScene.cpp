@@ -4,6 +4,8 @@
 
 void TestScene::Initialize()
 {
+	audio_ = AudioManager::GetInstance();
+
 	testTransform_.Initialize();
 	view_.Initialize();
 

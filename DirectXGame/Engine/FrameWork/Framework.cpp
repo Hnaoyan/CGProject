@@ -42,6 +42,8 @@ void Framework::Initialize()
 	audio = Audio::GetInstance();
 	audio->Initialize();
 
+	audioManager_ = std::make_unique<AudioManager>();
+
 	// Imgui
 	imguiManager = ImGuiManager::GetInstance();
 	imguiManager->Initialize(dxCommon, winApp);
