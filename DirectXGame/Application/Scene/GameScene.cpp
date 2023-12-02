@@ -134,7 +134,6 @@ void GameScene::Update()
 	/// カメラ関係の更新処理
 	CameraUpdate();
 
-	lockOn_->Update(enemies_, followCamera_->GetView());
 
 }
 
@@ -201,7 +200,10 @@ void GameScene::CameraUpdate()
 	}
 #endif // DEBUG
 
+	lockOn_->Update(enemies_, followCamera_->GetView());
+
 	followCamera_->Update();
+
 
 	// デバックカメラか追尾カメラ
 	if (isDebug_) {

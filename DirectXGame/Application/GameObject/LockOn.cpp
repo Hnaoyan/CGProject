@@ -43,10 +43,6 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	if (target_) {
 		// B.
 		// 敵のロックオン座標取得
-		//Vector3 positionWorld = {
-		//	target_->GetTransform().matWorld_.m[3][0],
-		//	target_->GetTransform().matWorld_.m[3][1],
-		//	target_->GetTransform().matWorld_.m[3][2] };
 		Vector3 local = { 0,1.0f,0 };
 		Vector3 positionWorld = MatLib::Transform(local, target_->GetTransform().matWorld_);
 
@@ -70,6 +66,12 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 
 	// 全ての敵に対して順にロックオン判定
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
+
+		// 死亡の場合スキップ
+		if (enemy->GetIsDead()) {
+			continue;
+		}
+
 		// 敵のロックオン座標取得
 		Vector3 positionWorld = { 
 			enemy->GetTransform().matWorld_.m[3][0],
@@ -102,6 +104,10 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		// ソートの結果一番近い敵をロックオン対象に設定
 		target_ = targets.front().second;
 	}
+
+	if (OutOfRange(viewProjection)) {
+		target_ = nullptr;
+	}
 }
 
 bool LockOn::OutOfRange(const ViewProjection& viewProjection)
@@ -123,7 +129,10 @@ bool LockOn::OutOfRange(const ViewProjection& viewProjection)
 	if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 
 		// カメラ前方との角度を計算
-		float arcTangent = std::atan2f(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
+		//float arcTangent = std::atan2f(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
+
+		Vector3 WorldView = { viewProjection.matView.m[3][0],viewProjection.matView.m[3][1],viewProjection.matView.m[3][2] };
+		float arcTangent = MathCalc::Dot(MathCalc::Normalize(positionView), MathCalc::Normalize(WorldView));
 
 		// 角度条件チェック
 		if (std::fabsf(arcTangent) <= angleRange_) {

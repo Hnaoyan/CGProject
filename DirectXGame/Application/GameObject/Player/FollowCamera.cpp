@@ -39,24 +39,18 @@ void FollowCamera::Update() {
 		// Y軸周り角度
 		viewProjection_.rotation_.y = std::atan2f(sub.x, sub.z);
 	}
-	// ロックオンしてない場合
-	else
-	{
-		// 追従対象がいれば
-		if (target_) {
-			// 座標をコピーしてオフセット分ずらす
-			worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
+	// 追従対象がいれば
+	if (target_) {
+		// 座標をコピーしてオフセット分ずらす
+		worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
 
-			if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-				float rotateSpeed = 0.075f;
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+			float rotateSpeed = 0.075f;
 
-				destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
-
-			}
-
-			viewProjection_.rotation_.y = MathCalc::Lerp(viewProjection_.rotation_.y, destinationAngleY_, 0.1f);
-
+			destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
+			//viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
 		}
+		viewProjection_.rotation_.y = MathCalc::Lerp(viewProjection_.rotation_.y, destinationAngleY_, 0.1f);
 	}
 
 	// 遅延追尾
@@ -82,6 +76,7 @@ void FollowCamera::Reset()
 	// 追従対象からのオフセット
 	Vector3 offset = SetOffset();
 	viewProjection_.translate_ = VectorLib::Add(interTarget_, offset);
+	viewProjection_.UpdateMatrix();
 }
 
 void FollowCamera::ApplyGlobalVariables()
