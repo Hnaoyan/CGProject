@@ -21,6 +21,13 @@ void AudioManager::PlayAudio(uint32_t soundHandle, bool isLoop, float volume)
 void AudioManager::PlayAudio(const char* soundID, bool isLoop, float volume)
 {
 	Audio::GetInstance()->PlayWave(GetSound(soundID), isLoop, volume);
+	if (!Audio::GetInstance()->IsPlaying(GetSound(soundID))) {
+		Audio::GetInstance()->PlayWave(GetSound(soundID), isLoop, volume);
+	}
+	else {
+		Audio::GetInstance()->StopWave(GetSound(soundID));
+		Audio::GetInstance()->PlayWave(GetSound(soundID), isLoop, volume);
+	}
 }
 
 uint32_t AudioManager::GetSound(const char* soundID)
