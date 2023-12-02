@@ -44,10 +44,10 @@ void WorldTransform::TransferMatrix()
 	constMap->matWorld = matWorld_;
 }
 
-void WorldTransform::BillBoardSetting(ViewProjection* view, bool billBoardFlag)
+void WorldTransform::BillBoardSetting(ViewProjection* viewProjection, bool billBoardFlag)
 {
 	// カメラの設定
-	view_ = view;
+	viewProjection_ = viewProjection;
 	// ビルボードの切り替え
 	isBillBoard_ = billBoardFlag;
 }
@@ -69,7 +69,7 @@ void WorldTransform::UpdateMatrix() {
 	// ビルボードありの場合
 	if (isBillBoard_) {
 		Matrix4x4 billBoardMat = MatLib::MakeBillBoard(
-			translation_, view_->translate_, Vector3(0.0f, 1.0f, 0.0f));
+			translation_, viewProjection_->translate_, Vector3(0.0f, 1.0f, 0.0f));
 
 		Matrix4x4 worldMat = MatLib::MakeAffineMatrix(
 			scale_, rotation_, translation_);

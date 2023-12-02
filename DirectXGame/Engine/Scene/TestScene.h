@@ -4,6 +4,7 @@
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "AudioManager.h"
 #include <memory>
 
 
@@ -48,6 +49,8 @@ private:
 	void ImGuiQuaternionPrintf(const Quaternion& quat, const char* tag);
 
 private:
+	AudioManager* audio_;
+
 	WorldTransform testTransform_;
 	ViewProjection view_;
 
