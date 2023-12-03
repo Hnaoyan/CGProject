@@ -100,6 +100,18 @@ void Player::Update()
 	ImGui::End();
 
 #endif // _DEBUG
+#ifdef _DEBUG
+	ImGui::Begin("kConstAT");
+	ImGui::Text("ATime : %d", kConstAttacks_[workAttack_.comboIndex_].anticipationTime_);
+	ImGui::Text("CTime : %d", kConstAttacks_[workAttack_.comboIndex_].chargeTime_);
+	ImGui::Text("STime : %d", kConstAttacks_[workAttack_.comboIndex_].swingTime_);
+	ImGui::Text("RTime : %d", kConstAttacks_[workAttack_.comboIndex_].recoveryTime_);
+	ImGui::Text("ASpeed : %.2f", kConstAttacks_[workAttack_.comboIndex_].anticipationSpeed_);
+	ImGui::Text("CSpeed : %.2f", kConstAttacks_[workAttack_.comboIndex_].chargeSpeed_);
+	ImGui::Text("SSpeed : %f", kConstAttacks_[workAttack_.comboIndex_].swingSpeed_);
+	ImGui::Text("MaxTime : %d", MaxAttackTime(workAttack_.comboIndex_));
+	ImGui::End();
+#endif // _DEBUG
 
 	// 死亡判定
 	if (worldTransform_.translation_.y < -15.0f) {
@@ -363,17 +375,6 @@ void Player::BehaviorAttackInitialize()
 
 void Player::BehaviorAttackUpdate()
 {
-#ifdef _DEBUG
-	ImGui::Begin("kConstAT");
-	ImGui::Text("ATime : %d", kConstAttacks_[workAttack_.comboIndex_].anticipationTime_);
-	ImGui::Text("CTime : %d", kConstAttacks_[workAttack_.comboIndex_].chargeTime_);
-	ImGui::Text("STime : %d", kConstAttacks_[workAttack_.comboIndex_].swingTime_);
-	ImGui::Text("RTime : %d", kConstAttacks_[workAttack_.comboIndex_].recoveryTime_);
-	ImGui::Text("ASpeed : %.2f", kConstAttacks_[workAttack_.comboIndex_].anticipationSpeed_);
-	ImGui::Text("CSpeed : %.2f", kConstAttacks_[workAttack_.comboIndex_].chargeSpeed_);
-	ImGui::Text("SSpeed : %f", kConstAttacks_[workAttack_.comboIndex_].swingSpeed_);
-	ImGui::End();
-#endif // _DEBUG
 
 	if (lockOn_->GetTarget() && lockOn_->ExistTarget()) {
 		// ロックオン座標
@@ -405,7 +406,6 @@ void Player::BehaviorAttackUpdate()
 
 	// コンボ上限に達していない
 	if (workAttack_.comboIndex_ < (ComboNum - 1) && !workAttack_.comboNext_) {
-
 		//
 		if (input_->GetInstance()->GetJoystickState(0, joyState) && input_->GetInstance()->GetJoystickState(0, joyStatePre)) {
 			// 攻撃トリガー
@@ -414,11 +414,10 @@ void Player::BehaviorAttackUpdate()
 				workAttack_.comboNext_ = true;
 			}
 		}
-
 	}
 
 	// 既定の時間経過で通常行動に戻る
-	if (workAttack_.attackParameter_ >= 30) {
+	if (workAttack_.attackParameter_ >= MaxAttackTime(workAttack_.comboIndex_)) {
 		// コンボ継続なら次のコンボに進む
 		if (workAttack_.comboNext_) {
 			// フラグリセット
@@ -536,7 +535,12 @@ void Player::DeadToRestart(const Vector3& startPoint)
 	isDead_ = false;
 }
 
-void Player::AttackCombo1() 
+uint32_t Player::MaxAttackTime(uint32_t index)
+{
+	return kConstAttacks_[index].anticipationTime_ + kConstAttacks_[index].chargeTime_ + kConstAttacks_[index].recoveryTime_ + kConstAttacks_[index].swingTime_;
+}
+
+void Player::AttackCombo1()
 {
 
 	switch (attackState_) {

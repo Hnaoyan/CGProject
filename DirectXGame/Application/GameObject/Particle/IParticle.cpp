@@ -13,6 +13,10 @@ void IParticle::Initialize(Model* model, uint32_t texture)
 void IParticle::Update()
 {
 
+	if (++timeElapsed_ > fadeTime_) {
+		isDead_ = true;
+	}
+
 	worldTransform_.UpdateMatrix();
 
 }

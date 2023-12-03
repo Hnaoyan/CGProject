@@ -46,6 +46,7 @@ void GameScene::Initialize() {
 	player_->Initialize(models);
 	followCamera_->SetTarget(player_->GetWorldTransform());
 	player_->SetViewProjection(followCamera_->GetViewPlayer());
+	player_->SetPariticleManager(particleManager_.get());
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize(model_.get());

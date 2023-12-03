@@ -68,7 +68,7 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
 
 		// 死亡の場合スキップ
-		if (enemy->GetIsDead()) {
+		if (enemy->GetIsDead() || OutOfRange(enemy.get(), viewProjection)) {
 			continue;
 		}
 
@@ -121,6 +121,38 @@ bool LockOn::OutOfRange(const ViewProjection& viewProjection)
 		target_->GetTransform().matWorld_.m[3][0],
 		target_->GetTransform().matWorld_.m[3][1],
 		target_->GetTransform().matWorld_.m[3][2] };
+	// ワールド座標から返還
+	Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
+
+
+	// 距離条件チェック
+	if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
+
+		// カメラ前方との角度を計算
+		//float arcTangent = std::atan2f(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
+
+		Vector3 WorldView = { viewProjection.matView.m[3][0],viewProjection.matView.m[3][1],viewProjection.matView.m[3][2] };
+		float arcTangent = MathCalc::Dot(MathCalc::Normalize(positionView), MathCalc::Normalize(WorldView));
+
+		// 角度条件チェック
+		if (std::fabsf(arcTangent) <= angleRange_) {
+			// 範囲外でない
+			return false;
+		}
+
+	}
+
+	// 範囲外である
+	return true;
+}
+
+bool LockOn::OutOfRange(Enemy* target, const ViewProjection& viewProjection)
+{
+	// 敵のロックオン座標取得
+	Vector3 positionWorld = {
+		target->GetTransform().matWorld_.m[3][0],
+		target->GetTransform().matWorld_.m[3][1],
+		target->GetTransform().matWorld_.m[3][2] };
 	// ワールド座標から返還
 	Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
 

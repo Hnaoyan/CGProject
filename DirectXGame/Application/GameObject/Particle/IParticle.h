@@ -48,7 +48,9 @@ private:
 
 	float radius_;
 
+	// 消える時間
 	int fadeTime_ = 0;
+	// 経過時間
 	int timeElapsed_ = 0;
 };
 

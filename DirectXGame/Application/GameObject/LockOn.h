@@ -36,6 +36,8 @@ public:
 	/// <returns></returns>
 	bool OutOfRange(const ViewProjection& viewProjection);
 
+	bool OutOfRange(Enemy* target, const ViewProjection& viewProjection);
+
 	Vector3 WorldToScreen(const Vector3& position, const ViewProjection& viewProjection);
 
 private:

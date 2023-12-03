@@ -3,6 +3,7 @@
 #include "Weapon.h"
 #include "Input.h"
 #include "LockOn.h"
+#include "ParticleManager.h"
 
 #include <optional>
 #include <functional>
@@ -39,6 +40,7 @@ public:
 	/// </summary>
 	void Setting();
 
+public: // アクセッサ
 	/// <summary>
 	/// 座標取得
 	/// </summary>
@@ -63,6 +65,12 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	}
+
+	void SetPariticleManager(ParticleManager* ptr) { paritcleManager_ = ptr; }
+
+private:
+	ParticleManager* paritcleManager_ = nullptr;
+
 private:
 	// モデルデータ配列
 	std::vector<Model*> models_;
@@ -241,6 +249,8 @@ private: // 攻撃
 		// 攻撃振りの速さ
 		float swingSpeed_;
 	};
+
+	uint32_t MaxAttackTime(uint32_t index);
 
 	// コンボの数
 	static const int ComboNum = 3;
