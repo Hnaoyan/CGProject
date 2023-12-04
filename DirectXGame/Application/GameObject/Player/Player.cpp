@@ -8,8 +8,8 @@
 const std::array<Player::ConstAttack, Player::ComboNum>Player::kConstAttacks_ = {
 	{
 		// 振りかぶり・攻撃前硬直・振りの時間・硬直・各フェーズの移動速度
-		{0,0,20,0,0.0f,0.0f,0.05f},
-		{15,10,15,0,0.2f,0.0f,0.0f},
+		{0,0,20,15,0.0f,0.0f,0.05f},
+		{15,10,15,25,0.2f,0.0f,0.1f},
 		{15,10,15,30,0.2f,0.0f,0.0f},
 	}
 };
@@ -19,8 +19,6 @@ void Player::Initialize(const std::vector<Model*>& models)
 	// システム系
 	input_ = Input::GetInstance();
 	
-	// モデル読み込み
-	radius_ = 1.0f;
 	// ベースの初期化
 	models_ = models;
 	deModel_.reset(Model::Create());
@@ -36,6 +34,7 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldAttackCollider_.Initialize();
 
 	// サイズ設定
+	radius_ = 1.0f;
 	collider_.SetterRad(Vector3(radius_, radius_, radius_));
 	collider_.SetWorldAddress(&worldTransform_);
 	// フラグ初期化
@@ -57,6 +56,7 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformBody_.translation_ = { 0,-0.4f,0 };
 	worldTransformL_Arm_.translation_ = { -0.4f, 1.5f, -0.15f };
 	worldTransformR_Arm_.translation_ = { 0.4f, 1.5f, -0.15f };
+	worldTransformL_Arm_.rotation_.x = 0;
 
 	attackMotions_.push_back(std::bind(&Player::AttackCombo1, this));
 	attackMotions_.push_back(std::bind(&Player::AttackCombo2, this));
@@ -90,17 +90,18 @@ void Player::Update()
 	//ImGui::DragFloat3("velo", &velocity_.x, 0.1f, -20.0f, 20.0f);
 	ImGui::Text("%d", isLand_);
 	ImGui::End();
-#endif // _DEBUG
-#ifdef _DEBUG
 
 	ImGui::Begin("attack");
 	ImGui::Text("param : %d", static_cast<int>(workAttack_.attackParameter_));
 	ImGui::Text("comboNex : %d", static_cast<int>(workAttack_.comboNext_));
 	ImGui::Text("comboInd : %d", workAttack_.comboIndex_);
+	if (ImGui::TreeNode("Weapon")) {
+		ImGui::DragFloat3("pos", &worldTransformWeapon_.translation_.x);
+		ImGui::DragFloat3("rot", &worldTransformWeapon_.rotation_.x);
+		ImGui::TreePop();
+	}
 	ImGui::End();
-
-#endif // _DEBUG
-#ifdef _DEBUG
+	
 	ImGui::Begin("kConstAT");
 	ImGui::Text("ATime : %d", kConstAttacks_[workAttack_.comboIndex_].anticipationTime_);
 	ImGui::Text("CTime : %d", kConstAttacks_[workAttack_.comboIndex_].chargeTime_);
@@ -111,6 +112,7 @@ void Player::Update()
 	ImGui::Text("SSpeed : %f", kConstAttacks_[workAttack_.comboIndex_].swingSpeed_);
 	ImGui::Text("MaxTime : %d", MaxAttackTime(workAttack_.comboIndex_));
 	ImGui::End();
+
 #endif // _DEBUG
 
 	// 死亡判定
@@ -301,6 +303,10 @@ void Player::ApplyGlobalVariables()
 
 void Player::BehaviorRootInitialize()
 {
+	worldTransformL_Arm_.rotation_.x = 0;
+	worldTransformR_Arm_.rotation_.x = 0;
+	worldTransformWeapon_.rotation_ = {};
+
 	//workAttack_ = false;
 }
 
@@ -425,11 +431,15 @@ void Player::BehaviorAttackUpdate()
 			// 順番
 			workAttack_.comboIndex_++;
 
-			workAttack_.attackParameter_ = 0;
+			// 時間・フェーズの初期化
+			workAttack_.attackParameter_ = 0u;
+			workAttack_.attackTimer_ = 0u;
+			workAttack_.inComboPhase_ = 0u;
 
 			// パーツごとの初期化
-			worldTransformL_Arm_.rotation_.x = 3.14f;
-			worldTransformR_Arm_.rotation_.x = 3.14f;
+			initRot_ = 3.14f;
+			worldTransformL_Arm_.rotation_.x = -initRot_;
+			worldTransformR_Arm_.rotation_.x = -initRot_;
 			worldTransformWeapon_.rotation_ = {};
 		}
 		// コンボ継続でないなら攻撃を終了してルートビヘイビアに戻る
@@ -524,7 +534,7 @@ void Player::Setting()
 {
 	// リスタート関数
 	DeadToRestart(Vector3(0, 1.0f, 0));
-
+	this->behaviorRequest_ = Behavior::kRoot;
 }
 
 void Player::DeadToRestart(const Vector3& startPoint)
@@ -542,55 +552,67 @@ uint32_t Player::MaxAttackTime(uint32_t index)
 
 void Player::AttackCombo1()
 {
+	//float maxRotation = 1.57f;
+	// 時間計測
+	workAttack_.attackTimer_++;
 
-	switch (attackState_) {
-		//---攻撃の振りおろし処理---//
-	case Player::Attack::kDown:
-		worldTransformWeapon_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
-		worldTransformL_Arm_.rotation_.x += 0.05f;
-		worldTransformR_Arm_.rotation_.x += 0.05f;
-		if (worldTransformWeapon_.rotation_.x > 1.5f) {
-			attackState_ = Attack::kStop;
-			workAttack_.attackParameter_ = 0;
+	float endRotation = 1.57f;
+	float rate = (float)workAttack_.attackTimer_ / kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+
+	if (rate >= 1.0f) {
+		rate = 1.0f;
+	}
+
+	switch (workAttack_.inComboPhase_)
+	{
+		// 攻撃処理
+	case 0:
+		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
+			// フェーズチェンジ
+			workAttack_.inComboPhase_++;
+			workAttack_.attackTimer_ = 0;
 		}
+		//worldTransformWeapon_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
+		//worldTransformL_Arm_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
+		//worldTransformR_Arm_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
+
+		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(rate, 0, endRotation);
+		worldTransformL_Arm_.rotation_.x = MathCalc::EaseInCubicF(rate, -initRot_, -endRotation);
+		worldTransformR_Arm_.rotation_.x = MathCalc::EaseInCubicF(rate, -initRot_, -endRotation);
+
 		break;
-		//---硬直処理---//
-	case Player::Attack::kStop:
-		//硬直終了判定
-		const float kMaxDuration = 15;
-		if (workAttack_.attackParameter_ == kMaxDuration) {
-			worldTransformL_Arm_.rotation_.x = 0;
-			worldTransformR_Arm_.rotation_.x = 0;
-			attackState_ = Attack::kDown;
+		// 硬直処理
+	case 1:
+		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].recoveryTime_) {
+			workAttack_.inComboPhase_++;
 		}
 		break;
 	}
-
 }
 
 void Player::AttackCombo2() 
 {
-	countTimer_++;
-	//if (countTimer_ > kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
-
-	//}
+	// 時間計測
+	workAttack_.attackTimer_++;
 
 	switch (workAttack_.inComboPhase_)
 	{
+		// 攻撃処理
 	case 0:
-
-		if (countTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
+		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
 			// フェーズチェンジ
 			workAttack_.inComboPhase_++;
-			countTimer_ = 0;
+			workAttack_.attackTimer_ = 0;
 		}
 
+		worldTransformWeapon_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
+		worldTransformL_Arm_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
+		worldTransformR_Arm_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
+
 		break;
-
+		// 硬直処理
 	case 1:
-
-
-		if (countTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
+		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].recoveryTime_) {
 			workAttack_.inComboPhase_++;
 		}
 		break;

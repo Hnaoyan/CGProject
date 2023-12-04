@@ -52,16 +52,7 @@ void GameScene::Initialize() {
 	enemy_->Initialize(model_.get());
 	enemy_->SetModel(models);
 
-
-
-	//for (int i = 0; i < 1; i++) {
-	//	std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-	//	enemy->Initialize(model_.get());
-	//	enemy->SetModel(models);
-	//	enemy->SetPosition(Vector3{ float(3 * i),0.0f,45.0f + (5 * i)});
-	//	enemies_.push_back(std::move(enemy));
-	//}
-	
+#pragma region Enemy
 	std::unique_ptr<Enemy> enemy;
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
@@ -83,7 +74,7 @@ void GameScene::Initialize() {
 	enemy->SetModel(models);
 	enemy->SetPosition(Vector3{ -50.0f,0,0 });
 	enemies_.push_back(std::move(enemy));
-
+#pragma endregion
 
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
@@ -98,7 +89,7 @@ void GameScene::Initialize() {
 	groundManager_->SetManager(colliderManager_.get());
 
 	Vector3 groundRad = { 5.0f,0.2f,5.0f };
-	float scale = 10.0f;
+	float scale = 20.0f;
 	groundRad.x *= scale;
 	groundRad.z *= scale;
 

@@ -23,6 +23,11 @@ void FollowCamera::Initialize() {
 void FollowCamera::Update() {
 	// jsonの更新
 	ApplyGlobalVariables();
+
+	ImGui::Begin("followCame");
+	ImGui::DragFloat3("pos", &viewProjection_.translate_.x);
+	ImGui::DragFloat3("rot", &viewProjection_.rotation_.x);
+	ImGui::End();
 	
 	XINPUT_STATE joyState;
 	Vector3 worldPosition = {};
@@ -44,7 +49,7 @@ void FollowCamera::Update() {
 		// 座標をコピーしてオフセット分ずらす
 		worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
 
-		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		if (Input::GetInstance()->GetJoystickState(0, joyState) && !lockOn_->GetTarget()) {
 			float rotateSpeed = 0.075f;
 
 			destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;

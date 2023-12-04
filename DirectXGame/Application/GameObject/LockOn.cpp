@@ -19,25 +19,38 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 
-		if (target_) {
-			// C.
-			// ロックオン解除
-			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
-				target_ = nullptr;
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+			if (isAuto_) {
+			//	isAuto_ = false;
 			}
-			// 範囲外判定
-			else if (OutOfRange(viewProjection)) {
-				target_ = nullptr;
-			}
-		}
-		else
-		{
-			// A.
-			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
-				SearchEnemy(enemies, viewProjection);
+			else {
+			//	isAuto_ = true;
 			}
 		}
 
+		if (isAuto_) {
+			SearchEnemy(enemies, viewProjection);
+		}
+		else {
+			if (target_) {
+				// C.
+				// ロックオン解除
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_Y) {
+					target_ = nullptr;
+				}
+				// 範囲外判定
+				else if (OutOfRange(viewProjection)) {
+					target_ = nullptr;
+				}
+			}
+			else
+			{
+				// A.
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
+					SearchEnemy(enemies, viewProjection);
+				}
+			}
+		}
 	}
 
 	if (target_) {

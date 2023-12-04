@@ -226,11 +226,13 @@ private: // 攻撃
 		uint32_t attackParameter_ = 0;
 		int32_t comboIndex_ = 0;
 		int32_t inComboPhase_ = 0;
+		int32_t attackTimer_ = 0;
 		bool comboNext_ = false;
-
 	};
 
 	WorkAttack workAttack_;
+
+	float initRot_ = 0;
 
 	// 攻撃用定数
 	struct ConstAttack {
@@ -249,13 +251,11 @@ private: // 攻撃
 		// 攻撃振りの速さ
 		float swingSpeed_;
 	};
-
+	// 攻撃の合計時間取得
 	uint32_t MaxAttackTime(uint32_t index);
 
 	// コンボの数
 	static const int ComboNum = 3;
-
-	int countTimer_ = 0;
 
 	// コンボ定数表
 	static const std::array<ConstAttack, ComboNum> kConstAttacks_;
