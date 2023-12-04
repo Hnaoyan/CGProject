@@ -55,9 +55,14 @@ private:
 
 	Vector2 position_ = {};
 
+	bool isAuto_ = false;
+
 public:
 	Vector3 GetTargetPosition() const;
 	const Enemy* GetTarget() const { return target_; }
 	bool ExistTarget() const { return target_ ? true : false; }
+
+	void SetIsAuto(bool isAuto) { isAuto_ = isAuto; }
+
 };
 
