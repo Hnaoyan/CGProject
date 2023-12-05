@@ -44,7 +44,7 @@ private:
 
 public:
 
-	void AddParitcle();
+	void AddParitcle(const Vector3& position);
 	enum Type {
 
 	};

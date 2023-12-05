@@ -36,7 +36,10 @@ public: // 設定・取得
 	/// 座標設定
 	/// </summary>
 	/// <param name="pos"></param>
-	void SetPosition(Vector3& pos) { worldTransform_.translation_ = pos; }
+	void SetPosition(const Vector3& position) {
+		worldTransform_.translation_ = position;
+		worldTransform_.UpdateMatrix();
+	}
 
 private:
 	Model* model_;

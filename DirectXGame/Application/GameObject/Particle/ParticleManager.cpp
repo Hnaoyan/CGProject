@@ -11,7 +11,7 @@ void ParticleManager::Initialize()
 {
 	cubeModel_.reset(Model::Create());
 	planeModel_.reset(Model::CreatePlane());
-	texture_ = TextureManager::Load("white1x1.png");
+	texture_ = TextureManager::Load("Circle2.png");
 }
 
 void ParticleManager::Update()
@@ -43,12 +43,14 @@ void ParticleManager::Draw(ViewProjection& viewProjection)
 	}
 }
 
-void ParticleManager::AddParitcle()
+void ParticleManager::AddParitcle(const Vector3& position)
 {
 
 	IParticle* newParticle = new IParticle();
-	uint32_t texture = TextureManager::Load("white1x1.png");
-	newParticle->Initialize(planeModel_.get(), texture);
+	//uint32_t texture = TextureManager::Load("white1x1.png");
+	newParticle->Initialize(planeModel_.get(), texture_);
+	newParticle->SetPosition(position);
+	newParticle->SetFadeTimer(60);
 	particles_.push_back(newParticle);
 
 }

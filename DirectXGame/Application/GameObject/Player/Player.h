@@ -212,6 +212,8 @@ private: // ダッシュ
 
 	WorkDash workDash_;
 
+	int particleCount_ = 0;
+
 private: // 攻撃
 
 	enum class Attack {

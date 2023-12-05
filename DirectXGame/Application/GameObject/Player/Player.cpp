@@ -204,6 +204,7 @@ void Player::ProcessMovement()
 		}
 		// 移動処理
 		if (isMoving) {
+			particleCount_++;
 			// 速さ
 			const float speed = 0.3f;
 			// 移動量
@@ -228,6 +229,11 @@ void Player::ProcessMovement()
 			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
+
+			if (particleCount_ % 20 == 0) {
+				paritcleManager_->AddParitcle(GetWorldPosition());
+			}
+
 		}
 		else if (lockOn_ && lockOn_->ExistTarget()) {
 			// ロックオン座標
@@ -238,7 +244,9 @@ void Player::ProcessMovement()
 
 			// Y軸周り角度
 			worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
-
+		}
+		if (!isMoving) {
+			particleCount_ = 0;
 		}
 
 		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 0.3f);
@@ -310,7 +318,7 @@ void Player::BehaviorRootInitialize()
 	worldTransformL_Arm_.rotation_.x = 0;
 	worldTransformR_Arm_.rotation_.x = 0;
 	worldTransformWeapon_.rotation_ = {};
-
+	particleCount_ = 0;
 	//workAttack_ = false;
 }
 

@@ -117,6 +117,7 @@ void GameScene::Update()
 	goal_->Update();
 
 	player_->Update();
+	particleManager_->Update();
 
 	for (auto itr = enemies_.begin(), end_ = enemies_.end(); itr != end_; itr++) {
 		itr->get()->Update();
@@ -155,6 +156,7 @@ void GameScene::Draw() {
 		itr->get()->Draw(viewProjection_);
 	}
 
+	particleManager_->Draw(viewProjection_);
 	goal_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
 	groundManager_->Draw(viewProjection_);

@@ -8,6 +8,9 @@ void IParticle::Initialize(Model* model, uint32_t texture)
 	texture_ = texture;
 	// 座標系設定
 	worldTransform_.Initialize();
+	worldTransform_.scale_ = { 0.25f,0.25f,0.25f };
+	model_->SetAlphaValue(0.3f);
+	this->timeElapsed_ = 0;
 }
 
 void IParticle::Update()
@@ -24,5 +27,6 @@ void IParticle::Update()
 
 void IParticle::Draw(ViewProjection& viewProjection)
 {
+	model_->SetBlendMode(Model::BlendMode::kAdd);
 	model_->Draw(worldTransform_, viewProjection, texture_);
 }
