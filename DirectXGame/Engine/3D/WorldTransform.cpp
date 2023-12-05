@@ -44,7 +44,7 @@ void WorldTransform::TransferMatrix()
 	constMap->matWorld = matWorld_;
 }
 
-void WorldTransform::BillBoardSetting(ViewProjection* viewProjection, bool billBoardFlag)
+void WorldTransform::BillBoardSetting(const ViewProjection* viewProjection, bool billBoardFlag)
 {
 	// カメラの設定
 	viewProjection_ = viewProjection;

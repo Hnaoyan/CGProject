@@ -43,14 +43,20 @@ void ParticleManager::Draw(ViewProjection& viewProjection)
 	}
 }
 
-void ParticleManager::AddParitcle(const Vector3& position)
+void ParticleManager::AddParitcle(const Vector3& position, const ViewProjection* viewProjection)
 {
 
 	IParticle* newParticle = new IParticle();
 	//uint32_t texture = TextureManager::Load("white1x1.png");
 	newParticle->Initialize(planeModel_.get(), texture_);
 	newParticle->SetPosition(position);
-	newParticle->SetFadeTimer(60);
+	newParticle->SetFadeTimer(30);
+	newParticle->SetBillBoard(viewProjection);
 	particles_.push_back(newParticle);
 
+}
+
+void ParticleManager::ClearList()
+{
+	particles_.clear();
 }

@@ -231,7 +231,7 @@ void Player::ProcessMovement()
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 
 			if (particleCount_ % 20 == 0) {
-				paritcleManager_->AddParitcle(GetWorldPosition());
+				paritcleManager_->AddParitcle(GetWorldPosition(), viewProjection_);
 			}
 
 		}
@@ -247,6 +247,7 @@ void Player::ProcessMovement()
 		}
 		if (!isMoving) {
 			particleCount_ = 0;
+			paritcleManager_->ClearList();
 		}
 
 		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 0.3f);

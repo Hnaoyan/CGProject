@@ -41,6 +41,10 @@ public: // 設定・取得
 		worldTransform_.UpdateMatrix();
 	}
 
+	void SetBillBoard(const ViewProjection* viewProjection) {
+		worldTransform_.BillBoardSetting(viewProjection);
+	}
+
 private:
 	Model* model_;
 	WorldTransform worldTransform_;

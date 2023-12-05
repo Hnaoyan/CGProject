@@ -156,10 +156,10 @@ void GameScene::Draw() {
 		itr->get()->Draw(viewProjection_);
 	}
 
-	particleManager_->Draw(viewProjection_);
 	goal_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
 	groundManager_->Draw(viewProjection_);
+	particleManager_->Draw(viewProjection_);
 
 	// 描画後処理
 	Model::PostDraw();

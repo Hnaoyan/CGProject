@@ -23,16 +23,15 @@ public:
 	void Update();
 
 	/// <summary>
-	/// パーティクルの更新処理
-	/// </summary>
-	void ParticleUpdate();
-
-	/// <summary>
 	/// 描画処理
 	/// </summary>
 	void Draw(ViewProjection& viewProjection);
 
 private:
+	/// <summary>
+	/// パーティクルの更新処理
+	/// </summary>
+	void ParticleUpdate();
 
 	std::list<IParticle*> particles_;
 
@@ -44,7 +43,8 @@ private:
 
 public:
 
-	void AddParitcle(const Vector3& position);
+	void AddParitcle(const Vector3& position,const ViewProjection* viewProjection);
+	void ClearList();
 	enum Type {
 
 	};

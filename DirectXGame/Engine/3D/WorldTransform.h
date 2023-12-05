@@ -16,7 +16,7 @@ struct WorldTransform
 	Vector3 translation_ = { 0,0,0 };
 	Matrix4x4 matWorld_ = {};
 	WorldTransform* parent_ = nullptr;
-	ViewProjection* viewProjection_ = nullptr;
+	const ViewProjection* viewProjection_ = nullptr;
 	bool isBillBoard_ = false;
 
 	void Initialize();
@@ -29,7 +29,7 @@ struct WorldTransform
 
 	void TransferMatrix();
 
-	void BillBoardSetting(ViewProjection* viewProjection, bool billBoardFlag = true);
+	void BillBoardSetting(const ViewProjection* viewProjection, bool billBoardFlag = true);
 
 	void ImGuiWidget(const char* tag);
 };
