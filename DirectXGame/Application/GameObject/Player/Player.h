@@ -223,10 +223,17 @@ private: // 攻撃
 
 	// 攻撃用ワーク
 	struct WorkAttack {
+		// 攻撃全体のカウント
 		uint32_t attackParameter_ = 0;
+		// コンボ数
 		int32_t comboIndex_ = 0;
+		// コンボ内の段階
 		int32_t inComboPhase_ = 0;
+		// 内部フレーム数
 		int32_t attackTimer_ = 0;
+		// 補間レート
+		float attackRate_ = 0;
+		// 次のコンボフラグ
 		bool comboNext_ = false;
 	};
 

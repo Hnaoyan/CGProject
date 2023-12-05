@@ -23,6 +23,8 @@ public:
 
 	void Move();
 
+	void UpdateCollider();
+
 public:
 
 	void SetModel(const std::vector<Model*>& models);

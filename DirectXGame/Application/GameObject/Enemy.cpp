@@ -42,6 +42,11 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 	ImGui::Begin("Enemy");
 	ImGui::Text("I");
 	ImGui::DragFloat3("view", &positionView.x, 0.01f, -1000, 1000);
+	ImGui::Text("%d : isLeft", isLeft_);
+	ImGui::Text("%d : isDead", isDead_);
+	Vector3 pos = collider_.GetPosition();
+	ImGui::DragFloat3("pos", &pos.x, 0.01f, -10.0f, 10.0f);
+
 	ImGui::End();
 
 	//BaseCharacter::Draw(viewProjection);
@@ -51,15 +56,7 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 }
 
 void Enemy::Move()
-{
-	
-	ImGui::Begin("Enemy	");
-	ImGui::Text("%d : isLeft", isLeft_);
-	ImGui::Text("%d : isDead", isDead_);
-	Vector3 pos = collider_.GetPosition();
-	ImGui::DragFloat3("pos", &pos.x, 0.01f, -10.0f, 10.0f);
-	ImGui::End();
-	
+{	
 	float returnPositionX = 6.0f;
 
 	if (isLeft_) 
@@ -83,6 +80,12 @@ void Enemy::Move()
 	float length = sqrtf(velocity_.x * velocity_.x + velocity_.z * velocity_.z);
 	worldTransform_.rotation_.x = std::atan2f(-velocity_.y, length);
 
+}
+
+void Enemy::UpdateCollider()
+{
+	Vector3 world = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };
+	collider_.SetPosition(world);
 }
 
 void Enemy::SetModel(const std::vector<Model*>& models)

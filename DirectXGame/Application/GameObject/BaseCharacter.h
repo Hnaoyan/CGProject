@@ -73,6 +73,9 @@ private:
 
 public:
 
-	void SetPosition(const Vector3& position) { worldTransform_.translation_ = position; }
+	void SetPosition(const Vector3& position) {
+		worldTransform_.translation_ = position;
+		worldTransform_.UpdateMatrix();
+	}
 
 };

@@ -9,6 +9,7 @@ public:
 	void Update();
 
 	void SetWorldPosition(const Vector3& position) { worldTransform_.translation_ = position; }
+	void SetScale(const Vector3& scale) { worldTransform_.scale_ = scale; }
 
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 

@@ -9,8 +9,8 @@ const std::array<Player::ConstAttack, Player::ComboNum>Player::kConstAttacks_ = 
 	{
 		// 振りかぶり・攻撃前硬直・振りの時間・硬直・各フェーズの移動速度
 		{0,0,20,15,0.0f,0.0f,0.05f},
-		{15,10,15,25,0.2f,0.0f,0.1f},
-		{15,10,15,30,0.2f,0.0f,0.0f},
+		{20,0,15,15,0.2f,0.0f,0.1f},
+		{45,0,25,30,0.2f,0.0f,0.0f},
 	}
 };
 
@@ -57,6 +57,7 @@ void Player::Initialize(const std::vector<Model*>& models)
 	worldTransformL_Arm_.translation_ = { -0.4f, 1.5f, -0.15f };
 	worldTransformR_Arm_.translation_ = { 0.4f, 1.5f, -0.15f };
 	worldTransformL_Arm_.rotation_.x = 0;
+	worldTransformWeapon_.translation_ = { 0,1.0f,0 };
 
 	attackMotions_.push_back(std::bind(&Player::AttackCombo1, this));
 	attackMotions_.push_back(std::bind(&Player::AttackCombo2, this));
@@ -86,9 +87,15 @@ void Player::Update()
 	ImGui::DragFloat3("pos", &worldTransform_.translation_.x, 0.1f, -20.0f, 20.0f);
 	Vector3 pos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1] ,worldTransform_.matWorld_.m[3][2] };
 	ImGui::DragFloat3("matPos", &pos.x, 0.01f, -20.0f, 20.0f);
+	Vector3 coll = collider_.GetPosition();
+	ImGui::DragFloat3("collider", &coll.x, 0.1f, -20.0f, 20.0f);
 	ImGui::DragFloat3("velo", &velocity_.x, 0.1f, -20.0f, 20.0f);
-	//ImGui::DragFloat3("velo", &velocity_.x, 0.1f, -20.0f, 20.0f);
 	ImGui::Text("%d", isLand_);
+	if (ImGui::TreeNode("Arm")) {
+		ImGui::DragFloat3("L_rot", &worldTransformL_Arm_.rotation_.x, 0.01f, -10, 10);
+		ImGui::DragFloat3("R_rot", &worldTransformR_Arm_.rotation_.x, 0.01f, -10, 10);
+		ImGui::TreePop();
+	}
 	ImGui::End();
 
 	ImGui::Begin("attack");
@@ -233,9 +240,6 @@ void Player::ProcessMovement()
 			worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
 
 		}
-		ImGui::Begin("moving");
-		ImGui::DragFloat3("joy", &moved.x, 0.01f, -100, 100);
-		ImGui::End();
 
 		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 0.3f);
 
@@ -372,11 +376,12 @@ void Player::BehaviorDashUpdate()
 
 void Player::BehaviorAttackInitialize()
 {
-	worldTransformL_Arm_.rotation_.x = 3.14f;
-	worldTransformR_Arm_.rotation_.x = 3.14f;
-	worldTransformWeapon_.rotation_ = {};
 	attackState_ = Attack::kDown;
 	workAttack_ = {};
+	initRot_ = 3.14f;
+	worldTransformL_Arm_.rotation_.x = initRot_;
+	worldTransformR_Arm_.rotation_.x = initRot_;
+	worldTransformWeapon_.rotation_ = {};
 }
 
 void Player::BehaviorAttackUpdate()
@@ -405,14 +410,12 @@ void Player::BehaviorAttackUpdate()
 	// 番号に合わせた攻撃処理
 	attackMotions_[workAttack_.comboIndex_]();
 
-	this->kConstAttacks_[workAttack_.comboIndex_].anticipationSpeed_;
-
 	XINPUT_STATE joyStatePre;
 	XINPUT_STATE joyState;
 
 	// コンボ上限に達していない
 	if (workAttack_.comboIndex_ < (ComboNum - 1) && !workAttack_.comboNext_) {
-		//
+		// 入力処理
 		if (input_->GetInstance()->GetJoystickState(0, joyState) && input_->GetInstance()->GetJoystickState(0, joyStatePre)) {
 			// 攻撃トリガー
 			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
@@ -437,10 +440,18 @@ void Player::BehaviorAttackUpdate()
 			workAttack_.inComboPhase_ = 0u;
 
 			// パーツごとの初期化
-			initRot_ = 3.14f;
-			worldTransformL_Arm_.rotation_.x = -initRot_;
-			worldTransformR_Arm_.rotation_.x = -initRot_;
-			worldTransformWeapon_.rotation_ = {};
+			switch (workAttack_.comboIndex_)
+			{
+			case 1:
+				//initRot_ = 3.14f / 2.0f;
+				//worldTransformL_Arm_.rotation_.x = initRot_;
+				//worldTransformR_Arm_.rotation_.x = initRot_;
+				//worldTransformWeapon_.rotation_ = {};
+				break;
+			case 2:
+
+				break;
+			}
 		}
 		// コンボ継続でないなら攻撃を終了してルートビヘイビアに戻る
 		else {
@@ -481,7 +492,8 @@ void Player::CollisionUpdate()
 	float y = -std::sinf(worldTransform_.rotation_.x);
 	float z = std::cosf(worldTransform_.rotation_.x) * std::cosf(worldTransform_.rotation_.y);
 
-	float distance = 3.0f;
+	float distance = 4.5f;
+	//Vector3 scale = { 1,1,1.5f };
 
 	Vector3 worldPosition = GetWorldPosition();
 
@@ -492,12 +504,13 @@ void Player::CollisionUpdate()
 	};
 
 	weapon_->SetWorldPosition(collisionPoint);
+	//weapon_->SetScale(scale);
 	weapon_->Update();
 }
 
 void Player::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 {
-	if (tag == kCollisionAttributeEnemy || tag == kCollisionAttributeGoal) {
+	if (tag == kCollisionAttributeEnemy /*|| tag == kCollisionAttributeGoal*/) {
 		DeadToRestart(Vector3(0, 1.0f, 0));
 	}
 	else if (tag == kCollisionAttributeGround) {
@@ -552,15 +565,14 @@ uint32_t Player::MaxAttackTime(uint32_t index)
 
 void Player::AttackCombo1()
 {
-	//float maxRotation = 1.57f;
 	// 時間計測
 	workAttack_.attackTimer_++;
 
-	float endRotation = 1.57f;
-	float rate = (float)workAttack_.attackTimer_ / kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+	const float kEndRotation = 1.57f;
+	workAttack_.attackRate_ = (float)workAttack_.attackTimer_ / kConstAttacks_[workAttack_.comboIndex_].swingTime_;
 
-	if (rate >= 1.0f) {
-		rate = 1.0f;
+	if (workAttack_.attackRate_ >= 1.0f) {
+		workAttack_.attackRate_ = 1.0f;
 	}
 
 	switch (workAttack_.inComboPhase_)
@@ -571,20 +583,19 @@ void Player::AttackCombo1()
 			// フェーズチェンジ
 			workAttack_.inComboPhase_++;
 			workAttack_.attackTimer_ = 0;
+			break;
 		}
-		//worldTransformWeapon_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
-		//worldTransformL_Arm_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
-		//worldTransformR_Arm_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
-
-		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(rate, 0, endRotation);
-		worldTransformL_Arm_.rotation_.x = MathCalc::EaseInCubicF(rate, -initRot_, -endRotation);
-		worldTransformR_Arm_.rotation_.x = MathCalc::EaseInCubicF(rate, -initRot_, -endRotation);
+		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, 0, kEndRotation);
+		worldTransformL_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, initRot_, kEndRotation + initRot_);
+		worldTransformR_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, initRot_, kEndRotation + initRot_);
 
 		break;
 		// 硬直処理
 	case 1:
 		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].recoveryTime_) {
+			workAttack_.attackTimer_ = 0;
 			workAttack_.inComboPhase_++;
+			break;
 		}
 		break;
 	}
@@ -595,32 +606,119 @@ void Player::AttackCombo2()
 	// 時間計測
 	workAttack_.attackTimer_++;
 
+	const float kMidPoint = 1.57f;
+	const float kEndRotation = 3.17f;
+	const float kArmMid = 4.74f;
+
+	if (workAttack_.attackRate_ >= 1.0f) {
+		workAttack_.attackRate_ = 1.0f;
+	}
+
 	switch (workAttack_.inComboPhase_)
 	{
-		// 攻撃処理
+		// 振り戻し処理
 	case 0:
-		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
+		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
 			// フェーズチェンジ
 			workAttack_.inComboPhase_++;
 			workAttack_.attackTimer_ = 0;
+			initRot_ = kEndRotation;
+			break;
+		}
+		// 補間レート
+		workAttack_.attackRate_ = (float)workAttack_.attackTimer_ / (kConstAttacks_[workAttack_.comboIndex_].anticipationTime_);
+		if (workAttack_.attackRate_ >= 1.0f) {
+			workAttack_.attackRate_ = 1.0f;
 		}
 
-		worldTransformWeapon_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
-		worldTransformL_Arm_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
-		worldTransformR_Arm_.rotation_.x += kConstAttacks_[workAttack_.comboIndex_].swingSpeed_;
+		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, kMidPoint, 0);
+		worldTransformL_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, kArmMid, kEndRotation);
+		worldTransformR_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, kArmMid, kEndRotation);
 
 		break;
-		// 硬直処理
+		// 振りおろし処理
 	case 1:
+		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
+			workAttack_.inComboPhase_++;
+			break;
+		}
+		// 補間レート
+		workAttack_.attackRate_ = (float)workAttack_.attackTimer_ / kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+		if (workAttack_.attackRate_ >= 1.0f) {
+			workAttack_.attackRate_ = 1.0f;
+		}
+
+		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, 0, kMidPoint);
+		worldTransformL_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, initRot_, kArmMid);
+		worldTransformR_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, initRot_, kArmMid);
+
+		break;
+	case 2:
 		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].recoveryTime_) {
 			workAttack_.inComboPhase_++;
 		}
+
 		break;
 	}
-
 }
 
 void Player::AttackCombo3() 
 {
+	// 時間計測
+	workAttack_.attackTimer_++;
 
+	const float kMidPoint = 1.57f;
+	const float kEndRotation = 3.17f;
+	const float kArmMid = 4.74f;
+
+	if (workAttack_.attackRate_ >= 1.0f) {
+		workAttack_.attackRate_ = 1.0f;
+	}
+
+	switch (workAttack_.inComboPhase_)
+	{
+		// 振り戻し処理
+	case 0:
+		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].anticipationTime_) {
+			// フェーズチェンジ
+			workAttack_.inComboPhase_++;
+			workAttack_.attackTimer_ = 0;
+			initRot_ = kEndRotation;
+			break;
+		}
+		// 補間レート
+		workAttack_.attackRate_ = (float)workAttack_.attackTimer_ / (kConstAttacks_[workAttack_.comboIndex_].anticipationTime_);
+		if (workAttack_.attackRate_ >= 1.0f) {
+			workAttack_.attackRate_ = 1.0f;
+		}
+
+		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, kMidPoint, 0);
+		worldTransformL_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, kArmMid, kEndRotation);
+		worldTransformR_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, kArmMid, kEndRotation);
+
+		break;
+		// 振りおろし処理
+	case 1:
+		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].swingTime_) {
+			workAttack_.inComboPhase_++;
+			break;
+		}
+		// 補間レート
+		workAttack_.attackRate_ = (float)workAttack_.attackTimer_ / kConstAttacks_[workAttack_.comboIndex_].swingTime_;
+		if (workAttack_.attackRate_ >= 1.0f) {
+			workAttack_.attackRate_ = 1.0f;
+		}
+
+		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, 0, kMidPoint);
+		worldTransformL_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, initRot_, kArmMid);
+		worldTransformR_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, initRot_, kArmMid);
+
+		break;
+	case 2:
+		if (workAttack_.attackTimer_ > (int)kConstAttacks_[workAttack_.comboIndex_].recoveryTime_) {
+			workAttack_.inComboPhase_++;
+		}
+
+		break;
+	}
 }

@@ -48,31 +48,35 @@ void GameScene::Initialize() {
 	player_->SetViewProjection(followCamera_->GetViewPlayer());
 	player_->SetPariticleManager(particleManager_.get());
 
-	enemy_ = std::make_unique<Enemy>();
-	enemy_->Initialize(model_.get());
-	enemy_->SetModel(models);
-
 #pragma region Enemy
 	std::unique_ptr<Enemy> enemy;
+	// 1
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
 	enemy->SetPosition(Vector3{ 0,0,50.0f });
+	enemy->UpdateCollider();
 	enemies_.push_back(std::move(enemy));
+	// 2
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
 	enemy->SetPosition(Vector3{ 0,0,-50.0f });
+	enemy->UpdateCollider();
 	enemies_.push_back(std::move(enemy));
+	// 3
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
 	enemy->SetPosition(Vector3{ 50.0f,0,0 });
+	enemy->UpdateCollider();
 	enemies_.push_back(std::move(enemy));
+	// 4
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
 	enemy->SetPosition(Vector3{ -50.0f,0,0 });
+	enemy->UpdateCollider();
 	enemies_.push_back(std::move(enemy));
 #pragma endregion
 
@@ -114,10 +118,6 @@ void GameScene::Update()
 
 	player_->Update();
 
-	//for (Enemy* enemy : enemies_) {
-	//	enemy->Update();
-	//}
-
 	for (auto itr = enemies_.begin(), end_ = enemies_.end(); itr != end_; itr++) {
 		itr->get()->Update();
 	}
@@ -150,9 +150,7 @@ void GameScene::Draw() {
 	Model::PreDraw(commandList);
 
 	player_->Draw(viewProjection_);
-	//if (!enemy_->GetIsDead()) {
-	//	enemy_->Draw(viewProjection_);
-	//}
+
 	for (auto itr = enemies_.begin(), end_ = enemies_.end(); itr != end_; itr++) {
 		itr->get()->Draw(viewProjection_);
 	}
@@ -218,9 +216,13 @@ void GameScene::CheckCollision()
 	if (player_->GetIsAttack()) {
 		colliderManager_->AddList(player_->GetWeapon());
 	}
-	if (!enemy_->GetIsDead()) {
-		colliderManager_->AddList(enemy_->GetCollider());
+
+	for (auto itr = enemies_.begin(), end_ = enemies_.end(); itr != end_; itr++) {
+		if (!itr->get()->GetIsDead()) {
+			colliderManager_->AddList(itr->get()->GetCollider());
+		}
 	}
+
 	colliderManager_->AddList(goal_.get());
 
 	for (Ground* ground : groundManager_->GetList()) {
