@@ -7,9 +7,11 @@ void TestScene::Initialize()
 	audio_ = AudioManager::GetInstance();
 
 	testTransform_.Initialize();
+	objTransform_.Initialize();
 	view_.Initialize();
 
 	testModel_.reset(Model::Create());
+	obj2Model_.reset(Model::Create());
 
 }
 
@@ -43,10 +45,18 @@ void TestScene::Update()
 	this->ImGuiVector3Printf(Mul_ab, "Mul");
 	this->ImGuiVector3Printf(Div_ab, "Div");
 
-	testTransform_.ImGuiWidget();
+	testTransform_.ImGuiWidget("test");
 	testTransform_.UpdateMatrix();
+	objTransform_.ImGuiWidget("obj");
+	objTransform_.UpdateMatrix();
 	view_.ImGuiWidget();
 	view_.UpdateMatrix();
+
+	ImGui::Begin("model");
+	ImGui::DragFloat("alpha", &alphaValue_, 0.01f, 0, 1.0f);
+	ImGui::End();
+
+	testModel_->SetAlphaValue(alphaValue_);
 
 }
 
@@ -61,6 +71,8 @@ void TestScene::Draw()
 	Model::PreDraw(commandList);
 
 	testModel_->Draw(testTransform_, view_);
+	obj2Model_->Draw(objTransform_, view_);
+
 
 	// 描画後処理
 	Model::PostDraw();

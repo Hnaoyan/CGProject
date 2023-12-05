@@ -52,9 +52,12 @@ private:
 	AudioManager* audio_;
 
 	WorldTransform testTransform_;
+	WorldTransform objTransform_;
 	ViewProjection view_;
 
 	std::unique_ptr<Model> testModel_;
+	std::unique_ptr<Model> obj2Model_;
 
+	float alphaValue_ = 0;
 };
 
