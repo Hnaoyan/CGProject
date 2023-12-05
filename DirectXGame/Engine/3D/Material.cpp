@@ -48,8 +48,13 @@ void Material::LoadTexture(const std::string& directoryPath)
 	DirectX::TexMetadata metadata{};
 	DirectX::ScratchImage scratchImg{};
 	// ファイルパス
-	std::string filepath = directoryPath + textureFilename_;
-
+	std::string filepath = {};
+	if (directoryPath != textureFilename_) {
+		filepath = directoryPath + textureFilename_;
+	}
+	else {
+		filepath = textureFilename_;
+	}
 	// テクスチャ読み込み
 	textureHandle_ = TextureManager::Load(filepath);
 }
