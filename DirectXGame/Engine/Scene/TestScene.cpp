@@ -1,6 +1,7 @@
 #include "TestScene.h"
 #include "imgui.h"
 #include "DirectXCommon.h"
+#include "TextureManager.h"
 
 void TestScene::Initialize()
 {
@@ -12,6 +13,10 @@ void TestScene::Initialize()
 
 	testModel_.reset(Model::Create());
 	obj2Model_.reset(Model::Create());
+	planeModel_.reset(Model::CreatePlane());
+
+	texture_ = TextureManager::Load("Texture/Circle.png");
+	alphaValue_ = 1.0f;
 
 }
 
@@ -56,7 +61,7 @@ void TestScene::Update()
 	ImGui::DragFloat("alpha", &alphaValue_, 0.01f, 0, 1.0f);
 	ImGui::End();
 
-	testModel_->SetAlphaValue(alphaValue_);
+	planeModel_->SetAlphaValue(alphaValue_);
 
 }
 
@@ -71,8 +76,9 @@ void TestScene::Draw()
 	Model::PreDraw(commandList);
 
 	testModel_->Draw(testTransform_, view_);
-	obj2Model_->Draw(objTransform_, view_);
+	//obj2Model_->Draw(objTransform_, view_);
 
+	planeModel_->Draw(objTransform_, view_, texture_);
 
 	// 描画後処理
 	Model::PostDraw();

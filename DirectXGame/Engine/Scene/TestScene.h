@@ -57,6 +57,9 @@ private:
 
 	std::unique_ptr<Model> testModel_;
 	std::unique_ptr<Model> obj2Model_;
+	std::unique_ptr<Model> planeModel_;
+
+	uint32_t texture_ = 0u;
 
 	float alphaValue_ = 0;
 };
