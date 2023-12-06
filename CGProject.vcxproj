@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectXGame\Application\GameObject\ContactRecord.cpp" />
     <ClCompile Include="DirectXGame\Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
@@ -212,6 +213,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Math\Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXGame\Application\GameObject\ContactRecord.h" />
     <ClInclude Include="DirectXGame\Engine\Audio\AudioManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h" />
     <ClInclude Include="DirectXGame\Engine\2D\Sprite.h" />

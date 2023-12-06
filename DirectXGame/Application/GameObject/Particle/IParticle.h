@@ -55,6 +55,8 @@ private:
 
 	float radius_;
 
+	float ease_t_ = 0;
+
 	// 消える時間
 	int fadeTime_ = 0;
 	// 経過時間

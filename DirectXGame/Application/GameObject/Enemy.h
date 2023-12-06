@@ -1,8 +1,13 @@
 #pragma once
 #include "BaseCharacter.h"
+#include "Weapon.h"
+#include "ParticleManager.h"
 
 class Enemy : public BaseCharacter
 {
+public:
+	Enemy();
+
 public:
 	/// <summary>
 	/// 初期化
@@ -56,6 +61,8 @@ public:
 	void SetIsDead(bool isDead) { isDead_ = isDead; }
 
 	bool GetIsDead() { return isDead_; }
+
+	void SetWeapon(Weapon* weapon) { weapon_ = weapon; }
 	
 private:
 	// モデルデータ配列
@@ -64,6 +71,8 @@ private:
 	WorldTransform worldBody_;
 	WorldTransform worldL_arm_;
 	WorldTransform worldR_arm_;
+
+	Weapon* weapon_ = nullptr;
 
 	// 浮遊ギミックの媒介変数
 	float floatingParameter_ = 0.0f;
@@ -83,6 +92,18 @@ private:
 	bool isLeft_ = false;
 
 	Vector3 velocity_ = {};
+
+	uint32_t hp_ = 0;
+
+public:
+
+	static uint32_t kSerialNumber_;
+
+	uint32_t GetSerial() const { return serialNumber_; }
+
+private:
+
+	uint32_t serialNumber_ = 0;
 
 };
 

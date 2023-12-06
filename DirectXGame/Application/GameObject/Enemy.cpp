@@ -3,6 +3,16 @@
 #include "ImGuiManager.h"
 #include "MathCalc.h"
 
+uint32_t Enemy::kSerialNumber_ = 0;
+
+Enemy::Enemy()
+{
+	// シリアル番号を振る
+	serialNumber_ = Enemy::kSerialNumber_;
+	// 次の番号を1加算
+	++Enemy::kSerialNumber_;
+}
+
 void Enemy::Initialize(Model* model)
 {
 	model;
@@ -19,10 +29,15 @@ void Enemy::Initialize(Model* model)
 
 	MoveInitialize();
 	isDead_ = false;
+	hp_ = 3;
 }
 
 void Enemy::Update()
 {
+	if (hp_ <= 0) {
+		isDead_ = true;
+	}
+
 	UpdateFloating();
 
 	//Move();
@@ -40,10 +55,9 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 	Vector3 positionWorld = GetWorldPosition();
 	Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
 	ImGui::Begin("Enemy");
-	ImGui::Text("I");
+	ImGui::Text("Serial : %d",serialNumber_);
+	ImGui::Text("isDead : %d", isDead_);
 	ImGui::DragFloat3("view", &positionView.x, 0.01f, -1000, 1000);
-	ImGui::Text("%d : isLeft", isLeft_);
-	ImGui::Text("%d : isDead", isDead_);
 	Vector3 pos = collider_.GetPosition();
 	ImGui::DragFloat3("pos", &pos.x, 0.01f, -10.0f, 10.0f);
 
@@ -110,8 +124,10 @@ void Enemy::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 {
 	//tag;
 	targetWorldTransform;
-	if (tag == kCollisionAttributeWeapon) {
-		isDead_ = true;
+	if (tag == kCollisionAttributeWeapon && !weapon_->GetIsAttack()) {
+		//isDead_ = true;
+		weapon_->SetIsAttack(true);
+		hp_ -= 1;
 	}
 }
 

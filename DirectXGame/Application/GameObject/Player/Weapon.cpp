@@ -1,10 +1,11 @@
 #include "Weapon.h"
 #include "imgui.h"
+#include "Enemy.h"
 
 void Weapon::Initialize()
 {
 	worldTransform_.Initialize();
-
+	isAttack_ = false;
 	float radius = 2.0f;
 
 	SetterRad(Vector3{ radius,radius,radius });
@@ -23,9 +24,6 @@ void Weapon::Update()
 	Vector3 pos = { worldTransform_.matWorld_.m[3][0],worldTransform_.matWorld_.m[3][1],worldTransform_.matWorld_.m[3][2] };
 	SetPosition(pos);
 	pos = GetPosition();
-	ImGui::Begin("weapon");
-	ImGui::DragFloat3("pos", &pos.x, 0.01f, -100, 100);
-	ImGui::End();
 }
 
 void Weapon::OnCollision(uint32_t tag, WorldTransform* worldTransfrom)

@@ -1,6 +1,7 @@
 #pragma once
 #include "Collider.h"
 #include "WorldTransform.h"
+#include "ContactRecord.h"
 
 class Weapon : public Collider
 {
@@ -13,10 +14,16 @@ public:
 
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 
+	void SetIsAttack(bool isAttack) { isAttack_ = isAttack; }
+	bool GetIsAttack() { return isAttack_; }
+
 private:
 	void OnCollision(uint32_t tag, WorldTransform* worldTransfrom);
 
 	WorldTransform worldTransform_;
 
+	ContactRecord contactRecord_;
+
+	bool isAttack_ = false;
 };
 

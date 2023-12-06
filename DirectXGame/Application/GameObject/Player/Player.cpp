@@ -105,6 +105,7 @@ void Player::Update()
 	if (ImGui::TreeNode("Weapon")) {
 		ImGui::DragFloat3("pos", &worldTransformWeapon_.translation_.x);
 		ImGui::DragFloat3("rot", &worldTransformWeapon_.rotation_.x);
+		ImGui::Text("isAttack : %d", weapon_->GetIsAttack());
 		ImGui::TreePop();
 	}
 	ImGui::End();
@@ -159,6 +160,13 @@ void Player::Update()
 	case Player::Behavior::kDash:
 		BehaviorDashUpdate();
 		break;
+	}
+
+	if (behavior_ == Behavior::kAttack) {
+		isAttack_ = true;
+	}
+	else {
+		isAttack_ = false;
 	}
 
 	// 落下
@@ -230,7 +238,7 @@ void Player::ProcessMovement()
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 
-			if (particleCount_ % 20 == 0) {
+			if (particleCount_ % 10 == 0) {
 				paritcleManager_->AddParitcle(GetWorldPosition(), viewProjection_);
 			}
 
@@ -245,10 +253,10 @@ void Player::ProcessMovement()
 			// Y軸周り角度
 			worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
 		}
-		if (!isMoving) {
-			particleCount_ = 0;
-			paritcleManager_->ClearList();
-		}
+		//if (!isMoving) {
+		//	particleCount_ = 0;
+		//	paritcleManager_->ClearList();
+		//}
 
 		//worldTransform_.rotation_.y = MathCalc::LerpShortAngle(worldTransform_.rotation_.y, destinationAngleY_, 0.3f);
 
@@ -340,7 +348,7 @@ void Player::BehaviorRootUpdate()
 	}
 
 	if (input_->GetInstance()->GetJoystickState(0, joyState) || input_->TriggerKey(DIK_SPACE)) {
-		if (joyState.Gamepad.bRightTrigger) {
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 			behaviorRequest_ = Behavior::kAttack;
 		}
 	}
@@ -391,6 +399,7 @@ void Player::BehaviorAttackInitialize()
 	worldTransformL_Arm_.rotation_.x = initRot_;
 	worldTransformR_Arm_.rotation_.x = initRot_;
 	worldTransformWeapon_.rotation_ = {};
+	weapon_->SetIsAttack(false);
 }
 
 void Player::BehaviorAttackUpdate()
@@ -427,7 +436,7 @@ void Player::BehaviorAttackUpdate()
 		// 入力処理
 		if (input_->GetInstance()->GetJoystickState(0, joyState) && input_->GetInstance()->GetJoystickState(0, joyStatePre)) {
 			// 攻撃トリガー
-			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+			if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER && workAttack_.attackParameter_ > 15) {
 				// コンボ有効
 				workAttack_.comboNext_ = true;
 			}
@@ -447,6 +456,9 @@ void Player::BehaviorAttackUpdate()
 			workAttack_.attackParameter_ = 0u;
 			workAttack_.attackTimer_ = 0u;
 			workAttack_.inComboPhase_ = 0u;
+
+			// 攻撃の判定
+			weapon_->SetIsAttack(false);
 
 			// パーツごとの初期化
 			switch (workAttack_.comboIndex_)

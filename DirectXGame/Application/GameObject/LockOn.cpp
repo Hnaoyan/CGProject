@@ -21,10 +21,10 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
 			if (isAuto_) {
-			//	isAuto_ = false;
+				isAuto_ = false;
 			}
 			else {
-			//	isAuto_ = true;
+				isAuto_ = true;
 			}
 		}
 

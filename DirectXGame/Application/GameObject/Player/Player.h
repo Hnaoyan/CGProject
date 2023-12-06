@@ -104,7 +104,7 @@ public:
 	/// <returns></returns>
 	bool GetIsDead() { return isDead_; }
 
-	bool GetIsAttack() { return behavior_ == Behavior::kAttack; }
+	bool GetIsAttack() { return isAttack_; }
 
 private:
 #pragma region 基本動作
@@ -242,6 +242,8 @@ private: // 攻撃
 	WorkAttack workAttack_;
 
 	float initRot_ = 0;
+
+	bool isAttack_ = false;
 
 	// 攻撃用定数
 	struct ConstAttack {

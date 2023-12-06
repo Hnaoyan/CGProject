@@ -48,38 +48,6 @@ void GameScene::Initialize() {
 	player_->SetViewProjection(followCamera_->GetViewPlayer());
 	player_->SetPariticleManager(particleManager_.get());
 
-#pragma region Enemy
-	std::unique_ptr<Enemy> enemy;
-	// 1
-	enemy = std::make_unique<Enemy>();
-	enemy->Initialize(model_.get());
-	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ 0,0,50.0f });
-	enemy->UpdateCollider();
-	enemies_.push_back(std::move(enemy));
-	// 2
-	enemy = std::make_unique<Enemy>();
-	enemy->Initialize(model_.get());
-	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ 0,0,-50.0f });
-	enemy->UpdateCollider();
-	enemies_.push_back(std::move(enemy));
-	// 3
-	enemy = std::make_unique<Enemy>();
-	enemy->Initialize(model_.get());
-	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ 50.0f,0,0 });
-	enemy->UpdateCollider();
-	enemies_.push_back(std::move(enemy));
-	// 4
-	enemy = std::make_unique<Enemy>();
-	enemy->Initialize(model_.get());
-	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ -50.0f,0,0 });
-	enemy->UpdateCollider();
-	enemies_.push_back(std::move(enemy));
-#pragma endregion
-
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 	followCamera_->SetLockOn(lockOn_.get());
@@ -100,6 +68,9 @@ void GameScene::Initialize() {
 	groundManager_->AddGround(Vector3(0, -0.2f, 10.0f), groundRad, Vector3(scale, 1.0f, scale));
 
 	groundManager_->Update();
+
+	EnemySpawn();
+
 }
 
 void GameScene::Update()
@@ -109,7 +80,9 @@ void GameScene::Update()
 
 
 	if (player_->GetIsDead()) {
+		enemies_.clear();
 		player_->DeadToRestart(Vector3(0, 1.0f, 0));
+		EnemySpawn();
 	}
 
 	groundManager_->Update();
@@ -123,6 +96,12 @@ void GameScene::Update()
 		itr->get()->Update();
 	}
 
+	enemies_.remove_if([](std::unique_ptr<Enemy>& enemy) {
+		if (enemy->GetIsDead()) {
+			return true;
+		}
+		return false;
+		});
 
 	/// カメラ関係の更新処理
 	CameraUpdate();
@@ -234,4 +213,47 @@ void GameScene::CheckCollision()
 
 	/// 当たり判定（仮
 	colliderManager_->CheckAllCollisions();
+}
+
+void GameScene::EnemySpawn()
+{
+	std::vector<Model*> models =
+	{ modelBody_.get(),modelL_arm_.get(),modelR_arm_.get(),modelWeapon_.get() };
+
+#pragma region Enemy
+	std::unique_ptr<Enemy> enemy;
+	// 1
+	enemy = std::make_unique<Enemy>();
+	enemy->Initialize(model_.get());
+	enemy->SetModel(models);
+	enemy->SetPosition(Vector3{ 0,0,50.0f });
+	enemy->UpdateCollider();
+	enemy->SetWeapon(player_->GetWeapon());
+	enemies_.push_back(std::move(enemy));
+	// 2
+	enemy = std::make_unique<Enemy>();
+	enemy->Initialize(model_.get());
+	enemy->SetModel(models);
+	enemy->SetPosition(Vector3{ 0,0,-50.0f });
+	enemy->UpdateCollider();
+	enemy->SetWeapon(player_->GetWeapon());
+	enemies_.push_back(std::move(enemy));
+	// 3
+	enemy = std::make_unique<Enemy>();
+	enemy->Initialize(model_.get());
+	enemy->SetModel(models);
+	enemy->SetPosition(Vector3{ 50.0f,0,0 });
+	enemy->UpdateCollider();
+	enemy->SetWeapon(player_->GetWeapon());
+	enemies_.push_back(std::move(enemy));
+	// 4
+	enemy = std::make_unique<Enemy>();
+	enemy->Initialize(model_.get());
+	enemy->SetModel(models);
+	enemy->SetPosition(Vector3{ -50.0f,0,0 });
+	enemy->UpdateCollider();
+	enemy->SetWeapon(player_->GetWeapon());
+	enemies_.push_back(std::move(enemy));
+#pragma endregion
+
 }
