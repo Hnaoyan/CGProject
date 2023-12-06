@@ -1,6 +1,7 @@
 #include "TestScene.h"
 #include "imgui.h"
 #include "DirectXCommon.h"
+#include "TextureManager.h"
 
 void TestScene::Initialize()
 {
@@ -12,6 +13,14 @@ void TestScene::Initialize()
 
 	testModel_.reset(Model::Create());
 	obj2Model_.reset(Model::Create());
+	planeModel_.reset(Model::CreatePlane());
+
+	texture_ = TextureManager::Load("Texture/Circle.png");
+
+	texture_ = TextureManager::Load("uvChecker.png");
+	testSprite_.reset(Sprite::Create(texture_, { 100,100 }, { 1,1,1,1 }, { 0.5f,0.5f }, 0, 0));
+
+	alphaValue_ = 1.0f;
 
 }
 
@@ -56,23 +65,35 @@ void TestScene::Update()
 	ImGui::DragFloat("alpha", &alphaValue_, 0.01f, 0, 1.0f);
 	ImGui::End();
 
-	testModel_->SetAlphaValue(alphaValue_);
+	planeModel_->SetAlphaValue(alphaValue_);
 
 }
 
 void TestScene::Draw()
 {
-
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+
+#pragma region 背景スプライト描画
+	// 描画前処理
+	Sprite::PreDraw(commandList);
+
+	testSprite_->Draw();
+
+	// 描画後処理
+	Sprite::PostDraw();
+	// 深度バッファクリア
+	DirectXCommon::GetInstance()->ClearDepthBuffer();
+#pragma endregion
 
 #pragma region 3Dオブジェクト描画
 	// 描画前処理
 	Model::PreDraw(commandList);
 
 	testModel_->Draw(testTransform_, view_);
-	obj2Model_->Draw(objTransform_, view_);
+	//obj2Model_->Draw(objTransform_, view_);
 
+	planeModel_->Draw(objTransform_, view_, texture_);
 
 	// 描画後処理
 	Model::PostDraw();

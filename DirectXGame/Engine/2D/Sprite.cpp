@@ -15,7 +15,9 @@ UINT Sprite::sDescriptorHandleIncrementSize_;
 Matrix4x4 Sprite::sMatProjection_;
 
 ComPtr<ID3D12RootSignature> Sprite::sRootSignature_;
-ComPtr<ID3D12PipelineState> Sprite::gPipelineState_;
+std::array<ComPtr<ID3D12PipelineState>, size_t(Sprite::BlendMode::kCountOfBlendMode)> Sprite::sPipelineStates_;
+
+//ComPtr<ID3D12PipelineState> Sprite::gPipelineState_;
 
 Sprite* Sprite::Create(uint32_t textureHandle, Vector2 position, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY) {
 	// 仮のサイズを追加
@@ -137,7 +139,7 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	D3D12_ROOT_PARAMETER rootParameters[2] = {};
 	rootParameters[0] = D3D12Lib::InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootParameters[1] = D3D12Lib::InitAsDescriptorTable(1, descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-	
+
 	/// スタティックサンプラーの設定
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	staticSamplers[0] = D3D12Lib::SetSamplerDesc(0, D3D12_FILTER_MIN_MAG_MIP_LINEAR);
@@ -153,7 +155,7 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	descriptionRootSignature.NumParameters = _countof(rootParameters);
 
 
-	descriptionRootSignature.pStaticSamplers = staticSamplers;	
+	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
 	// シリアライズしてバイナリにする
@@ -170,34 +172,83 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 
 	gPipeline.pRootSignature = sRootSignature_.Get();	// ルートシグネチャ
 
-
-	// BlendStateの設定
-	D3D12_BLEND_DESC blendDesc{};
-	// すべての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask =
-		D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-
-	/// αBlend
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-
-	/// AddBlend
-	//blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	//blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	//blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
-
-	// ここは基本変えない
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-
-	gPipeline.BlendState = blendDesc;					// ブレンド
-	
-
+	// ブレンドなし
+	D3D12_BLEND_DESC blenddesc{};
+	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blenddesc.RenderTarget[0].BlendEnable = false;
+	gPipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
-	result = sDevice_->CreateGraphicsPipelineState(&gPipeline, IID_PPV_ARGS(&gPipelineState_));
+	result =
+		sDevice_->CreateGraphicsPipelineState(
+			&gPipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kNone)]));
+	assert(SUCCEEDED(result));
+
+
+	// ブレンド設定
+	blenddesc.RenderTarget[0].BlendEnable = true;
+	// ここは基本変えない
+	blenddesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blenddesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+
+	// αブレンド
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	// ブレンドステート
+	gPipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		sDevice_->CreateGraphicsPipelineState(
+			&gPipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kNormal)]));
+	assert(SUCCEEDED(result));
+
+	// 加算合成
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	// ブレンドステート
+	gPipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		sDevice_->CreateGraphicsPipelineState(
+			&gPipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kAdd)]));
+	assert(SUCCEEDED(result));
+
+	// 減算合成
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	// ブレンドステート
+	gPipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		sDevice_->CreateGraphicsPipelineState(
+			&gPipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kSubtract)]));
+	assert(SUCCEEDED(result));
+
+	// 乗算合成
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
+	// ブレンドステート
+	gPipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		sDevice_->CreateGraphicsPipelineState(
+			&gPipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kMultiply)]));
+	assert(SUCCEEDED(result));
+
+	// スクリーン合成
+	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	// ブレンドステート
+	gPipeline.BlendState = blenddesc;
+	// グラフィックスパイプラインの生成
+	result =
+		sDevice_->CreateGraphicsPipelineState(
+			&gPipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kScreen)]));
 	assert(SUCCEEDED(result));
 
 	// 射影行列
@@ -226,11 +277,14 @@ bool Sprite::Initialize() {
 
 	resourceDesc_ = TextureManager::GetInstance()->GetResourceDesc(textureHandle_);
 
+	// デフォルトブレンド
+	blendMode_ = BlendMode::kNormal;
+
 	{
 		// ヒーププロパティ
 		D3D12_HEAP_PROPERTIES heapProps = D3D12Lib::SetHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
 		// リソース設定
-		D3D12_RESOURCE_DESC resourceDesc = 
+		D3D12_RESOURCE_DESC resourceDesc =
 			D3D12Lib::SetResourceDesc(sizeof(VertexData) * kVertNum);
 
 		// 頂点バッファ生成
@@ -269,6 +323,23 @@ bool Sprite::Initialize() {
 	return true;
 }
 
+void Sprite::Update()
+{
+
+	TransferVertices();
+
+	// ワールド行列の更新
+	matWorld_ = MatLib::MakeIdentity4x4();
+	matWorld_ = MatLib::Multiply(matWorld_, MatLib::MakeRotateZMatrix(rotation_));
+	matWorld_ = MatLib::Multiply(matWorld_, MatLib::MakeTranslateMatrix(Vector3(position_.x, position_.y, 0)));
+
+	// 定数バッファにデータ転送
+	constData_->color = color_;
+	constData_->mat = MatLib::Multiply(matWorld_, sMatProjection_);
+	constData_->uv = MatLib::MakeIdentity4x4();
+	UVUpdate();
+}
+
 void Sprite::SetAnchorPoint(const Vector2& anchorPoint)
 {
 	anchorpoint_ = anchorPoint;
@@ -277,10 +348,16 @@ void Sprite::SetAnchorPoint(const Vector2& anchorPoint)
 	TransferVertices();
 }
 
+void Sprite::SetSpriteRect(const Vector2& texBase, const Vector2& texSize)
+{
+	texBase_ = texBase;
+	texSize_ = texSize;
+
+	TransferVertices();
+}
+
 void Sprite::TransferVertices()
 {
-	//HRESULT result = S_FALSE;
-
 	// 4頂点
 	enum { LB, LT, RB, RT };
 
@@ -323,15 +400,25 @@ void Sprite::TransferVertices()
 	memcpy(vertData_, vertices, sizeof(vertices));
 }
 
+void Sprite::UVUpdate()
+{
+	Matrix4x4 uvTransformMat = MatLib::MakeScaleMatrix(UVTransform_.scale);
+	uvTransformMat = MatLib::Multiply(uvTransformMat, MatLib::MakeRotateZMatrix(UVTransform_.rotate.z));
+	uvTransformMat = MatLib::Multiply(uvTransformMat, MatLib::MakeTranslateMatrix(UVTransform_.translate));
+	constData_->uv = uvTransformMat;
+}
+
 void Sprite::Draw() {
-	// ワールド行列の更新
-	matWorld_ = MatLib::MakeIdentity4x4();
-	matWorld_ = MatLib::Multiply(matWorld_, MatLib::MakeRotateZMatrix(rotation_));
-	matWorld_ = MatLib::Multiply(matWorld_, MatLib::MakeTranslateMatrix(Vector3(position_.x, position_.y, 0)));
-	
-	// 定数バッファにデータ転送
-	constData_->color = color_;
-	constData_->mat = MatLib::Multiply(matWorld_, sMatProjection_);
+
+	Update();
+
+	// パイプラインの設定
+	sCommandList_->SetPipelineState(sPipelineStates_[size_t(blendMode_)].Get());
+
+	// 非表示処理
+	if (isInvisible_) {
+		return;
+	}
 
 	// 頂点バッファの設定
 	sCommandList_->IASetVertexBuffers(0, 1, &vbView_);
@@ -360,6 +447,14 @@ void Sprite::SetPosition(const Vector2& position)
 	TransferVertices();
 }
 
+void Sprite::SetSize(const Vector2& size)
+{
+	size_ = size;
+
+	// データ転送
+	TransferVertices();
+}
+
 void Sprite::SetRotation(float rotation)
 {
 	rotation_ = rotation;
@@ -372,8 +467,6 @@ void Sprite::PreDraw(ID3D12GraphicsCommandList* commandList) {
 	assert(Sprite::sCommandList_ == nullptr);
 
 	sCommandList_ = commandList;
-	// パイプラインの設定
-	sCommandList_->SetPipelineState(gPipelineState_.Get());
 	// ルートシグネチャの設定
 	sCommandList_->SetGraphicsRootSignature(sRootSignature_.Get());
 
