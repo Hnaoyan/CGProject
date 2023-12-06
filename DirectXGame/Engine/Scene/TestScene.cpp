@@ -16,6 +16,10 @@ void TestScene::Initialize()
 	planeModel_.reset(Model::CreatePlane());
 
 	texture_ = TextureManager::Load("Texture/Circle.png");
+
+	texture_ = TextureManager::Load("uvChecker.png");
+	testSprite_.reset(Sprite::Create(texture_, { 100,100 }, { 1,1,1,1 }, { 0.5f,0.5f }, 0, 0));
+
 	alphaValue_ = 1.0f;
 
 }
@@ -67,9 +71,20 @@ void TestScene::Update()
 
 void TestScene::Draw()
 {
-
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+
+#pragma region 背景スプライト描画
+	// 描画前処理
+	Sprite::PreDraw(commandList);
+
+	testSprite_->Draw();
+
+	// 描画後処理
+	Sprite::PostDraw();
+	// 深度バッファクリア
+	DirectXCommon::GetInstance()->ClearDepthBuffer();
+#pragma endregion
 
 #pragma region 3Dオブジェクト描画
 	// 描画前処理

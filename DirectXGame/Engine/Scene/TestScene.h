@@ -5,6 +5,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "AudioManager.h"
+#include "Sprite.h"
 #include <memory>
 
 
@@ -58,6 +59,7 @@ private:
 	std::unique_ptr<Model> testModel_;
 	std::unique_ptr<Model> obj2Model_;
 	std::unique_ptr<Model> planeModel_;
+	std::unique_ptr<Sprite> testSprite_;
 
 	uint32_t texture_ = 0u;
 
