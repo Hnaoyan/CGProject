@@ -41,13 +41,13 @@ private:
 	std::unique_ptr<Model> planeModel_;
 
 
-public:
-
+public: // 外部呼び出し用関数
+	// 追加
 	void AddParitcle(const Vector3& position,const ViewProjection* viewProjection);
+	// リストクリア
 	void ClearList();
-	enum Type {
 
-	};
+	void DamageEffect(const Vector3& position, const ViewProjection* viewProjection);
 
 };
 
