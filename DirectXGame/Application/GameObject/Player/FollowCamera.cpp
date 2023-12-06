@@ -45,7 +45,7 @@ void FollowCamera::Update() {
 		viewProjection_.rotation_.y = std::atan2f(sub.x, sub.z);
 	}
 	// 追従対象がいれば
-	if (target_) {
+	else if (target_) {
 		// 座標をコピーしてオフセット分ずらす
 		worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
 

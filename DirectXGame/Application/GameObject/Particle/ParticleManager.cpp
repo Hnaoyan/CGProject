@@ -63,4 +63,5 @@ void ParticleManager::ClearList()
 
 void ParticleManager::DamageEffect(const Vector3& position, const ViewProjection* viewProjection)
 {
+	position, viewProjection;
 }
