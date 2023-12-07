@@ -29,9 +29,6 @@ float4 main(VSOutput input) : SV_TARGET
             
             //shadecolor.rgb += (diffuse + specular) * directLight[i].lightcolor;
             
-            //float cos = saturate(dot(normalize(input.normal), -directLight[i].lightv));
-            
-            //shadecolor=
             //float3 lightDir = normalize(directLight[i].lightv);
             //float3 normal = normalize(input.normal);
             //float3 viewDir = normalize(cameraPos - input.worldPos.xyz);

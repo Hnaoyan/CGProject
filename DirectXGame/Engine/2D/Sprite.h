@@ -1,5 +1,6 @@
 #pragma once
 #include <wrl.h>
+#include <array>
 #include "WindowAPI.h"
 #include "StructManager.h"
 
@@ -13,15 +14,6 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
-enum BlendMode {
-	// ブレンドなし
-	kBlendNone,
-	// 通常αブレンド。
-	kBlendNormal,
-	// 加算。
-	kBlendAdd,
-};
-
 class Sprite
 {
 public:	// サブクラス
@@ -34,6 +26,23 @@ public:	// サブクラス
 	struct ConstBufferData {
 		Vector4 color;
 		Matrix4x4 mat;
+		Matrix4x4 uv;
+	};
+
+	struct Transform {
+		Vector3 scale;
+		Vector3 rotate;
+		Vector3 translate;
+	};
+
+	enum class BlendMode : int {
+		kNone,
+		kNormal,
+		kAdd,
+		kSubtract,
+		kMultiply,
+		kScreen,
+		kCountOfBlendMode,
 	};
 
 public:	// 静的メンバ関数
@@ -72,7 +81,11 @@ private:	// 静的メンバ変数
 
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
 
-	static Microsoft::WRL::ComPtr<ID3D12PipelineState> gPipelineState_;
+	// パイプラインステートオブジェ
+	static std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
+		size_t(BlendMode::kCountOfBlendMode)> sPipelineStates_;
+
+	//static Microsoft::WRL::ComPtr<ID3D12PipelineState> gPipelineState_;
 	// デスクリプタサイズ
 	static UINT sDescriptorHandleIncrementSize_;
 
@@ -100,6 +113,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool Initialize();
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	void Update();
 
 	/// <summary>
 	/// 描画
@@ -130,6 +148,14 @@ public:
 	const Vector2& GetPosition() { return position_; }
 
 	/// <summary>
+	/// サイズの設定
+	/// </summary>
+	/// <param name="size"></param>
+	void SetSize(const Vector2& size);
+
+	const Vector2& GetSize() { return size_; }
+
+	/// <summary>
 	/// 角度の設定
 	/// </summary>
 	/// <param name="rotation"></param>
@@ -149,12 +175,37 @@ public:
 	/// 色の設定
 	/// </summary>
 	/// <param name="color"></param>
-	void SetColor(const Vector4& color) { color_ = color; }
+	void SetColor(const Vector4& color) {
+		color_ = color;
+		Update();
+	}
 
 	const Vector4 GetColor() { return color_; }
 
+	/// <summary>
+	/// ブレンドの設定
+	/// </summary>
+	/// <param name="mode"></param>
+	void SetBlendMode(BlendMode mode) { blendMode_ = mode; }
+
+	/// <summary>
+	/// 表示か非表示かの設定
+	/// </summary>
+	/// <param name="isInv"></param>
+	void SetInvisible(bool isInv) { isInvisible_ = isInv; }
+
+	/// <summary>
+	/// 描画サイズ設定
+	/// </summary>
+	/// <param name="texBase"></param>
+	/// <param name="texSize"></param>
+	void SetSpriteRect(const Vector2& texBase, const Vector2& texSize);
+
 private:
+
 	void TransferVertices();
+
+	void UVUpdate();
 
 private:	// メンバ関数
 
@@ -189,6 +240,13 @@ private:	// メンバ関数
 	// 色
 	Vector4 color_ = { 1,1,1,1 };
 
+	// UV
+	Transform UVTransform_ = {
+		{1.0f,1.0f,1.0f},
+		{0,0,0},
+		{0,0,0}
+	};
+
 	float rotation_ = 0;
 
 	// テクスチャの始点
@@ -201,6 +259,10 @@ private:	// メンバ関数
 	// 上下反転
 	bool isFlipY_ = false;
 
-	D3D12_RESOURCE_DESC resourceDesc_;
+	bool isInvisible_ = false;
+
+	D3D12_RESOURCE_DESC resourceDesc_{};
+
+	BlendMode blendMode_ = BlendMode::kNormal;
 };
 

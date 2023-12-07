@@ -38,6 +38,10 @@ public:
 
 	void Update();
 
+	void SetAlpha(float alpha) { alpha_ = alpha; }
+
+	float GetAlpha() { return alpha_; }
+
 	void SetGraphicsCommand(
 		ID3D12GraphicsCommandList* commandList, UINT rootParametreIndexMaterial,
 		UINT rootParameterIndexTexture);

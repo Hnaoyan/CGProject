@@ -52,10 +52,10 @@ void WorldTransform::BillBoardSetting(ViewProjection* viewProjection, bool billB
 	isBillBoard_ = billBoardFlag;
 }
 
-void WorldTransform::ImGuiWidget()
+void WorldTransform::ImGuiWidget(const char* tag)
 {
 
-	ImGui::Begin("WorldTransform");
+	ImGui::Begin(tag);
 	float posValue = 500.0f;
 	ImGui::DragFloat3("position", &this->translation_.x, 0.01f, -posValue, posValue);
 	ImGui::DragFloat3("rotate", &this->rotation_.x, 0.01f, -5.0f, 5.0f);

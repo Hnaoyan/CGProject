@@ -31,6 +31,6 @@ struct WorldTransform
 
 	void BillBoardSetting(ViewProjection* viewProjection, bool billBoardFlag = true);
 
-	void ImGuiWidget();
+	void ImGuiWidget(const char* tag);
 };
 
