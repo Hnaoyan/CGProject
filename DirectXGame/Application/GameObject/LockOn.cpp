@@ -46,8 +46,9 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 			else
 			{
 				// A.
-				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X) {
+				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X && !isDuring_) {
 					SearchEnemy(enemies, viewProjection);
+					isDuring_ = true;
 				}
 			}
 		}
@@ -69,6 +70,14 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 	}
 
+	if (isDuring_) {
+		coolTime_++;
+		if (coolTime_ > 10) {
+			coolTime_ = 0;
+			isDuring_ = false;
+		}
+	}
+
 }
 
 void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection)
@@ -76,6 +85,8 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 
 	// 目標
 	std::list<std::pair<float, const Enemy*>> targets;
+
+	targets.clear();
 
 	// 全ての敵に対して順にロックオン判定
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
@@ -100,13 +111,26 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 
 			// カメラ前方との角度を計算
-			float arcTangent = std::atan2(std::sqrt(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
+			//float arcTangent = std::atan2(
+			//	std::sqrt(positionView.x * positionView.x + positionView.y * positionView.y),
+			//	positionView.z);
+			Vector3 WorldView = { viewProjection.matView.m[3][0],viewProjection.matView.m[3][1],viewProjection.matView.m[3][2] };
+			float arcTangent = MathCalc::Dot(MathCalc::Normalize(positionView), MathCalc::Normalize(WorldView));
 
 			// 角度条件チェック
 			if (std::fabs(arcTangent) <= angleRange_) {
 				targets.emplace_back(std::make_pair(positionView.z, enemy.get()));
 			}
 		}
+		// 対象をリセット
+		target_ = nullptr;
+		if (!targets.empty()) {
+			// 昇順にソート
+			targets.sort([](auto& pair1, auto& pair2) {return pair1.first < pair2.first; });
+			// ソートの結果一番近い敵をロックオン対象に設定
+			target_ = targets.front().second;
+		}
+
 	}
 
 	// 対象をリセット

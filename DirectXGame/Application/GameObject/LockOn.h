@@ -45,7 +45,7 @@ private:
 
 	const Enemy* target_ = nullptr;
 
-	float kDegreeToRadian = 45.0f * ((float)std::numbers::pi * 180.0f);
+	float kDegreeToRadian = 90.0f * ((float)std::numbers::pi * 180.0f);
 
 	float minDistance_ = 10.0f;
 
@@ -56,6 +56,10 @@ private:
 	Vector2 position_ = {};
 
 	bool isAuto_ = false;
+
+	bool isDuring_ = false;
+
+	uint32_t coolTime_ = 0;
 
 public:
 	Vector3 GetTargetPosition() const;
