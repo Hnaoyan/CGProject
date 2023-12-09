@@ -52,11 +52,6 @@ public:
 
 	WorldTransform GetTransform() const { return worldTransform_; }
 
-	void UpdateFloating();
-
-	void InitializeFloating();
-
-	void MoveInitialize();
 
 	void SetIsDead(bool isDead) { isDead_ = isDead; }
 
@@ -102,6 +97,12 @@ public:
 	uint32_t GetSerial() const { return serialNumber_; }
 
 private:
+
+	void UpdateFloating();
+
+	void InitializeFloating();
+
+	void MoveInitialize();
 
 	uint32_t serialNumber_ = 0;
 

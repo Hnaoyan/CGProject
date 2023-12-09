@@ -45,9 +45,14 @@ public: // 設定・取得
 		worldTransform_.BillBoardSetting(viewProjection);
 	}
 
+	void SetVelocity(const Vector3& velocity) {
+		velocity_ = velocity;
+	}
+
 private:
 	Model* model_;
 	WorldTransform worldTransform_;
+	Vector3 velocity_;
 
 	uint32_t texture_ = 0u;
 

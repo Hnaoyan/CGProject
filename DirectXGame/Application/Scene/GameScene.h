@@ -65,6 +65,8 @@ private:
 
 	void EnemySpawn();
 
+	void EnemyListUpdate();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;

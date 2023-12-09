@@ -40,6 +40,10 @@ public:
 
 	Vector3 WorldToScreen(const Vector3& position, const ViewProjection& viewProjection);
 
+	const Enemy* GetEnemyAddress() { return target_; }
+
+	void ResetTarget() { target_ = nullptr; }
+
 private:
 	std::unique_ptr<Sprite> lockOnMark_;
 

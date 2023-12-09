@@ -29,7 +29,7 @@ void IParticle::Update()
 	}
 
 	worldTransform_.scale_ = MathCalc::EaseInCubicF(ease_t_, Vector3(0.25f, 0.25f, 0.25f), Vector3(0, 0, 0));
-
+	worldTransform_.translation_ += velocity_;
 	worldTransform_.UpdateMatrix();
 
 }

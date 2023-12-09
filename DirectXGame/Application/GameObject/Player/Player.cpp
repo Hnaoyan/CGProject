@@ -238,8 +238,9 @@ void Player::ProcessMovement()
 			float length = sqrtf(move.x * move.x + move.z * move.z);
 			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 
+			// 移動エフェクト
 			if (particleCount_ % 10 == 0) {
-				paritcleManager_->AddParitcle(GetWorldPosition(), viewProjection_);
+				paritcleManager_->AddParitcle(GetWorldPosition(), Vector3(0,0,0), viewProjection_);
 			}
 
 		}

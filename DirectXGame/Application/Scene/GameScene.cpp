@@ -96,13 +96,6 @@ void GameScene::Update()
 		itr->get()->Update();
 	}
 
-	enemies_.remove_if([](std::unique_ptr<Enemy>& enemy) {
-		if (enemy->GetIsDead()) {
-			return true;
-		}
-		return false;
-		});
-
 	/// カメラ関係の更新処理
 	CameraUpdate();
 
@@ -256,4 +249,19 @@ void GameScene::EnemySpawn()
 	enemies_.push_back(std::move(enemy));
 #pragma endregion
 
+}
+
+void GameScene::EnemyListUpdate()
+{
+	LockOn* lockOnPtr = lockOn_.get();
+
+	enemies_.remove_if([lockOnPtr](std::unique_ptr<Enemy>& enemy) {
+		if (enemy->GetIsDead()) {
+			if (lockOnPtr->GetEnemyAddress() == enemy.get()) {
+				lockOnPtr->ResetTarget();
+			}
+			return true;
+		}
+		return false;
+		});
 }
