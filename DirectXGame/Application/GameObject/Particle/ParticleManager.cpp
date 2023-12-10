@@ -1,5 +1,7 @@
 #include "ParticleManager.h"
 #include "TextureManager.h"
+#include "WindowAPI.h"
+#include "MathCalc.h"
 
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -51,10 +53,28 @@ void ParticleManager::AddParitcle(const Vector3& position, const Vector3& veloci
 	newParticle->Initialize(planeModel_.get(), texture_);
 	newParticle->SetPosition(position);
 	newParticle->SetVelocity(velocity);
-	newParticle->SetFadeTimer(30);
+	newParticle->SetFadeTimer(45);
 	newParticle->SetBillBoard(viewProjection);
 	particles_.push_back(newParticle);
 
+}
+
+void ParticleManager::AddParitcle(const Vector3& position, uint32_t fadeTimer, const ViewProjection* viewProjection)
+{
+	// ランダム
+	std::uniform_real_distribution<float> distribution(-0.5f, 0.5f);
+	Vector3 velocity = Vector3(distribution(WindowAPI::randomEngine),
+		distribution(WindowAPI::randomEngine), distribution(WindowAPI::randomEngine));
+	velocity = VectorLib::Scaler(velocity, 1.0f / 10.0f);
+
+	IParticle* newParticle = new IParticle();
+	uint32_t texture = TextureManager::Load("white1x1.png");
+	newParticle->Initialize(cubeModel_.get(), texture);
+	newParticle->SetPosition(position);
+	newParticle->SetVelocity(velocity);
+	newParticle->SetFadeTimer(fadeTimer);
+	newParticle->SetBillBoard(viewProjection);
+	particles_.push_back(newParticle);
 }
 
 void ParticleManager::ClearList()
@@ -64,5 +84,7 @@ void ParticleManager::ClearList()
 
 void ParticleManager::DamageEffect(const Vector3& position, const ViewProjection* viewProjection)
 {
-	position, viewProjection;
+	for (int i = 0; i < 10; i++) {
+		AddParitcle(position, 120, viewProjection);
+	}
 }

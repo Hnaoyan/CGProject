@@ -172,6 +172,10 @@ void Player::Update()
 	// 落下
 	Fall();
 
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		paritcleManager_->DamageEffect(GetWorldPosition(), viewProjection_);
+	}
+
 	// 更新
 	BaseCharacter::Update();
 	worldTransformBody_.UpdateMatrix();

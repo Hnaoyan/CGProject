@@ -211,6 +211,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Math\Vector3.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\Vector2.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\Vector4.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\EnemyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\GameObject\ContactRecord.h" />
@@ -266,6 +267,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Math\Vector3.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector2.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector4.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\EnemyManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

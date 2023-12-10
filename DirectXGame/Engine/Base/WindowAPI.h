@@ -16,7 +16,7 @@ public:
 	// ウインドウクラス名
 	static const wchar_t kWindowClassName[];
 
-private:
+public:
 
 	static std::random_device seedGenerator;
 	static std::mt19937 randomEngine;

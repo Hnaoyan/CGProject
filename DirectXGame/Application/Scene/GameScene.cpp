@@ -94,11 +94,14 @@ void GameScene::Update()
 
 	for (auto itr = enemies_.begin(), end_ = enemies_.end(); itr != end_; itr++) {
 		itr->get()->Update();
+		if (itr->get()->GetIsDead()) {
+			particleManager_->DamageEffect(itr->get()->GetWorldPosition(),const_cast<ViewProjection*>(&viewProjection_));
+		}
 	}
+	EnemyListUpdate();
 
 	/// カメラ関係の更新処理
 	CameraUpdate();
-
 
 }
 

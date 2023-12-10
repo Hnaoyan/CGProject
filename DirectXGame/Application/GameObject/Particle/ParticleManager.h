@@ -44,6 +44,7 @@ private:
 public: // 外部呼び出し用関数
 	// 追加
 	void AddParitcle(const Vector3& position, const Vector3& velocity, const ViewProjection* viewProjection);
+	void AddParitcle(const Vector3& position, uint32_t fadeTimer, const ViewProjection* viewProjection);
 	// リストクリア
 	void ClearList();
 
