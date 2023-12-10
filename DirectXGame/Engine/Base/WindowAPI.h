@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <cstdint>
 #include<format>
+#include <random>
 
 void Log(const std::string& message);
 
@@ -14,6 +15,12 @@ public:
 	static const int32_t kClientHeight = 720;
 	// ウインドウクラス名
 	static const wchar_t kWindowClassName[];
+
+private:
+
+	static std::random_device seedGenerator;
+	static std::mt19937 randomEngine;
+
 
 public:	// メンバ関数
 	/// <summary>
