@@ -105,6 +105,9 @@ void Model::InitializeGraphicsPipeline()
 	// ルートパラメータ
 	D3D12_ROOT_PARAMETER rootparams[5];
 	rootparams[0] = D3D12Lib::InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+	// Instancing用のやつ
+	//uint32_t instancing = 1;
+	//rootparams[1] = D3D12Lib::InitAsDescriptorTable(instancing, &descRangeSRV, D3D12_SHADER_VISIBILITY_VERTEX);
 	rootparams[1] = D3D12Lib::InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[2] = D3D12Lib::InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[3] = D3D12Lib::InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
@@ -143,6 +146,7 @@ void Model::InitializeGraphicsPipeline()
 
 	gpipeline.pRootSignature = sRootSignature_.Get();
 
+#pragma region Blend
 	// ブレンド設定
 	// ブレンドなし
 	D3D12_BLEND_DESC blenddesc{};
@@ -214,6 +218,7 @@ void Model::InitializeGraphicsPipeline()
 	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
 	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+#pragma endregion
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
