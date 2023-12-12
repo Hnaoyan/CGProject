@@ -30,34 +30,31 @@ void FollowCamera::Update() {
 	ImGui::End();
 	
 	XINPUT_STATE joyState;
-	Vector3 worldPosition = {};
-	// ロックオン中
-	if (lockOn_->GetTarget()) {
-		// ロックオン座標
-		Vector3 lockOnPoint = lockOn_->GetTargetPosition();
-		// ターゲット座標
-		Vector3 targetPoint = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
-		// 追従対象からロックオン対象へのベクトル
-		Vector3 sub = lockOnPoint - targetPoint;
-		sub = MathCalc::Normalize(sub);
-
-		// Y軸周り角度
-		viewProjection_.rotation_.y = std::atan2f(sub.x, sub.z);
-	}
 	// 追従対象がいれば
-	else if (target_) {
-		// 座標をコピーしてオフセット分ずらす
-		worldPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
+	if (target_) {
 
-		if (Input::GetInstance()->GetJoystickState(0, joyState) && !lockOn_->GetTarget()) {
+		if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 			float rotateSpeed = 0.075f;
 
-			destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
-			//viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
+			//destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
+			viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
 		}
-		viewProjection_.rotation_.y = MathCalc::Lerp(viewProjection_.rotation_.y, destinationAngleY_, 0.1f);
-	}
+		//viewProjection_.rotation_.y = MathCalc::Lerp(viewProjection_.rotation_.y, destinationAngleY_, 0.1f);
 
+		// ロックオン中
+		if (lockOn_->GetTarget()) {
+			// ロックオン座標
+			Vector3 lockOnPoint = lockOn_->GetTargetPosition();
+			// ターゲット座標
+			Vector3 targetPoint = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
+			// 追従対象からロックオン対象へのベクトル
+			Vector3 sub = lockOnPoint - targetPoint;
+			sub = MathCalc::Normalize(sub);
+
+			// Y軸周り角度
+			viewProjection_.rotation_.y = std::atan2f(sub.x, sub.z);
+		}
+	}
 	// 遅延追尾
 	Vector3 nowPosition = { target_->matWorld_.m[3][0],target_->matWorld_.m[3][1],target_->matWorld_.m[3][2] };
 	interTarget_ = MathCalc::Lerp(interTarget_, nowPosition, delayRate_);

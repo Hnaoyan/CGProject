@@ -131,7 +131,6 @@ void GameScene::Draw() {
 		itr->get()->Draw(viewProjection_);
 	}
 
-	goal_->Draw(viewProjection_);
 	skydome_->Draw(viewProjection_);
 	groundManager_->Draw(viewProjection_);
 	particleManager_->Draw(viewProjection_);
@@ -167,10 +166,7 @@ void GameScene::CameraUpdate()
 	}
 #endif // DEBUG
 
-	lockOn_->Update(enemies_, followCamera_->GetView());
-
 	followCamera_->Update();
-
 
 	// デバックカメラか追尾カメラ
 	if (isDebug_) {
@@ -181,6 +177,8 @@ void GameScene::CameraUpdate()
 		viewProjection_.matProjection = followCamera_->GetView().matProjection;
 		viewProjection_.TransferMatrix();
 	}
+
+	lockOn_->Update(enemies_, followCamera_->GetView());
 }
 
 void GameScene::CheckCollision()
@@ -230,7 +228,7 @@ void GameScene::EnemySpawn()
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ 0,0,-50.0f });
+	enemy->SetPosition(Vector3{ 10.0f,0,20.0f });
 	enemy->UpdateCollider();
 	enemy->SetWeapon(player_->GetWeapon());
 	enemies_.push_back(std::move(enemy));
@@ -238,7 +236,7 @@ void GameScene::EnemySpawn()
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ 50.0f,0,0 });
+	enemy->SetPosition(Vector3{ -10.0f,0,20.0f });
 	enemy->UpdateCollider();
 	enemy->SetWeapon(player_->GetWeapon());
 	enemies_.push_back(std::move(enemy));
@@ -246,7 +244,16 @@ void GameScene::EnemySpawn()
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ -50.0f,0,0 });
+	enemy->SetPosition(Vector3{ -20.0f,0,50.0f });
+	enemy->UpdateCollider();
+	enemy->SetWeapon(player_->GetWeapon());
+	enemies_.push_back(std::move(enemy));
+
+	// 5
+	enemy = std::make_unique<Enemy>();
+	enemy->Initialize(model_.get());
+	enemy->SetModel(models);
+	enemy->SetPosition(Vector3{ 20.0f,0,50.0f });
 	enemy->UpdateCollider();
 	enemy->SetWeapon(player_->GetWeapon());
 	enemies_.push_back(std::move(enemy));
