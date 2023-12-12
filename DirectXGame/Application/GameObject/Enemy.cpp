@@ -131,9 +131,9 @@ void Enemy::OnCollision(uint32_t tag, WorldTransform* targetWorldTransform)
 	}
 }
 
-Vector3 Enemy::GetWorldPosition()
+Vector3 Enemy::GetWorldPosition() const
 {
-	return worldTransform_.translation_;
+	return Vector3(worldTransform_.matWorld_.m[3][0], worldTransform_.matWorld_.m[3][1], worldTransform_.matWorld_.m[3][2]);
 }
 
 void Enemy::UpdateFloating()

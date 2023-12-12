@@ -42,7 +42,7 @@ public:
 	/// 座標取得
 	/// </summary>
 	/// <returns></returns>
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() const;
 
 	const Vector3& GetWorldPositionTarget() const
 	{
@@ -51,7 +51,6 @@ public:
 	}
 
 	WorldTransform GetTransform() const { return worldTransform_; }
-
 
 	void SetIsDead(bool isDead) { isDead_ = isDead; }
 

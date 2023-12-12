@@ -192,7 +192,7 @@ void Player::Draw(const ViewProjection& viewProjection)
 	models_[R_ARM]->Draw(worldTransformR_Arm_, viewProjection);
 	if (behavior_ == Behavior::kAttack) {
 		models_[WEAPON]->Draw(worldTransformWeapon_, viewProjection);
-		deModel_->Draw(weapon_->GetWorldTransform(), viewProjection);
+		//deModel_->Draw(weapon_->GetWorldTransform(), viewProjection);
 	}
 }
 
@@ -237,10 +237,11 @@ void Player::ProcessMovement()
 			velocity_.x = normal.x;
 			velocity_.z = normal.z;
 			// 目標角度
-			destinationAngleY_ = std::atan2f(move.x, move.z);
-			worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
-			float length = sqrtf(move.x * move.x + move.z * move.z);
-			worldTransform_.rotation_.x = std::atan2f(-move.y, length);
+			//destinationAngleY_ = std::atan2f(move.x, move.z);
+			worldTransform_.rotation_.y = MathCalc::CalculateYawFromVector(Vector3(move.x, 0, move.z));
+			//worldTransform_.rotation_.y = std::atan2f(move.x, move.z);
+			//float length = sqrtf(move.x * move.x + move.z * move.z);
+			//worldTransform_.rotation_.x = std::atan2f(-move.y, length);
 
 			// 移動エフェクト
 			if (particleCount_ % 10 == 0) {
@@ -256,7 +257,8 @@ void Player::ProcessMovement()
 			sub = MathCalc::Normalize(sub);
 
 			// Y軸周り角度
-			worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
+			//worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
+			worldTransform_.rotation_.y = MathCalc::CalculateYawFromVector(Vector3(sub.x, 0, sub.z));
 		}
 		//if (!isMoving) {
 		//	particleCount_ = 0;
@@ -424,7 +426,8 @@ void Player::BehaviorAttackUpdate()
 		//	// Y軸周り角度
 		//	
 		//}
-		worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
+		//worldTransform_.rotation_.y = std::atan2f(sub.x, sub.z);
+		worldTransform_.rotation_.y = MathCalc::CalculateYawFromVector(Vector3(sub.x, 0, sub.z));
 	}
 
 	// フレームカウント

@@ -177,8 +177,7 @@ void GameScene::CameraUpdate()
 		viewProjection_.matProjection = followCamera_->GetView().matProjection;
 		viewProjection_.TransferMatrix();
 	}
-
-	lockOn_->Update(enemies_, followCamera_->GetView());
+	lockOn_->Update(enemies_, viewProjection_);
 }
 
 void GameScene::CheckCollision()

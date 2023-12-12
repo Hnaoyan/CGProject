@@ -7,19 +7,6 @@
 #include "Input.h"
 #include "imgui.h"
 
-float CheckAngle(const Vector3& vectorA, const Vector3& vectorB) {
-	float dot = MathCalc::Dot(vectorA, vectorB);
-	float a = MathCalc::Length(vectorA);
-	float b = MathCalc::Length(vectorB);
-	float result = std::acosf(dot / (a * b));
-
-	if (vectorA.x < 0) {
-		result = -result;
-	}
-
-	return result;
-}
-
 void LockOn::Initialize()
 {
 	uint32_t texture = TextureManager::Load("lockOn.png");
@@ -132,26 +119,20 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 		}
 
 		// 敵のロックオン座標取得
-		Vector3 positionWorld = { 
-			enemy->GetTransform().matWorld_.m[3][0],
-			enemy->GetTransform().matWorld_.m[3][1],
-			enemy->GetTransform().matWorld_.m[3][2] };
-		Vector3 local = { 0,1.0f,0 };
-		positionWorld = MatLib::Transform(local, enemy->GetTransform().matWorld_);
+		Vector3 positionWorld = enemy->GetWorldPosition();
+		//Vector3 off = { 0,1.0f,0 };
+		//positionWorld = MatLib::Transform(off, enemy->GetTransform().matWorld_);
 
 		// ワールド→ビュー座標変換
 		Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
 
 		// 距離条件チェック
-		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_/* && !OutOfRange(viewProjection)*/) {
+		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 
 			// カメラ前方との角度を計算
-			//float arcTangent = std::atan2(
-			//	std::sqrt(positionView.x * positionView.x + positionView.y * positionView.y),
-			//	positionView.z);
 			//Vector3 WorldView = { viewProjection.matView.m[3][0],viewProjection.matView.m[3][1],viewProjection.matView.m[3][2] };
 			//float arcTangent = MathCalc::Dot(MathCalc::Normalize(positionView), MathCalc::Normalize(WorldView));
-			float arcTangent = CheckAngle(Vector3(std::sqrtf(positionView.x * positionView.x + positionView.y + positionView.y), 0.0f, positionView.z), Vector3(0, 0, 1));
+			float arcTangent = MathCalc::CalculateYawFromVector(Vector3(std::sqrtf(positionView.x * positionView.x + positionView.y + positionView.y), 0.0f, positionView.z));
 			// 角度条件チェック
 			if (std::fabsf(arcTangent) <= angleRange_) {
 				targets_.emplace_back(std::make_pair(positionView.z, enemy.get()));
@@ -183,18 +164,14 @@ bool LockOn::OutOfRange(const Enemy* target, const ViewProjection& viewProjectio
 	if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 
 		// カメラ前方との角度を計算
-		//float arcTangent = std::atan2f(std::sqrtf(positionView.x * positionView.x + positionView.y * positionView.y), positionView.z);
-
 		Vector3 WorldView = { viewProjection.matView.m[3][0],viewProjection.matView.m[3][1],viewProjection.matView.m[3][2] };
 		float arcTangent = MathCalc::Dot(MathCalc::Normalize(positionView), MathCalc::Normalize(WorldView));
-		//float angle = std::acosf(arcTangent);
 
 		// 角度条件チェック
-		if (arcTangent <= angleRange_) {
+		if (std::fabsf(arcTangent) <= angleRange_) {
 			// 範囲外でない
 			return false;
 		}
-
 	}
 
 	// 範囲外である

@@ -130,6 +130,19 @@ float MathCalc::LerpShortAngle(float a, float b, float t)
 }
 
 #pragma region イージング計算
+float MathCalc::CalculateYawFromVector(const Vector3& direction)
+{
+	float dot = MathCalc::Dot(direction, Vector3(0, 0, 1.0f));
+	float fromLength = MathCalc::Length(direction);
+	float toLength = MathCalc::Length(Vector3(0, 0, 1.0f));
+	float result = std::acosf(dot / (fromLength * toLength));
+
+	if (direction.x < 0) {
+		result = -result;
+	}
+
+	return result;
+}
 Vector3 MathCalc::Ease(float t, Vector3& start, Vector3& end)
 {
 	return Vector3((1.0f - t) * start.x + t * end.x,

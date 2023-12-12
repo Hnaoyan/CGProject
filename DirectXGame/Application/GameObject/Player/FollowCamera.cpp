@@ -52,7 +52,8 @@ void FollowCamera::Update() {
 			sub = MathCalc::Normalize(sub);
 
 			// Y軸周り角度
-			viewProjection_.rotation_.y = std::atan2f(sub.x, sub.z);
+			viewProjection_.rotation_.y = MathCalc::CalculateYawFromVector(Vector3(sub.x, 0, sub.z));
+			//viewProjection_.rotation_.y = std::atan2f(sub.x, sub.z);
 		}
 	}
 	// 遅延追尾

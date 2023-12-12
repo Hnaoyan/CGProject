@@ -5,6 +5,10 @@
 
 class MathCalc
 {
+public:
+	// お試し
+	static float CalculateYawFromVector(const Vector3& direction);
+
 private:
 	/// <summary>
 	/// イージングの結果を出す計算
