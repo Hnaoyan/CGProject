@@ -40,7 +40,9 @@ void Enemy::Update()
 
 	UpdateFloating();
 
-	//Move();
+	if (isMove_) {
+		Move();
+	}
 
 	BaseCharacter::Update();	
 	worldBody_.UpdateMatrix();

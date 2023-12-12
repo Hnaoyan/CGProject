@@ -57,6 +57,8 @@ public:
 	bool GetIsDead() { return isDead_; }
 
 	void SetWeapon(Weapon* weapon) { weapon_ = weapon; }
+
+	void SetIsMove(bool isMove) { isMove_ = isMove; }
 	
 private:
 	// モデルデータ配列
@@ -84,6 +86,8 @@ private:
 	};
 
 	bool isLeft_ = false;
+
+	bool isMove_ = false;
 
 	Vector3 velocity_ = {};
 

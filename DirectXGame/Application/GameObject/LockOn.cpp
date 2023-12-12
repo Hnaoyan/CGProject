@@ -15,7 +15,7 @@ void LockOn::Initialize()
 
 }
 
-void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection)
+void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection, Player* player)
 {
 	
 	ImGui::Begin("LockOn");
@@ -31,13 +31,14 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A && !isAutoDuring_) {
 			if (isAuto_) {
 				isAuto_ = false;
 			}
 			else {
 				isAuto_ = true;
 			}
+			isAutoDuring_ = true;
 		}
 		if (target_) {
 			// C.
@@ -46,7 +47,7 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 				target_ = nullptr;
 			}
 			// 範囲外判定
-			else if (OutOfRange(target_, viewProjection)) {
+			else if (OutOfRange(target_, viewProjection, player)) {
 				target_ = nullptr;
 			}
 
@@ -66,12 +67,12 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 		else
 		{
 			if (isAuto_) {
-				//SearchEnemy(enemies, viewProjection);
+				SearchEnemy(enemies, viewProjection, player);
 			}
 			else {
 				// A.
 				if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_X && !isDuring_) {
-					SearchEnemy(enemies, viewProjection);
+					SearchEnemy(enemies, viewProjection, player);
 					isDuring_ = true;
 				}
 			}
@@ -96,15 +97,22 @@ void LockOn::Update(const std::list<std::unique_ptr<Enemy>>& enemies, const View
 
 	if (isDuring_) {
 		coolTime_++;
-		if (coolTime_ > 10) {
+		if (coolTime_ > 20) {
 			coolTime_ = 0;
 			isDuring_ = false;
 		}
 	}
 
+	if (isAutoDuring_) {
+		autoCoolTime_++;
+		if (autoCoolTime_ > 20) {
+			isAutoDuring_ = false;
+			autoCoolTime_ = 0;
+		}
+	}
 }
 
-void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection)
+void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const ViewProjection& viewProjection, Player* player)
 {
 	// ここバグ
 	// 目標
@@ -114,30 +122,42 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 	for (const std::unique_ptr<Enemy>& enemy : enemies) {
 
 		// 死亡の場合スキップ
-		if (enemy->GetIsDead() || OutOfRange(enemy.get(), viewProjection)) {
+		if (enemy->GetIsDead() || OutOfRange(enemy.get(), viewProjection, player)) {
 			continue;
 		}
 
 		// 敵のロックオン座標取得
 		Vector3 positionWorld = enemy->GetWorldPosition();
-		//Vector3 off = { 0,1.0f,0 };
-		//positionWorld = MatLib::Transform(off, enemy->GetTransform().matWorld_);
+		Vector3 playerWorld = player->GetWorldPosition();
 
 		// ワールド→ビュー座標変換
 		Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
 
-		// 距離条件チェック
-		if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
+		Vector3 enemyDirect = MathCalc::Normalize(VectorLib::Subtract(positionWorld, viewProjection.translate_));
+		Vector3 playerDirect = MathCalc::Normalize(VectorLib::Subtract(playerWorld, viewProjection.translate_));
 
-			// カメラ前方との角度を計算
-			//Vector3 WorldView = { viewProjection.matView.m[3][0],viewProjection.matView.m[3][1],viewProjection.matView.m[3][2] };
-			//float arcTangent = MathCalc::Dot(MathCalc::Normalize(positionView), MathCalc::Normalize(WorldView));
-			float arcTangent = MathCalc::CalculateYawFromVector(Vector3(std::sqrtf(positionView.x * positionView.x + positionView.y + positionView.y), 0.0f, positionView.z));
-			// 角度条件チェック
-			if (std::fabsf(arcTangent) <= angleRange_) {
-				targets_.emplace_back(std::make_pair(positionView.z, enemy.get()));
-			}
+		//// 距離条件チェック
+		//if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
+
+		//	// カメラ前方との角度を計算
+		//	//Vector3 WorldView = { viewProjection.matView.m[3][0],viewProjection.matView.m[3][1],viewProjection.matView.m[3][2] };
+		//	//float arcTangent = MathCalc::Dot(MathCalc::Normalize(positionView), MathCalc::Normalize(WorldView));
+		//	float arcTangent = MathCalc::CalculateYawFromVector(Vector3(std::sqrtf(positionView.x * positionView.x + positionView.y + positionView.y), 0.0f, positionView.z));
+		//	// 角度条件チェック
+		//	if (std::fabsf(arcTangent) <= angleRange_) {
+		//		targets_.emplace_back(std::make_pair(positionView.z, enemy.get()));
+		//	}
+		//}
+
+		float dot = MathCalc::Dot(enemyDirect, playerDirect);
+		float distance = MathCalc::Length(VectorLib::Subtract(positionWorld, playerWorld));
+
+		if (minDistance_ <= distance && distance <= maxDistance_ && dot > 0.0f) {
+
+			targets_.emplace_back(std::make_pair(distance, enemy.get()));
+
 		}
+
 	}
 
 	// 対象をリセット
@@ -151,7 +171,7 @@ void LockOn::SearchEnemy(const std::list<std::unique_ptr<Enemy>>& enemies, const
 	}
 }
 
-bool LockOn::OutOfRange(const Enemy* target, const ViewProjection& viewProjection)
+bool LockOn::OutOfRange(const Enemy* target, const ViewProjection& viewProjection, Player* player)
 {
 	// 敵のロックオン座標取得
 	Vector3 positionWorld = {
@@ -159,21 +179,36 @@ bool LockOn::OutOfRange(const Enemy* target, const ViewProjection& viewProjectio
 		target->GetTransform().matWorld_.m[3][1],
 		target->GetTransform().matWorld_.m[3][2] };
 	// ワールド座標から返還
+	//Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
+	Vector3 playerWorld = player->GetWorldPosition();
+
+	// ワールド→ビュー座標変換
 	Vector3 positionView = MatLib::Transform(positionWorld, viewProjection.matView);
 
-	if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
+	Vector3 enemyDirect = MathCalc::Normalize(VectorLib::Subtract(positionWorld, viewProjection.translate_));
+	Vector3 playerDirect = MathCalc::Normalize(VectorLib::Subtract(playerWorld, viewProjection.translate_));
 
-		// カメラ前方との角度を計算
-		Vector3 WorldView = { viewProjection.matView.m[3][0],viewProjection.matView.m[3][1],viewProjection.matView.m[3][2] };
-		float arcTangent = MathCalc::Dot(MathCalc::Normalize(positionView), MathCalc::Normalize(WorldView));
+	//if (minDistance_ <= positionView.z && positionView.z <= maxDistance_) {
 
-		// 角度条件チェック
-		if (std::fabsf(arcTangent) <= angleRange_) {
-			// 範囲外でない
-			return false;
-		}
+	//	// カメラ前方との角度を計算
+	//	Vector3 WorldView = { viewProjection.matView.m[3][0],viewProjection.matView.m[3][1],viewProjection.matView.m[3][2] };
+	//	float arcTangent = MathCalc::Dot(MathCalc::Normalize(positionView), MathCalc::Normalize(WorldView));
+
+	//	// 角度条件チェック
+	//	if (std::fabsf(arcTangent) <= angleRange_) {
+	//		// 範囲外でない
+	//		return false;
+	//	}
+	//}
+
+	float dot = MathCalc::Dot(enemyDirect, playerDirect);
+	float distance = MathCalc::Length(VectorLib::Subtract(positionWorld, playerWorld));
+
+	if (minDistance_ <= distance && distance <= maxDistance_ && dot > 0.0f) {
+
+		return false;
+
 	}
-
 	// 範囲外である
 	return true;
 }

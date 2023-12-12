@@ -177,7 +177,8 @@ void GameScene::CameraUpdate()
 		viewProjection_.matProjection = followCamera_->GetView().matProjection;
 		viewProjection_.TransferMatrix();
 	}
-	lockOn_->Update(enemies_, viewProjection_);
+
+	lockOn_->Update(enemies_, viewProjection_, player_.get());
 }
 
 void GameScene::CheckCollision()
@@ -219,9 +220,10 @@ void GameScene::EnemySpawn()
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ 0,0,50.0f });
+	enemy->SetPosition(Vector3{ 0,0,70.0f });
 	enemy->UpdateCollider();
 	enemy->SetWeapon(player_->GetWeapon());
+	enemy->SetIsMove(true);
 	enemies_.push_back(std::move(enemy));
 	// 2
 	enemy = std::make_unique<Enemy>();
