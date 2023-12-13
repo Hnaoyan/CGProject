@@ -163,7 +163,7 @@ void Player::Update()
 	}
 
 	if (behavior_ == Behavior::kAttack) {
-		isAttack_ = true;
+		//isAttack_ = true;
 	}
 	else {
 		isAttack_ = false;
@@ -464,6 +464,7 @@ void Player::BehaviorAttackUpdate()
 			workAttack_.attackParameter_ = 0u;
 			workAttack_.attackTimer_ = 0u;
 			workAttack_.inComboPhase_ = 0u;
+			isAttack_ = false;
 
 			// 攻撃の判定
 			weapon_->SetIsAttack(false);
@@ -614,6 +615,10 @@ void Player::AttackCombo1()
 			workAttack_.attackTimer_ = 0;
 			break;
 		}
+		if (workAttack_.attackRate_ > 0.5f) {
+			isAttack_ = true;
+		}
+
 		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, 0, kEndRotation);
 		worldTransformL_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, initRot_, kEndRotation + initRot_);
 		worldTransformR_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, initRot_, kEndRotation + initRot_);
@@ -676,6 +681,9 @@ void Player::AttackCombo2()
 		if (workAttack_.attackRate_ >= 1.0f) {
 			workAttack_.attackRate_ = 1.0f;
 		}
+		if (workAttack_.attackRate_ > 0.5f) {
+			isAttack_ = true;
+		}
 
 		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, 0, kMidPoint);
 		worldTransformL_Arm_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, initRot_, kArmMid);
@@ -736,6 +744,9 @@ void Player::AttackCombo3()
 		workAttack_.attackRate_ = (float)workAttack_.attackTimer_ / kConstAttacks_[workAttack_.comboIndex_].swingTime_;
 		if (workAttack_.attackRate_ >= 1.0f) {
 			workAttack_.attackRate_ = 1.0f;
+		}
+		if (workAttack_.attackRate_ > 0.5f) {
+			isAttack_ = true;
 		}
 
 		worldTransformWeapon_.rotation_.x = MathCalc::EaseInCubicF(workAttack_.attackRate_, 0, kMidPoint);

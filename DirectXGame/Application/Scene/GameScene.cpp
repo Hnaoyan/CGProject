@@ -83,6 +83,7 @@ void GameScene::Update()
 		enemies_.clear();
 		player_->DeadToRestart(Vector3(0, 1.0f, 0));
 		EnemySpawn();
+		lockOn_->ResetTarget();
 	}
 
 	groundManager_->Update();
@@ -216,6 +217,10 @@ void GameScene::EnemySpawn()
 
 #pragma region Enemy
 	std::unique_ptr<Enemy> enemy;
+
+	float frontZ = 20.0f;
+	float backZ = 30.0f;
+
 	// 1
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
@@ -229,7 +234,7 @@ void GameScene::EnemySpawn()
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ 10.0f,0,20.0f });
+	enemy->SetPosition(Vector3{ 5.0f,0,frontZ });
 	enemy->UpdateCollider();
 	enemy->SetWeapon(player_->GetWeapon());
 	enemies_.push_back(std::move(enemy));
@@ -237,7 +242,7 @@ void GameScene::EnemySpawn()
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ -10.0f,0,20.0f });
+	enemy->SetPosition(Vector3{ -5.0f,0,frontZ });
 	enemy->UpdateCollider();
 	enemy->SetWeapon(player_->GetWeapon());
 	enemies_.push_back(std::move(enemy));
@@ -245,7 +250,7 @@ void GameScene::EnemySpawn()
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ -20.0f,0,50.0f });
+	enemy->SetPosition(Vector3{ -10.0f,0,backZ });
 	enemy->UpdateCollider();
 	enemy->SetWeapon(player_->GetWeapon());
 	enemies_.push_back(std::move(enemy));
@@ -254,7 +259,7 @@ void GameScene::EnemySpawn()
 	enemy = std::make_unique<Enemy>();
 	enemy->Initialize(model_.get());
 	enemy->SetModel(models);
-	enemy->SetPosition(Vector3{ 20.0f,0,50.0f });
+	enemy->SetPosition(Vector3{ 10.0f,0,backZ });
 	enemy->UpdateCollider();
 	enemy->SetWeapon(player_->GetWeapon());
 	enemies_.push_back(std::move(enemy));
