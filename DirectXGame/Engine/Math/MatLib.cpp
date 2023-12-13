@@ -1,6 +1,5 @@
 #include "MatLib.h"
-#include "VectorLib.h"
-#include "MathCalc.h"
+#include "MathLib.h"
 
 #include <cmath>
 #include <cassert>

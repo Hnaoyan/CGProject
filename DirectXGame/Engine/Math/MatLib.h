@@ -1,6 +1,6 @@
 #pragma once
 #include "StructManager.h"
-#include "QuatLib.h"
+#include "MathLib.h"
 
 class MatLib
 {

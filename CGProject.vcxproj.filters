@@ -210,7 +210,7 @@
     <ClCompile Include="DirectXGame\Engine\Collider\CollisionManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Math\VectorLib.cpp">
+    <ClCompile Include="DirectXGame\Engine\Math\Vector\VectorLib.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp">
@@ -243,13 +243,13 @@
     <ClCompile Include="DirectXGame\Engine\Math\QuatLib.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Math\Vector3.cpp">
+    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector3.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Math\Vector2.cpp">
+    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector2.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Math\Vector4.cpp">
+    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector4.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Audio\AudioManager.cpp">
@@ -368,7 +368,7 @@
     <ClInclude Include="DirectXGame\Engine\Collider\CollisionManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Math\VectorLib.h">
+    <ClInclude Include="DirectXGame\Engine\Math\Vector\VectorLib.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h">
@@ -401,16 +401,19 @@
     <ClInclude Include="DirectXGame\Engine\Math\QuatLib.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Math\Vector3.h">
+    <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector3.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Math\Vector2.h">
+    <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector2.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Math\Vector4.h">
+    <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector4.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Audio\AudioManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\Math\MathLib.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

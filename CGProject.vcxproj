@@ -193,7 +193,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\main.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\MathCalc.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\MatLib.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\VectorLib.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector\VectorLib.cpp" />
     <ClCompile Include="DirectXGame\MyGame.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\FollowCamera.cpp" />
     <ClCompile Include="DirectXGame\Engine\Other\GlobalVariables.cpp" />
@@ -207,9 +207,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Weapon.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\TestScene.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\Vector3.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\Vector2.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\Vector4.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector3.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector2.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Engine\Audio\AudioManager.h" />
@@ -245,9 +245,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Particle\ParticleManager.h" />
     <ClInclude Include="DirectXGame\Engine\Input\Input.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MathCalc.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\MathLib.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MatLib.h" />
     <ClInclude Include="DirectXGame\Engine\Math\QuatLib.h" />
-    <ClInclude Include="DirectXGame\Engine\Math\VectorLib.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector\VectorLib.h" />
     <ClInclude Include="DirectXGame\MyGame.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\FollowCamera.h" />
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h" />
@@ -261,9 +262,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Weapon.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\LockOn.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\TestScene.h" />
-    <ClInclude Include="DirectXGame\Engine\Math\Vector3.h" />
-    <ClInclude Include="DirectXGame\Engine\Math\Vector2.h" />
-    <ClInclude Include="DirectXGame\Engine\Math\Vector4.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector3.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector2.h" />
+    <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
