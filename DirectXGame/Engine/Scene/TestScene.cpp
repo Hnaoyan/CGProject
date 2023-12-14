@@ -67,6 +67,8 @@ void TestScene::Update()
 
 	planeModel_->SetAlphaValue(alphaValue_);
 
+	ImGui::ShowDemoWindow();
+
 }
 
 void TestScene::Draw()
