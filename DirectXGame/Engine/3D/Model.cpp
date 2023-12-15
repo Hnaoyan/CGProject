@@ -103,15 +103,19 @@ void Model::InitializeGraphicsPipeline()
 	descRangeSRV = D3D12Lib::Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 
 	// ルートパラメータ
-	D3D12_ROOT_PARAMETER rootparams[5];
-	rootparams[0] = D3D12Lib::InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+	D3D12_ROOT_PARAMETER rootparams[static_cast<int>(RootParameter::kCountOfParameter)];
+	rootparams[static_cast<int>(RootParameter::kWorldTransform)] = D3D12Lib::InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 	// Instancing用のやつ
 	//uint32_t instancing = 1;
 	//rootparams[1] = D3D12Lib::InitAsDescriptorTable(instancing, &descRangeSRV, D3D12_SHADER_VISIBILITY_VERTEX);
-	rootparams[1] = D3D12Lib::InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
-	rootparams[2] = D3D12Lib::InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
-	rootparams[3] = D3D12Lib::InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
-	rootparams[4] = D3D12Lib::InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
+	// View
+	rootparams[static_cast<int>(RootParameter::kViewProjection)] = D3D12Lib::InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
+	// マテリアル
+	rootparams[static_cast<int>(RootParameter::kMaterial)] = D3D12Lib::InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_PIXEL);
+	// テクスチャ
+	rootparams[static_cast<int>(RootParameter::kTexture)] = D3D12Lib::InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_PIXEL);
+	// ライト
+	rootparams[static_cast<int>(RootParameter::kLight)] = D3D12Lib::InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
 	// スタティックサンプラー
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[1];

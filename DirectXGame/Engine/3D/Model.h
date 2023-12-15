@@ -25,12 +25,13 @@
 class Model
 {
 public:
-	enum class RootParameter {
+	enum class RootParameter : int{
 		kWorldTransform,
 		kViewProjection,
 		kMaterial,
 		kTexture,
 		kLight,
+		kCountOfParameter,	// サイズを取得する為の値
 	};
 
 	enum class BlendMode : int {
@@ -47,7 +48,7 @@ private:
 	static const std::string kBaseDirectory;
 	static const std::string kDefaultName;
 
-private:	// 静的メンバ変数
+private: // パイプラインの設定
 	// デスクリプタサイズ
 	static UINT sDescriptorHandleIncrementSize_;
 	// コマンドリスト
@@ -60,7 +61,7 @@ private:	// 静的メンバ変数
 	// ライト
 	static std::unique_ptr<LightGroup> lightGroup_;
 
-private:
+private: // モデル管理の内訳
 	// 名前
 	std::string name_;
 	// メッシュ

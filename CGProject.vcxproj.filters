@@ -436,6 +436,8 @@
     <FxCompile Include="resources\shaders\ObjVS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shaders\ParticlePS.hlsl" />
+    <FxCompile Include="Resources\shaders\ParticleVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -444,5 +446,6 @@
     <None Include="resources\shaders\Obj.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
+    <None Include="Resources\shaders\Particle.hlsli" />
   </ItemGroup>
 </Project>
