@@ -11,6 +11,7 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 using namespace Microsoft::WRL;
+using namespace Pipeline;
 
 /// <summary>
 /// 静的変数の実体化
@@ -21,7 +22,7 @@ UINT Model::sDescriptorHandleIncrementSize_ = 0;
 ID3D12GraphicsCommandList* Model::sCommandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Model::sRootSignature_;
 //ComPtr<ID3D12PipelineState> Model::sPipelineState_;
-std::array<ComPtr<ID3D12PipelineState>, size_t(Model::BlendMode::kCountOfBlendMode)> Model::sPipelineStates_;
+std::array<ComPtr<ID3D12PipelineState>, size_t(BlendMode::kCountOfBlendMode)> Model::sPipelineStates_;
 std::unique_ptr<LightGroup> Model::lightGroup_;
 
 void Model::StaticInitialize()

@@ -3,6 +3,7 @@
 #include <array>
 #include "WindowAPI.h"
 #include "StructManager.h"
+#include "Graphic/PipelineManager.h"
 
 #include <dxgidebug.h>
 #include <dxcapi.h>
@@ -33,16 +34,6 @@ public:	// サブクラス
 		Vector3 scale;
 		Vector3 rotate;
 		Vector3 translate;
-	};
-
-	enum class BlendMode : int {
-		kNone,
-		kNormal,
-		kAdd,
-		kSubtract,
-		kMultiply,
-		kScreen,
-		kCountOfBlendMode,
 	};
 
 public:	// 静的メンバ関数
@@ -83,7 +74,7 @@ private:	// 静的メンバ変数
 
 	// パイプラインステートオブジェ
 	static std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
-		size_t(BlendMode::kCountOfBlendMode)> sPipelineStates_;
+		size_t(Pipeline::BlendMode::kCountOfBlendMode)> sPipelineStates_;
 
 	//static Microsoft::WRL::ComPtr<ID3D12PipelineState> gPipelineState_;
 	// デスクリプタサイズ
@@ -186,7 +177,7 @@ public:
 	/// ブレンドの設定
 	/// </summary>
 	/// <param name="mode"></param>
-	void SetBlendMode(BlendMode mode) { blendMode_ = mode; }
+	void SetBlendMode(Pipeline::BlendMode mode) { blendMode_ = mode; }
 
 	/// <summary>
 	/// 表示か非表示かの設定
@@ -263,6 +254,6 @@ private:	// メンバ関数
 
 	D3D12_RESOURCE_DESC resourceDesc_{};
 
-	BlendMode blendMode_ = BlendMode::kNormal;
+	Pipeline::BlendMode blendMode_ = Pipeline::BlendMode::kNormal;
 };
 

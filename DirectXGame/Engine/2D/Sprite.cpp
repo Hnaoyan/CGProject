@@ -8,6 +8,7 @@
 #include "MathCalc.h"
 
 using namespace Microsoft::WRL;
+using namespace Pipeline;
 
 ID3D12Device* Sprite::sDevice_ = nullptr;
 ID3D12GraphicsCommandList* Sprite::sCommandList_;
@@ -15,7 +16,7 @@ UINT Sprite::sDescriptorHandleIncrementSize_;
 Matrix4x4 Sprite::sMatProjection_;
 
 ComPtr<ID3D12RootSignature> Sprite::sRootSignature_;
-std::array<ComPtr<ID3D12PipelineState>, size_t(Sprite::BlendMode::kCountOfBlendMode)> Sprite::sPipelineStates_;
+std::array<ComPtr<ID3D12PipelineState>, size_t(BlendMode::kCountOfBlendMode)> Sprite::sPipelineStates_;
 
 //ComPtr<ID3D12PipelineState> Sprite::gPipelineState_;
 

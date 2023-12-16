@@ -11,6 +11,7 @@
 #include <wrl.h>
 #include <unordered_map>
 #include "LightGroup.h"
+#include "Graphic/PipelineManager.h"
 
 #include <dxgidebug.h>
 #include <dxcapi.h>
@@ -25,24 +26,24 @@
 class Model
 {
 public:
-	enum class RootParameter : int{
-		kWorldTransform,
-		kViewProjection,
-		kMaterial,
-		kTexture,
-		kLight,
-		kCountOfParameter,	// サイズを取得する為の値
-	};
+	//enum class RootParameter : int{
+	//	kWorldTransform,
+	//	kViewProjection,
+	//	kMaterial,
+	//	kTexture,
+	//	kLight,
+	//	kCountOfParameter,	// サイズを取得する為の値
+	//};
 
-	enum class BlendMode : int {
-		kNone,
-		kNormal,
-		kAdd,
-		kSubtract,
-		kMultiply,
-		kScreen,
-		kCountOfBlendMode,
-	};
+	//enum class BlendMode : int {
+	//	kNone,
+	//	kNormal,
+	//	kAdd,
+	//	kSubtract,
+	//	kMultiply,
+	//	kScreen,
+	//	kCountOfBlendMode,
+	//};
 
 private:
 	static const std::string kBaseDirectory;
@@ -57,7 +58,7 @@ private: // パイプラインの設定
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
 	// パイプラインステートオブジェ
 	static std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
-		size_t(BlendMode::kCountOfBlendMode)> sPipelineStates_;
+		size_t(Pipeline::BlendMode::kCountOfBlendMode)> sPipelineStates_;
 	// ライト
 	static std::unique_ptr<LightGroup> lightGroup_;
 
@@ -71,7 +72,7 @@ private: // モデル管理の内訳
 	// デフォルトマテリアル
 	Material* defaultMaterial_ = nullptr;
 	// ブレンド
-	BlendMode blendMode_ = BlendMode::kNormal;
+	Pipeline::BlendMode blendMode_ = Pipeline::BlendMode::kNormal;
 
 	float alphaValue_ = 1.0f;
 
@@ -144,7 +145,7 @@ public:
 
 	float GetAlphaValue();
 
-	void SetBlendMode(BlendMode blendMode) { blendMode_ = blendMode; }
+	void SetBlendMode(Pipeline::BlendMode blendMode) { blendMode_ = blendMode; }
 
 	void SetMaterial(Material* material);
 
