@@ -28,14 +28,11 @@ void PipelineManager::CreatePipeline()
 	ComPtr<ID3DBlob> rootSigBlob;
 
 	// 頂点シェーダの読み込みとコンパイル
-	//vsBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/ObjVS.hlsl",
-	//	L"vs_6_0");
 	vsBlob = Shader::GetInstance()->Compile(L"ObjVS.hlsl", L"vs_6_0");
 	assert(vsBlob != nullptr);
 
 	// ピクセルシェーダの読み込みとコンパイル
-	psBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/ObjPS.hlsl",
-		L"ps_6_0");
+	psBlob = Shader::GetInstance()->Compile(L"ObjPS.hlsl", L"ps_6_0");
 	assert(psBlob != nullptr);
 
 	// 頂点レイアウト
@@ -58,7 +55,7 @@ void PipelineManager::CreatePipeline()
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
 	gpipeline.VS = D3D12Lib::ShaderByteCode(vsBlob.Get());
 	gpipeline.PS = D3D12Lib::ShaderByteCode(psBlob.Get());
-
+	
 	// サンプルマスク
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// ラスタライザステート
