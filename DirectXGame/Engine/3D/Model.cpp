@@ -2,6 +2,7 @@
 #include "DirectXCommon.h"
 #include "D3D12Lib.h"
 #include "StringManager.h"
+#include "Graphics/Shader.h"
 
 #include <string>
 #include <cassert>
@@ -21,7 +22,6 @@ const std::string Model::kDefaultName = "cube";
 UINT Model::sDescriptorHandleIncrementSize_ = 0;
 ID3D12GraphicsCommandList* Model::sCommandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Model::sRootSignature_;
-//ComPtr<ID3D12PipelineState> Model::sPipelineState_;
 std::array<ComPtr<ID3D12PipelineState>, size_t(BlendMode::kCountOfBlendMode)> Model::sPipelineStates_;
 std::unique_ptr<LightGroup> Model::lightGroup_;
 
@@ -45,13 +45,11 @@ void Model::InitializeGraphicsPipeline()
 	ComPtr<ID3DBlob> rootSigBlob;
 
 	// 頂点シェーダの読み込みとコンパイル
-	vsBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/ObjVS.hlsl",
-		L"vs_6_0");
+	vsBlob = Shader::GetInstance()->Compile(L"ObjVS.hlsl", L"vs_6_0");
 	assert(vsBlob != nullptr);
 
 	// ピクセルシェーダの読み込みとコンパイル
-	psBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/ObjPS.hlsl",
-		L"ps_6_0");
+	psBlob = Shader::GetInstance()->Compile(L"ObjPS.hlsl", L"ps_6_0");
 	assert(psBlob != nullptr);
 
 	// 頂点レイアウト

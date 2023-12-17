@@ -211,7 +211,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector2.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector4.cpp" />
     <ClCompile Include="DirectXGame\Engine\Map\MapLoader.cpp" />
-    <ClCompile Include="DirectXGame\Engine\3D\Graphic\PipelineManager.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\Graphics\PipelineManager.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\Graphics\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Engine\Audio\AudioManager.h" />
@@ -268,7 +269,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector2.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector4.h" />
     <ClInclude Include="DirectXGame\Engine\Map\MapLoader.h" />
-    <ClInclude Include="DirectXGame\Engine\3D\Graphic\PipelineManager.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Graphics\PipelineManager.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Graphics\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

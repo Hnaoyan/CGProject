@@ -11,7 +11,7 @@
 #include <wrl.h>
 #include <unordered_map>
 #include "LightGroup.h"
-#include "Graphic/PipelineManager.h"
+#include "Graphics/PipelineManager.h"
 
 #include <dxgidebug.h>
 #include <dxcapi.h>

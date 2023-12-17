@@ -8,6 +8,7 @@
 #include "TextureManager.h"
 #include "Model.h"
 #include "Sprite.h"
+#include "Graphics/Shader.h"
 #include <memory>
 
 class Framework

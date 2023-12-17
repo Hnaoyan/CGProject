@@ -258,7 +258,10 @@
     <ClCompile Include="DirectXGame\Engine\Map\MapLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\3D\Graphic\PipelineManager.cpp">
+    <ClCompile Include="DirectXGame\Engine\3D\Graphics\PipelineManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\3D\Graphics\Shader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -425,7 +428,10 @@
     <ClInclude Include="DirectXGame\Engine\Map\MapLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\3D\Graphic\PipelineManager.h">
+    <ClInclude Include="DirectXGame\Engine\3D\Graphics\PipelineManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Graphics\Shader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

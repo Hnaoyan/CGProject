@@ -52,6 +52,8 @@ void Framework::Initialize()
 	TextureManager::GetInstance()->Initialize(dxCommon->GetDevice());
 	TextureManager::Load("white1x1.png");
 
+	Shader::Initialize();
+
 	// スプライトインスタンス
 	Sprite::StaticInitialize(dxCommon->GetDevice(), (int)WindowAPI::kClientWidth, (int)WindowAPI::kClientHeight);
 
