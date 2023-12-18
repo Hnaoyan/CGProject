@@ -1,4 +1,5 @@
 #include "DirectXCommon.h"
+#include "Graphics/PipelineManager.h"
 #include <cassert>
 
 using namespace Microsoft::WRL;
@@ -34,6 +35,7 @@ void DirectXCommon::Initialize(WindowAPI* winApp, int32_t bufferWidth, int32_t b
 
 	// フェンスの生成
 	CreateFence();
+
 
 }
 

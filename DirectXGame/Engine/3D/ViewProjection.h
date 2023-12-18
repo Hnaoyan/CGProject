@@ -1,5 +1,6 @@
 #pragma once
 #include "StructManager.h"
+#include "CBuffer.h"
 #include <wrl.h>
 #include <d3d12.h>
 #include <numbers>

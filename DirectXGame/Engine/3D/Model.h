@@ -83,11 +83,6 @@ public:
 	static void StaticInitialize();
 
 	/// <summary>
-	/// グラフィックスの初期化
-	/// </summary>
-	static void InitializeGraphicsPipeline();
-
-	/// <summary>
 	/// モデル生成
 	/// </summary>
 	/// <returns></returns>

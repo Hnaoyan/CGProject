@@ -1,9 +1,10 @@
 
-cbuffer WorldTransform : register(b0)
+struct WorldTransform
 {
     matrix world;
 };
 
+StructuredBuffer<WorldTransform> gWorldTransform : register(t0);
 
 cbuffer ViewProjection : register(b1)
 {

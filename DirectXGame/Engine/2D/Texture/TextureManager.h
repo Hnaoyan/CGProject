@@ -6,22 +6,22 @@
 #include "DirectXTex.h"
 #include "d3dx12.h"
 
+struct Texture {
+	// テクスチャリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> resource;
+	// シェーダーリソースビューのハンドル（CPU）
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
+	// シェーダーリソースビューのハンドル（GPU）
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
+	// 名前
+	std::string name;
+};
+
 class TextureManager
 {
 public:
 	
 	static const size_t kNumDescriptor = 256;
-
-	struct Texture {
-		// テクスチャリソース
-		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
-		// シェーダーリソースビューのハンドル（CPU）
-		D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
-		// シェーダーリソースビューのハンドル（GPU）
-		D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
-		// 名前
-		std::string name;
-	};
 
 	/// <summary>
 	/// 読み込み

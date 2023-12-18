@@ -49,12 +49,20 @@ namespace Pipeline
 
 class PipelineManager
 {
+public:
+	static PipelineManager* GetInstance() {
+		static PipelineManager instance;
+		return &instance;
+	}
 
 public:
 	// パイプラインステート
-	static std::array<
-		std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, size_t(Pipeline::BlendMode::kCountOfBlendMode)>,
-		size_t(Pipeline::DrawType::kCountOfDrawer)> sPipelineStates_;
+	//static std::array<
+	//	std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, size_t(Pipeline::BlendMode::kCountOfBlendMode)>,
+	//	size_t(Pipeline::DrawType::kCountOfDrawer)> sPipelineStates_;
+	static std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
+		size_t(Pipeline::BlendMode::kCountOfBlendMode)> sPipelineStates_;
+
 	// ルートシグネチャ
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
 
@@ -64,5 +72,6 @@ public:
 private:
 	static D3D12_RASTERIZER_DESC SetRasterizerState(D3D12_FILL_MODE fillMode, D3D12_CULL_MODE cullMode);
 	static D3D12_INPUT_ELEMENT_DESC SetInputLayout(const char* semanticName,DXGI_FORMAT format);
+	static D3D12_BLEND_DESC SetBlendDesc(D3D12_BLEND srcBlend, D3D12_BLEND_OP blendOp, D3D12_BLEND destBlend);
 };
 

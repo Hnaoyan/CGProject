@@ -150,7 +150,7 @@
     <ClCompile Include="DirectXGame\Engine\Base\StringManager.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Base\TextureManager.cpp">
+    <ClCompile Include="DirectXGame\Engine\2D\Texture\TextureManager.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Base\WindowAPI.cpp">
@@ -264,6 +264,12 @@
     <ClCompile Include="DirectXGame\Engine\3D\Graphics\Shader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\3D\Descriptor\SRV.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Engine\D3D12Lib\D3D12Lib.h">
@@ -314,10 +320,10 @@
     <ClInclude Include="DirectXGame\Engine\Base\StringManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Base\StructManager.h">
+    <ClInclude Include="DirectXGame\Engine\3D\StructManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Base\TextureManager.h">
+    <ClInclude Include="DirectXGame\Engine\2D\Texture\TextureManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Base\WindowAPI.h">
@@ -434,6 +440,15 @@
     <ClInclude Include="DirectXGame\Engine\3D\Graphics\Shader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\CBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Descriptor\SRV.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
@@ -448,8 +463,12 @@
     <FxCompile Include="resources\shaders\ObjVS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shaders\ParticlePS.hlsl" />
-    <FxCompile Include="Resources\shaders\ParticleVS.hlsl" />
+    <FxCompile Include="Resources\shaders\ParticlePS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\ParticleVS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -458,6 +477,8 @@
     <None Include="resources\shaders\Obj.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
-    <None Include="Resources\shaders\Particle.hlsli" />
+    <None Include="Resources\shaders\Particle.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>

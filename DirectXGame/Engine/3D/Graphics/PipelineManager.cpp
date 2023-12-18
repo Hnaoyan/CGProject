@@ -14,11 +14,12 @@
 using namespace Microsoft::WRL;
 using namespace Pipeline;
 
-std::array<
-	std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, size_t(Pipeline::BlendMode::kCountOfBlendMode)>,
-	size_t(Pipeline::DrawType::kCountOfDrawer)> PipelineManager::sPipelineStates_;
+//std::array<
+//	std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, size_t(Pipeline::BlendMode::kCountOfBlendMode)>,
+//	size_t(Pipeline::DrawType::kCountOfDrawer)> PipelineManager::sPipelineStates_;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> PipelineManager::sRootSignature_;
-
+std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
+	size_t(Pipeline::BlendMode::kCountOfBlendMode)> PipelineManager::sPipelineStates_;
 void PipelineManager::CreatePipeline()
 {
 	HRESULT result = S_FALSE;
@@ -36,19 +37,30 @@ void PipelineManager::CreatePipeline()
 	assert(psBlob != nullptr);
 
 	// 頂点レイアウト
+	//D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
+	//	{
+	//		"POSITION",	0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+	//		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
+	//	},
+	//	{
+	//		"NORMAL",	0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+	//		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
+	//	},
+	//	{
+	//		"TEXCOORD",	0,DXGI_FORMAT_R32G32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
+	//		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
+	//	},
+	//};
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		{
-			"POSITION",	0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
-		},
-		{
-			"NORMAL",	0,DXGI_FORMAT_R32G32B32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
-		},
-		{
-			"TEXCOORD",	0,DXGI_FORMAT_R32G32_FLOAT,0,D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
-		},
+	{
+		SetInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT)
+	},
+	{
+		SetInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT)
+	},
+	{
+		SetInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT)
+	},
 	};
 
 	// グラフィックスパイプライン
@@ -134,8 +146,7 @@ void PipelineManager::CreatePipeline()
 	gpipeline.pRootSignature = sRootSignature_.Get();
 
 #pragma region Blend
-	// ブレンド設定
-	// ブレンドなし
+// ブレンドなし
 	D3D12_BLEND_DESC blenddesc{};
 	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	blenddesc.RenderTarget[0].BlendEnable = false;
@@ -143,75 +154,60 @@ void PipelineManager::CreatePipeline()
 	// グラフィックスパイプラインの生成
 	result =
 		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
-			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kNone)][size_t(DrawType::kModel)]));
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kNone)]));
 	assert(SUCCEEDED(result));
-	// αブレンド
-	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blenddesc.RenderTarget[0].BlendEnable = TRUE;
-	// ここは基本変えない
-	blenddesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blenddesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blenddesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
-	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	// αブレンド
+	blenddesc = SetBlendDesc(D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_INV_SRC_ALPHA);
+
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
 	result =
 		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
-			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kNormal)][size_t(DrawType::kModel)]));
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kNormal)]));
 	assert(SUCCEEDED(result));
 
 	// 加算合成
-	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blenddesc = SetBlendDesc(D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE);
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
 	result =
 		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
-			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kAdd)][size_t(DrawType::kModel)]));
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kAdd)]));
 	assert(SUCCEEDED(result));
 
 	// 減算合成
-	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
-	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blenddesc = SetBlendDesc(D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_OP_REV_SUBTRACT, D3D12_BLEND_ONE);
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
 	result =
 		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
-			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kSubtract)][size_t(DrawType::kModel)]));
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kSubtract)]));
 	assert(SUCCEEDED(result));
 
 	// 乗算合成
-	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
-	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
+	blenddesc = SetBlendDesc(D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD, D3D12_BLEND_SRC_COLOR);
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
 	result =
 		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
-			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kMultiply)][size_t(DrawType::kModel)]));
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kMultiply)]));
 	assert(SUCCEEDED(result));
 
 	// スクリーン合成
-	blenddesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
-	blenddesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blenddesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
-#pragma endregion
+	blenddesc = SetBlendDesc(D3D12_BLEND_INV_DEST_COLOR, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE);
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
 	result =
 		DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
-			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kScreen)][size_t(DrawType::kModel)]));
+			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kScreen)]));
 	assert(SUCCEEDED(result));
+#pragma endregion
 
 }
 
@@ -240,4 +236,22 @@ D3D12_INPUT_ELEMENT_DESC PipelineManager::SetInputLayout(const char* semanticNam
     };
 
     return inputLayout;
+}
+
+D3D12_BLEND_DESC PipelineManager::SetBlendDesc(D3D12_BLEND srcBlend, D3D12_BLEND_OP blendOp, D3D12_BLEND destBlend)
+{
+	D3D12_BLEND_DESC blendDesc{};
+	// 初期設定
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+
+	// 基本設定
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	// 種類別設定
+	blendDesc.RenderTarget[0].SrcBlend = srcBlend;
+	blendDesc.RenderTarget[0].BlendOp = blendOp;
+	blendDesc.RenderTarget[0].DestBlend = destBlend;
+	return blendDesc;
 }

@@ -52,7 +52,10 @@ void Framework::Initialize()
 	TextureManager::GetInstance()->Initialize(dxCommon->GetDevice());
 	TextureManager::Load("white1x1.png");
 
+	// モデル用シェーダー初期化
 	Shader::Initialize();
+	// モデル用パイプラインの初期化
+	PipelineManager::CreatePipeline();
 
 	// スプライトインスタンス
 	Sprite::StaticInitialize(dxCommon->GetDevice(), (int)WindowAPI::kClientWidth, (int)WindowAPI::kClientHeight);

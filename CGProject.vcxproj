@@ -116,7 +116,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(SolutionDir)ImGui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\imgui;$(ProjectDir)DirectXGame;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Effect;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Particle;$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\FrameWork;$(ProjectDir)DirectXGame\Engine\UI;$(ProjectDir)DirectXGame\Application;$(ProjectDir)DirectXGame\Application\Scene;$(ProjectDir)DirectXGame\Application\GameObject;$(ProjectDir)DirectXGame\Application\GameObject\Area;$(ProjectDir)DirectXGame\Application\GameObject\Block;$(ProjectDir)DirectXGame\Application\GameObject\BlockManager;$(ProjectDir)DirectXGame\Application\GameObject\BossEnemy;$(ProjectDir)DirectXGame\Application\GameObject\Player;$(ProjectDir)DirectXGame\Application\GameObject\PlayerAttack;$(ProjectDir)DirectXGame\Application\GameObject\Other;$(ProjectDir)DirectXGame\Application\GameObject\Ground;$(ProjectDir)DirectXGame\Application\GameObject\Particle;$(ProjectDir)DirectXGame\Application\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ImGui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\imgui;$(ProjectDir)DirectXGame;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\2D\Texture;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Effect;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Particle;$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\FrameWork;$(ProjectDir)DirectXGame\Engine\UI;$(ProjectDir)DirectXGame\Application;$(ProjectDir)DirectXGame\Application\Scene;$(ProjectDir)DirectXGame\Application\GameObject;$(ProjectDir)DirectXGame\Application\GameObject\Area;$(ProjectDir)DirectXGame\Application\GameObject\Block;$(ProjectDir)DirectXGame\Application\GameObject\BlockManager;$(ProjectDir)DirectXGame\Application\GameObject\BossEnemy;$(ProjectDir)DirectXGame\Application\GameObject\Player;$(ProjectDir)DirectXGame\Application\GameObject\PlayerAttack;$(ProjectDir)DirectXGame\Application\GameObject\Other;$(ProjectDir)DirectXGame\Application\GameObject\Ground;$(ProjectDir)DirectXGame\Application\GameObject\Particle;$(ProjectDir)DirectXGame\Application\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -141,7 +141,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>$(SolutionDir)ImGui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\imgui;$(ProjectDir)DirectXGame;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Effect;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Particle;$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\FrameWork;$(ProjectDir)DirectXGame\Engine\UI;$(ProjectDir)DirectXGame\Application;$(ProjectDir)DirectXGame\Application\Scene;$(ProjectDir)DirectXGame\Application\GameObject;$(ProjectDir)DirectXGame\Application\GameObject\Area;$(ProjectDir)DirectXGame\Application\GameObject\Block;$(ProjectDir)DirectXGame\Application\GameObject\BlockManager;$(ProjectDir)DirectXGame\Application\GameObject\BossEnemy;$(ProjectDir)DirectXGame\Application\GameObject\Player;$(ProjectDir)DirectXGame\Application\GameObject\PlayerAttack;$(ProjectDir)DirectXGame\Application\GameObject\Other;$(ProjectDir)DirectXGame\Application\GameObject\Ground;$(ProjectDir)DirectXGame\Application\GameObject\Particle;$(ProjectDir)DirectXGame\Application\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ImGui;$(ProjectDir)externals\nlohmann;$(ProjectDir)externals\DirectXTex;$(ProjectDir)externals\imgui;$(ProjectDir)DirectXGame;$(ProjectDir)DirectXGame\Engine;$(ProjectDir)DirectXGame\Engine\2D;$(ProjectDir)DirectXGame\Engine\2D\Texture;$(ProjectDir)DirectXGame\Engine\3D;$(ProjectDir)DirectXGame\Engine\Audio;$(ProjectDir)DirectXGame\Engine\Base;$(ProjectDir)DirectXGame\Engine\Camera;$(ProjectDir)DirectXGame\Engine\Collider;$(ProjectDir)DirectXGame\Engine\D3D12Lib;$(ProjectDir)DirectXGame\Engine\Effect;$(ProjectDir)DirectXGame\Engine\Input;$(ProjectDir)DirectXGame\Engine\Math;$(ProjectDir)DirectXGame\Engine\Other;$(ProjectDir)DirectXGame\Engine\Particle;$(ProjectDir)DirectXGame\Engine\Scene;$(ProjectDir)DirectXGame\Engine\FrameWork;$(ProjectDir)DirectXGame\Engine\UI;$(ProjectDir)DirectXGame\Application;$(ProjectDir)DirectXGame\Application\Scene;$(ProjectDir)DirectXGame\Application\GameObject;$(ProjectDir)DirectXGame\Application\GameObject\Area;$(ProjectDir)DirectXGame\Application\GameObject\Block;$(ProjectDir)DirectXGame\Application\GameObject\BlockManager;$(ProjectDir)DirectXGame\Application\GameObject\BossEnemy;$(ProjectDir)DirectXGame\Application\GameObject\Player;$(ProjectDir)DirectXGame\Application\GameObject\PlayerAttack;$(ProjectDir)DirectXGame\Application\GameObject\Other;$(ProjectDir)DirectXGame\Application\GameObject\Ground;$(ProjectDir)DirectXGame\Application\GameObject\Particle;$(ProjectDir)DirectXGame\Application\GameObject\SkyDome;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
@@ -174,7 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Base\DirectXCommon.cpp" />
     <ClCompile Include="DirectXGame\Engine\Base\ImGuiManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Base\StringManager.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Base\TextureManager.cpp" />
+    <ClCompile Include="DirectXGame\Engine\2D\Texture\TextureManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Base\WindowAPI.cpp" />
     <ClCompile Include="DirectXGame\Engine\Camera\BaseCamera.cpp" />
     <ClCompile Include="DirectXGame\Engine\Collider\Collider.cpp" />
@@ -213,8 +214,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Map\MapLoader.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Graphics\PipelineManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Graphics\Shader.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\Descriptor\SRV.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\CBuffer.h" />
     <ClInclude Include="DirectXGame\Engine\Audio\AudioManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h" />
     <ClInclude Include="DirectXGame\Engine\2D\Sprite.h" />
@@ -231,8 +235,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Base\DirectXCommon.h" />
     <ClInclude Include="DirectXGame\Engine\Base\ImGuiManager.h" />
     <ClInclude Include="DirectXGame\Engine\Base\StringManager.h" />
-    <ClInclude Include="DirectXGame\Engine\Base\StructManager.h" />
-    <ClInclude Include="DirectXGame\Engine\Base\TextureManager.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\StructManager.h" />
+    <ClInclude Include="DirectXGame\Engine\2D\Texture\TextureManager.h" />
     <ClInclude Include="DirectXGame\Engine\Base\WindowAPI.h" />
     <ClInclude Include="DirectXGame\Engine\Camera\BaseCamera.h" />
     <ClInclude Include="DirectXGame\Engine\Collider\Collider.h" />
@@ -271,6 +275,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Map\MapLoader.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Graphics\PipelineManager.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Graphics\Shader.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Descriptor\SRV.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
