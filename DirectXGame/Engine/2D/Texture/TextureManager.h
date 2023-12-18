@@ -10,9 +10,9 @@ struct Texture {
 	// テクスチャリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource;
 	// シェーダーリソースビューのハンドル（CPU）
-	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV{};
 	// シェーダーリソースビューのハンドル（GPU）
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV;
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV{};
 	// 名前
 	std::string name;
 };
@@ -71,8 +71,6 @@ private:
 	UINT sDescriptorHandleIncrementSize_ = 0u;
 	// ディレクトリパス
 	std::string directoryPath_;
-	// デスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_;
 	// 次に使うデスクリプタヒープの番号
 	uint32_t indexNextDescriptorHeap_ = 0u;
 	// テクスチャコンテナ

@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include "StringManager.h"
+#include "Descriptor/DescriptorManager.h"
 #include "D3D12Lib.h"
 
 uint32_t TextureManager::Load(const std::string& fileName)
@@ -88,12 +89,12 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	}
 
 	// SRVを作成するDescriptorHeapの場所を決める
-	texture.cpuDescHandleSRV = descriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-	texture.gpuDescHandleSRV = descriptorHeap_->GetGPUDescriptorHandleForHeapStart();
+	texture.cpuDescHandleSRV = DescriptorManager::GetInstance()->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+	texture.gpuDescHandleSRV = DescriptorManager::GetInstance()->GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
 
 	// 先頭は使われているためその次
-	texture.cpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
-	texture.gpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
+	texture.cpuDescHandleSRV.ptr += handle * static_cast<uint32_t>(sDescriptorHandleIncrementSize_);
+	texture.gpuDescHandleSRV.ptr += handle * static_cast<uint32_t>(sDescriptorHandleIncrementSize_);
 
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -137,15 +138,7 @@ void TextureManager::Initialize(ID3D12Device* device, std::string directoryPath)
 
 void TextureManager::ResetAll()
 {
-	HRESULT result = S_FALSE;
-
-	// デスクリプタヒープを生成
-	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
-	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	descHeapDesc.NumDescriptors = kNumDescriptor;
-	result = device_->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descriptorHeap_));
-	assert(SUCCEEDED(result));
+	DescriptorManager::GetInstance()->ResetDescriptor(device_, kNumDescriptor);
 
 	indexNextDescriptorHeap_ = 0;
 
@@ -169,7 +162,9 @@ void TextureManager::SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* c
 {
 	// デスクリプタヒープの配列
 	assert(textureHandle < textures_.size());
-	ID3D12DescriptorHeap* ppHeaps[] = { descriptorHeap_.Get() };
+	//ID3D12DescriptorHeap* ppHeaps[] = { descriptorHeap_.Get() };
+	ID3D12DescriptorHeap* ppHeaps[] = { DescriptorManager::GetInstance()->GetDescriptorHeap() };
+	
 	commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 	// シェーダリソースビューをセット
