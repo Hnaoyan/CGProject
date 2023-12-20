@@ -1,5 +1,18 @@
 #include "DescriptorManager.h"
 
+void DescriptorManager::StaticInitialize()
+{
+	dxCommon_ = DirectXCommon::GetInstance();
+	srvHeap_ = std::make_unique<SRV>();
+	srvHeap_->StaticInitialize(dxCommon_);
+
+}
+
+void DescriptorManager::Finalize()
+{
+	srvHeap_->GetSRV()->Release();
+}
+
 void DescriptorManager::ResetDescriptor(ID3D12Device* device, UINT numSize)
 {
 	HRESULT result = S_FALSE;

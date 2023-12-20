@@ -8,18 +8,8 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 
-#include "CollisionManager.h"
-#include "FollowCamera.h"
 #include "IScene.h"
 #include "BaseCamera.h"
-
-#include "Player.h"
-#include "Enemy.h"
-#include "Goal.h"
-#include "LockOn.h"
-
-#include "GroundManager.h"
-#include "SkyDome.h"
 
 #include <memory>
 
@@ -69,38 +59,9 @@ private: // メンバ変数
 
 	ViewProjection viewProjection_;
 
-private:
-	std::unique_ptr<CollisionManager> colliderManager_;
-
-
 private:	// メンバポインタ
 	// カメラ
 	//std::unique_ptr<DebugCamera> debugCamera_;
-	// フォローカメラ
-	std::unique_ptr<FollowCamera> followCamera_;
-	// ベースカメラ
-	std::unique_ptr<BaseCamera> baseCamera_;
-
-	// 仮のオブジェクト
-	std::unique_ptr<Model> model_;
-	std::unique_ptr<Model> skydomeModel_;
-	std::unique_ptr<Model> goalModel_;
-	// パーツモデル
-	std::unique_ptr<Model> modelHead_;
-	std::unique_ptr<Model> modelBody_;
-	std::unique_ptr<Model> modelR_arm_;
-	std::unique_ptr<Model> modelL_arm_;
-	std::unique_ptr<Model> modelWeapon_;
-	// オブジェクト
-	std::unique_ptr<SkyDome> skydome_;
-	std::unique_ptr<Player> player_;
-	std::unique_ptr<Enemy> enemy_;
-	std::unique_ptr<Goal> goal_;
-	std::unique_ptr<GroundManager> groundManager_;
-
-	std::list<std::unique_ptr<Enemy>> enemies_;
-
-	std::unique_ptr<LockOn> lockOn_;
 
 	bool isDebug_ = false;
 

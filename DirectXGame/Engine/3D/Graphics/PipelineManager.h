@@ -69,7 +69,7 @@ public:
 public:
 	static void CreatePipeline();
 
-private:
+public:
 	static D3D12_RASTERIZER_DESC SetRasterizerState(D3D12_FILL_MODE fillMode, D3D12_CULL_MODE cullMode);
 	static D3D12_INPUT_ELEMENT_DESC SetInputLayout(const char* semanticName,DXGI_FORMAT format);
 	static D3D12_BLEND_DESC SetBlendDesc(D3D12_BLEND srcBlend, D3D12_BLEND_OP blendOp, D3D12_BLEND destBlend);

@@ -4,7 +4,7 @@ struct WorldTransform
     matrix world;
 };
 
-StructuredBuffer<WorldTransform> gWorldTransform : register(t0);
+//StructuredBuffer<WorldTransform> gWorldTransform : register(t1);
 
 cbuffer ViewProjection : register(b1)
 {

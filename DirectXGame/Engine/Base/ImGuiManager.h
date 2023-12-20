@@ -2,6 +2,7 @@
 #include "WindowAPI.h"
 #include "imgui_impl_dx12.h"
 #include "imgui_impl_win32.h"
+#include "Descriptor/DescriptorManager.h"
 
 class ImGuiManager
 {
@@ -42,8 +43,7 @@ public:
 private:
 
 	DirectXCommon* dxCommon_ = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
+	DescriptorManager* descriptor_ = nullptr;
 
 private:
 	ImGuiManager() = default;

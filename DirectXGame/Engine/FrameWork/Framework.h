@@ -64,6 +64,7 @@ protected:
 	Audio* audio;
 	Input* input;
 	ImGuiManager* imguiManager = nullptr;
+	DescriptorManager* descriptorManager = nullptr;
 
 	std::unique_ptr<AudioManager> audioManager_;
 };

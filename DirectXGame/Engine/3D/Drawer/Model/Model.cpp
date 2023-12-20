@@ -78,7 +78,6 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	// アルファ値の更新
 	Update();
 	// パイプラインステートの設定
-	//sCommandList_->SetPipelineState(sPipelineStates_[size_t(blendMode_)].Get());
 	sCommandList_->SetPipelineState(PipelineManager::GetInstance()->sPipelineStates_[size_t(blendMode_)].Get());
 	// ライト
 	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));

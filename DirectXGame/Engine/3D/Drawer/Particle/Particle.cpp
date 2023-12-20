@@ -1,26 +1,19 @@
-#include "PipelineManager.h"
-#include "DirectXCommon.h"
+#include "Particle.h"
 #include "D3D12Lib.h"
-#include "StringManager.h"
-#include "Shader.h"
+#include "Graphics/Shader.h"
+#include "DirectXCommon.h"
 
-#include <string>
 #include <cassert>
-#include <fstream>
-#include <sstream>
-
-#pragma comment(lib, "d3dcompiler.lib")
 
 using namespace Microsoft::WRL;
 using namespace Pipeline;
 
-//std::array<
-//	std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, size_t(Pipeline::BlendMode::kCountOfBlendMode)>,
-//	size_t(Pipeline::DrawType::kCountOfDrawer)> PipelineManager::sPipelineStates_;
-Microsoft::WRL::ComPtr<ID3D12RootSignature> PipelineManager::sRootSignature_;
-std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
-	size_t(Pipeline::BlendMode::kCountOfBlendMode)> PipelineManager::sPipelineStates_;
-void PipelineManager::CreatePipeline()
+UINT Particle::sDescriptorHandleIncrementSize_;
+ID3D12GraphicsCommandList* Particle::sCommandList_ = nullptr;
+ComPtr<ID3D12RootSignature> Particle::sRootSignature_;
+std::array<ComPtr<ID3D12PipelineState>, size_t(BlendMode::kCountOfBlendMode)> Particle::sPipelineStates_;
+
+void Particle::StaticInitialize()
 {
 	HRESULT result = S_FALSE;
 	ComPtr<IDxcBlob> vsBlob;
@@ -29,22 +22,22 @@ void PipelineManager::CreatePipeline()
 	ComPtr<ID3DBlob> rootSigBlob;
 
 	// 頂点シェーダの読み込みとコンパイル
-	vsBlob = Shader::GetInstance()->Compile(L"ObjVS.hlsl", L"vs_6_0");
+	vsBlob = Shader::GetInstance()->Compile(L"ParticleVS.hlsl", L"vs_6_0");
 	assert(vsBlob != nullptr);
 
 	// ピクセルシェーダの読み込みとコンパイル
-	psBlob = Shader::GetInstance()->Compile(L"ObjPS.hlsl", L"ps_6_0");
+	psBlob = Shader::GetInstance()->Compile(L"ParticlePS.hlsl", L"ps_6_0");
 	assert(psBlob != nullptr);
 
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 	{
-		SetInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT)
+		PipelineManager::SetInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT)
 	},
 	{
-		SetInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT)
+		PipelineManager::SetInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT)
 	},
 	{
-		SetInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT)
+		PipelineManager::SetInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT)
 	},
 	};
 
@@ -52,11 +45,11 @@ void PipelineManager::CreatePipeline()
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
 	gpipeline.VS = D3D12Lib::ShaderByteCode(vsBlob.Get());
 	gpipeline.PS = D3D12Lib::ShaderByteCode(psBlob.Get());
-	
+
 	// サンプルマスク
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// ラスタライザステート
-	D3D12_RASTERIZER_DESC rasterizer= SetRasterizerState(D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_BACK);
+	D3D12_RASTERIZER_DESC rasterizer = PipelineManager::SetRasterizerState(D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_BACK);
 	gpipeline.RasterizerState = rasterizer;
 	// デプスステンシルステート
 	gpipeline.DepthStencilState.DepthEnable = true;
@@ -85,14 +78,15 @@ void PipelineManager::CreatePipeline()
 	// ルートパラメータ
 	D3D12_ROOT_PARAMETER rootparams[static_cast<int>(RootParameter::kCountOfParameter)];
 	rootparams[static_cast<int>(RootParameter::kWorldTransform)] = D3D12Lib::InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+	// Instancing用のやつ
+	//uint32_t instancing = 1;
+	//rootparams[1] = D3D12Lib::InitAsDescriptorTable(instancing, &descRangeSRV, D3D12_SHADER_VISIBILITY_VERTEX);
 	// View
 	rootparams[static_cast<int>(RootParameter::kViewProjection)] = D3D12Lib::InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
 	// マテリアル
 	rootparams[static_cast<int>(RootParameter::kMaterial)] = D3D12Lib::InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 	// テクスチャ
 	rootparams[static_cast<int>(RootParameter::kTexture)] = D3D12Lib::InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_PIXEL);
-	// ライト
-	rootparams[static_cast<int>(RootParameter::kLight)] = D3D12Lib::InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
 	// スタティックサンプラー
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[1];
@@ -128,7 +122,7 @@ void PipelineManager::CreatePipeline()
 	gpipeline.pRootSignature = sRootSignature_.Get();
 
 #pragma region Blend
-// ブレンドなし
+	// ブレンドなし
 	D3D12_BLEND_DESC blenddesc{};
 	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	blenddesc.RenderTarget[0].BlendEnable = false;
@@ -140,7 +134,7 @@ void PipelineManager::CreatePipeline()
 	assert(SUCCEEDED(result));
 
 	// αブレンド
-	blenddesc = SetBlendDesc(D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_INV_SRC_ALPHA);
+	blenddesc = PipelineManager::SetBlendDesc(D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_INV_SRC_ALPHA);
 
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
@@ -151,7 +145,7 @@ void PipelineManager::CreatePipeline()
 	assert(SUCCEEDED(result));
 
 	// 加算合成
-	blenddesc = SetBlendDesc(D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE);
+	blenddesc = PipelineManager::SetBlendDesc(D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE);
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
@@ -161,7 +155,7 @@ void PipelineManager::CreatePipeline()
 	assert(SUCCEEDED(result));
 
 	// 減算合成
-	blenddesc = SetBlendDesc(D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_OP_REV_SUBTRACT, D3D12_BLEND_ONE);
+	blenddesc = PipelineManager::SetBlendDesc(D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_OP_REV_SUBTRACT, D3D12_BLEND_ONE);
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
@@ -171,7 +165,7 @@ void PipelineManager::CreatePipeline()
 	assert(SUCCEEDED(result));
 
 	// 乗算合成
-	blenddesc = SetBlendDesc(D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD, D3D12_BLEND_SRC_COLOR);
+	blenddesc = PipelineManager::SetBlendDesc(D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD, D3D12_BLEND_SRC_COLOR);
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
@@ -181,7 +175,7 @@ void PipelineManager::CreatePipeline()
 	assert(SUCCEEDED(result));
 
 	// スクリーン合成
-	blenddesc = SetBlendDesc(D3D12_BLEND_INV_DEST_COLOR, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE);
+	blenddesc = PipelineManager::SetBlendDesc(D3D12_BLEND_INV_DEST_COLOR, D3D12_BLEND_OP_ADD, D3D12_BLEND_ONE);
 	// ブレンドステート
 	gpipeline.BlendState = blenddesc;
 	// グラフィックスパイプラインの生成
@@ -191,49 +185,20 @@ void PipelineManager::CreatePipeline()
 	assert(SUCCEEDED(result));
 #pragma endregion
 
+
 }
 
-D3D12_RASTERIZER_DESC PipelineManager::SetRasterizerState(D3D12_FILL_MODE fillMode, D3D12_CULL_MODE cullMode)
+Particle* Particle::Create()
 {
-	D3D12_RASTERIZER_DESC rasterizer{};
-	rasterizer.FillMode = fillMode;
-	rasterizer.CullMode = cullMode;
-	rasterizer.FrontCounterClockwise = FALSE;
-	rasterizer.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-	rasterizer.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-	rasterizer.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-	rasterizer.DepthClipEnable = TRUE;
-	rasterizer.MultisampleEnable = FALSE;
-	rasterizer.AntialiasedLineEnable = FALSE;
-	rasterizer.ForcedSampleCount = 0;
-	rasterizer.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
-	return rasterizer;
+	return nullptr;
 }
 
-D3D12_INPUT_ELEMENT_DESC PipelineManager::SetInputLayout(const char* semanticName, DXGI_FORMAT format)
+void Particle::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
 {
-    D3D12_INPUT_ELEMENT_DESC inputLayout = {
-        semanticName,0,format,0,D3D12_APPEND_ALIGNED_ELEMENT,
-        D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
-    };
-
-    return inputLayout;
+	worldTransform, viewProjection;
 }
 
-D3D12_BLEND_DESC PipelineManager::SetBlendDesc(D3D12_BLEND srcBlend, D3D12_BLEND_OP blendOp, D3D12_BLEND destBlend)
+void Particle::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle)
 {
-	D3D12_BLEND_DESC blendDesc{};
-	// 初期設定
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-
-	// 基本設定
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-	// 種類別設定
-	blendDesc.RenderTarget[0].SrcBlend = srcBlend;
-	blendDesc.RenderTarget[0].BlendOp = blendOp;
-	blendDesc.RenderTarget[0].DestBlend = destBlend;
-	return blendDesc;
+	worldTransform, viewProjection, textureHandle;
 }
