@@ -14,11 +14,8 @@
 #include "BaseCamera.h"
 
 #include "Player.h"
-#include "Enemy.h"
-#include "Goal.h"
 #include "LockOn.h"
 
-#include "GroundManager.h"
 #include "SkyDome.h"
 
 #include <memory>
@@ -71,7 +68,7 @@ private: // メンバ変数
 
 private:
 	std::unique_ptr<CollisionManager> colliderManager_;
-
+	std::unique_ptr<Player> player_;
 
 private:	// メンバポインタ
 	// カメラ

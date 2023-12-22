@@ -19,12 +19,20 @@ void GameScene::Initialize() {
 
 	viewProjection_.Initialize();
 
+	model_.reset(Model::Create());
+
+	// プレイヤー
+	player_ = std::make_unique<Player>();
+	player_->Initialize(model_.get());
+
 	// 衝突マネージャー
 	colliderManager_ = std::make_unique<CollisionManager>();
 
 	// 追従カメラ
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
+	followCamera_->SetTarget(player_->GetTargetAddress());
+
 
 }
 
@@ -32,6 +40,8 @@ void GameScene::Update()
 {
 	// 衝突処理
 	CheckCollision();
+
+	player_->Update();
 
 	/// カメラ関係の更新処理
 	CameraUpdate();
@@ -58,7 +68,7 @@ void GameScene::Draw() {
 	// 描画前処理
 	Model::PreDraw(commandList);
 
-
+	player_->Draw(viewProjection_);
 
 	// 描画後処理
 	Model::PostDraw();

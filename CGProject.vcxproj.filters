@@ -180,9 +180,6 @@
     <ClCompile Include="DirectXGame\Application\GameObject\BaseBullet.cpp">
       <Filter>ソース ファイル\bullet</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Ground\Ground.cpp">
-      <Filter>ソース ファイル\object</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Collider\Collider.cpp">
       <Filter>ソース ファイル\collider</Filter>
     </ClCompile>
@@ -219,19 +216,7 @@
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Ground\GroundManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Goal.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\TimeCall\TimedCall.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Player\Weapon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp">
@@ -338,9 +323,6 @@
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h">
       <Filter>ヘッダー ファイル\other</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Ground\Ground.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Collider\Collider.h">
       <Filter>ヘッダー ファイル\collider</Filter>
     </ClInclude>
@@ -377,19 +359,7 @@
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Ground\GroundManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Goal.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\TimeCall\TimedCall.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Player\Weapon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\LockOn.h">
