@@ -37,7 +37,7 @@ void GameScene::Initialize() {
 	followCamera_->Initialize();
 	followCamera_->SetTarget(player_->GetTargetAddress());
 
-	viewProjection_.translate_ = { 0,6.0f,-25.0f };
+	viewProjection_.translate_ = { 0,6.0f,-75.0f };
 	missileManager_ = std::make_unique<MissileManager>();
 	missileManager_->Initialize();
 
@@ -63,7 +63,7 @@ void GameScene::Update()
 	// 衝突処理
 	CheckCollision();
 	if (Input::GetInstance()->TriggerKey(DIK_H)) {
-		MissileManager::AddInfo info;
+		MissileManager::MissileConfig info;
 		info = { player_->GetWorldPosition(),{0,1.0f,1.0f},0 };
 		missileManager_->AddMissile(info);
 	}

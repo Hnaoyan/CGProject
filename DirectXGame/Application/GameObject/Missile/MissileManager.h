@@ -6,12 +6,17 @@
 class MissileManager
 {
 public: // サブクラス
-	struct AddInfo {
+	struct MissileConfig {
 		Vector3 position;
 		Vector3 direct;
 		float kSpeed;
 		Enemy* ptr;
 	};
+
+	struct ControlParam {
+
+	};
+
 public:
 	static MissileManager* GetInstance() {
 		static MissileManager instance;
@@ -24,7 +29,7 @@ public:
 	void Draw(ViewProjection& viewProjection);
 
 public:
-	void AddMissile(const AddInfo info);
+	void AddMissile(const MissileConfig info);
 
 private:
 	std::list<IMissile*> missiles_;

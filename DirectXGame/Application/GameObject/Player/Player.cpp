@@ -43,6 +43,15 @@ void Player::Draw(const ViewProjection& viewProjection)
 
 void Player::InputUpdate()
 {
+#ifdef _DEBUG
+
+	ImGui::Begin("player");
+	if (ImGui::TreeNode("missileInfo")) {
+		ImGui::DragFloat3("missileDirect", &missileDirect.x, 0.01f, -1.0f, 1.0f);
+		ImGui::TreePop();
+	}
+	ImGui::End();
+#endif // _DEBUG
 
 	// ゲームパッドの状態を得る変数(XINPUT)
 	XINPUT_STATE joyState;
@@ -51,9 +60,16 @@ void Player::InputUpdate()
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER && !isFire_) {
 			Vector3 enemyToPlayer = this->enemyPtr_->GetTestWorld() - GetWorldPosition();
-			MissileManager::AddInfo info;
+			MissileManager::MissileConfig info;
 			info = { GetWorldPosition(),enemyToPlayer,0, enemyPtr_->GetTestPtr() };
-			//info = { GetWorldPosition(),{0,1,1},0, enemyPtr_->GetTestPtr() };
+			missileManager_->AddMissile(info);
+
+			isFire_ = true;
+		}
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && !isFire_) {
+			//Vector3 enemyToPlayer = this->enemyPtr_->GetTestWorld() - GetWorldPosition();
+			MissileManager::MissileConfig info;
+			info = { GetWorldPosition(),missileDirect,0, enemyPtr_->GetTestPtr() };
 			missileManager_->AddMissile(info);
 
 			isFire_ = true;

@@ -37,5 +37,6 @@ private:
 	float kBulletSpeed_ = 5.0f;
 	float frame_ = 0;
 	int guidedTime_ = 0;
+	float p_ = 0;
 };
 

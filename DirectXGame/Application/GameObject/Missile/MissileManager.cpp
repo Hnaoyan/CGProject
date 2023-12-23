@@ -18,7 +18,9 @@ void MissileManager::Update()
 
 #endif // _DEBUG
 
-
+	if (Input::GetInstance()->TriggerKey(DIK_R)) {
+		missiles_.clear();
+	}
 
 	for (IMissile* missile : missiles_) {
 		missile->Update();
@@ -33,7 +35,7 @@ void MissileManager::Draw(ViewProjection& viewProjection)
 	}
 }
 
-void MissileManager::AddMissile(const AddInfo info)
+void MissileManager::AddMissile(const MissileConfig info)
 {
 	IMissile* newInstance = new IMissile();
 	newInstance->Initialize(model_.get());

@@ -50,5 +50,7 @@ private:
 
 	bool isFire_ = false;
 	int coolTime_ = 0;
+
+	Vector3 missileDirect = {};
 };
 
