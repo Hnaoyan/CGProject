@@ -6,8 +6,8 @@
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-std::random_device WindowAPI::seedGenerator;
-std::mt19937 WindowAPI::randomEngine(WindowAPI::seedGenerator());
+//std::random_device WindowAPI::seedGenerator;
+//std::mt19937 WindowAPI::randomEngine(WindowAPI::seedGenerator());
 
 void Log(const std::string& message) {
 	OutputDebugStringA(message.c_str());

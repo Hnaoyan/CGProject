@@ -2,6 +2,7 @@
 #include "MathCalc.h"
 #include "ImGuiManager.h"
 #include "GlobalVariables.h"
+#include "Missile/MissileManager.h"
 
 #include <algorithm>
 
@@ -15,6 +16,8 @@ void Player::Initialize(Model* model)
 
 void Player::Update()
 {
+	InputUpdate();
+
 	Vector3 moveVector{};
 	float speedValue = 10.0f;
 
@@ -26,7 +29,7 @@ void Player::Update()
 
 
 	worldTransform_.translation_ += moveVector;
-	worldTransform_.translation_.z += 0.1f;
+	//worldTransform_.translation_.z += 0.1f;
 	worldTransform_.UpdateMatrix();
 }
 
@@ -35,5 +38,34 @@ void Player::Draw(const ViewProjection& viewProjection)
 
 	// 自機描画
 	model_->Draw(worldTransform_, viewProjection);
+
+}
+
+void Player::InputUpdate()
+{
+
+	// ゲームパッドの状態を得る変数(XINPUT)
+	XINPUT_STATE joyState;
+
+	// ジョイスティック状態取得
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER && !isFire_) {
+			Vector3 enemyToPlayer = this->enemyPtr_->GetTestWorld() - GetWorldPosition();
+			MissileManager::AddInfo info;
+			info = { GetWorldPosition(),enemyToPlayer,0, enemyPtr_->GetTestPtr() };
+			//info = { GetWorldPosition(),{0,1,1},0, enemyPtr_->GetTestPtr() };
+			missileManager_->AddMissile(info);
+
+			isFire_ = true;
+		}
+	}
+
+	if (isFire_) {
+		coolTime_++;
+		if (coolTime_ > 20) {
+			coolTime_ = 0;
+			isFire_ = false;
+		}
+	}
 
 }

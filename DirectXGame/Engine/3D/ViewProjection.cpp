@@ -64,5 +64,5 @@ void ViewProjection::ImGuiWidget()
 	ImGui::DragFloat3("position", &this->translate_.x, 0.01f, -posValue, posValue);
 	ImGui::DragFloat3("rotate", &this->rotation_.x, 0.01f, -5.0f, 5.0f);
 	ImGui::End();
-
+	UpdateMatrix();
 }

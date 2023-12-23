@@ -9,12 +9,14 @@
 #include "WorldTransform.h"
 
 #include "CollisionManager.h"
+#include "Missile/MissileManager.h"
 #include "FollowCamera.h"
 #include "IScene.h"
 #include "BaseCamera.h"
 
 #include "Player.h"
 #include "LockOn.h"
+#include "Enemy/EnemyManager.h"
 
 #include "SkyDome.h"
 
@@ -69,6 +71,8 @@ private: // メンバ変数
 private:
 	std::unique_ptr<CollisionManager> colliderManager_;
 	std::unique_ptr<Player> player_;
+	std::unique_ptr<MissileManager> missileManager_;
+	std::unique_ptr<EnemyManager> enemyManager_;
 
 private:	// メンバポインタ
 	// カメラ
@@ -81,6 +85,8 @@ private:	// メンバポインタ
 	std::unique_ptr<Model> model_;
 
 	bool isDebug_ = false;
+
+	float frame_ = 0;
 
 	/// <summary>
 	/// ゲームシーン用

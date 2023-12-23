@@ -7,6 +7,8 @@
 
 void Log(const std::string& message);
 
+//template <typename Type>
+
 class WindowAPI 
 {
 public:
@@ -18,8 +20,8 @@ public:
 
 private:
 
-	static std::random_device seedGenerator;
-	static std::mt19937 randomEngine;
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine;
 
 
 public:	// メンバ関数
@@ -40,8 +42,18 @@ public:	// メンバ関数
 	static WindowAPI* GetInstance();
 
 private:
-	WindowAPI(){};
+	WindowAPI()
+	{
+		//randomEngine.seed(seedGenerator);
+	};
 	~WindowAPI() {};
+
+public:
+
+	//Type RandomValue(Type maxValue, Type minValue) {
+	//	std::uniform_real_distribution<Type> distribution(minValue, maxValue);
+	//	return distribution(randomEngine);
+	//}
 
 public:
 	/// <summary>
