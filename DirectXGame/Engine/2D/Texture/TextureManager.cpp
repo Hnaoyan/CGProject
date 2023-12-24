@@ -89,8 +89,8 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	}
 
 	// SRVを作成するDescriptorHeapの場所を決める
-	texture.cpuDescHandleSRV = DescriptorManager::GetInstance()->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
-	texture.gpuDescHandleSRV = DescriptorManager::GetInstance()->GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
+	//texture.cpuDescHandleSRV = DescriptorManager::GetInstance()->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+	//texture.gpuDescHandleSRV = DescriptorManager::GetInstance()->GetDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
 
 	// 先頭は使われているためその次
 	texture.cpuDescHandleSRV.ptr += handle * static_cast<uint32_t>(sDescriptorHandleIncrementSize_);
@@ -138,7 +138,7 @@ void TextureManager::Initialize(ID3D12Device* device, std::string directoryPath)
 
 void TextureManager::ResetAll()
 {
-	DescriptorManager::GetInstance()->ResetDescriptor(device_, kNumDescriptor);
+	//DescriptorManager::GetInstance()->ResetDescriptor(device_, kNumDescriptor);
 
 	indexNextDescriptorHeap_ = 0;
 
@@ -163,9 +163,9 @@ void TextureManager::SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* c
 	// デスクリプタヒープの配列
 	assert(textureHandle < textures_.size());
 	//ID3D12DescriptorHeap* ppHeaps[] = { descriptorHeap_.Get() };
-	ID3D12DescriptorHeap* ppHeaps[] = { DescriptorManager::GetInstance()->GetDescriptorHeap() };
+	//ID3D12DescriptorHeap* ppHeaps[] = { DescriptorManager::GetInstance()->GetDescriptorHeap() };
 	
-	commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+	//commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
 	// シェーダリソースビューをセット
 	commandList->SetGraphicsRootDescriptorTable(

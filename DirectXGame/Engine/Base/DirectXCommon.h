@@ -45,15 +45,15 @@ public:
 	/// </summary>
 	void PostDraw();
 
-	/// <summary>
-	/// レンダーターゲットのクリア
-	/// </summary>
-	void ClearRenderTarget();
+	///// <summary>
+	///// レンダーターゲットのクリア
+	///// </summary>
+	//void ClearRenderTarget();
 
-	/// <summary>
-	/// 深度バッファのクリア
-	/// </summary>
-	void ClearDepthBuffer();
+	///// <summary>
+	///// 深度バッファのクリア
+	///// </summary>
+	//void ClearDepthBuffer();
 
 public: // 取得・設定
 	/// <summary>
@@ -133,6 +133,7 @@ private:	//メンバ関数
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+	//DescriptorManager* descriptorManager_ = nullptr;
 
 private:	// メンバ変数
 	// ウィンドウズアプリケーション管理
@@ -172,20 +173,20 @@ private:	// メンバ関数
 	/// </summary>
 	void InitializeCommand();
 
-	/// <summary>
-	/// SwapChainの生成
-	/// </summary>
-	void CreateSwapChain();
+	///// <summary>
+	///// SwapChainの生成
+	///// </summary>
+	//void CreateSwapChain();
 
-	/// <summary>
-	/// RTVの生成
-	/// </summary>
-	void CreateRenderTargetView();
+	///// <summary>
+	///// RTVの生成
+	///// </summary>
+	//void CreateRenderTargetView();
 
-	/// <summary>
-	/// 深度Bufferの生成
-	/// </summary>
-	void CreateDepthBuffer();
+	///// <summary>
+	///// 深度Bufferの生成
+	///// </summary>
+	//void CreateDepthBuffer();
 
 	/// <summary>
 	/// フェンスの生成

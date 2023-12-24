@@ -1,4 +1,5 @@
 #include "RTV.h"
+#include "DescriptorManager.h"
 #include <cassert>
 
 using namespace Microsoft::WRL;
@@ -74,6 +75,10 @@ void RTV::CreateRenderTarget()
 	result = device_->CreateDescriptorHeap(&rtvDescHeapDesc, IID_PPV_ARGS(&heap_));
 	assert(SUCCEEDED(result));
 
+	// RTVデスクの設定
+	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;	// 出力結果をSRGBに変換して書き込む
+	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;	// 2Dテクスチャとして書き込む
+
 	// 裏表の2つ分
 	backBuffer_.resize(swapChainDesc.BufferCount);
 	for (int i = 0; i < backBuffer_.size(); i++) {
@@ -84,12 +89,7 @@ void RTV::CreateRenderTarget()
 
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), i);
 
-		// RTVの設定
-		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;	// 出力結果をSRGBに変換して書き込む
-		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;	// 2Dテクスチャとして書き込む
-
-		device_->CreateRenderTargetView(backBuffer_[i].Get(), &rtvDesc, handle);
+		device_->CreateRenderTargetView(backBuffer_[i].Get(), &rtvDesc_, handle);
 	}
 }
 

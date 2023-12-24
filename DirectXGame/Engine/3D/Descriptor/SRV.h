@@ -1,7 +1,9 @@
 #pragma once
 #include "TextureManager.h"
-#include "WindowAPI.h"
 #include "DirectXCommon.h"
+#include <wrl.h>
+
+class DirectXCommon;
 
 class SRV
 {
