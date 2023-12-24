@@ -6,9 +6,11 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <chrono>
-
 #include <wrl.h>
+#include <memory>
+
 #include "WindowAPI.h"
+#include "Descriptor/DescriptorManager.h"
 
 #include <dxcapi.h>
 #pragma comment(lib, "dxcompiler.lib")
@@ -65,6 +67,18 @@ public: // 取得・設定
 	/// </summary>
 	/// <returns></returns>
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
+
+	/// <summary>
+	/// DXGIファクトリーの取得
+	/// </summary>
+	/// <returns></returns>
+	IDXGIFactory7* GetDxgiFactory() { return dxgiFactory_.Get(); }
+
+	/// <summary>
+	/// コマンドキューの取得
+	/// </summary>
+	/// <returns></returns>
+	ID3D12CommandQueue* GetCmdQueue() { return commandQueue_.Get(); }
 
 	/// <summary>
 	/// バッファーカウントの取得
@@ -136,6 +150,8 @@ private:	// メンバ変数
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthResourceBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
+
+	std::unique_ptr<DescriptorManager> descriptorManager_;
 
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;

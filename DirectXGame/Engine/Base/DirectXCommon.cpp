@@ -15,6 +15,12 @@ void DirectXCommon::Initialize(WindowAPI* winApp, int32_t bufferWidth, int32_t b
 	backBufferWidth_ = bufferWidth;
 	backBufferHeight_ = bufferHeight;
 
+	descriptorManager_ = std::make_unique<DescriptorManager>();
+	descriptorManager_->StaticInitialize();
+
+	descriptorManager_->GetSRV()->StaticInitialize(this);
+	descriptorManager_->GetRTV()->StaticInitialize(this, backBufferWidth_, backBufferHeight_);
+
 	// フレーム固定の初期化
 	InitializeFixFPS();
 
@@ -40,15 +46,6 @@ void DirectXCommon::Initialize(WindowAPI* winApp, int32_t bufferWidth, int32_t b
 }
 
 void DirectXCommon::PreDraw() {
-	//HRESULT result = S_FALSE;
-	// これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
-
-	// Barrier
-	D3D12_RESOURCE_BARRIER barrier = GetBarrier(backBuffer_[backBufferIndex].Get(),
-		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	// TransitionBarrierを張る
-	commandList_->ResourceBarrier(1, &barrier);
 
 	// 描画先のRTVを設定する
 	// ハンドルを取得
@@ -60,6 +57,9 @@ void DirectXCommon::PreDraw() {
 
 	// 全画面クリア
 	ClearRenderTarget();
+
+	descriptorManager_->GetRTV()->ClearRenderTarget(commandList_.Get());
+
 	// 深度クリア
 	ClearDepthBuffer();
 

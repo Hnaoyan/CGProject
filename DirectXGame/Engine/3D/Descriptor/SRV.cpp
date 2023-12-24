@@ -22,13 +22,14 @@ void SRV::StaticInitialize(DirectXCommon* dxCommon)
 {
 	HRESULT result = S_FALSE;
 	dxCommon_ = dxCommon;
+	device_ = dxCommon_->GetDevice();
 
 	D3D12_DESCRIPTOR_HEAP_DESC srvDescriptorHeapDesc{};
 	srvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvDescriptorHeapDesc.NumDescriptors = 1;
 	srvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-	result = dxCommon_->GetDevice()->CreateDescriptorHeap(&srvDescriptorHeapDesc, IID_PPV_ARGS(&heap_));
+	result = device_->CreateDescriptorHeap(&srvDescriptorHeapDesc, IID_PPV_ARGS(&heap_));
 	assert(SUCCEEDED(result));
 
 }
