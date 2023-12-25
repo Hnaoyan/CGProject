@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectXGame\Engine\Base\DirectXDevice.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
@@ -214,8 +215,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\SRV.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DSV.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\RTV.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Base\NRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXGame\Engine\Base\DirectXDevice.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.h" />
     <ClInclude Include="DirectXGame\Engine\3D\CBuffer.h" />
     <ClInclude Include="DirectXGame\Engine\Audio\AudioManager.h" />
@@ -274,6 +277,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\3D\Descriptor\SRV.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Descriptor\DSV.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Descriptor\RTV.h" />
+    <ClInclude Include="DirectXGame\Engine\Base\NRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

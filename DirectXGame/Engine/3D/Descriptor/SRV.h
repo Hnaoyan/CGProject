@@ -1,7 +1,7 @@
 #pragma once
 #include "TextureManager.h"
 #include "WindowAPI.h"
-#include "DirectXCommon.h"
+#include "NRenderer.h"
 
 class SRV
 {
@@ -9,14 +9,12 @@ public:
 
 	static void CreateInstancingSRV();
 
-	void StaticInitialize(DirectXCommon* dxCommon);
+	void StaticInitialize(DirectXDevice* dxDevice);
 
 	ID3D12DescriptorHeap* GetSRV() { return heap_.Get(); }
 
 private:
-
-	DirectXCommon* dxCommon_ = nullptr;
-
+	DirectXDevice* dxDevice_ = nullptr;
 	// デバイス
 	ID3D12Device* device_ = nullptr;
 	// ヒープ自体

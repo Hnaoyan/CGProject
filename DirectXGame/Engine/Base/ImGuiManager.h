@@ -1,5 +1,6 @@
-#include "DirectXCommon.h"
+//#include "DirectXCommon.h"
 #include "WindowAPI.h"
+#include "NRenderer.h"
 #include "imgui_impl_dx12.h"
 #include "imgui_impl_win32.h"
 #include "Descriptor/DescriptorManager.h"
@@ -18,7 +19,7 @@ public:
 	/// </summary>
 	/// <param name="dxCommon"></param>
 	/// <param name="winApp"></param>
-	void Initialize(DirectXCommon* dxCommon,WindowAPI* winApp);
+	void Initialize(NRenderer* render,WindowAPI* winApp);
 
 	/// <summary>
 	/// Imgui開始
@@ -42,7 +43,7 @@ public:
 
 private:
 
-	DirectXCommon* dxCommon_ = nullptr;
+	NRenderer* render_ = nullptr;
 	DescriptorManager* descriptor_ = nullptr;
 
 private:

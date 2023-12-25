@@ -9,11 +9,11 @@ ImGuiManager* ImGuiManager::GetInstance()
 	return &instance;
 }
 
-void ImGuiManager::Initialize(DirectXCommon* dxCommon, WindowAPI* winApp)
+void ImGuiManager::Initialize(NRenderer* render, WindowAPI* winApp)
 {
 	//HRESULT result = S_FALSE;
-	dxCommon_ = dxCommon;
-	descriptor_ = DescriptorManager::GetInstance();
+	render_ = render;
+	descriptor_ = render_->GetDescriptorManager();
 	
 	IMGUI_CHECKVERSION();
 	// ImGuiのコンテキストを生成
@@ -22,7 +22,8 @@ void ImGuiManager::Initialize(DirectXCommon* dxCommon, WindowAPI* winApp)
 	ImGui::StyleColorsDark();
 	// プラットフォームとレンダラーのバックエンドを設定
 	ImGui_ImplWin32_Init(winApp->GetHwnd());
-	ImGui_ImplDX12_Init(dxCommon_->GetDevice(), static_cast<int>(dxCommon_->GetBackBufferCount()),
+	ImGui_ImplDX12_Init(render_->GetDXDevice()->GetDevice(),
+		static_cast<int>(descriptor_->GetRTV()->GetBufferCount()),
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, descriptor_->GetSRVHeap(),
 		descriptor_->GetSRVHeap()->GetCPUDescriptorHandleForHeapStart(),
 		descriptor_->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart());
@@ -53,7 +54,7 @@ void ImGuiManager::End()
 void ImGuiManager::Draw()
 {
 	// 描画用のDescriptorHeapの設定
-	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = render_->GetCmdList();
 	ID3D12DescriptorHeap* descriptorHeaps[] = { descriptor_->GetSRVHeap() };
 	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 

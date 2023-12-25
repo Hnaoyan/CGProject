@@ -30,6 +30,9 @@ void Framework::Initialize()
 	winApp = WindowAPI::GetInstance();
 	winApp->CreateGameWindow();
 
+	renderer = NRenderer::GetInstance();
+	renderer->Initialize(winApp);
+
 	// DirectX
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(winApp);
@@ -38,8 +41,8 @@ void Framework::Initialize()
 	// モデル用パイプラインの初期化
 	PipelineManager::CreatePipeline();
 	// Heap初期化
-	descriptorManager = DescriptorManager::GetInstance();
-	descriptorManager->StaticInitialize();
+	//descriptorManager = DescriptorManager::GetInstance();
+	//descriptorManager->StaticInitialize();
 
 	// Input
 	input = Input::GetInstance();
@@ -53,15 +56,15 @@ void Framework::Initialize()
 
 	// Imgui
 	imguiManager = ImGuiManager::GetInstance();
-	imguiManager->Initialize(dxCommon, winApp);
+	imguiManager->Initialize(renderer, winApp);
 
 	// テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(dxCommon->GetDevice());
+	TextureManager::GetInstance()->Initialize(renderer->GetDXDevice()->GetDevice());
 	TextureManager::Load("white1x1.png");
 
 
 	// スプライトインスタンス
-	Sprite::StaticInitialize(dxCommon->GetDevice(), (int)WindowAPI::kClientWidth, (int)WindowAPI::kClientHeight);
+	Sprite::StaticInitialize(renderer->GetDXDevice()->GetDevice(), (int)WindowAPI::kClientWidth, (int)WindowAPI::kClientHeight);
 
 	// モデルインスタンス
 	Model::StaticInitialize();
@@ -71,7 +74,7 @@ void Framework::Initialize()
 void Framework::Finalize()
 {
 	imguiManager->Finalize();
-	descriptorManager->Finalize();
+	//descriptorManager->Finalize();
 	audio->Finalize();
 	CoUninitialize();
 }

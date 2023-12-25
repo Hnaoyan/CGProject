@@ -11,6 +11,8 @@
 #include "Graphics/Shader.h"
 #include <memory>
 
+#include "NRenderer.h"
+
 class Framework
 {
 public:
@@ -33,7 +35,7 @@ public:
 	/// 更新処理
 	/// </summary>
 	virtual void Update();
-	
+
 	/// <summary>
 	/// 描画処理
 	/// </summary>
@@ -65,6 +67,7 @@ protected:
 	Input* input;
 	ImGuiManager* imguiManager = nullptr;
 	DescriptorManager* descriptorManager = nullptr;
+	NRenderer* renderer = nullptr;
 
 	std::unique_ptr<AudioManager> audioManager_;
 };

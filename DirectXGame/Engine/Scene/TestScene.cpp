@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "DirectXCommon.h"
 #include "TextureManager.h"
+#include "NRenderer.h"
 
 void TestScene::Initialize()
 {
@@ -74,7 +75,7 @@ void TestScene::Update()
 void TestScene::Draw()
 {
 	// コマンドリストの取得
-	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = NRenderer::GetInstance()->GetCmdList();
 
 #pragma region 背景スプライト描画
 	// 描画前処理
@@ -85,7 +86,7 @@ void TestScene::Draw()
 	// 描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
-	DirectXCommon::GetInstance()->ClearDepthBuffer();
+	NRenderer::GetInstance()->GetDescriptorManager()->GetDSV()->ClearDepthBuffer(commandList);
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画

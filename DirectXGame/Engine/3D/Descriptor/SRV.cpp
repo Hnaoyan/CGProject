@@ -18,17 +18,17 @@ void SRV::CreateInstancingSRV()
 
 }
 
-void SRV::StaticInitialize(DirectXCommon* dxCommon)
+void SRV::StaticInitialize(DirectXDevice* dxDevice)
 {
 	HRESULT result = S_FALSE;
-	dxCommon_ = dxCommon;
+	dxDevice_ = dxDevice;
 
 	D3D12_DESCRIPTOR_HEAP_DESC srvDescriptorHeapDesc{};
 	srvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvDescriptorHeapDesc.NumDescriptors = 1;
 	srvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-	result = dxCommon_->GetDevice()->CreateDescriptorHeap(&srvDescriptorHeapDesc, IID_PPV_ARGS(&heap_));
+	result = dxDevice_->GetDevice()->CreateDescriptorHeap(&srvDescriptorHeapDesc, IID_PPV_ARGS(&heap_));
 	assert(SUCCEEDED(result));
 
 }
