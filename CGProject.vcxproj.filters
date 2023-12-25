@@ -317,7 +317,7 @@
     <ClInclude Include="DirectXGame\Engine\Base\StringManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\3D\StructManager.h">
+    <ClInclude Include="DirectXGame\Engine\Base\StructManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\2D\Texture\TextureManager.h">

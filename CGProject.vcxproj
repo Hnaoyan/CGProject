@@ -233,7 +233,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Base\DirectXCommon.h" />
     <ClInclude Include="DirectXGame\Engine\Base\ImGuiManager.h" />
     <ClInclude Include="DirectXGame\Engine\Base\StringManager.h" />
-    <ClInclude Include="DirectXGame\Engine\3D\StructManager.h" />
+    <ClInclude Include="DirectXGame\Engine\Base\StructManager.h" />
     <ClInclude Include="DirectXGame\Engine\2D\Texture\TextureManager.h" />
     <ClInclude Include="DirectXGame\Engine\Base\WindowAPI.h" />
     <ClInclude Include="DirectXGame\Engine\Camera\BaseCamera.h" />
