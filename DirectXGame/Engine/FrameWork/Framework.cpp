@@ -30,16 +30,17 @@ void Framework::Initialize()
 	winApp = WindowAPI::GetInstance();
 	winApp->CreateGameWindow();
 
+	// Heap初期化
+	descriptorManager = DescriptorManager::GetInstance();
+	descriptorManager->StaticInitialize();
 	// DirectX
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(winApp);
+
 	// モデル用シェーダー初期化
 	Shader::Initialize();
 	// モデル用パイプラインの初期化
 	PipelineManager::CreatePipeline();
-	// Heap初期化
-	descriptorManager = DescriptorManager::GetInstance();
-	descriptorManager->StaticInitialize();
 
 	// Input
 	input = Input::GetInstance();

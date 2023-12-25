@@ -133,7 +133,8 @@ private:	//メンバ関数
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-	//DescriptorManager* descriptorManager_ = nullptr;
+
+	void SetDescriptorManager(DescriptorManager* ptr) { descriptorManager_ = ptr; }
 
 private:	// メンバ変数
 	// ウィンドウズアプリケーション管理
@@ -151,8 +152,9 @@ private:	// メンバ変数
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthResourceBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
+	DescriptorManager* descriptorManager_ = nullptr;
 
-	std::unique_ptr<DescriptorManager> descriptorManager_;
+	//std::unique_ptr<DescriptorManager> descriptorManager_;
 
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
