@@ -2,10 +2,6 @@
 
 NRenderer::NRenderer()
 {
-
-	descriptorManager_ = std::make_unique<DescriptorManager>();
-	directXDevice_ = std::make_unique<DirectXDevice>();
-
 }
 
 void NRenderer::Initialize(WindowAPI* winApp, int32_t bufferWidth, int32_t bufferHeight)
@@ -14,14 +10,24 @@ void NRenderer::Initialize(WindowAPI* winApp, int32_t bufferWidth, int32_t buffe
 	winApp_ = winApp;
 	backBufferWidth_ = bufferWidth;
 	backBufferHeight_ = bufferHeight;
-	// ヒープ系の初期化
-	descriptorManager_->StaticInitialize();
-
 	// デバイスの生成
+	directXDevice_ = std::make_unique<DirectXDevice>();
 	directXDevice_->Initialize();
 
 	// コマンド関係の生成
 	InitializeCommand();
+	//srvHeap_ = std::make_unique<SRV>();
+	//dsvHeap_ = std::make_unique<DSV>();
+	//rtvHeap_ = std::make_unique<RTV>();
+
+	//rtvHeap_->StaticInitialize(directXDevice_->GetFactory(),, bufferWidth, bufferHeight);
+	//dsvHeap_->StaticInitialize(renderer_->GetDXDevice(), bufferWidth, bufferHeight);
+	//srvHeap_->StaticInitialize(renderer_->GetDXDevice());
+
+	// ヒープ系の初期化
+	descriptorManager_ = std::make_unique<DescriptorManager>();
+	descriptorManager_->StaticInitialize();
+
 
 	descriptorManager_->GetRTV()->StaticInitialize(this, backBufferWidth_, backBufferHeight_);
 

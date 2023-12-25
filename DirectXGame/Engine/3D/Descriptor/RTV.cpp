@@ -7,8 +7,12 @@ using namespace Microsoft::WRL;
 void RTV::StaticInitialize(NRenderer* renderer, int32_t bufferWidth, int32_t bufferHeight)
 {
 	HRESULT result = S_FALSE;
-	renderer_ = renderer;
-	device_ = renderer_->GetDXDevice()->GetDevice();
+	renderer;
+	renderer_ = NRenderer::GetInstance();
+	device_ = NRenderer::GetInstance()->GetDXDevice()->GetDevice();
+
+
+	CreateSwapChain(bufferWidth, bufferHeight);
 
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
 	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
@@ -17,8 +21,6 @@ void RTV::StaticInitialize(NRenderer* renderer, int32_t bufferWidth, int32_t buf
 
 	result = device_->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&heap_));
 	assert(SUCCEEDED(result));
-
-	CreateSwapChain(bufferWidth, bufferHeight);
 
 	CreateRenderTarget();
 }
@@ -63,8 +65,8 @@ void RTV::CreateSwapChain(int32_t bufferWidth, int32_t bufferHeight)
 	ComPtr<IDXGISwapChain1> swapChain1;
 
 	// SwapChain1で生成
-	result = renderer_->GetDXDevice()->GetFactory()->CreateSwapChainForHwnd(
-		renderer_->GetCmdQueue(),
+	result = DirectXDevice::GetInstance()->dxgiFactory_->CreateSwapChainForHwnd(
+		NRenderer::GetInstance()->GetCmdQueue(),
 		WindowAPI::GetInstance()->GetHwnd(),
 		&swapChainDesc,
 		nullptr, nullptr,

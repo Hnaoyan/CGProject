@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "WindowAPI.h"
 #include "NRenderer.h"
+#include "DirectXDevice.h"
 
 class SRV
 {
@@ -11,7 +12,7 @@ public:
 
 	void StaticInitialize(DirectXDevice* dxDevice);
 
-	ID3D12DescriptorHeap* GetSRV() { return heap_.Get(); }
+	ID3D12DescriptorHeap* GetHeap() { return heap_.Get(); }
 
 private:
 	DirectXDevice* dxDevice_ = nullptr;

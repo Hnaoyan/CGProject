@@ -1,6 +1,6 @@
 #include "TextureManager.h"
 #include "StringManager.h"
-#include "Descriptor/DescriptorManager.h"
+#include "DescriptorManager.h"
 #include "D3D12Lib.h"
 
 uint32_t TextureManager::Load(const std::string& fileName)

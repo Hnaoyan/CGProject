@@ -24,9 +24,9 @@ void ImGuiManager::Initialize(NRenderer* render, WindowAPI* winApp)
 	ImGui_ImplWin32_Init(winApp->GetHwnd());
 	ImGui_ImplDX12_Init(render_->GetDXDevice()->GetDevice(),
 		static_cast<int>(descriptor_->GetRTV()->GetBufferCount()),
-		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, descriptor_->GetSRVHeap(),
-		descriptor_->GetSRVHeap()->GetCPUDescriptorHandleForHeapStart(),
-		descriptor_->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart());
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, descriptor_->GetSRV()->GetHeap(),
+		descriptor_->GetSRV()->GetHeap()->GetCPUDescriptorHandleForHeapStart(),
+		descriptor_->GetSRV()->GetHeap()->GetGPUDescriptorHandleForHeapStart());
 
 	ImGui::CreateContext();
 	auto& io = ImGui::GetIO();
@@ -55,7 +55,7 @@ void ImGuiManager::Draw()
 {
 	// 描画用のDescriptorHeapの設定
 	ID3D12GraphicsCommandList* commandList = render_->GetCmdList();
-	ID3D12DescriptorHeap* descriptorHeaps[] = { descriptor_->GetSRVHeap() };
+	ID3D12DescriptorHeap* descriptorHeaps[] = { descriptor_->GetSRV()->GetHeap() };
 	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	// 実際のcommandListのImGuiの描画コマンドを積む

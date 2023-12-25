@@ -4,6 +4,8 @@
 
 #include "NRenderer.h"
 
+class NRenderer;
+
 class RTV
 {
 public:
@@ -15,7 +17,7 @@ public:
 	void PostDraw();
 
 public:
-	ID3D12DescriptorHeap* GetRTV() { return heap_.Get(); }
+	ID3D12DescriptorHeap* GetHeap() { return heap_.Get(); }
 
 	ID3D12Resource* GetBackBuffer(UINT index) { return backBuffer_[index].Get(); }
 

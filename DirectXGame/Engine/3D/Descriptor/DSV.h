@@ -1,6 +1,7 @@
 #pragma once
 #include "NRenderer.h"
 #include <wrl.h>
+#include "DirectXDevice.h"
 
 class DSV
 {
@@ -11,7 +12,7 @@ public:
 	/// <param name="dxCommon"></param>
 	void StaticInitialize(DirectXDevice* dxDevice, int32_t bufferWidth, int32_t bufferHeight);
 
-	ID3D12DescriptorHeap* GetDSV() { return heap_.Get(); }
+	ID3D12DescriptorHeap* GetHeap() { return heap_.Get(); }
 	D3D12_CPU_DESCRIPTOR_HANDLE GetHandle() { return handle_; }
 
 private:

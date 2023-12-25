@@ -7,7 +7,7 @@
 #include <chrono>
 
 // ヘッダーファイル
-#include "Descriptor/DescriptorManager.h"
+#include "DescriptorManager.h"
 #include "DirectXDevice.h"
 
 // DirectX
@@ -18,6 +18,13 @@
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
+
+class DescriptorManager;
+class DirectXDevice;
+
+class DSV;
+class SRV;
+class RTV;
 
 class NRenderer
 {
@@ -56,6 +63,10 @@ private:
 	uint32_t backBufferWidth_ = 0;
 	uint32_t backBufferHeight_ = 0;
 	UINT fenceVal_ = 0;
+
+	std::unique_ptr<SRV> srvHeap_;
+	std::unique_ptr<DSV> dsvHeap_;
+	std::unique_ptr<RTV> rtvHeap_;
 
 public:
 

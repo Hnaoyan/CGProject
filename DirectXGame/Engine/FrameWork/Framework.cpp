@@ -30,12 +30,13 @@ void Framework::Initialize()
 	winApp = WindowAPI::GetInstance();
 	winApp->CreateGameWindow();
 
+	// DirectX
+	//dxCommon = DirectXCommon::GetInstance();
+	//dxCommon->Initialize(winApp);
+
 	renderer = NRenderer::GetInstance();
 	renderer->Initialize(winApp);
 
-	// DirectX
-	dxCommon = DirectXCommon::GetInstance();
-	dxCommon->Initialize(winApp);
 	// モデル用シェーダー初期化
 	Shader::Initialize();
 	// モデル用パイプラインの初期化

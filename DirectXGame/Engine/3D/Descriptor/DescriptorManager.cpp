@@ -2,22 +2,29 @@
 
 DescriptorManager::DescriptorManager()
 {
-	srvHeap_ = std::make_unique<SRV>();
-	dsvHeap_ = std::make_unique<DSV>();
-	rtvHeap_ = std::make_unique<RTV>();
 }
 
 void DescriptorManager::StaticInitialize()
 {
 	renderer_ = NRenderer::GetInstance();
+	srvHeap_ = std::make_unique<SRV>();
+	dsvHeap_ = std::make_unique<DSV>();
+	rtvHeap_ = std::make_unique<RTV>();
+
+	uint32_t width = WindowAPI::kClientWidth;
+	uint32_t height = WindowAPI::kClientHeight;
+	rtvHeap_->StaticInitialize(renderer_, width, height);
+	dsvHeap_->StaticInitialize(renderer_->GetDXDevice(), width, height);
+	srvHeap_->StaticInitialize(renderer_->GetDXDevice());
 
 }
 
 void DescriptorManager::PreDraw(ID3D12GraphicsCommandList* cmdList)
 {
 	rtvHeap_->ClearResourceBarrier(cmdList);
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetDSV()->GetCPUDescriptorHandleForHeapStart();
-	cmdList->OMSetRenderTargets(1, &rtvHeap_->GetHandle(), false, &dsvHandle);
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap_->GetHeap()->GetCPUDescriptorHandleForHeapStart();
+	//renderer_->GetCmdList()->OMSetRenderTargets(1, &rtvHeap_->GetHandle(), false, &dsvHandle);
+	//cmdList->OMSetRenderTargets(1, &rtvHeap_->GetHandle(), false,&dsvHandle);
 
 	rtvHeap_->ClearRenderTarget(cmdList);
 	dsvHeap_->ClearDepthBuffer(cmdList);
@@ -30,7 +37,7 @@ void DescriptorManager::PostDraw()
 
 void DescriptorManager::Finalize()
 {
-	srvHeap_->GetSRV()->Release();
+	srvHeap_->GetHeap()->Release();
 }
 
 void DescriptorManager::ResetDescriptor(ID3D12Device* device, UINT numSize)

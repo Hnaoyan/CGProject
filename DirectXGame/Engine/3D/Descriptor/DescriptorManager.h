@@ -9,6 +9,11 @@
 #include <memory>
 #include "NRenderer.h"
 
+class NRenderer;
+class DSV;
+class SRV;
+class RTV;
+
 class DescriptorManager
 {
 public:
@@ -30,13 +35,13 @@ public:
 
 	// SRV
 	SRV* GetSRV() { return srvHeap_.get(); }
-	ID3D12DescriptorHeap* GetSRVHeap() { return srvHeap_.get()->GetSRV(); }
+	//ID3D12DescriptorHeap* GetSRVHeap() { return srvHeap_.get()->GetSRV(); }
 	// DSV
 	DSV* GetDSV() { return dsvHeap_.get(); }
-	ID3D12DescriptorHeap* GetDSVHeap() { return dsvHeap_.get()->GetDSV(); }
+	//ID3D12DescriptorHeap* GetDSVHeap() { return dsvHeap_.get()->GetDSV(); }
 	// RTV
 	RTV* GetRTV() { return rtvHeap_.get(); }
-	ID3D12DescriptorHeap* GetRTVHeap() { return rtvHeap_.get()->GetRTV(); }
+	//ID3D12DescriptorHeap* GetRTVHeap() { return rtvHeap_.get()->GetRTV(); }
 
 	// 静的初期化
 	void StaticInitialize();
