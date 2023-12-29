@@ -32,10 +32,8 @@ void GameScene::Initialize() {
 	// 衝突マネージャー
 	colliderManager_ = std::make_unique<CollisionManager>();
 
-	// 追従カメラ
-	followCamera_ = std::make_unique<FollowCamera>();
-	followCamera_->Initialize();
-	followCamera_->SetTarget(player_->GetTargetAddress());
+	fixedPointCamera_ = std::make_unique<FixedPointCam>();
+	fixedPointCamera_->Initialize();
 
 	viewProjection_.translate_ = { 0,6.0f,-75.0f };
 	missileManager_ = std::make_unique<MissileManager>();
@@ -64,7 +62,7 @@ void GameScene::Update()
 	CheckCollision();
 	if (Input::GetInstance()->TriggerKey(DIK_H)) {
 		MissileManager::MissileConfig info;
-		info = { player_->GetWorldPosition(),{0,1.0f,1.0f},0 };
+		info = { player_->GetWorldPosition(),{0,1.0f,1.0f}, 0, enemyManager_->GetTestPtr()};
 		missileManager_->AddMissile(info);
 	}
 
@@ -138,17 +136,16 @@ void GameScene::CameraUpdate()
 	}
 #endif // DEBUG
 
-	followCamera_->Update();
+	fixedPointCamera_->Update();
 
-	viewProjection_.ImGuiWidget();
 
-	// デバックカメラか追尾カメラ
+	// デバックカメラ
 	if (isDebug_) {
 
 	}
 	else {
-		//viewProjection_.matView = followCamera_->GetView().matView;
-		//viewProjection_.matProjection = followCamera_->GetView().matProjection;
+		viewProjection_.matView = fixedPointCamera_->GetView().matView;
+		viewProjection_.matProjection = fixedPointCamera_->GetView().matProjection;
 		viewProjection_.TransferMatrix();
 	}
 }

@@ -3,6 +3,12 @@
 #include <list>
 #include <memory>
 
+enum MissileType {
+	eSlerp,
+	eItano,
+	eV1,
+};
+
 class MissileManager
 {
 public: // サブクラス
@@ -11,11 +17,13 @@ public: // サブクラス
 		Vector3 direct;
 		float kSpeed;
 		Enemy* ptr;
+		int type;
 	};
 
 	struct ControlParam {
 
 	};
+
 
 public:
 	static MissileManager* GetInstance() {

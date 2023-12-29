@@ -39,6 +39,9 @@ public:
 	void SetMissileManager(MissileManager* ptr) { missileManager_ = ptr; }
 
 private:
+	Input* input_ = nullptr;
+
+private:
 
 	Model* model_;
 	WorldTransform worldTransform_;
@@ -52,5 +55,8 @@ private:
 	int coolTime_ = 0;
 
 	Vector3 missileDirect = {};
+
+	int missileType_ = MissileType::eSlerp;
+
 };
 

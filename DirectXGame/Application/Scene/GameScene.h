@@ -13,6 +13,7 @@
 #include "FollowCamera.h"
 #include "IScene.h"
 #include "BaseCamera.h"
+#include "Missile/FixedPointCam.h"
 
 #include "Player.h"
 #include "LockOn.h"
@@ -80,6 +81,8 @@ private:	// メンバポインタ
 	std::unique_ptr<FollowCamera> followCamera_;
 	// ベースカメラ
 	std::unique_ptr<BaseCamera> baseCamera_;
+	// 定点カメラ
+	std::unique_ptr<FixedPointCam> fixedPointCamera_;
 
 	// 仮のオブジェクト
 	std::unique_ptr<Model> model_;

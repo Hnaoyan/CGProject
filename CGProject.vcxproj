@@ -202,15 +202,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\TimeCall\TimedCall.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\TestScene.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\Vector3.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\Vector2.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\Vector4.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\IMissile.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\NLib.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\GuidanceSystem.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Camera\ICamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Engine\Audio\AudioManager.h" />
@@ -266,6 +265,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\GuidanceSystem.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.h" />
+    <ClInclude Include="DirectXGame\Engine\Camera\ICamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

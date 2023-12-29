@@ -7,8 +7,8 @@ void BaseCamera::Initialize()
 	viewProjection_.Initialize();
 
 	// 位置・角度の設定
-	viewProjection_.translate_ = { 0,1.5f,-30.0f };
-	viewProjection_.rotation_ = { 0,0,0 };
+	//viewProjection_.translate_ = { 0,1.5f,-30.0f };
+	//viewProjection_.rotation_ = { 0,0,0 };
 }
 
 void BaseCamera::Update()

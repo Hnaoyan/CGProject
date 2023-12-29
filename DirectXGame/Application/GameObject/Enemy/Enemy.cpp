@@ -19,6 +19,7 @@ void Enemy::Update()
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		moveVector.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * SpeedDelta(speedValue);
 		moveVector.y += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * SpeedDelta(speedValue);
+		moveVector.z += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * SpeedDelta(speedValue);
 	}
 	worldTransform_.translation_ += moveVector;
 #endif // _DEBUG

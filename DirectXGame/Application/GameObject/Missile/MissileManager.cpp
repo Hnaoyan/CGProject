@@ -38,10 +38,11 @@ void MissileManager::Draw(ViewProjection& viewProjection)
 void MissileManager::AddMissile(const MissileConfig info)
 {
 	IMissile* newInstance = new IMissile();
-	newInstance->Initialize(model_.get());
-	newInstance->SetDirection(MathCalc::Normalize(info.direct));
-	newInstance->SetPosition(info.position);
-	newInstance->SetBulletSpeed(bulletSpeed_);
+	newInstance->Initialize(model_.get(), info.position);
+	//newInstance->SetDirection(MathCalc::Normalize(info.direct));
+	//newInstance->SetBulletSpeed(bulletSpeed_);
+	newInstance->InitMoveParameter(info.direct, info.kSpeed);
 	newInstance->SetTarget(info.ptr);
+	newInstance->SetType(info.type);
 	missiles_.push_back(newInstance);
 }

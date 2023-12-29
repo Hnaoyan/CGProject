@@ -7,11 +7,9 @@ float NLib::InductionPerform(float frame, float accuracy)
     return (frame - 1.0f) + accuracy;
 }
 
-Vector3 NLib::InductionNewVector(const Vector3& missile, const Vector3& target, float frame, float accuracy)
+Vector3 NLib::InductionNewVector(const Vector3& missile, const Vector3& target, float p)
 {
     Vector3 result = {};
-
-    float p = InductionPerform(frame, accuracy);
 
     Vector3 t1 = VectorLib::Scaler(missile, (1.0f - p));
     Vector3 t2 = VectorLib::Scaler(target, p);
@@ -45,6 +43,24 @@ Vector3 NLib::Slerp(const Vector3& moveVector, const Vector3& targetVector, floa
     result = VectorLib::Scaler(mvNormalize, s0) + VectorLib::Scaler(trNormalize, s1);
 
     return MathCalc::Normalize(result);
+}
+
+Vector3 NLib::Slerp_Test(const Vector3& moveVector, const Vector3& targetVector, float t)
+{
+    //v1,v2を正規化
+    Vector3 start = MathCalc::Normalize(moveVector);
+    Vector3 end = MathCalc::Normalize(targetVector);
+
+    //2ベクトル間の角度(鋭角側)
+    float angle = std::acosf(MathCalc::Dot(start, end));
+
+    //補間係数
+    float Ps = std::sinf(angle * (1 - t));
+    float Pe = std::sinf(angle * t);
+
+    Vector3 result = VectorLib::Multiply(1.0f / std::sinf(angle), VectorLib::Add(VectorLib::Multiply(Ps, start), VectorLib::Multiply(Pe, end)));
+
+    return result;
 }
 
 float NLib::DeltaTimeSpeed(float kSpeed)
