@@ -22,10 +22,15 @@ void IMissile::Update()
 	ImGui::DragFloat3("direct", &velocity_.x);
 	ImGui::DragFloat("lerpRad", &lerpRad_, 0.1f, 0, 30.0f);
 	ImGui::DragFloat("damping", &damping_, 0.01f, 0, 1.0f);
+	ImGui::DragFloat("coolTime", &coolTime_, 0.1f, 0, 100.0f);
 	ImGui::End();
 #endif // _DEBUG
 
-	HomingUpdate();
+	guidedTime_++;
+	if (guidedTime_ > coolTime_) {
+		HomingUpdate();
+		guidedTime_ = 0;
+	}
 
 	worldTransform_.UpdateMatrix();
 
