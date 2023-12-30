@@ -11,7 +11,7 @@
 #include <wrl.h>
 #include <unordered_map>
 #include "LightGroup.h"
-#include "Graphic/PipelineManager.h"
+#include "Graphics/PipelineManager.h"
 
 #include <dxgidebug.h>
 #include <dxcapi.h>
@@ -81,11 +81,6 @@ public:
 	/// 静的初期化
 	/// </summary>
 	static void StaticInitialize();
-
-	/// <summary>
-	/// グラフィックスの初期化
-	/// </summary>
-	static void InitializeGraphicsPipeline();
 
 	/// <summary>
 	/// モデル生成

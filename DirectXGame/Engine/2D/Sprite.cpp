@@ -6,6 +6,7 @@
 #include <cassert>
 #include "D3D12Lib.h"
 #include "MathCalc.h"
+#include "Graphics/Shader.h"
 
 using namespace Microsoft::WRL;
 using namespace Pipeline;
@@ -61,13 +62,11 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	ComPtr<ID3DBlob> errorBlob;			// エラーオブジェクト
 
 	// 頂点シェーダの読み込みとコンパイル
-	vertexShaderBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/Sprite.VS.hlsl",
-		L"vs_6_0");
+	vertexShaderBlob = Shader::GetInstance()->Compile(L"Sprite.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
 	// ピクセルシェーダの読み込みとコンパイル
-	pixelShaderBlob = D3D12Lib::GetInstance()->CompileShader(L"Resources/shaders/Sprite.PS.hlsl",
-		L"ps_6_0");
+	pixelShaderBlob = Shader::GetInstance()->Compile(L"Sprite.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	// InputLayout
@@ -173,6 +172,7 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 
 	gPipeline.pRootSignature = sRootSignature_.Get();	// ルートシグネチャ
 
+#pragma region ブレンド設定
 	// ブレンドなし
 	D3D12_BLEND_DESC blenddesc{};
 	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
@@ -251,6 +251,7 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 		sDevice_->CreateGraphicsPipelineState(
 			&gPipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kScreen)]));
 	assert(SUCCEEDED(result));
+#pragma endregion
 
 	// 射影行列
 	sMatProjection_ = MatLib::MakeOrthographicMatrix(0.0f, 0.0f, (float)window_width, (float)window_height, 0.0f, 1.0f);

@@ -34,7 +34,6 @@ public:
 
 private:
 
-	std::list<Particle*> particles_;
 
 	uint32_t texture_ = 0u;
 

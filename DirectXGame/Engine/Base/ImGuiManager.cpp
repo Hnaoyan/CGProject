@@ -11,20 +11,9 @@ ImGuiManager* ImGuiManager::GetInstance()
 
 void ImGuiManager::Initialize(DirectXCommon* dxCommon, WindowAPI* winApp)
 {
-	HRESULT result = S_FALSE;
+	//HRESULT result = S_FALSE;
 	dxCommon_ = dxCommon;
-
-	D3D12_DESCRIPTOR_HEAP_DESC srvDescriptorHeapDesc{};
-	//srvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	//srvDescriptorHeapDesc.NumDescriptors = 128;
-	//srvDescriptorHeapDesc.Flags = true ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
-	srvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	srvDescriptorHeapDesc.NumDescriptors = 1;
-	srvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
-	result = dxCommon_->GetDevice()->CreateDescriptorHeap(&srvDescriptorHeapDesc, IID_PPV_ARGS(&srvDescriptorHeap_));
-	assert(SUCCEEDED(result));
+	descriptor_ = DescriptorManager::GetInstance();
 	
 	IMGUI_CHECKVERSION();
 	// ImGuiのコンテキストを生成
@@ -34,9 +23,9 @@ void ImGuiManager::Initialize(DirectXCommon* dxCommon, WindowAPI* winApp)
 	// プラットフォームとレンダラーのバックエンドを設定
 	ImGui_ImplWin32_Init(winApp->GetHwnd());
 	ImGui_ImplDX12_Init(dxCommon_->GetDevice(), static_cast<int>(dxCommon_->GetBackBufferCount()),
-		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, srvDescriptorHeap_.Get(),
-		srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(),
-		srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart());
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, descriptor_->GetSRVHeap(),
+		descriptor_->GetSRVHeap()->GetCPUDescriptorHandleForHeapStart(),
+		descriptor_->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart());
 
 	ImGui::CreateContext();
 	auto& io = ImGui::GetIO();
@@ -65,7 +54,7 @@ void ImGuiManager::Draw()
 {
 	// 描画用のDescriptorHeapの設定
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap_.Get() };
+	ID3D12DescriptorHeap* descriptorHeaps[] = { descriptor_->GetSRVHeap() };
 	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	// 実際のcommandListのImGuiの描画コマンドを積む
@@ -80,5 +69,4 @@ void ImGuiManager::Finalize()
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	srvDescriptorHeap_.Reset();
 }

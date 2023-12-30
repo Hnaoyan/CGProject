@@ -126,7 +126,7 @@
     <ClCompile Include="DirectXGame\Engine\3D\Mesh.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\3D\Model.cpp">
+    <ClCompile Include="DirectXGame\Engine\3D\Drawer\Model\Model.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\3D\ViewProjection.cpp">
@@ -150,7 +150,7 @@
     <ClCompile Include="DirectXGame\Engine\Base\StringManager.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Base\TextureManager.cpp">
+    <ClCompile Include="DirectXGame\Engine\2D\Texture\TextureManager.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Base\WindowAPI.cpp">
@@ -180,19 +180,16 @@
     <ClCompile Include="DirectXGame\Application\GameObject\BaseBullet.cpp">
       <Filter>ソース ファイル\bullet</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Ground\Ground.cpp">
-      <Filter>ソース ファイル\object</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Collider\Collider.cpp">
       <Filter>ソース ファイル\collider</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Camera\DebugCamera.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Particle\ParticleManager.cpp">
+    <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleManager.cpp">
       <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Particle\Particle.cpp">
+    <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.cpp">
       <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Camera\BaseCamera.cpp">
@@ -213,13 +210,7 @@
     <ClCompile Include="DirectXGame\Engine\Math\Vector\VectorLib.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Ground\GroundManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy.cpp">
@@ -249,7 +240,22 @@
     <ClCompile Include="DirectXGame\Engine\Map\MapLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\3D\Graphic\PipelineManager.cpp">
+    <ClCompile Include="DirectXGame\Engine\3D\Graphics\PipelineManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\3D\Graphics\Shader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\3D\Descriptor\SRV.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DSV.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\3D\Descriptor\RTV.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -278,7 +284,7 @@
     <ClInclude Include="DirectXGame\Engine\3D\Mesh.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\3D\Model.h">
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Model\Model.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\3D\ViewProjection.h">
@@ -302,10 +308,10 @@
     <ClInclude Include="DirectXGame\Engine\Base\StringManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Base\StructManager.h">
+    <ClInclude Include="DirectXGame\Engine\3D\StructManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\Base\TextureManager.h">
+    <ClInclude Include="DirectXGame\Engine\2D\Texture\TextureManager.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Base\WindowAPI.h">
@@ -335,19 +341,16 @@
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h">
       <Filter>ヘッダー ファイル\other</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Ground\Ground.h">
-      <Filter>ヘッダー ファイル\object</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Collider\Collider.h">
       <Filter>ヘッダー ファイル\collider</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Camera\DebugCamera.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Particle\ParticleManager.h">
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleManager.h">
       <Filter>ヘッダー ファイル\particle</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Particle\Particle.h">
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.h">
       <Filter>ヘッダー ファイル\particle</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Camera\BaseCamera.h">
@@ -368,13 +371,7 @@
     <ClInclude Include="DirectXGame\Engine\Math\Vector\VectorLib.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Ground\GroundManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy.h">
@@ -416,7 +413,25 @@
     <ClInclude Include="DirectXGame\Engine\Map\MapLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\3D\Graphic\PipelineManager.h">
+    <ClInclude Include="DirectXGame\Engine\3D\Graphics\PipelineManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Graphics\Shader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\CBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Descriptor\SRV.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Descriptor\DSV.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Descriptor\RTV.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -433,8 +448,12 @@
     <FxCompile Include="resources\shaders\ObjVS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shaders\ParticlePS.hlsl" />
-    <FxCompile Include="Resources\shaders\ParticleVS.hlsl" />
+    <FxCompile Include="Resources\shaders\ParticlePS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\ParticleVS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -443,6 +462,8 @@
     <None Include="resources\shaders\Obj.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
-    <None Include="Resources\shaders\Particle.hlsli" />
+    <None Include="Resources\shaders\Particle.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>

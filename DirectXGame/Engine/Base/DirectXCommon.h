@@ -6,9 +6,11 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <chrono>
-
 #include <wrl.h>
+#include <memory>
+
 #include "WindowAPI.h"
+#include "Descriptor/DescriptorManager.h"
 
 #include <dxcapi.h>
 #pragma comment(lib, "dxcompiler.lib")
@@ -43,15 +45,15 @@ public:
 	/// </summary>
 	void PostDraw();
 
-	/// <summary>
-	/// レンダーターゲットのクリア
-	/// </summary>
-	void ClearRenderTarget();
+	///// <summary>
+	///// レンダーターゲットのクリア
+	///// </summary>
+	//void ClearRenderTarget();
 
-	/// <summary>
-	/// 深度バッファのクリア
-	/// </summary>
-	void ClearDepthBuffer();
+	///// <summary>
+	///// 深度バッファのクリア
+	///// </summary>
+	//void ClearDepthBuffer();
 
 public: // 取得・設定
 	/// <summary>
@@ -65,6 +67,18 @@ public: // 取得・設定
 	/// </summary>
 	/// <returns></returns>
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
+
+	/// <summary>
+	/// DXGIファクトリーの取得
+	/// </summary>
+	/// <returns></returns>
+	IDXGIFactory7* GetDxgiFactory() { return dxgiFactory_.Get(); }
+
+	/// <summary>
+	/// コマンドキューの取得
+	/// </summary>
+	/// <returns></returns>
+	ID3D12CommandQueue* GetCmdQueue() { return commandQueue_.Get(); }
 
 	/// <summary>
 	/// バッファーカウントの取得
@@ -120,6 +134,8 @@ private:	//メンバ関数
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
+	void SetDescriptorManager(DescriptorManager* ptr) { descriptorManager_ = ptr; }
+
 private:	// メンバ変数
 	// ウィンドウズアプリケーション管理
 	WindowAPI* winApp_;
@@ -136,6 +152,9 @@ private:	// メンバ変数
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthResourceBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
+	DescriptorManager* descriptorManager_ = nullptr;
+
+	//std::unique_ptr<DescriptorManager> descriptorManager_;
 
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
@@ -156,20 +175,20 @@ private:	// メンバ関数
 	/// </summary>
 	void InitializeCommand();
 
-	/// <summary>
-	/// SwapChainの生成
-	/// </summary>
-	void CreateSwapChain();
+	///// <summary>
+	///// SwapChainの生成
+	///// </summary>
+	//void CreateSwapChain();
 
-	/// <summary>
-	/// RTVの生成
-	/// </summary>
-	void CreateRenderTargetView();
+	///// <summary>
+	///// RTVの生成
+	///// </summary>
+	//void CreateRenderTargetView();
 
-	/// <summary>
-	/// 深度Bufferの生成
-	/// </summary>
-	void CreateDepthBuffer();
+	///// <summary>
+	///// 深度Bufferの生成
+	///// </summary>
+	//void CreateDepthBuffer();
 
 	/// <summary>
 	/// フェンスの生成

@@ -62,23 +62,6 @@ D3D12_RESOURCE_DESC D3D12Lib::TexResoruceDesc(DXGI_FORMAT format,  uint32_t widt
 	return resourceDesc;
 }
 
-//D3D12_RESOURCE_DESC D3D12Lib::TexResourceDesc(DXGI_FORMAT format, UINT64 width, UINT height)
-//{
-//	format;
-//	width;
-//	height;
-//	return D3D12_RESOURCE_DESC();
-//}
-//
-//D3D12_RESOURCE_DESC D3D12Lib::TexResourceDesc(DXGI_FORMAT format, UINT64 width, UINT height, UINT16 arraySize, UINT16 mipLevels)
-//{
-//	D3D12_RESOURCE_DESC resDesc;
-//	resDesc = { D3D12_RESOURCE_DIMENSION_TEXTURE2D, 0, width, height, arraySize,
-//			mipLevels, format, 1, 0, D3D12_TEXTURE_LAYOUT_UNKNOWN, D3D12_RESOURCE_FLAG_NONE };
-//	return resDesc;
-//}
-
-
 D3D12_STATIC_SAMPLER_DESC D3D12Lib::SetSamplerDesc(UINT shaderRegister, D3D12_FILTER filter)
 {
 	D3D12_STATIC_SAMPLER_DESC staticSampler{};

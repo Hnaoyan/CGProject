@@ -3,7 +3,7 @@
 #include <array>
 #include "WindowAPI.h"
 #include "StructManager.h"
-#include "Graphic/PipelineManager.h"
+#include "Graphics/PipelineManager.h"
 
 #include <dxgidebug.h>
 #include <dxcapi.h>
