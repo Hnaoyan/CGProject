@@ -205,9 +205,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Weapon.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\TestScene.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector3.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector2.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector4.cpp" />
     <ClCompile Include="DirectXGame\Engine\Map\MapLoader.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Graphics\PipelineManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Graphics\Shader.cpp" />

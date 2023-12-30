@@ -234,15 +234,6 @@
     <ClCompile Include="DirectXGame\Engine\Math\QuatLib.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector3.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector2.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\Math\Vector\Vector4.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Audio\AudioManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
