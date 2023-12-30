@@ -1,5 +1,6 @@
 #include "DirectXCommon.h"
 #include "Graphics/PipelineManager.h"
+#include "DescriptorManager.h"
 #include <cassert>
 
 using namespace Microsoft::WRL;
@@ -69,41 +70,52 @@ void DirectXCommon::PreDraw()
 }
 
 void DirectXCommon::PostDraw() {
-	HRESULT result = S_FALSE;
+	//HRESULT result = S_FALSE;
 
-	rtv_->PostDraw();
+	//rtv_->PostDraw();
 
-	ID3D12CommandList* commandLists[] = { commandList_.Get() };
-	commandQueue_->ExecuteCommandLists(1, commandLists);
+	////// これから書き込むバックバッファのインデックスを取得
+	////UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	////// Barrier
+	////D3D12_RESOURCE_BARRIER barrier = DescriptorManager::GetBarrier(rtv_->GetBackBuffer(backBufferIndex),
+	////	D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-	// GPUとOSに画面の交換を行うよう通知する
-	swapChain_->Present(1, 0);
+	////commandList_->ResourceBarrier(1, &barrier);
 
-	// FenceのSignalを待つためのイベントを作成する
-	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	assert(fenceEvent != nullptr);
+	////// コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
+	////result = commandList_->Close();
+	////assert(SUCCEEDED(result));
+
+	////ID3D12CommandList* commandLists[] = { commandList_.Get() };
+	////commandQueue_->ExecuteCommandLists(1, commandLists);
+
+	//// GPUとOSに画面の交換を行うよう通知する
+	//swapChain_->Present(1, 0);
+
+	//// FenceのSignalを待つためのイベントを作成する
+	//HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	//assert(fenceEvent != nullptr);
 
 
-	// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-	commandQueue_->Signal(fence_.Get(), ++fenceVal_);
+	//// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+	//commandQueue_->Signal(fence_.Get(), ++fenceVal_);
 
-	if (fence_->GetCompletedValue() != fenceVal_)
-	{
-		// 指定したSignalにたどりついていないので、たどり着くまで待つようにイベントを設定する
-		fence_->SetEventOnCompletion(fenceVal_, fenceEvent);
-		// イベントを待つ
-		WaitForSingleObject(fenceEvent, INFINITE);
-		CloseHandle(fenceEvent);
-	}
+	//if (fence_->GetCompletedValue() != fenceVal_)
+	//{
+	//	// 指定したSignalにたどりついていないので、たどり着くまで待つようにイベントを設定する
+	//	fence_->SetEventOnCompletion(fenceVal_, fenceEvent);
+	//	// イベントを待つ
+	//	WaitForSingleObject(fenceEvent, INFINITE);
+	//	CloseHandle(fenceEvent);
+	//}
 
-	// フレーム固定の処理
-	UpdateFixFPS();
+	//// フレーム固定の処理
+	//UpdateFixFPS();
 
-	// 次のフレーム用のコマンドリストを準備
-	result = commandAllocator_->Reset();
-	assert(SUCCEEDED(result));
-	result = commandList_->Reset(commandAllocator_.Get(), nullptr);
-
+	//// 次のフレーム用のコマンドリストを準備
+	//result = commandAllocator_->Reset();
+	//assert(SUCCEEDED(result));
+	//result = commandList_->Reset(commandAllocator_.Get(), nullptr);
 
 }
 
@@ -212,34 +224,57 @@ void DirectXCommon::InitializeCommand() {
 
 void DirectXCommon::CreateSwapChain()
 {
-	HRESULT result = S_FALSE;
-	// SwapChainDesc作成
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	// 画面サイズ
-	swapChainDesc.Width = backBufferWidth_;
-	swapChainDesc.Height = backBufferHeight_;
-	// 色の形式
-	swapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	// マルチサンプルの有無
-	swapChainDesc.SampleDesc.Count = 1;
-	// 描画ターゲットとして
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = 2;	// ダブルバッファ
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;	// モニタにうつしたら破棄
+	//HRESULT result = S_FALSE;
+	//// SwapChainDesc作成
+	//DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	//// 画面サイズ
+	//swapChainDesc.Width = backBufferWidth_;
+	//swapChainDesc.Height = backBufferHeight_;
+	//// 色の形式
+	//swapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	//// マルチサンプルの有無
+	//swapChainDesc.SampleDesc.Count = 1;
+	//// 描画ターゲットとして
+	//swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	//swapChainDesc.BufferCount = 2;	// ダブルバッファ
+	//swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;	// モニタにうつしたら破棄
 
-	// 設定を渡すため
+	//// 設定を渡すため
+	//ComPtr<IDXGISwapChain1> swapChain1;
+
+	//// SwapChain1で生成
+	//result = dxgiFactory_->CreateSwapChainForHwnd(
+	//	commandQueue_.Get(),
+	//	WindowAPI::GetInstance()->GetHwnd(),
+	//	&swapChainDesc,
+	//	nullptr, nullptr,
+	//	&swapChain1);
+	//assert(SUCCEEDED(result));
+
+	//// SwapChain1を変換
+	//result = swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain_));
+	//assert(SUCCEEDED(result));
+	HRESULT result = S_FALSE;
+
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	swapChainDesc.Width = backBufferWidth_;	// 画面の幅
+	swapChainDesc.Height = backBufferHeight_;// 画面の高さ
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	// 色の形式
+	swapChainDesc.SampleDesc.Count = 1;	// マルチサンプルしない
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	// 描画のターゲットとして利用する
+	swapChainDesc.BufferCount = 2;	// ダブルバッファ
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;	// モニタにうつしたら、中身を破棄
+	// コマンドキュー、ウィンドウハンドル、設定を渡して生成する
 	ComPtr<IDXGISwapChain1> swapChain1;
 
-	// SwapChain1で生成
 	result = dxgiFactory_->CreateSwapChainForHwnd(
 		commandQueue_.Get(),
-		WindowAPI::GetInstance()->GetHwnd(),
+		winApp_->GetHwnd(),
 		&swapChainDesc,
 		nullptr, nullptr,
 		&swapChain1);
 	assert(SUCCEEDED(result));
 
-	// SwapChain1を変換
 	result = swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain_));
 	assert(SUCCEEDED(result));
 }

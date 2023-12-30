@@ -16,7 +16,7 @@ public:
 public: // アクセッサ
 	ID3D12DescriptorHeap* GetHeap() { return heap_.Get(); }
 	D3D12_RENDER_TARGET_VIEW_DESC GetDesc() { return rtvDesc_; }
-	//ID3D12Resource* GetBackBuffer(UINT index) { return backBuffer_[index].Get(); }
+	ID3D12Resource* GetBackBuffer(UINT index) { return backBuffer_[index].Get(); }
 	size_t GetBackBufferCount() const { return backBuffer_.size(); }
 
 public:
