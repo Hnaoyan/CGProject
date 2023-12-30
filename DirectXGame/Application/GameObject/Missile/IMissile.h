@@ -4,17 +4,29 @@
 #include "MathCalc.h"
 #include "Enemy/Enemy.h"
 
+/// <summary>
+/// ミサイルクラス
+/// </summary>
 class IMissile
 {
 public:
-
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="model"></param>
+	/// <param name="position"></param>
 	void Initialize(Model* model, const Vector3& position);
-
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update();
-
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="viewProjection"></param>
 	void Draw(ViewProjection& viewProjection);
 
-public:
+public: // アクセッサ・初期化
 	/// <summary>
 	/// ワールド座標
 	/// </summary>
@@ -34,7 +46,7 @@ public:
 
 	void InitMoveParameter(const Vector3& direct, float speed);
 
-private:
+private: // 内部の固有処理
 	/// <summary>
 	/// スラープによるデフォルト追尾
 	/// </summary>

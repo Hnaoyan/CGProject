@@ -76,3 +76,8 @@ float NLib::DeltaTimeSpeed(float kSpeed)
 
     return kSpeed * (1.0f / deltaTime);
 }
+
+float NLib::GetDeltaTime(float frame)
+{
+    return 1.0f / frame;
+}

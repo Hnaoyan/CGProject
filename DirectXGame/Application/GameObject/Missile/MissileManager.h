@@ -3,12 +3,17 @@
 #include <list>
 #include <memory>
 
+/// <summary>
+/// ミサイル軌道の種類
+/// </summary>
 enum MissileType {
 	eSlerp,
 	eItano,
 	eV1,
 };
-
+/// <summary>
+/// ミサイル管理クラス
+/// </summary>
 class MissileManager
 {
 public: // サブクラス
@@ -23,19 +28,29 @@ public: // サブクラス
 	struct ControlParam {
 
 	};
-
-
 public:
+	/// <summary>
+	/// シングルトン
+	/// </summary>
 	static MissileManager* GetInstance() {
 		static MissileManager instance;
 		return &instance;
 	}
 
 public:
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Initialize();
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update();
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="viewProjection"></param>
 	void Draw(ViewProjection& viewProjection);
-
 public:
 	void AddMissile(const MissileConfig info);
 

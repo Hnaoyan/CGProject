@@ -19,6 +19,7 @@ public:
 
 	// デルタタイム計算
 	static float DeltaTimeSpeed(float kSpeed);
+	static float GetDeltaTime(float frame);
 
 };
 

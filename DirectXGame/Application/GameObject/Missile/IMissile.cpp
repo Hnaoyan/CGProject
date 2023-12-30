@@ -63,7 +63,6 @@ void IMissile::SlerpUpdate()
 	// 球面線形補間
 	velocity_ = NLib::Slerp_Test(velocity_, toEnemy, 0.025f) * kBulletSpeed_;
 
-	//worldTransform_.translation_ += GetDeltaTimeVelocity();
 }
 
 void IMissile::ItanoUpdate()
@@ -78,8 +77,8 @@ void IMissile::ItanoUpdate()
 	Vector3 directToEnemy = target_->GetWorldPosition() - GetWorldPosition();
 	p_ = NLib::InductionPerform(frame_, 0.01f);
 	direction_ = NLib::InductionNewVector(direction_, directToEnemy, p_);
-	acceleration_ = direction_ * (1.0f / 60.0f);
-	velocity_ += acceleration_ * (1.0f / 60.0f);
+	acceleration_ = direction_ * NLib::GetDeltaTime(60.0f);
+	velocity_ += acceleration_ * NLib::GetDeltaTime(60.0f);
 
 }
 
@@ -106,7 +105,7 @@ void IMissile::TrackingMissileV1()
 
 	force += nowDirect * propulsion;
 	force -= velocity_ * damping_;
-	velocity_ += force * (1.0f / 60.0f);
+	velocity_ += force * NLib::GetDeltaTime(60.0f);
 }
 
 void IMissile::HomingUpdate()
@@ -131,6 +130,6 @@ void IMissile::HomingUpdate()
 Vector3 IMissile::GetDeltaTimeVelocity()
 {
 	// TODO: return ステートメントをここに挿入します
-	Vector3 newVelocity = velocity_ * (1.0f / 60.0f);
+	Vector3 newVelocity = velocity_ * NLib::GetDeltaTime(60.0f);
 	return newVelocity;
 }
