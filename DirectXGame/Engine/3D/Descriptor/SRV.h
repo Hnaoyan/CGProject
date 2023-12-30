@@ -13,7 +13,7 @@ public:
 
 	void StaticInitialize(DirectXCommon* dxCommon);
 
-	ID3D12DescriptorHeap* GetSRV() { return heap_.Get(); }
+	ID3D12DescriptorHeap* GetHeap() { return heap_.Get(); }
 
 private:
 

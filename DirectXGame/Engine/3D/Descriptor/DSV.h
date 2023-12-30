@@ -13,17 +13,16 @@ public:
 	/// <param name="dxCommon"></param>
 	void StaticInitialize(DirectXCommon* dxCommon, int32_t bufferWidth, int32_t bufferHeight);
 
-	ID3D12DescriptorHeap* GetDSV() { return heap_.Get(); }
+	ID3D12DescriptorHeap* GetHeap() { return heap_.Get(); }
 
-private:
+public:
 	/// <summary>
 	/// DepthBufferの生成
 	/// </summary>
 	/// <param name="bufferWidth"></param>
 	/// <param name="bufferHeight"></param>
-	void CreateDepthBuffer(int32_t bufferWidth, int32_t bufferHeight);
+	void CreateDepthBuffer();
 
-public:
 	/// <summary>
 	/// DepthBufferのクリア
 	/// </summary>
@@ -40,9 +39,13 @@ private:
 	// ヒープ自体
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> heap_;
 
+	// インフォ
 	uint32_t kDescriptorSize_;
 	uint32_t size_;
+	uint32_t bufferWidth_;
+	uint32_t bufferHeight_;
 
+	// リソース・デスク
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource_;
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc_{};
 

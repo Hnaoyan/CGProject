@@ -6,7 +6,6 @@
 #include "SRV.h"
 #include "DSV.h"
 #include "RTV.h"
-#include <memory>
 
 class DescriptorManager
 {
@@ -24,16 +23,6 @@ public:
 	/// <returns></returns>
 	ID3D12DescriptorHeap* GetDescriptorHeap() { return descriptorHeap_.Get(); }
 
-	// SRV
-	SRV* GetSRV() { return srvHeap_.get(); }
-	ID3D12DescriptorHeap* GetSRVHeap() { return srvHeap_.get()->GetSRV(); }
-	// DSV
-	DSV* GetDSV() { return dsvHeap_.get(); }
-	ID3D12DescriptorHeap* GetDSVHeap() { return dsvHeap_.get()->GetDSV(); }
-	// RTV
-	RTV* GetRTV() { return rtvHeap_.get(); }
-	ID3D12DescriptorHeap* GetRTVHeap() { return rtvHeap_.get()->GetRTV(); }
-
 	// 静的初期化
 	void StaticInitialize();
 
@@ -47,12 +36,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_;
 
 	DirectXCommon* dxCommon_ = nullptr;
-
-	//Microsoft::WRL::ComPtr <SRV> srvHeap_;
-
-	std::unique_ptr<SRV> srvHeap_;
-	std::unique_ptr<DSV> dsvHeap_;
-	std::unique_ptr<RTV> rtvHeap_;
 
 public:
 

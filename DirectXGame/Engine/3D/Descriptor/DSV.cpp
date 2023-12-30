@@ -8,15 +8,15 @@ void DSV::StaticInitialize(DirectXCommon* dxCommon, int32_t bufferWidth, int32_t
 {
 	dxCommon_ = dxCommon;
 	device_ = dxCommon_->GetDevice();
-
-	CreateDepthBuffer(bufferWidth, bufferHeight);
+	bufferWidth_ = bufferWidth;
+	bufferHeight_ = bufferHeight;
 }
 
-void DSV::CreateDepthBuffer(int32_t bufferWidth, int32_t bufferHeight)
+void DSV::CreateDepthBuffer()
 {
 	// リソースの設定
 	D3D12_RESOURCE_DESC resourceDesc = CreateResourceDesc(
-		DXGI_FORMAT_D32_FLOAT, D3D12_RESOURCE_DIMENSION_TEXTURE2D, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, bufferWidth, bufferHeight);
+		DXGI_FORMAT_D32_FLOAT, D3D12_RESOURCE_DIMENSION_TEXTURE2D, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL, bufferWidth_, bufferHeight_);
 	resourceDesc.MipLevels = 0;
 
 	// Heapの設定
