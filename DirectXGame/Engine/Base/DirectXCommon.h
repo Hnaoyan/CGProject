@@ -49,15 +49,15 @@ public:
 	/// </summary>
 	void PostDraw();
 
-	///// <summary>
-	///// レンダーターゲットのクリア
-	///// </summary>
-	//void ClearRenderTarget();
+	/// <summary>
+	/// レンダーターゲットのクリア
+	/// </summary>
+	void ClearRenderTarget() {};
 
-	///// <summary>
-	///// 深度バッファのクリア
-	///// </summary>
-	//void ClearDepthBuffer();
+	/// <summary>
+	/// 深度バッファのクリア
+	/// </summary>
+	void ClearDepthBuffer() { };
 private:
 	// Direct3D関連のポインタ
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
