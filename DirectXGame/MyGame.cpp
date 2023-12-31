@@ -1,5 +1,6 @@
 #include "MyGame.h"
 #include "GlobalVariables.h"
+#include "Editor/Editor.h"
 
 void MyGame::Initialize()
 {
@@ -33,6 +34,8 @@ void MyGame::Update()
 #ifdef _DEBUG
 	// json更新
 	GlobalVariables::GetInstance()->Update();
+	// Editor
+	Editor::GetInstance()->Update();
 #endif // _DEBUG
 
 	// ゲームシーン更新処理

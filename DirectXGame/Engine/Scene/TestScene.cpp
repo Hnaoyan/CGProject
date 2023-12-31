@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "DirectXCommon.h"
 #include "TextureManager.h"
+#include "Editor/Editor.h"
 
 void TestScene::Initialize()
 {
@@ -21,6 +22,21 @@ void TestScene::Initialize()
 	testSprite_.reset(Sprite::Create(texture_, { 100,100 }, { 1,1,1,1 }, { 0.5f,0.5f }, 0, 0));
 
 	alphaValue_ = 1.0f;
+
+	Editor* editor = Editor::GetInstance();
+	Editor::HierarchicalName nameGroup;
+	nameGroup.kGroup = "First";
+	nameGroup.kSection = "Alpha";
+
+	//editor->CreateGroup(nameGroup.kGroup);
+	editor->CreateSection(nameGroup);
+	editor->SetValue(nameGroup, "one", testValue_);
+
+	nameGroup.kGroup = "Second";
+	editor->CreateSection(nameGroup);
+	editor->SetValue(nameGroup, "two", testValue_);
+
+	ApplyGlobalVariables();
 
 }
 
@@ -68,7 +84,7 @@ void TestScene::Update()
 	planeModel_->SetAlphaValue(alphaValue_);
 
 	ImGui::ShowDemoWindow();
-
+	ApplyGlobalVariables();
 }
 
 void TestScene::Draw()
@@ -136,4 +152,15 @@ void TestScene::ImGuiQuaternionPrintf(const Quaternion& quat, const char* tag)
 		ImGui::TreePop();
 	}
 	ImGui::End();
+}
+
+void TestScene::ApplyGlobalVariables()
+{
+	Editor* editor = Editor::GetInstance();
+	Editor::HierarchicalName nameGroup;
+	nameGroup.kGroup = "First";
+	nameGroup.kSection = "Alpha";
+
+	this->testValue_ = editor->GetIntValue(nameGroup, "one");
+
 }
