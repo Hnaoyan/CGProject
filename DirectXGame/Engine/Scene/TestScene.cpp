@@ -85,7 +85,7 @@ void TestScene::Draw()
 	// 描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
-	//DirectXCommon::GetInstance()->ClearDepthBuffer();
+	DirectXCommon::GetInstance()->ClearDepthBuffer();
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画

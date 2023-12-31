@@ -33,6 +33,7 @@ void DirectXCommon::Initialize(WindowAPI* winApp, int32_t bufferWidth, int32_t b
 	//rtv_->CreateSwapChain();
 	CreateSwapChain();
 	rtv_->CreateRenderTargetView();
+	//CreateRenderTargetView();
 
 	dsv_ = std::make_unique<DSV>();
 	dsv_->StaticInitialize(this, backBufferWidth_, backBufferHeight_);
@@ -47,20 +48,21 @@ void DirectXCommon::Initialize(WindowAPI* winApp, int32_t bufferWidth, int32_t b
 void DirectXCommon::PreDraw()
 {
 	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
-
+	// Barrier
+	D3D12_RESOURCE_BARRIER barrier = DescriptorManager::GetBarrier(rtv_->GetBackBuffer(backBufferIndex),
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	// TransitionBarrierを張る
+	commandList_->ResourceBarrier(1, &barrier);
 	// 描画先のRTVを設定する
 	// ハンドルを取得
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = DescriptorManager::GetCPUDescriptorHandle(rtv_->GetHeap(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), backBufferIndex);
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsv_->GetHeap()->GetCPUDescriptorHandleForHeapStart();
 	// レンダーターゲットを設定
 	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
-	// 指定した色で画面全体をクリアする
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
-	commandList_->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
 	rtv_->ClearRenderTarget(commandList_.Get());
 
-	dsv_->ClearDepthBuffer(commandList_.Get());
+	ClearDepthBuffer();
 
 	// ビューポートの設定
 	D3D12_VIEWPORT viewport = CreateViewport(FLOAT(backBufferWidth_), FLOAT(backBufferHeight_), 0, 0, 0.0f, 1.0f);
@@ -70,53 +72,58 @@ void DirectXCommon::PreDraw()
 }
 
 void DirectXCommon::PostDraw() {
-	//HRESULT result = S_FALSE;
+	HRESULT result = S_FALSE;
 
 	//rtv_->PostDraw();
 
-	////// これから書き込むバックバッファのインデックスを取得
-	////UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
-	////// Barrier
-	////D3D12_RESOURCE_BARRIER barrier = DescriptorManager::GetBarrier(rtv_->GetBackBuffer(backBufferIndex),
-	////	D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	// これから書き込むバックバッファのインデックスを取得
+	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
+	// Barrier
+	D3D12_RESOURCE_BARRIER barrier = DescriptorManager::GetBarrier(rtv_->GetBackBuffer(backBufferIndex),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-	////commandList_->ResourceBarrier(1, &barrier);
+	commandList_->ResourceBarrier(1, &barrier);
 
-	////// コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
-	////result = commandList_->Close();
-	////assert(SUCCEEDED(result));
+	// コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
+	result = commandList_->Close();
+	assert(SUCCEEDED(result));
 
-	////ID3D12CommandList* commandLists[] = { commandList_.Get() };
-	////commandQueue_->ExecuteCommandLists(1, commandLists);
+	ID3D12CommandList* commandLists[] = { commandList_.Get() };
+	commandQueue_->ExecuteCommandLists(1, commandLists);
 
-	//// GPUとOSに画面の交換を行うよう通知する
-	//swapChain_->Present(1, 0);
+	// GPUとOSに画面の交換を行うよう通知する
+	swapChain_->Present(1, 0);
 
-	//// FenceのSignalを待つためのイベントを作成する
-	//HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	//assert(fenceEvent != nullptr);
+	// FenceのSignalを待つためのイベントを作成する
+	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
 
 
-	//// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-	//commandQueue_->Signal(fence_.Get(), ++fenceVal_);
+	// GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+	commandQueue_->Signal(fence_.Get(), ++fenceVal_);
 
-	//if (fence_->GetCompletedValue() != fenceVal_)
-	//{
-	//	// 指定したSignalにたどりついていないので、たどり着くまで待つようにイベントを設定する
-	//	fence_->SetEventOnCompletion(fenceVal_, fenceEvent);
-	//	// イベントを待つ
-	//	WaitForSingleObject(fenceEvent, INFINITE);
-	//	CloseHandle(fenceEvent);
-	//}
+	if (fence_->GetCompletedValue() != fenceVal_)
+	{
+		// 指定したSignalにたどりついていないので、たどり着くまで待つようにイベントを設定する
+		fence_->SetEventOnCompletion(fenceVal_, fenceEvent);
+		// イベントを待つ
+		WaitForSingleObject(fenceEvent, INFINITE);
+		CloseHandle(fenceEvent);
+	}
 
-	//// フレーム固定の処理
-	//UpdateFixFPS();
+	// フレーム固定の処理
+	UpdateFixFPS();
 
-	//// 次のフレーム用のコマンドリストを準備
-	//result = commandAllocator_->Reset();
-	//assert(SUCCEEDED(result));
-	//result = commandList_->Reset(commandAllocator_.Get(), nullptr);
+	// 次のフレーム用のコマンドリストを準備
+	result = commandAllocator_->Reset();
+	assert(SUCCEEDED(result));
+	result = commandList_->Reset(commandAllocator_.Get(), nullptr);
 
+}
+
+void DirectXCommon::ClearDepthBuffer()
+{
+	dsv_->ClearDepthBuffer(this->commandList_.Get());
 }
 
 void DirectXCommon::InitializeDXGIDevice() {

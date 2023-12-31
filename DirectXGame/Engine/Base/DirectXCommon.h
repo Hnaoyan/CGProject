@@ -50,14 +50,9 @@ public:
 	void PostDraw();
 
 	/// <summary>
-	/// レンダーターゲットのクリア
-	/// </summary>
-	void ClearRenderTarget() {};
-
-	/// <summary>
 	/// 深度バッファのクリア
 	/// </summary>
-	void ClearDepthBuffer() { };
+	void ClearDepthBuffer();
 private:
 	// Direct3D関連のポインタ
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
@@ -108,9 +103,6 @@ private:	// メンバ変数
 	WindowAPI* winApp_;
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthResourceBuffer_;
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
 
 	//std::unique_ptr<DescriptorManager> descriptorManager_;
@@ -120,7 +112,11 @@ private:	// メンバ変数
 	UINT fenceVal_ = 0;
 	
 	std::unique_ptr<SRV> srv_;
+
 	std::unique_ptr<RTV> rtv_;
+	//D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
+	//std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffer_;
+
 	std::unique_ptr<DSV> dsv_;
 
 private:	// メンバ関数
@@ -142,16 +138,6 @@ private:	// メンバ関数
 	///// SwapChainの生成
 	///// </summary>
 	void CreateSwapChain();
-
-	///// <summary>
-	///// RTVの生成
-	///// </summary>
-	//void CreateRenderTargetView();
-
-	///// <summary>
-	///// 深度Bufferの生成
-	///// </summary>
-	//void CreateDepthBuffer();
 
 	/// <summary>
 	/// フェンスの生成
