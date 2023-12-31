@@ -1,4 +1,4 @@
 #include "IScene.h"
 #include "SceneManager.h"
 
-int IScene::sceneNum = GAMESCENE;
+int IScene::sceneNum = TITLE;
