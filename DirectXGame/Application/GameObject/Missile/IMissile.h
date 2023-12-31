@@ -75,10 +75,10 @@ private:
 	Vector3 acceleration_;
 	float kBulletSpeed_ = 5.0f;
 	float frame_ = 0;
-	int guidedTime_ = 100;
+	int guidedTime_ = 0;
 	float p_ = 0;
 	int type_ = 0;
-	float coolTime_ = 100;
+	int coolTime_ = 3;
 
 private:
 	float lerpRad_ = 5.0f;

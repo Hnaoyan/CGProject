@@ -22,7 +22,7 @@ void IMissile::Update()
 	ImGui::DragFloat3("direct", &velocity_.x);
 	ImGui::DragFloat("lerpRad", &lerpRad_, 0.1f, 0, 30.0f);
 	ImGui::DragFloat("damping", &damping_, 0.01f, 0, 1.0f);
-	ImGui::DragFloat("coolTime", &coolTime_, 0.1f, 0, 100.0f);
+	ImGui::DragInt("coolTime", &coolTime_, 1, 0, 100);
 	ImGui::End();
 #endif // _DEBUG
 
@@ -32,8 +32,8 @@ void IMissile::Update()
 		guidedTime_ = 0;
 	}
 
+	worldTransform_.translation_ += velocity_ * NLib::GetDeltaTime(60.0f);
 	worldTransform_.UpdateMatrix();
-
 }
 
 void IMissile::Draw(ViewProjection& viewProjection)
@@ -51,6 +51,7 @@ void IMissile::InitMoveParameter(const Vector3& direct, float speed)
 	//SetBulletSpeed(speed);
 	// 移動ベクトルの初速度計算
 	velocity_ = direct * speed;
+	//velocity_ *= NLib::GetDeltaTime(60.0f);
 }
 
 void IMissile::SlerpUpdate()
@@ -122,9 +123,7 @@ void IMissile::HomingUpdate()
 		TrackingMissileV1();
 		break;
 	}
-
-	worldTransform_.translation_ += GetDeltaTimeVelocity();
-	worldTransform_.UpdateMatrix();
+	//velocity_ *= NLib::GetDeltaTime(60.0f);
 }
 
 Vector3 IMissile::GetDeltaTimeVelocity()
