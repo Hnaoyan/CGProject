@@ -9,7 +9,7 @@ void FollowCamera::Initialize() {
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	defaultTranslate_ = viewProjection_.translate_;
-	defaultOffset = {0.0f, 2.0f, -15.0f};
+	defaultOffset = {0.0f, 6.0f, -25.0f};
 
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "FollowCamera";
