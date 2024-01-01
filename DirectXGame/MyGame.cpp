@@ -8,6 +8,8 @@ void MyGame::Initialize()
 	Framework::Initialize();
 	// グローバル変数の外部管理
 	GlobalVariables::GetInstance()->LoadFiles();
+
+	Editor::GetInstance()->LoadFiles();
 	// シーンの初期化
 	sceneManager = new SceneManager();
 }

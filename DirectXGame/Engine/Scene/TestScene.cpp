@@ -28,13 +28,15 @@ void TestScene::Initialize()
 	nameGroup.kGroup = "First";
 	nameGroup.kSection = "Alpha";
 
-	//editor->CreateGroup(nameGroup.kGroup);
-	editor->CreateSection(nameGroup);
+	editor->CreateHierarchy(nameGroup);
 	editor->SetValue(nameGroup, "one", testValue_);
 
 	nameGroup.kGroup = "Second";
-	editor->CreateSection(nameGroup);
+	editor->CreateHierarchy(nameGroup);
 	editor->SetValue(nameGroup, "two", testValue_);
+
+	nameGroup = { "Third","Alpha" };
+	editor->CreateHierarchy(nameGroup);
 
 	ApplyGlobalVariables();
 

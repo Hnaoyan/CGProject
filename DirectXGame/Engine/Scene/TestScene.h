@@ -63,9 +63,11 @@ private:
 
 	uint32_t texture_ = 0u;
 
-	float alphaValue_ = 0;
+	float alphaValue_;
 
-	uint32_t testValue_ = 0;
+	uint32_t testValue_;
+
+	
 
 	void ApplyGlobalVariables();
 };

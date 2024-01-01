@@ -6,11 +6,16 @@
 
 class Editor
 {
-public:
+public: // サブクラス
 	struct HierarchicalName {
 		std::string kGroup;
 		std::string kSection;
 	};
+private:
+	Editor() = default;
+	~Editor() = default;
+	Editor(const Editor& variable) = default;
+	Editor& operator=(const Editor& variable);
 
 public:
 	static Editor* GetInstance() {
@@ -25,12 +30,10 @@ public:
 
 public:
 	/// <summary>
-	/// グループの作成
+	/// ヒエラルキーで作成
 	/// </summary>
-	/// <param name="groupName"></param>
-	void CreateGroup(const std::string& groupName);
-
-	void CreateSection(const HierarchicalName& names);
+	/// <param name="names"></param>
+	void CreateHierarchy(const HierarchicalName& names);
 
 	/// <summary>
 	/// ファイルに書き出し
@@ -41,16 +44,16 @@ public:
 	/// <summary>
 	/// ディレクトリの全ファイル読み込み
 	/// </summary>
-	//void LoadFiles();
+	void LoadFiles();
 
 	/// <summary>
 	/// ファイルから読み込む
 	/// </summary>
 	/// <param name="groupName"></param>
-	//void LoadFile(const HierarchicalName& groupName);
+	void LoadFile(const std::string& groupName);
 
-public:
-
+public: // アクセッサ
+#pragma region 設定
 	/// <summary>
 	/// 値のセット(int)
 	/// </summary>
@@ -59,18 +62,20 @@ public:
 	/// <summary>
 	/// 値のセット(float)
 	/// </summary>
-	//void SetValue(const std::string& groupName, const std::string& key, float value);
+	void SetValue(const HierarchicalName& names, const std::string& key, float value);
 
 	/// <summary>
 	/// 値のセット(Vector2)
 	/// </summary>
-	//void SetValue(const std::string& groupName, const std::string& key, const Vector2& value);
+	void SetValue(const HierarchicalName& names, const std::string& key, const Vector2& value);
 
 	/// <summary>
 	/// 値のセット(Vector3)
 	/// </summary>
-	//void SetValue(const std::string& groupName, const std::string& key, const Vector3& value);
+	void SetValue(const HierarchicalName& names, const std::string& key, const Vector3& value);
+#pragma endregion
 
+#pragma region 追加
 	/// <summary>
 	/// 項目の追加(int)
 	/// </summary>
@@ -79,31 +84,37 @@ public:
 	/// <summary>
 	/// 項目の追加(float)
 	/// </summary>
-	//void AddItem(const std::string& groupName, const std::string& key, float value);
+	void AddItem(const HierarchicalName& names, const std::string& key, float value);
 
 	/// <summary>
 	/// 項目の追加(Vector2)
 	/// </summary>
-	//void AddItem(const std::string& groupName, const std::string& key, const Vector2& value);
+	void AddItem(const HierarchicalName& names, const std::string& key, const Vector2& value);
 
 	/// <summary>
 	/// 項目の追加(Vector3)
 	/// </summary>
-	//void AddItem(const std::string& groupName, const std::string& key, const Vector3& value);
+	void AddItem(const HierarchicalName& names, const std::string& key, const Vector3& value);
+#pragma endregion
 
-	// 値の取得
+#pragma region 取得
+	/// <summary>
+	/// 値の取得(int)
+	/// </summary>
 	int32_t GetIntValue(const HierarchicalName& names, const std::string& key);
-	//float GetFloatValue(const std::string& groupName, const std::string& key);
-	//Vector2 GetVector2Value(const std::string& groupName, const std::string& key);
-	//Vector3 GetVector3Value(const std::string& groupName, const std::string& key);
-
-
-
-private:
-	Editor() = default;
-	~Editor() = default;
-	Editor(const Editor& variable) = default;
-	Editor& operator=(const Editor& variable);
+	/// <summary>
+	/// 値の取得(float)
+	/// </summary>
+	float GetFloatValue(const HierarchicalName& names, const std::string& key);
+	/// <summary>
+	/// 値の取得(Vector2)
+	/// </summary>
+	Vector2 GetVector2Value(const HierarchicalName& names, const std::string& key);
+	/// <summary>
+	/// 値の取得(Vector3)
+	/// </summary>
+	Vector3 GetVector3Value(const HierarchicalName& names, const std::string& key);
+#pragma endregion
 
 private:
 	//// 項目
