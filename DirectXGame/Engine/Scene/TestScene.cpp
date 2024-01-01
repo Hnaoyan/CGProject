@@ -29,11 +29,11 @@ void TestScene::Initialize()
 	nameGroup.kSection = "Alpha";
 
 	editor->CreateHierarchy(nameGroup);
-	editor->SetValue(nameGroup, "one", testValue_);
+	editor->AddItem(nameGroup, "one", testValue_);
 
 	nameGroup.kGroup = "Second";
 	editor->CreateHierarchy(nameGroup);
-	editor->SetValue(nameGroup, "two", testValue_);
+	editor->AddItem(nameGroup, "two", testValue_);
 
 	nameGroup = { "Third","Alpha" };
 	editor->CreateHierarchy(nameGroup);

@@ -65,7 +65,7 @@ private:
 
 	float alphaValue_;
 
-	uint32_t testValue_;
+	int32_t testValue_;
 
 	
 
