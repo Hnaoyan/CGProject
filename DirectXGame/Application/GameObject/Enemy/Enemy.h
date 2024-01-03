@@ -28,9 +28,12 @@ public:
 public:
 
 	WorldTransform* GetTargetAddress() { return &worldTransform_; }
+
 	Vector3 GetWorldPosition() {
 		return Vector3(worldTransform_.matWorld_.m[3][0], worldTransform_.matWorld_.m[3][1], worldTransform_.matWorld_.m[3][2]);
 	}
+
+	Vector3 GetVelocity() { return velocity_; }
 
 	void SetPosition(const Vector3& position) { worldTransform_.translation_ = position; }
 
@@ -41,7 +44,11 @@ private:
 	WorldTransform worldTransform_;
 	uint32_t texture_ = 0u;
 
+	Vector3 velocity_ = {};
+
 	float SpeedDelta(float moveValue) { return moveValue * (1.0f / 60.0f); }
+
+	void ImGuiWidget();
 
 };
 

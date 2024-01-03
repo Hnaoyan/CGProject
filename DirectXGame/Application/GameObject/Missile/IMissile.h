@@ -58,10 +58,17 @@ private: // 内部の固有処理
 
 	void TrackingMissileV1();
 	/// <summary>
+	/// 比例航法の追尾
+	/// </summary>
+	void ProportionaMissile();
+
+	Vector3 GetDeltaTimeVelocity();
+
+private:
+	/// <summary>
 	/// ホーミング処理の管理
 	/// </summary>
 	void HomingUpdate();
-	Vector3 GetDeltaTimeVelocity();
 
 private:
 	WorldTransform worldTransform_;
@@ -73,6 +80,9 @@ private:
 	Vector3 velocity_;
 	Vector3 direction_;
 	Vector3 acceleration_;
+
+	Vector3 toEnemy_;
+
 	float kBulletSpeed_ = 5.0f;
 	float frame_ = 0;
 	int guidedTime_ = 0;
