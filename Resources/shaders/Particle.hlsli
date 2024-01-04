@@ -22,21 +22,21 @@ cbuffer Material : register(b2)
     float m_alpha : packoffset(c2.w);
 }
 
-static const int DIRECTLIGHT_NUM = 3;
+//static const int DIRECTLIGHT_NUM = 3;
 
 
-struct DirectLight
-{
-    float3 lightv;
-    float3 lightcolor;
-    uint active;
-};
+//struct DirectLight
+//{
+//    float3 lightv;
+//    float3 lightcolor;
+//    uint active;
+//};
 
-cbuffer LightGroup : register(b3)
-{
-    float3 ambientColor;
-    DirectLight directLight[DIRECTLIGHT_NUM];
-}
+//cbuffer LightGroup : register(b3)
+//{
+//    float3 ambientColor;
+//    DirectLight directLight[DIRECTLIGHT_NUM];
+//}
 
 
 
