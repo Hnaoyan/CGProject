@@ -5,6 +5,10 @@
 
 class Particle
 {
+private:
+	static const std::string kBaseDirectory;
+	static const std::string kDefaultName;
+
 public:
 	static void StaticInitialize();
 
@@ -26,6 +30,39 @@ public:
 	/// <param name="textureHandle"></param>
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle);
 
+	void PreDraw(ID3D12GraphicsCommandList* commandList);
+
+	void PostDraw();
+
+	void Initialize(const std::string& name, bool smoothing = false);
+
+private:
+
+
+	/// <summary>
+	/// モデル読み込み
+	/// </summary>
+	/// <param name="modelName"></param>
+	/// <param name="smoothing"></param>
+	void LoadModel(const std::string& name, bool smoothing);
+
+	/// <summary>
+	/// マテリアル読み込み
+	/// </summary>
+	/// <param name="directoryPath"></param>
+	/// <param name="fileName"></param>
+	void LoadMaterial(const std::string& directoryPath, const std::string& fileName);
+
+	/// <summary>
+	/// マテリアルの追加
+	/// </summary>
+	/// <param name="material"></param>
+	void AddMaterial(Material* material);
+
+	/// <summary>
+	/// テクスチャ読み込み
+	/// </summary>
+	void LoadTextures();
 
 private: // 設定・取得
 	// デスクリプタサイズ

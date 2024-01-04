@@ -26,6 +26,16 @@ namespace Pipeline
 		kCountOfParameter,	
 	};
 
+	// パーティクルのレジスタ用
+	enum class ParticleRegister : int {
+		kWorldTransform,
+		kViewProjection,
+		kMaterial,
+		kTexture,
+
+		kCountOfParameter,
+	};
+
 	enum class BlendMode : int {
 		kNone,
 		kNormal,
