@@ -28,6 +28,7 @@ void Enemy::Update()
 	ImGuiWidget();
 
 #endif // _DEBUG
+	//velocity_ = {};
 
 	worldTransform_.translation_ += (velocity_ + moveVector) * NLib::GetDeltaTime(60.0f);
 

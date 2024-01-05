@@ -19,21 +19,26 @@ void IMissile::Update()
 	ImGui::Begin("Missile");
 	ImGui::Text("frame : %.3f", frame_);
 	ImGui::Text("P : %.3f", p_);
-	ImGui::DragFloat3("velocity", &velocity_.x);
 	ImGui::DragFloat("lerpRad", &lerpRad_, 0.1f, 0, 30.0f);
 	ImGui::DragFloat("damping", &damping_, 0.01f, 0, 1.0f);
 	ImGui::DragInt("coolTime", &coolTime_, 1, 0, 100);
-	ImGui::DragFloat3("toEnemy", &toEnemy_.x);
+	if (ImGui::TreeNode("Vector")) {
+		ImGui::DragFloat3("toEnemy", &toEnemy_.x);
+		ImGui::DragFloat3("velocity", &velocity_.x);
+		ImGui::DragFloat3("accleration", &acceleration_.x);
+
+		ImGui::TreePop();
+	}
 	ImGui::End();
 #endif // _DEBUG
 
 	guidedTime_++;
-	if (guidedTime_ > coolTime_) {
+	//if (guidedTime_ > coolTime_) {
 		HomingUpdate();
 		guidedTime_ = 0;
-	}
+	//}
 
-	worldTransform_.translation_ += velocity_ * NLib::GetDeltaTime(60.0f);
+	worldTransform_.translation_ += GetDeltaTimeVelocity();
 	worldTransform_.UpdateMatrix();
 }
 
@@ -112,7 +117,9 @@ void IMissile::TrackingMissileV1()
 
 	force += nowDirect * propulsion;
 	force -= velocity_ * damping_;
-	velocity_ += force * NLib::GetDeltaTime(60.0f);
+	acceleration_ = force * NLib::GetDeltaTime(60.0f);
+	velocity_ += acceleration_;
+	//velocity_ += force * NLib::GetDeltaTime(60.0f);
 }
 
 void IMissile::HomingUpdate()
@@ -142,7 +149,7 @@ void IMissile::ProportionaMissile()
 	//// 加速度 = 有効航法定数 * 速度 * 変化率
 	//acceleration_ = velocity_ * mu * n;
 
-#pragma region PNを使った基本的な加速度の求める計算
+#pragma region Prot1
 	//// 座標
 	//Vector3 Rm = GetWorldPosition();
 	//Vector3 Rt = target_->GetWorldPosition();
@@ -159,7 +166,7 @@ void IMissile::ProportionaMissile()
 	//velocity_ += acceleration_ * NLib::GetDeltaTime(60.0f);
 #pragma endregion
 
-#pragma region ２つ目の計算案
+#pragma region Prot2
 
 	//// 座標
 	//Vector3 Rm = GetWorldPosition();
@@ -184,7 +191,7 @@ void IMissile::ProportionaMissile()
 
 #pragma endregion
 
-#pragma region 3つ目の案
+#pragma region Prot3
 
 	//Vector3 relaVelocity = target_->GetVelocity() - velocity_;
 	//Vector3 relaPosition = target_->GetWorldPosition() - GetWorldPosition();
@@ -206,37 +213,79 @@ void IMissile::ProportionaMissile()
 
 #pragma endregion
 
-#pragma region 4つ目の案
+#pragma region Prot4
 
-	Vector3 Vd = velocity_;
-	Vector3 Vg = target_->GetWorldPosition();
-	Vector3 Vp = GetWorldPosition();
+	//Vector3 Vd = velocity_;
+	//Vector3 Vg = target_->GetWorldPosition();
+	//Vector3 Vp = GetWorldPosition();
 
-	// 誘導係数
-	float r = 0.5f;
+	//// 誘導係数
+	//float r = 0.1f;
 
-	Vector3 V = Vg - Vp;
+	//Vector3 V = Vg - Vp;
 
-	V = MathCalc::Normalize(V);
+	//V = MathCalc::Normalize(V);
 
-	Vd = MathCalc::Normalize(Vd);
+	//Vd = MathCalc::Normalize(Vd);
 
-	Vector3 temp = Vd * r;
+	//Vector3 temp = Vd * r;
 
-	Vector3 newVd = temp + (V * (1 - r));
+	//Vector3 newVd = temp + (V * (1 - r));
 
-	newVd = MathCalc::Normalize(newVd);
+	//newVd = MathCalc::Normalize(newVd);
 
-	float kSpeedValue = 8.0f;
+	//float kSpeedValue = 30.0f;
 
-	velocity_ += (newVd * kSpeedValue) * NLib::GetDeltaTime(60.0f);
-
-	//target_->SetPosition(newVp);
-
-	//velocity_ += acceleration_ * NLib::GetDeltaTime(60.0f);
+	//velocity_ += (newVd * kSpeedValue) * NLib::GetDeltaTime(60.0f);
 
 #pragma endregion
 
+#pragma region Prot5
+
+	//Vector3 R = target_->GetWorldPosition() - GetWorldPosition();
+	//Vector3 V = target_->GetVelocity() - velocity_;
+
+	////Vector3 cross = (V.x * R.x - V.y * R.y - V.z * R.z);
+
+	//Vector3 rotVector = MathCalc::Cross(V,R) / MathCalc::Dot(R, R);
+
+	//float constant = 30.0f;
+
+	////velocity_ += VectorLib::Scaler(V, constant) * rotVector;
+	//acceleration_ += VectorLib::Scaler(V, constant) * rotVector;
+	//velocity_ += acceleration_ * NLib::DeltaTimeSpeed(60.0f);
+
+#pragma endregion
+
+#pragma region Prot6
+
+	Vector3 M_Pos = GetWorldPosition();
+	Vector3 T_Pos = target_->GetWorldPosition();
+
+	Vector3 M_Velo = velocity_;
+	Vector3 T_Velo = target_->GetVelocity();
+
+	float distance = MathCalc::Length(M_Pos - T_Pos);
+	if (distance < 0.0001f) {
+		return;
+	}
+
+	Vector3 r = T_Pos - M_Pos;
+	Vector3 v = T_Velo - M_Velo;
+	float vc = (-MathCalc::Dot(r, v)) / MathCalc::Length(r);
+	Vector3 crossR = MathCalc::Cross(r,v);
+
+	//float lamd = std::atan2f(MathCalc::Length(crossR), MathCalc::Dot(r, v));
+	float lamdDot = MathCalc::Dot(crossR, v) / (MathCalc::Length(r) * MathCalc::Length(r));
+
+	float n = 3 * vc * lamdDot;
+
+	//float n = 10.0f;
+
+	acceleration_ = (crossR * (n / MathCalc::Length(r)));
+	velocity_ += acceleration_ * NLib::GetDeltaTime(60.0f);
+
+#pragma endregion
 
 }
 
