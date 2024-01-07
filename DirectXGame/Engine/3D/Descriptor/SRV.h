@@ -9,7 +9,7 @@ class SRV
 {
 public:
 
-	static void CreateInstancingSRV();
+	void CreateInstancingSRV();
 
 	void StaticInitialize(DirectXCommon* dxCommon);
 

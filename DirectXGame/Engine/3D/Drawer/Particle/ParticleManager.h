@@ -12,6 +12,8 @@ public:
 	/// <returns></returns>
 	static ParticleManager* GetInstance();
 
+	void StaticInitialize();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -31,6 +33,8 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw(ViewProjection& viewProjection);
+
+	void SRVCreate();
 
 private:
 

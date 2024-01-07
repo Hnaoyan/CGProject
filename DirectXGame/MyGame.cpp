@@ -35,9 +35,9 @@ void MyGame::Update()
 	imguiManager->Begin();
 #ifdef _DEBUG
 	// json更新
-	GlobalVariables::GetInstance()->Update();
+	//GlobalVariables::GetInstance()->Update();
 	// Editor
-	Editor::GetInstance()->Update();
+	//Editor::GetInstance()->Update();
 #endif // _DEBUG
 
 	// ゲームシーン更新処理

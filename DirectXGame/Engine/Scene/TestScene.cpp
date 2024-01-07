@@ -15,6 +15,7 @@ void TestScene::Initialize()
 	testModel_.reset(Model::Create());
 	obj2Model_.reset(Model::Create());
 	planeModel_.reset(Model::CreatePlane());
+	particleTest_.reset(Particle::Create());
 
 	texture_ = TextureManager::Load("Texture/Circle.png");
 
@@ -38,7 +39,10 @@ void TestScene::Initialize()
 	nameGroup = { "Third","Alpha" };
 	editor->CreateHierarchy(nameGroup);
 
-	ApplyGlobalVariables();
+	//ApplyGlobalVariables();
+
+	objTransform_.translation_ = { 0,-9.0f,-14.0f };
+	objTransform_.rotation_ = { 0,0.2f,0 };
 
 }
 
@@ -53,10 +57,10 @@ void TestScene::Update()
 	Vector3 rotateByQuat = MatLib::RotateVector(pointY, rotation);
 	Vector3 rotateByMatrix = MatLib::Transform(pointY, rotateMat);
 
-	this->ImGuiMatrixPrintf(rotateMat,"zero");
-	this->ImGuiVector3Printf(rotateByQuat,"Quat");
-	this->ImGuiVector3Printf(rotateByMatrix, "Matrix");
-	this->ImGuiQuaternionPrintf(rotation, "test");
+	//this->ImGuiMatrixPrintf(rotateMat,"zero");
+	//this->ImGuiVector3Printf(rotateByQuat,"Quat");
+	//this->ImGuiVector3Printf(rotateByMatrix, "Matrix");
+	//this->ImGuiQuaternionPrintf(rotation, "test");
 
 
 	Vector3 a = { 1,1,1 };
@@ -67,26 +71,27 @@ void TestScene::Update()
 	Vector3 Mul_ab = a * b;
 	Vector3 Div_ab = a / b;
 
-	this->ImGuiVector3Printf(Add_ab, "Add");
-	this->ImGuiVector3Printf(Sub_ab, "Sub");
-	this->ImGuiVector3Printf(Mul_ab, "Mul");
-	this->ImGuiVector3Printf(Div_ab, "Div");
+	//this->ImGuiVector3Printf(Add_ab, "Add");
+	//this->ImGuiVector3Printf(Sub_ab, "Sub");
+	//this->ImGuiVector3Printf(Mul_ab, "Mul");
+	//this->ImGuiVector3Printf(Div_ab, "Div");
+	//testTransform_.ImGuiWidget("test");
+	//objTransform_.ImGuiWidget("obj");
+	//view_.ImGuiWidget();
+	//ImGui::ShowDemoWindow();
+	//ImGui::Begin("model");
+	//ImGui::DragFloat("alpha", &alphaValue_, 0.01f, 0, 1.0f);
+	//ImGui::End();
+	
+	//ApplyGlobalVariables();
 
-	testTransform_.ImGuiWidget("test");
 	testTransform_.UpdateMatrix();
-	objTransform_.ImGuiWidget("obj");
 	objTransform_.UpdateMatrix();
-	view_.ImGuiWidget();
 	view_.UpdateMatrix();
 
-	ImGui::Begin("model");
-	ImGui::DragFloat("alpha", &alphaValue_, 0.01f, 0, 1.0f);
-	ImGui::End();
 
-	planeModel_->SetAlphaValue(alphaValue_);
+	//planeModel_->SetAlphaValue(alphaValue_);
 
-	ImGui::ShowDemoWindow();
-	ApplyGlobalVariables();
 }
 
 void TestScene::Draw()
@@ -98,7 +103,7 @@ void TestScene::Draw()
 	// 描画前処理
 	Sprite::PreDraw(commandList);
 
-	testSprite_->Draw();
+	//testSprite_->Draw();
 
 	// 描画後処理
 	Sprite::PostDraw();
@@ -110,7 +115,7 @@ void TestScene::Draw()
 	// 描画前処理
 	Model::PreDraw(commandList);
 
-	testModel_->Draw(testTransform_, view_);
+	//testModel_->Draw(testTransform_, view_);
 	//obj2Model_->Draw(objTransform_, view_);
 
 	planeModel_->Draw(objTransform_, view_, texture_);
@@ -119,6 +124,11 @@ void TestScene::Draw()
 	Model::PostDraw();
 #pragma endregion
 
+	//Particle::PreDraw(commandList);
+
+	//particleTest_->Draw(objTransform_, view_, texture_);
+
+	//Particle::PostDraw();
 }
 
 void TestScene::ImGuiMatrixPrintf(const Matrix4x4& matrix, const char* tag)

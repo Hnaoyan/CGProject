@@ -83,10 +83,8 @@ void Particle::StaticInitialize()
 
 	// ルートパラメータ
 	D3D12_ROOT_PARAMETER rootparams[static_cast<int>(ParticleRegister::kCountOfParameter)];
-	rootparams[static_cast<int>(ParticleRegister::kWorldTransform)] = D3D12Lib::InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 	// Instancing用のやつ
-	//uint32_t instancing = 1;
-	//rootparams[1] = D3D12Lib::InitAsDescriptorTable(instancing, &descRangeSRV, D3D12_SHADER_VISIBILITY_VERTEX);
+	rootparams[static_cast<int>(ParticleRegister::kWorldTransform)] = D3D12Lib::InitAsDescriptorTable(kInstanceNum_, &descRangeSRV, D3D12_SHADER_VISIBILITY_VERTEX);
 	// View
 	rootparams[static_cast<int>(ParticleRegister::kViewProjection)] = D3D12Lib::InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
 	// マテリアル
@@ -191,6 +189,34 @@ void Particle::StaticInitialize()
 	assert(SUCCEEDED(result));
 #pragma endregion
 
+	SRVCreate();
+	CreateConstBuffer();
+}
+
+void Particle::SRVCreate()
+{
+	D3D12_SHADER_RESOURCE_VIEW_DESC instancingDesc{};
+	instancingDesc.Format = DXGI_FORMAT_UNKNOWN;
+	instancingDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	instancingDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	instancingDesc.Buffer.FirstElement = 0;
+	instancingDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	instancingDesc.Buffer.NumElements = 10;
+	instancingDesc.Buffer.StructureByteStride = sizeof(CBufferDataParitcle);
+
+	SrvHandleCPU =
+		DescriptorManager::GetCPUDescriptorHandle(
+			DirectXCommon::GetInstance()->GetSRV()->GetHeap(),
+			DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+			3);
+	SrvHandleGPU =
+		DescriptorManager::GetGPUDescriptorHandle(
+			DirectXCommon::GetInstance()->GetSRV()->GetHeap(),
+			DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+			3);
+
+	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(
+		instancingResource_.Get(), &instancingDesc, SrvHandleCPU);
 
 }
 
@@ -217,15 +243,53 @@ void Particle::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 
 	// 全メッシュを描画
 	for (auto& mesh : meshes_) {
-		mesh->Draw(
+		mesh->DrawInstancing(
 			sCommandList_, (UINT)ParticleRegister::kMaterial,
-			(UINT)ParticleRegister::kTexture);
+			(UINT)ParticleRegister::kTexture, 1);
 	}
 }
 
 void Particle::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle)
 {
-	worldTransform, viewProjection, textureHandle;
+	// パイプラインステートの設定
+	sCommandList_->SetPipelineState(sPipelineStates_[size_t(blendMode_)].Get());
+	// CBV（ワールド行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(
+		static_cast<UINT>(ParticleRegister::kWorldTransform),
+		worldTransform.constBuff_->GetGPUVirtualAddress());
+
+	// CBV（ビュープロジェクション行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(
+		static_cast<UINT>(ParticleRegister::kViewProjection),
+		viewProjection.constBuff_->GetGPUVirtualAddress());
+
+	// 全メッシュを描画
+	for (auto& mesh : meshes_) {
+		mesh->DrawInstancing(
+			sCommandList_, (UINT)ParticleRegister::kMaterial,
+			(UINT)ParticleRegister::kTexture, textureHandle, 10);
+	}
+
+	///---変更後---//
+
+	// パイプラインステートの設定
+	sCommandList_->SetPipelineState(sPipelineStates_[size_t(blendMode_)].Get());
+	// CBV（ワールド行列）
+	sCommandList_->SetGraphicsRootDescriptorTable(
+		static_cast<UINT>(ParticleRegister::kWorldTransform),SrvHandleGPU);
+
+	// CBV（ビュープロジェクション行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(
+		static_cast<UINT>(ParticleRegister::kViewProjection),
+		viewProjection.constBuff_->GetGPUVirtualAddress());
+
+	// 全メッシュを描画
+	for (auto& mesh : meshes_) {
+		mesh->DrawInstancing(
+			sCommandList_, (UINT)ParticleRegister::kMaterial,
+			(UINT)ParticleRegister::kTexture, textureHandle, 10);
+	}
+
 }
 
 void Particle::PreDraw(ID3D12GraphicsCommandList* commandList)
@@ -595,4 +659,41 @@ void Particle::LoadTextures()
 			textureIndex++;
 		}
 	}
+}
+
+void Particle::TransferMatrix()
+{
+	instanceCount_ = 0;
+	for (std::list<ParticleData>::iterator iterator = particles_.begin();
+		iterator != particles_.end(); ++iterator) {
+		//constMap[i].matWorld
+		iterator->UpdateMatrix();
+		instancingData_[instanceCount_].matWorld = iterator->matWorld_;
+		instanceCount_++;
+	}
+
+}
+
+void Particle::Map() 
+{
+	//instancingResource_=
+}
+
+void Particle::CreateConstBuffer()
+{
+	HRESULT result;
+	//const int kNumInstance = 10;
+
+	D3D12_HEAP_PROPERTIES heapProps = D3D12Lib::SetHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+
+	D3D12_RESOURCE_DESC resourceDesc = D3D12Lib::SetResourceDesc(((sizeof(ConstBufferDataWorldTransform) + 0xff) & ~0xff) * kInstanceNum_);
+
+	result = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
+		&heapProps,
+		D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+		IID_PPV_ARGS(&instancingResource_));
+	assert(SUCCEEDED(result));
+
+	result = instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
+	assert(SUCCEEDED(result));
 }

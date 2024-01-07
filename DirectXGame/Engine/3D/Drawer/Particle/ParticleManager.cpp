@@ -7,6 +7,10 @@ ParticleManager* ParticleManager::GetInstance()
 	return &instance;
 }
 
+void ParticleManager::StaticInitialize()
+{
+}
+
 void ParticleManager::Initialize()
 {
 	model_.reset(Model::Create());

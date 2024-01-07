@@ -1,7 +1,10 @@
 #pragma once
 #include "StructManager.h"
 #include "Model.h"
+#include "CBuffer.h"
+#include "ParticleData.h"
 #include <memory>
+#include <list>
 
 class Particle
 {
@@ -10,7 +13,14 @@ private:
 	static const std::string kDefaultName;
 
 public:
-	static void StaticInitialize();
+	static Particle* GetInstance() {
+		static Particle instance;
+		return &instance;
+	}
+
+	void StaticInitialize();
+
+	void SRVCreate();
 
 	static Particle* Create();
 
@@ -30,11 +40,13 @@ public:
 	/// <param name="textureHandle"></param>
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, UINT textureHandle);
 
-	void PreDraw(ID3D12GraphicsCommandList* commandList);
+	static void PreDraw(ID3D12GraphicsCommandList* commandList);
 
-	void PostDraw();
+	static void PostDraw();
 
 	void Initialize(const std::string& name, bool smoothing = false);
+
+	void Update();
 
 private:
 
@@ -79,8 +91,48 @@ private: // 設定・取得
 private:
 	Model* model_;
 	WorldTransform worldTransform_;
+	
+	static const int kInstanceNum_ = 1000;
+
+	CBufferDataParitcle gTransformationMatrices[100];
 
 	uint32_t texture_ = 0u;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
+	ConstBufferDataWorldTransform* constMap = nullptr;
+
+	Matrix4x4 matWorld_ = {};
+
+	void CreateConstBuffer();
+	void Map();
+	void TransferMatrix();
+	//ConstBufferDataWorldTransform
+
+	D3D12_CPU_DESCRIPTOR_HANDLE SrvHandleCPU;
+	D3D12_GPU_DESCRIPTOR_HANDLE SrvHandleGPU;
+private:
+
+	/// メモ書き
+	// パーティクルの描画はこのクラスのDrawで全てまとめて管理する予定。
+	// 現在このクラスはModelと同じ機能しかないのでまずはWorldTransformの役割を
+	// 配列で行うように変更していく。（この処理がParticleDataのリストを使うやつ
+	// 上記の管理の体制が整い次第描画処理の部分を変更していく必要があり。
+	// 描画は01_00の資料にあるやつ
+	// ルートシグネチャにインスタンシング用のものを設定するところでエラーあり
+
+	// これらを管理するリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource_;
+	//	Shaderに送る情報（下のリストをここに設定し、HLSLファイルで計算
+	CBufferDataParitcle* instancingData_ = nullptr;
+
+	// パーティクルそれぞれの座標などの情報
+	std::list<ParticleData> particles_;
+
+	int instanceCount_ = 0;
+
+public:
+	void SetMatrix(Matrix4x4 matWolrd) { matWorld_ = matWolrd; }
+
 private:
 	// 名前
 	std::string name_;

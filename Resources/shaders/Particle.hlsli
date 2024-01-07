@@ -1,11 +1,4 @@
 
-struct WorldTransform
-{
-    matrix world;
-};
-
-//StructuredBuffer<WorldTransform> gWorldTransform : register(t1);
-
 cbuffer ViewProjection : register(b1)
 {
     matrix view;
@@ -21,23 +14,6 @@ cbuffer Material : register(b2)
     float3 m_specular : packoffset(c2);
     float m_alpha : packoffset(c2.w);
 }
-
-//static const int DIRECTLIGHT_NUM = 3;
-
-
-//struct DirectLight
-//{
-//    float3 lightv;
-//    float3 lightcolor;
-//    uint active;
-//};
-
-//cbuffer LightGroup : register(b3)
-//{
-//    float3 ambientColor;
-//    DirectLight directLight[DIRECTLIGHT_NUM];
-//}
-
 
 
 struct VSOutput

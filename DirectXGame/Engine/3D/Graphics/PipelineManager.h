@@ -30,6 +30,7 @@ namespace Pipeline
 	enum class ParticleRegister : int {
 		kWorldTransform,
 		kViewProjection,
+		//kWorldTransform,
 		kMaterial,
 		kTexture,
 

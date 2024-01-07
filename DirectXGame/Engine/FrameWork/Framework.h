@@ -7,6 +7,7 @@
 #include "SceneManager.h"
 #include "TextureManager.h"
 #include "Model.h"
+#include "Particle.h"
 #include "Sprite.h"
 #include "Graphics/Shader.h"
 #include <memory>
