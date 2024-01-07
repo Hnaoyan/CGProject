@@ -112,6 +112,7 @@ private:
 	}
 
 	bool isDead_ = false;
+	bool isDelay_ = false;
 
 private:
 	WorldTransform worldTransform_;
@@ -132,6 +133,7 @@ private:
 	float p_ = 0;
 	int type_ = 0;
 	int coolTime_ = 3;
+	int deathCount_ = 0;
 
 private:
 	float lerpRad_ = 5.0f;

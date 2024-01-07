@@ -96,6 +96,8 @@ private:	// メンバポインタ
 
 	float frame_ = 0;
 
+	int DefeatCount_ = 0;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

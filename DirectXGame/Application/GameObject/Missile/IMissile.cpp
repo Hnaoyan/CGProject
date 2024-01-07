@@ -12,7 +12,7 @@ void IMissile::Initialize(Model* model, const Vector3& position)
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
-	worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
+	worldTransform_.scale_ = { 0.25f,0.25f,0.25f };
 	guidedTime_ = 0;
 	slerp_t_ = WindowAPI::GetInstance()->GetRandom(0.1f, 0.45f);
 
@@ -47,7 +47,7 @@ void IMissile::Update()
 
 	HomingUpdate();
 
-	if (guidedTime_ % 15 == 0) {
+	if (guidedTime_ % 60 == 0) {
 		manager_->AddParticle(GetWorldPosition(), 60);
 	}
 
@@ -138,21 +138,30 @@ void IMissile::TrackingMissileV1()
 void IMissile::HomingUpdate()
 {
 
+	int timer = 5;
+	if (deathCount_ > (60 * timer)) {
+		isDead_ = true;
+	}
 
 	if (GetWorldPosition().z > targetPosition_.z) {
+		deathCount_++;
 		return;
+	}
+	coolTime_ = 10;
+	isDelay_ = false;
+	if (guidedTime_ > coolTime_) {
+		isDelay_ = true;
+		guidedTime_ = 0;
+	}
+	else {
+		guidedTime_++;
 	}
 
 	switch (type_)
 	{
 	case MissileType::kSlerp:
-		coolTime_ = 10;
-		if (guidedTime_ > coolTime_) {
+		if (isDelay_) {
 			SlerpUpdate();
-			guidedTime_ = 0;
-		}
-		else {
-			guidedTime_++;
 		}
 		break;
 	case MissileType::kV1:
