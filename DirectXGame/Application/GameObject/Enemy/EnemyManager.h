@@ -22,6 +22,8 @@ public:
 	Enemy* GetTestPtr() { return testEnemy_.get(); }
 	Vector3 GetTestWorld() { return testEnemy_->GetWorldPosition(); }
 
+	std::list<Enemy*> GetList() { return enemys_; }
+
 private:
 	std::list<Enemy*> enemys_;
 	std::unique_ptr<Enemy> testEnemy_;

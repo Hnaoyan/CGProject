@@ -18,8 +18,8 @@ public:
 
 private:
 
-	static std::random_device seedGenerator;
-	static std::mt19937 randomEngine;
+	//static std::random_device seedGenerator;
+	//static std::mt19937 randomEngine;
 
 
 public:	// メンバ関数
@@ -68,5 +68,17 @@ private:// メンバ変数
 	// Window関連
 	HWND hwnd_ = nullptr;		// ウィンドウハンドル
 	WNDCLASS windowClass_{};	// ウィンドウクラス
+private: // 乱数用
+	std::mt19937 randomEngine_;       // メルセンヌツイスター乱数生成器
+
+public:
+
+	void RandomInitialize();
+
+	template <typename T>
+	inline T GetRandom(T min, T max) {
+		std::uniform_real_distribution<T> distribution(min, max); // 乱数分布
+		return distribution(randomEngine_);
+	}
 
 };

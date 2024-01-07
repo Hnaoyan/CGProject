@@ -6,6 +6,7 @@
 GameScene::GameScene() 
 {
 	model_.reset(Model::Create());
+	//model_.reset(Model::CreateFromObj("Bullet", false));
 }
 
 GameScene::~GameScene()
@@ -20,6 +21,7 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 	model_.reset(Model::CreateFromObj("Jett", true));
+	skyDomeModel_.reset(Model::CreateFromObj("skydome", true));
 
 	// プレイヤー
 	player_ = std::make_unique<Player>();
@@ -41,10 +43,21 @@ void GameScene::Initialize() {
 
 	player_->SetEnemyManager(enemyManager_.get());
 	player_->SetMissileManager(missileManager_.get());
+
+
+
+	skyDome_ = std::make_unique<SkyDome>();
+	skyDome_->Initialize(skyDomeModel_.get());
+
+	particleManager_ = std::make_unique<ParticleManager>();
+	particleManager_->Initialize();
+
+	missileManager_->SetParticleManager(particleManager_.get());
 }
 
 void GameScene::Update()
 {
+#ifdef _DEBUG
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		DEVMODE dm;
 		ZeroMemory(&dm, sizeof(dm));
@@ -57,28 +70,26 @@ void GameScene::Update()
 	ImGui::Begin("test");
 	ImGui::Text("MaxFPS : %f", frame_);
 	ImGui::End();
+#endif // _DEBUG
+
+	particleManager_->Update();
+	particleManager_->SetView(&viewProjection_);
 
 	// 衝突処理
 	CheckCollision();
-	if (Input::GetInstance()->TriggerKey(DIK_H)) {
-		MissileManager::MissileConfig info;
-		info = { player_->GetWorldPosition(),{0,1.0f,1.0f}, 0, enemyManager_->GetTestPtr()};
-		missileManager_->AddMissile(info);
-	}
-
-	//if (Input::GetInstance()->TriggerKey(DIK_A)) {
-	//	EnemyManager::AddInfo info;
-	//	info = {};
-	//	info.position = { 0,0,30.0f };
-	//	enemyManager_->AddEnemy(info);
-	//}
 
 	player_->Update();
 	enemyManager_->Update();
 	missileManager_->Update();
 
+	if (input_->TriggerKey(DIK_R)) {
+		//particleManager_->AddParticle(player_->GetWorldPosition(), 30, &viewProjection_);
+	}
+
 	/// カメラ関係の更新処理
 	CameraUpdate();
+
+	skyDome_->Update();
 
 }
 
@@ -102,9 +113,13 @@ void GameScene::Draw() {
 	// 描画前処理
 	Model::PreDraw(commandList);
 
+	skyDome_->Draw(viewProjection_);
+
 	enemyManager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 	missileManager_->Draw(viewProjection_);
+
+	particleManager_->Draw(viewProjection_);
 
 	// 描画後処理
 	Model::PostDraw();
@@ -163,12 +178,11 @@ void GameScene::CheckCollision()
 	//if (!enemy_->GetIsDead()) {
 	//	colliderManager_->AddList(enemy_->GetCollider());
 	//}
-	//colliderManager_->AddList(goal_.get());
+	colliderManager_->AddList(enemyManager_->GetTestPtr()->GetCollider());
 
-	//for (Ground* ground : groundManager_->GetList()) {
-	//	colliderManager_->AddList(ground->GetCollider());
-	//}
-
+	for (IMissile* missile : missileManager_->GetList()) {
+		colliderManager_->AddList(missile->GetCollider());
+	}
 
 	/// 当たり判定（仮
 	colliderManager_->CheckAllCollisions();

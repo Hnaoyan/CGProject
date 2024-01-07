@@ -164,6 +164,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\IMissile.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileManager.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
@@ -191,7 +192,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\BaseBullet.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\BaseCharacter.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.cpp" />
-    <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleManager.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\ParticleManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Input\Input.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\QuatLib.cpp" />
     <ClCompile Include="DirectXGame\Engine\NLib\NLib.cpp" />
@@ -219,6 +220,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Editor\Editor.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\Guidance\IGuidanceState.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\PIDController.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\TitleScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
@@ -226,6 +229,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\IMissile.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileManager.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.h" />
     <ClInclude Include="DirectXGame\Engine\3D\CBuffer.h" />
     <ClInclude Include="DirectXGame\Engine\Audio\AudioManager.h" />
@@ -256,7 +260,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\BaseBullet.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\BaseCharacter.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.h" />
-    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleManager.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\ParticleManager.h" />
     <ClInclude Include="DirectXGame\Engine\Input\Input.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MathCalc.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MathLib.h" />
@@ -287,6 +291,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Editor\Editor.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\Guidance\IGuidanceState.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\PIDController.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\TitleScene.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

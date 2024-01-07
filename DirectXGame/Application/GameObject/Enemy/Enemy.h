@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseCharacter.h"
 #include "Input.h"
+#include "Collider.h"
 
 #include <optional>
 #include <functional>
@@ -37,18 +38,28 @@ public:
 
 	void SetPosition(const Vector3& position) { worldTransform_.translation_ = position; }
 
+	bool GetIsDead() { return isDead_; }
+
+	Collider* GetCollider() { return &collider_; }
 
 private:
 
-	Model* model_;
+	Model* model_ = nullptr;
+	Collider collider_;
 	WorldTransform worldTransform_;
 	uint32_t texture_ = 0u;
 
 	Vector3 velocity_ = {};
 
+	float radius_ = 0;
+
+	bool isDead_ = false;
+
 	float SpeedDelta(float moveValue) { return moveValue * (1.0f / 60.0f); }
 
 	void ImGuiWidget();
+
+	void OnCollision(uint32_t tag, WorldTransform* world);
 
 };
 

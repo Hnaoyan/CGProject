@@ -25,9 +25,9 @@ class Collider
 {
 private:
 	// 半径
-	//float radius_;
+	float f_Radius_;
 
-	Vector3 radius_;
+	Vector3 V3_radius_;
 
 	// 衝突属性（自分）
 	int collisionAttribute_ = 0xffffffff;
@@ -48,11 +48,14 @@ public:	// 取得・設定
 	int GetAttribute() { return collisionAttribute_; }
 	int GetMask() { return collisionMark_; }
 
-	Vector3 GetterRad() { return radius_; }
-	void SetterRad(const Vector3& radius) { radius_ = radius; }
+	Vector3 GetterRad() { return V3_radius_; }
+	void SetterRad(const Vector3& radius) { V3_radius_ = radius; }
+
+	float GetRadius() { return f_Radius_; }
+	void SetRadius(float radius) { f_Radius_ = radius; }
 
 	Vector3 GetPosition() { return position_; }
-	void SetPosition(Vector3& pos);
+	void SetPosition(const Vector3& pos);
 
 	// ワールドトランスフォーム
 	WorldTransform* GetWorldAddress() { return worldTransform_; }

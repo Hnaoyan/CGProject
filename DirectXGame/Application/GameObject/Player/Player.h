@@ -56,7 +56,7 @@ private:
 
 	Vector3 missileDirect = {};
 
-	int missileType_ = MissileType::eSlerp;
+	int missileType_ = MissileType::kSlerp;
 
 };
 

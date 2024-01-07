@@ -2,23 +2,36 @@
 #include "NLib.h"
 #include "imgui.h"
 #include "MissileManager.h"
+#include "WindowAPI.h"
 
 #include <algorithm>
 
 void IMissile::Initialize(Model* model, const Vector3& position)
 {
+
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 	worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
+	guidedTime_ = 0;
+	slerp_t_ = WindowAPI::GetInstance()->GetRandom(0.1f, 0.45f);
+
+	collider_.SetCollisionAttribute(kCollisionAttributeWeapon);
+	collider_.SetRadius(1.0f);
+	collider_.SetterRad({ 1,1,1 });
+	collider_.SetWorldAddress(&worldTransform_);
+	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&IMissile::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
+	collider_.SetFunction(f);
+
 }
 
 void IMissile::Update()
 {
 #ifdef _DEBUG
 	ImGui::Begin("Missile");
-	ImGui::Text("frame : %.3f", frame_);
 	ImGui::Text("P : %.3f", p_);
+	ImGui::InputInt("guidedTime", &guidedTime_);
+	ImGui::InputInt("coolTime", &coolTime_);
 	ImGui::DragFloat("lerpRad", &lerpRad_, 0.1f, 0, 30.0f);
 	ImGui::DragFloat("damping", &damping_, 0.01f, 0, 1.0f);
 	ImGui::DragInt("coolTime", &coolTime_, 1, 0, 100);
@@ -32,14 +45,24 @@ void IMissile::Update()
 	ImGui::End();
 #endif // _DEBUG
 
-	guidedTime_++;
-	//if (guidedTime_ > coolTime_) {
-		HomingUpdate();
-		guidedTime_ = 0;
-	//}
+	HomingUpdate();
 
+	if (guidedTime_ % 15 == 0) {
+		manager_->AddParticle(GetWorldPosition(), 60);
+	}
+
+	velocity_ += acceleration_;
 	worldTransform_.translation_ += GetDeltaTimeVelocity();
+
+	Vector3 velocityVect = MathCalc::Normalize(velocity_);
+
+	worldTransform_.rotation_.y = MathCalc::CalculateYawFromVector(Vector3(velocityVect.x, 0, velocityVect.z));
+	//worldTransform_.rotation_.y = std::atan2f(velocity_.x, velocity_.z);
+	float length = sqrtf(velocity_.x * velocity_.x + velocity_.z * velocity_.z);
+	worldTransform_.rotation_.x = std::atan2f(-velocity_.y, length);
+
 	worldTransform_.UpdateMatrix();
+	collider_.SetPosition(worldTransform_.GetWorld());
 }
 
 void IMissile::Draw(ViewProjection& viewProjection)
@@ -62,18 +85,12 @@ void IMissile::InitMoveParameter(const Vector3& direct, float speed)
 
 void IMissile::SlerpUpdate()
 {
-	//Vector3 toEnemy = target_->GetWorldPosition() - GetWorldPosition();
-	//toEnemy = MathCalc::Normalize(toEnemy);
-	//velocity_ = MathCalc::Normalize(velocity_);
-
-	//// 球面線形補間
-	//velocity_ = NLib::Slerp_Test(velocity_, toEnemy, 0.025f) * kBulletSpeed_;
 
 	toEnemy_ = target_->GetWorldPosition() - GetWorldPosition();
 	toEnemy_ = MathCalc::Normalize(toEnemy_);
 	velocity_ = MathCalc::Normalize(velocity_);
 
-	velocity_ = NLib::Slerp_Test(velocity_, toEnemy_, 0.25f) * kBulletSpeed_;
+	velocity_ = NLib::Slerp_Test(velocity_, toEnemy_, slerp_t_) * kBulletSpeed_;
 
 }
 
@@ -84,10 +101,10 @@ void IMissile::ItanoUpdate()
 	//if (guidedTime_ > 15) {
 	//	guidedTime_ = 0;
 	//}
-	frame_ += 1.0f;
+	//frame_ += 1.0f;
 	//frame_ = std::clamp(frame_, 0.0f, 1.0f);
 	Vector3 directToEnemy = target_->GetWorldPosition() - GetWorldPosition();
-	p_ = NLib::InductionPerform(frame_, 0.01f);
+	//p_ = NLib::InductionPerform(frame_, 0.01f);
 	direction_ = NLib::InductionNewVector(direction_, directToEnemy, p_);
 	acceleration_ = direction_ * NLib::GetDeltaTime(60.0f);
 	velocity_ += acceleration_ * NLib::GetDeltaTime(60.0f);
@@ -107,34 +124,51 @@ void IMissile::TrackingMissileV1()
 		centripetalAccel /= centripetalAccelMagnitude;
 	}
 
-	//float rad = 15.0f;
-
 	float maxCentripetalAccel = std::powf(kBulletSpeed_, 2) / lerpRad_;
 	Vector3 force = centripetalAccel * maxCentripetalAccel;
 
-	//float damping = 0.1f;
 	float propulsion = kBulletSpeed_ * damping_;
 
 	force += nowDirect * propulsion;
 	force -= velocity_ * damping_;
 	acceleration_ = force * NLib::GetDeltaTime(60.0f);
-	velocity_ += acceleration_;
 	//velocity_ += force * NLib::GetDeltaTime(60.0f);
 }
 
 void IMissile::HomingUpdate()
 {
+
+
+	if (GetWorldPosition().z > targetPosition_.z) {
+		return;
+	}
+
 	switch (type_)
 	{
-	case MissileType::eSlerp:
-		SlerpUpdate();
+	case MissileType::kSlerp:
+		coolTime_ = 10;
+		if (guidedTime_ > coolTime_) {
+			SlerpUpdate();
+			guidedTime_ = 0;
+		}
+		else {
+			guidedTime_++;
+		}
 		break;
-	case MissileType::eItano:
-		//ItanoUpdate();
-		ProportionaMissile();
-		break;
-	case MissileType::eV1:
+	case MissileType::kV1:
 		TrackingMissileV1();
+		break;
+	case MissileType::kProt4:
+		ProportionalV4();
+		break;
+	case MissileType::kProt6:
+		ProportionalV6();
+		break;
+	case MissileType::kProt7:
+		ProportionalV7();
+		break;
+	case MissileType::kNone:
+
 		break;
 	}
 	//velocity_ *= NLib::GetDeltaTime(60.0f);
@@ -142,13 +176,6 @@ void IMissile::HomingUpdate()
 
 void IMissile::ProportionaMissile()
 {
-
-	//float n = 0.01f; // 有効航法定数
-	//float mu = 0.1f;	// 変化率
-
-	//// 加速度 = 有効航法定数 * 速度 * 変化率
-	//acceleration_ = velocity_ * mu * n;
-
 #pragma region Prot1
 	//// 座標
 	//Vector3 Rm = GetWorldPosition();
@@ -215,28 +242,7 @@ void IMissile::ProportionaMissile()
 
 #pragma region Prot4
 
-	//Vector3 Vd = velocity_;
-	//Vector3 Vg = target_->GetWorldPosition();
-	//Vector3 Vp = GetWorldPosition();
-
-	//// 誘導係数
-	//float r = 0.1f;
-
-	//Vector3 V = Vg - Vp;
-
-	//V = MathCalc::Normalize(V);
-
-	//Vd = MathCalc::Normalize(Vd);
-
-	//Vector3 temp = Vd * r;
-
-	//Vector3 newVd = temp + (V * (1 - r));
-
-	//newVd = MathCalc::Normalize(newVd);
-
-	//float kSpeedValue = 30.0f;
-
-	//velocity_ += (newVd * kSpeedValue) * NLib::GetDeltaTime(60.0f);
+	//ProportionalV4();
 
 #pragma endregion
 
@@ -257,6 +263,52 @@ void IMissile::ProportionaMissile()
 
 #pragma endregion
 
+#pragma region Prot6
+
+	//ProportionalV6();
+
+#pragma endregion
+
+#pragma region Prot7
+
+	ProportionalV7();
+
+#pragma endregion
+
+}
+
+void IMissile::ProportionalV4()
+{
+#pragma region Prot4
+
+	Vector3 Vd = velocity_;
+	Vector3 Vg = target_->GetWorldPosition();
+	Vector3 Vp = GetWorldPosition();
+
+	// 誘導係数
+	float r = 0.01f;
+
+	Vector3 V = Vg - Vp;
+
+	V = MathCalc::Normalize(V);
+
+	Vd = MathCalc::Normalize(Vd);
+
+	Vector3 temp = Vd * r;
+
+	Vector3 newVd = temp + (V * (1 - r));
+
+	newVd = MathCalc::Normalize(newVd);
+
+	float kSpeedValue = 30.0f;
+
+	velocity_ += (newVd * kSpeedValue) * NLib::GetDeltaTime(60.0f);
+
+#pragma endregion
+}
+
+void IMissile::ProportionalV6()
+{
 #pragma region Prot6
 
 	Vector3 M_Pos = GetWorldPosition();
@@ -282,11 +334,45 @@ void IMissile::ProportionaMissile()
 
 	//float n = 10.0f;
 
-	acceleration_ = (crossR * (n / MathCalc::Length(r)));
-	velocity_ += acceleration_ * NLib::GetDeltaTime(60.0f);
+	acceleration_ = (crossR * (n / MathCalc::Length(r))) * NLib::GetDeltaTime(60.0f);
+	velocity_ += acceleration_;
 
 #pragma endregion
 
+}
+
+void IMissile::ProportionalV7()
+{
+#pragma region Prot7
+	Vector3 targetDirection = (target_->GetWorldPosition() - GetWorldPosition());
+	Vector3 currentDirection = MathCalc::Normalize(velocity_);
+
+	// プロポーショナルゲイン（誘導の割合）を設定します
+	float proportionalGain = 0.1f;
+
+	// 目標方向から少しオフセットされた方向を計算します
+	Vector3 newDirection = (targetDirection * (1 - proportionalGain)) + (currentDirection * proportionalGain);
+	newDirection = MathCalc::Normalize(newDirection);
+
+	// 初速度の大きさを保持したまま、目標方向に対する微調整を計算します
+	float initialSpeed = MathCalc::Length(velocity_);
+	Vector3 adjustedAcceleration = (newDirection * initialSpeed) - velocity_;
+
+	// 最大調整角度を設定します（これにより小さな弧を描くように制御されます）
+	float maxAdjustmentAngle = 0.9f; // radians（適切な角度に調整してください）
+
+	// 新しい加速度が最大調整角度を超えないように制限します
+	float currentAngle = acos(MathCalc::Dot(currentDirection, newDirection));
+	if (currentAngle > maxAdjustmentAngle) {
+		float limitFactor = maxAdjustmentAngle / currentAngle;
+		adjustedAcceleration = (newDirection - currentDirection) * (initialSpeed * limitFactor);
+	}
+	acceleration_ = adjustedAcceleration * NLib::GetDeltaTime(60.0f);
+	//// 速度を調整する係数を設定します（0.1から1の間の値）
+	//float speedAdjustmentFactor = 1.5f; // 適切な係数に調整してください
+
+	//acceleration_ = adjustedAcceleration * speedAdjustmentFactor * NLib::GetDeltaTime(60.0f);
+#pragma endregion
 }
 
 Vector3 IMissile::GetDeltaTimeVelocity()

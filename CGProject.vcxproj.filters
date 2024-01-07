@@ -186,7 +186,7 @@
     <ClCompile Include="DirectXGame\Engine\Camera\DebugCamera.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleManager.cpp">
+    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\ParticleManager.cpp">
       <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.cpp">
@@ -282,6 +282,15 @@
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\PIDController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXGame\Application\Scene\TitleScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Engine\D3D12Lib\D3D12Lib.h">
@@ -371,7 +380,7 @@
     <ClInclude Include="DirectXGame\Engine\Camera\DebugCamera.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleManager.h">
+    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\ParticleManager.h">
       <Filter>ヘッダー ファイル\particle</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.h">
@@ -480,6 +489,15 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\PIDController.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\Scene\TitleScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

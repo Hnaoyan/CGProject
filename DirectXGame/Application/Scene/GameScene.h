@@ -18,6 +18,7 @@
 #include "Player/Player.h"
 #include "LockOn.h"
 #include "Enemy/EnemyManager.h"
+#include "Particle/ParticleManager.h"
 
 #include "SkyDome/SkyDome.h"
 
@@ -74,6 +75,7 @@ private:
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<MissileManager> missileManager_;
 	std::unique_ptr<EnemyManager> enemyManager_;
+	std::unique_ptr<ParticleManager> particleManager_;
 
 private:	// メンバポインタ
 	// カメラ
@@ -86,6 +88,9 @@ private:	// メンバポインタ
 
 	// 仮のオブジェクト
 	std::unique_ptr<Model> model_;
+	std::unique_ptr<Model> skyDomeModel_;
+
+	std::unique_ptr<SkyDome> skyDome_;
 
 	bool isDebug_ = false;
 

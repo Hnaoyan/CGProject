@@ -33,5 +33,8 @@ struct WorldTransform
 	void BillBoardSetting(ViewProjection* viewProjection, bool billBoardFlag = true);
 
 	void ImGuiWidget(const char* tag);
+
+	// ワールド座標を取得
+	Vector3 GetWorld() { return { matWorld_.m[3][0],matWorld_.m[3][1] ,matWorld_.m[3][2] }; }
 };
 

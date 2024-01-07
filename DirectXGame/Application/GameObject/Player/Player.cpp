@@ -63,21 +63,7 @@ void Player::InputUpdate()
 		ImGui::DragFloat3("missileDirect", &missileDirect.x, 0.01f, -1.0f, 1.0f);
 		ImGui::TreePop();
 	}
-
-	if (ImGui::TreeNode("MissileType")) {
-		if (ImGui::Button("slerp")) {
-			missileType_ = eSlerp;
-		}
-		if (ImGui::Button("itano")) {
-			missileType_ = eItano;
-		}
-		if (ImGui::Button("V1")) {
-			missileType_ = eV1;
-		}
-		ImGui::TreePop();
-	}
-
-	ImGui::Text("type : %d", missileType_);
+	ImGui::InputFloat3("rotate", &worldTransform_.rotation_.x);
 
 	ImGui::End();
 #endif // _DEBUG
@@ -85,34 +71,17 @@ void Player::InputUpdate()
 	// ゲームパッドの状態を得る変数(XINPUT)
 	XINPUT_STATE joyState;
 
-	const float kInitSpeed = 20.0f;
-
 	// ジョイスティック状態取得
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER && !isFire_) {
-			Vector3 enemyToPlayer = this->enemyPtr_->GetTestWorld() - GetWorldPosition();
-			MissileManager::MissileConfig info;
-			info = { GetWorldPosition(),enemyToPlayer,kInitSpeed, enemyPtr_->GetTestPtr(), missileType_ };
-			missileManager_->AddMissile(info);
-
-			isFire_ = true;
-		}
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && !isFire_) {
-			MissileManager::MissileConfig info;
-			info = { GetWorldPosition(),missileDirect,kInitSpeed, enemyPtr_->GetTestPtr(), missileType_ };
-			missileManager_->AddMissile(info);
-
-			isFire_ = true;
-		}
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A && !isFire_) {
 			MissileManager::MissileConfig info;
 			// 左
-			info = { GetWorldPosition(),Vector3(0,0,0),kInitSpeed, enemyPtr_->GetTestPtr(), missileType_ };
+			info = { GetWorldPosition(),Vector3(0,0,0), enemyPtr_->GetTestPtr() };
 			
-			info.direct = Vector3(-1, 0, 0);
+			info.direct = Vector3(-1, 1.0, 0);
 			missileManager_->AddMissile(info);
 			// 右
-			info.direct = Vector3(1, 0, 0);
+			info.direct = Vector3(1, 1.0, 0);
 			missileManager_->AddMissile(info);
 
 			// 上

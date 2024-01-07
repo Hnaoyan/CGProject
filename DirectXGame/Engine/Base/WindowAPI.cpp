@@ -6,9 +6,6 @@
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-std::random_device WindowAPI::seedGenerator;
-std::mt19937 WindowAPI::randomEngine(WindowAPI::seedGenerator());
-
 void Log(const std::string& message) {
 	OutputDebugStringA(message.c_str());
 }
@@ -71,6 +68,9 @@ void WindowAPI::CreateGameWindow(const wchar_t* title, UINT windowStyle, int32_t
 
 	// ウィンドウを表示する
 	ShowWindow(hwnd_, SW_SHOW);
+
+	RandomInitialize();
+
 }
 
 bool WindowAPI::ProcessMessage() {
@@ -86,6 +86,12 @@ bool WindowAPI::ProcessMessage() {
 		return true;
 	}
 	return false;
+}
+
+void WindowAPI::RandomInitialize()
+{
+	std::random_device seedGenerator;
+	randomEngine_ = std::mt19937(seedGenerator());
 }
 
 WindowAPI* WindowAPI::GetInstance() {

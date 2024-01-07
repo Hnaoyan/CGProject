@@ -1,6 +1,7 @@
 #pragma once
 #include "StructManager.h"
-#include "Particle.h"
+#include "ViewProjection.h"
+#include "IParticle.h"
 #include <list>
 
 class ParticleManager
@@ -34,17 +35,24 @@ public:
 
 private:
 
-
 	uint32_t texture_ = 0u;
 
 	std::unique_ptr<Model> model_;
 
+	std::list<IParticle*> particles_;
+
+	ViewProjection* viewPtr_ = nullptr;
 
 public:
 
-	enum Type {
+	void AddParticle(const Vector3& position, uint32_t fadeTimer);
 
-	};
+	void SetView(ViewProjection* viewPtr) {
+		viewPtr_ = nullptr;
+		viewPtr_ = viewPtr;
+	}
+
+	void ClearList() { particles_.clear(); }
 
 };
 
