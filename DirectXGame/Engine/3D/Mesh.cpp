@@ -131,3 +131,33 @@ void Mesh::Draw(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndexM
 	// 描画コマンド
 	commandList->DrawIndexedInstanced((UINT)indices_.size(), 1, 0, 0, 0);
 }
+
+void Mesh::DrawInstancing(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndexMaterial, UINT rootParameterIndexTexture, int32_t instanceCount)
+{
+	// 頂点バッファをセット
+	commandList->IASetVertexBuffers(0, 1, &vbView_);
+	// インデックスバッファをセット
+	commandList->IASetIndexBuffer(&ibView_);
+
+	// マテリアルのグラフィックスコマンドをセット
+	material_->SetGraphicsCommand(commandList, rootParameterIndexMaterial, rootParameterIndexTexture);
+
+	// 描画コマンド
+	commandList->DrawIndexedInstanced((UINT)indices_.size(), instanceCount, 0, 0, 0);
+}
+
+void Mesh::DrawInstancing(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndexMaterial,
+	UINT rootParameterIndexTexture, int32_t textureHandle, int32_t instanceCount)
+{
+	// 頂点バッファをセット
+	commandList->IASetVertexBuffers(0, 1, &vbView_);
+	// インデックスバッファをセット
+	commandList->IASetIndexBuffer(&ibView_);
+
+	// マテリアルのグラフィックスコマンドをセット
+	material_->SetGraphicsCommand(
+		commandList, rootParameterIndexMaterial, rootParameterIndexTexture, textureHandle);
+
+	// 描画コマンド
+	commandList->DrawIndexedInstanced((UINT)indices_.size(), instanceCount, 0, 0, 0);
+}

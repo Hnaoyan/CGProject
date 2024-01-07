@@ -19,7 +19,7 @@ public:
 	};
 
 public:
-	
+
 	/// <summary>
 	/// 名前のゲッター
 	/// </summary>
@@ -102,6 +102,16 @@ public:
 
 	void Draw(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndexMaterial,
 		UINT rootParameterIndexTexture, int32_t textureHandle);
+
+
+	/// <summary>
+	/// パーティクル用
+	/// </summary>
+	void DrawInstancing(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndexMaterial,
+		UINT rootParameterIndexTexture, int32_t instanceCount);
+
+	void DrawInstancing(ID3D12GraphicsCommandList* commandList, UINT rootParameterIndexMaterial,
+		UINT rootParameterIndexTexture, int32_t textureHandle, int32_t instanceCount);
 
 	/// <summary>
 	/// 頂点配列

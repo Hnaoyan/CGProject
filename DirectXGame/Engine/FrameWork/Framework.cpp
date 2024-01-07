@@ -67,6 +67,10 @@ void Framework::Initialize()
 	// モデルインスタンス
 	Model::StaticInitialize();
 
+	// パーティクルインスタンス
+	// 未完成
+	//Particle::StaticInitialize();
+
 }
 
 void Framework::Finalize()
