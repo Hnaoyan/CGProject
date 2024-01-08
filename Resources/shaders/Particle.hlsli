@@ -1,3 +1,10 @@
+struct Particle
+{
+    matrix world;
+    float3 velocity;
+};
+
+StructuredBuffer<Particle> gTransform : register(t1);
 
 cbuffer ViewProjection : register(b1)
 {
@@ -22,4 +29,5 @@ struct VSOutput
     float4 worldPos : POSITION;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD;
+    //uint id : SV_InstanceID;
 };

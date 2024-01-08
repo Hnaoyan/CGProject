@@ -1,6 +1,7 @@
 #include "Particle.h"
 #include "D3D12Lib.h"
 #include "Graphics/Shader.h"
+#include "MathCalc.h"
 #include "DirectXCommon.h"
 
 #include <string>
@@ -22,6 +23,10 @@ std::array<ComPtr<ID3D12PipelineState>, size_t(BlendMode::kCountOfBlendMode)> Pa
 void Particle::StaticInitialize()
 {
 	HRESULT result = S_FALSE;
+
+	CreateConstBuffer();
+	SRVCreate();
+
 	ComPtr<IDxcBlob> vsBlob;
 	ComPtr<IDxcBlob> psBlob;
 	ComPtr<ID3DBlob> errorBlob;
@@ -55,7 +60,7 @@ void Particle::StaticInitialize()
 	// サンプルマスク
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// ラスタライザステート
-	D3D12_RASTERIZER_DESC rasterizer = PipelineManager::SetRasterizerState(D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_BACK);
+	D3D12_RASTERIZER_DESC rasterizer = PipelineManager::SetRasterizerState(D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_NONE);
 	gpipeline.RasterizerState = rasterizer;
 	// デプスステンシルステート
 	gpipeline.DepthStencilState.DepthEnable = true;
@@ -64,7 +69,7 @@ void Particle::StaticInitialize()
 	gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 	// 深度バッファのフォーマット
-	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	gpipeline.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 頂点レイアウト
 	gpipeline.InputLayout.pInputElementDescs = inputLayout;
@@ -78,19 +83,33 @@ void Particle::StaticInitialize()
 	gpipeline.SampleDesc.Count = 1;
 
 	// デスクリプタレンジ
-	D3D12_DESCRIPTOR_RANGE descRangeSRV;
-	descRangeSRV = D3D12Lib::Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	D3D12_DESCRIPTOR_RANGE descRangeSRV[1] = {};
 
 	// ルートパラメータ
 	D3D12_ROOT_PARAMETER rootparams[static_cast<int>(ParticleRegister::kCountOfParameter)];
 	// Instancing用のやつ
-	rootparams[static_cast<int>(ParticleRegister::kWorldTransform)] = D3D12Lib::InitAsDescriptorTable(kInstanceNum_, &descRangeSRV, D3D12_SHADER_VISIBILITY_VERTEX);
+	//descRangeSRV[0] = D3D12Lib::Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 2);
+	descRangeSRV[0].BaseShaderRegister = 1;
+	descRangeSRV[0].NumDescriptors = 1;
+	descRangeSRV[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descRangeSRV[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	rootparams[static_cast<int>(ParticleRegister::kWorldTransform)].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootparams[static_cast<int>(ParticleRegister::kWorldTransform)].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootparams[static_cast<int>(ParticleRegister::kWorldTransform)].DescriptorTable.pDescriptorRanges = descRangeSRV;
+	rootparams[static_cast<int>(ParticleRegister::kWorldTransform)].DescriptorTable.NumDescriptorRanges = _countof(descRangeSRV);
+
+	//rootparams[static_cast<int>(ParticleRegister::kWorldTransform)] = D3D12Lib::InitAsDescriptorTable(100, descRangeSRV, D3D12_SHADER_VISIBILITY_VERTEX);
+	//rootparams[static_cast<int>(ParticleRegister::kWorldTransform)].DescriptorTable.NumDescriptorRanges = _countof(descRangeSRV);
+	//rootparams[static_cast<int>(ParticleRegister::kWorldTransform)] = D3D12Lib::InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 	// View
 	rootparams[static_cast<int>(ParticleRegister::kViewProjection)] = D3D12Lib::InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
 	// マテリアル
 	rootparams[static_cast<int>(ParticleRegister::kMaterial)] = D3D12Lib::InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 	// テクスチャ
-	rootparams[static_cast<int>(ParticleRegister::kTexture)] = D3D12Lib::InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_PIXEL);
+	descRangeSRV[0] = D3D12Lib::Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	rootparams[static_cast<int>(ParticleRegister::kTexture)] = D3D12Lib::InitAsDescriptorTable(1, descRangeSRV, D3D12_SHADER_VISIBILITY_PIXEL);
+	rootparams[static_cast<int>(ParticleRegister::kTexture)].DescriptorTable.NumDescriptorRanges = _countof(descRangeSRV);
 
 	// スタティックサンプラー
 	D3D12_STATIC_SAMPLER_DESC samplerDesc[1];
@@ -189,8 +208,6 @@ void Particle::StaticInitialize()
 	assert(SUCCEEDED(result));
 #pragma endregion
 
-	SRVCreate();
-	CreateConstBuffer();
 }
 
 void Particle::SRVCreate()
@@ -208,12 +225,12 @@ void Particle::SRVCreate()
 		DescriptorManager::GetCPUDescriptorHandle(
 			DirectXCommon::GetInstance()->GetSRV()->GetHeap(),
 			DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			3);
+			0);
 	SrvHandleGPU =
 		DescriptorManager::GetGPUDescriptorHandle(
 			DirectXCommon::GetInstance()->GetSRV()->GetHeap(),
 			DirectXCommon::GetInstance()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			3);
+			0);
 
 	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(
 		instancingResource_.Get(), &instancingDesc, SrvHandleCPU);
@@ -682,11 +699,10 @@ void Particle::Map()
 void Particle::CreateConstBuffer()
 {
 	HRESULT result;
-	//const int kNumInstance = 10;
 
 	D3D12_HEAP_PROPERTIES heapProps = D3D12Lib::SetHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
 
-	D3D12_RESOURCE_DESC resourceDesc = D3D12Lib::SetResourceDesc(((sizeof(ConstBufferDataWorldTransform) + 0xff) & ~0xff) * kInstanceNum_);
+	D3D12_RESOURCE_DESC resourceDesc = D3D12Lib::SetResourceDesc(sizeof(CBufferDataParitcle) * kInstanceNum_);
 
 	result = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
 		&heapProps,
@@ -696,4 +712,10 @@ void Particle::CreateConstBuffer()
 
 	result = instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
 	assert(SUCCEEDED(result));
+
+	for (uint32_t i = 0; i < kInstanceNum_; ++i) {
+		instancingData_[i].matWorld = MatLib::MakeIdentity4x4();
+		instancingData_[i].velocity = {};
+	}
+
 }

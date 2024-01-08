@@ -69,7 +69,7 @@ void Framework::Initialize()
 
 	// パーティクルインスタンス
 	// 未完成
-	//Particle::StaticInitialize();
+	//Particle::GetInstance()->StaticInitialize();
 
 }
 

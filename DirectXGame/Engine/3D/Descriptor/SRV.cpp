@@ -15,6 +15,19 @@ void SRV::CreateInstancingSRV()
 	instancingSrvDesc.Buffer.StructureByteStride = sizeof(CBufferDataParitcle);
 
 	//D3D12_CPU_DESCRIPTOR_HANDLE instSrvHandleCPU;
+	handleCPU =
+		DescriptorManager::GetCPUDescriptorHandle(
+			heap_.Get(),
+			dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+			0);
+	handleGPU =
+		DescriptorManager::GetGPUDescriptorHandle(
+			heap_.Get(),
+			dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+			0);
+
+	//DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(
+		//instancingResource_.Get(), &instancingDesc, SrvHandleCPU);
 
 }
 

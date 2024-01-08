@@ -9,7 +9,7 @@ class SRV
 {
 public:
 
-	static void CreateInstancingSRV();
+	void CreateInstancingSRV();
 
 	void StaticInitialize(DirectXCommon* dxCommon);
 
@@ -26,6 +26,9 @@ private:
 
 	uint32_t kDescriptorSize_;
 	uint32_t size_;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU;
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU;
 
 };
 
