@@ -7,11 +7,11 @@ void NEngine::Initialize(DirectXCommon* dxCommon, WindowAPI* winApi)
 	winAPI_ = winApi;
 	dxCommon_ = dxCommon;
 
-	SettingBlendState();
-	CreateRootSignatureP();
-	CreateInputlayoutP();
-	SettingRasterrizerP();
-	InitPSOP();
+	SetBlendState();
+	CreateRootSignature();
+	CreateInputlayout();
+	SettingRasterrizer();
+	InitPSO();
 
 }
 
@@ -26,7 +26,7 @@ void NEngine::ParticlePostDraw()
 	//dxCommon_->GetCommandList()->SetPipelineState(nullptr);
 }
 
-void NEngine::SettingBlendState()
+void NEngine::SetBlendState()
 {
 	//すべての色要素を書き込む
 	//ノーマルブレンド
@@ -81,7 +81,7 @@ void NEngine::SettingBlendState()
 	blendDesc_[kBlendModeScreen].RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 }
 
-void NEngine::CreateRootSignatureP()
+void NEngine::CreateRootSignature()
 {
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
@@ -156,7 +156,7 @@ void NEngine::CreateRootSignatureP()
 	assert(SUCCEEDED(hr));
 }
 
-void NEngine::CreateInputlayoutP()
+void NEngine::CreateInputlayout()
 {
 	//inputElementDescsをメンバ変数にすると治った
 	inputElementDescsParticle_[0].SemanticName = "POSITION";
@@ -178,7 +178,7 @@ void NEngine::CreateInputlayoutP()
 	inputLayoutDesc_.NumElements = _countof(inputElementDescsParticle_);
 }
 
-void NEngine::SettingRasterrizerP()
+void NEngine::SettingRasterrizer()
 {
 	//裏面（時計回り）を表示しない
 	rasterizerDescParticle_.CullMode = D3D12_CULL_MODE_NONE;
@@ -194,7 +194,7 @@ void NEngine::SettingRasterrizerP()
 
 }
 
-void NEngine::InitPSOP()
+void NEngine::InitPSO()
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignatureParticle_.Get();//RootSignature

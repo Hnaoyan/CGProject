@@ -31,11 +31,11 @@ public:
 	void ParticlePostDraw();
 
 private:
-	void SettingBlendState();
-	void CreateRootSignatureP();
-	void CreateInputlayoutP();
-	void SettingRasterrizerP();
-	void InitPSOP();
+	void SetBlendState();
+	void CreateRootSignature();
+	void CreateInputlayout();
+	void SettingRasterrizer();
+	void InitPSO();
 
 private:
 	WindowAPI* winAPI_;

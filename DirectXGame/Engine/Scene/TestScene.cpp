@@ -124,7 +124,7 @@ void TestScene::Draw()
 	NEngine::GetInstance()->ParticlePreDraw(commandList);
 
 	particles_->PreDraw(commandList);
-	particles_->Draw(view_, { 1,1,1,1 }, texture_);
+	//particles_->Draw(view_, { 1,1,1,1 }, texture_);
 	particles_->PostDraw();
 
 
