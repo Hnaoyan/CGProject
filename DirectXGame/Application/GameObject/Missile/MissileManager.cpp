@@ -54,6 +54,9 @@ void MissileManager::Draw(ViewProjection& viewProjection)
 
 void MissileManager::AddMissile(const MissileConfig info)
 {
+	if (info.ptr == nullptr) {
+		return;
+	}
 	IMissile* newInstance = new IMissile();
 	newInstance->Initialize(model_.get(), info.position);
 	newInstance->InitMoveParameter(info.direct, bulletSpeed_);
@@ -63,4 +66,58 @@ void MissileManager::AddMissile(const MissileConfig info)
 	newInstance->SettingParameter(param_.lerpRad, param_.damping);
 	newInstance->SetParticle(particleManager_);
 	missiles_.push_back(newInstance);
+}
+
+void MissileManager::AddMissileNoneType(const MissileConfig info, int type)
+{
+	IMissile* newInstance = new IMissile();
+	newInstance->Initialize(model_.get(), info.position);
+	newInstance->InitMoveParameter(info.direct, bulletSpeed_);
+	newInstance->SetTarget(info.ptr);
+	newInstance->SetType(type);
+	newInstance->SetTargetPosition(info.ptr->GetWorldPosition());
+	newInstance->SettingParameter(param_.lerpRad, param_.damping);
+	newInstance->SetParticle(particleManager_);
+	missiles_.push_back(newInstance);
+}
+
+void MissileManager::BurstTheGravity(const MissileConfig info)
+{
+	if (info.ptr == nullptr) {
+		return;
+	}
+	MissileConfig config = info;
+
+#pragma region 上下左右
+	// 上
+	config.direct = { 0,1,0 };
+	AddMissileNoneType(config, kSlerp);
+	// 下
+	config.direct = { 0,-1,0 };
+	AddMissileNoneType(config, kSlerp);
+
+	// 右
+	config.direct = { 1,0,0 };
+	AddMissileNoneType(config, kSlerp);
+	// 左
+	config.direct = { -1,0,0 };
+	AddMissileNoneType(config, kSlerp);
+#pragma endregion
+
+#pragma region 斜め
+	// 左上
+	config.direct = { -1,1,0 };
+	AddMissileNoneType(config, kProt7);
+	// 左下
+	config.direct = { -1,-1,0 };
+	AddMissileNoneType(config, kProt7);
+
+	// 右上
+	config.direct = { 1,1,0 };
+	AddMissileNoneType(config, kProt7);
+	// 右下
+	config.direct = { 1,-1,0 };
+	AddMissileNoneType(config, kProt7);
+#pragma endregion
+
 }

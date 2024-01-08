@@ -45,6 +45,10 @@ void IMissile::Update()
 	ImGui::End();
 #endif // _DEBUG
 
+	if (Input::GetInstance()->TriggerKey(DIK_L)) {
+		target_ = nullptr;
+	}
+
 	HomingUpdate();
 
 	if (guidedTime_ % 60 == 0) {
@@ -137,16 +141,6 @@ void IMissile::TrackingMissileV1()
 
 void IMissile::HomingUpdate()
 {
-
-	int timer = 5;
-	if (deathCount_ > (60 * timer)) {
-		isDead_ = true;
-	}
-
-	if (GetWorldPosition().z > targetPosition_.z) {
-		deathCount_++;
-		return;
-	}
 	coolTime_ = 10;
 	isDelay_ = false;
 	if (guidedTime_ > coolTime_) {
@@ -155,6 +149,16 @@ void IMissile::HomingUpdate()
 	}
 	else {
 		guidedTime_++;
+	}
+
+	int timer = 5;
+	if (deathCount_ > (60 * timer)) {
+		isDead_ = true;
+	}
+
+	if (GetWorldPosition().z > targetPosition_.z || target_ == nullptr) {
+		deathCount_++;
+		return;
 	}
 
 	switch (type_)

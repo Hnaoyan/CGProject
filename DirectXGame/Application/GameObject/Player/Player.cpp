@@ -79,19 +79,21 @@ void Player::InputUpdate()
 			info = { GetWorldPosition(),Vector3(0,0,0), enemyPtr_->GetTestPtr() };
 			
 			info.direct = Vector3(-1, 1.0, 0);
-			missileManager_->AddMissile(info);
+			//missileManager_->AddMissile(info);
 			// 右
 			info.direct = Vector3(1, 1.0, 0);
-			missileManager_->AddMissile(info);
+			//missileManager_->AddMissile(info);
 
 			// 上
 			info.direct = Vector3(0, 1, 0);
-			missileManager_->AddMissile(info);
+			//missileManager_->AddMissile(info);
 
 			// 下
 			info.direct = Vector3(0, -1, 0);
-			missileManager_->AddMissile(info);
+			//missileManager_->AddMissile(info);
 		
+			missileManager_->BurstTheGravity(info);
+
 			// 連射出来ないように
 			isFire_ = true;
 		}

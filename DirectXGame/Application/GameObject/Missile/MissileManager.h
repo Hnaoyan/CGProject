@@ -59,9 +59,14 @@ public:
 public:
 	void AddMissile(const MissileConfig info);
 
+	void AddMissileNoneType(const MissileConfig info, int type);
+
 	std::list<IMissile*> GetList() { return missiles_; }
 
 	void SetParticleManager(ParticleManager* manager) { particleManager_ = manager; }
+
+	// 一斉射撃Ver.1
+	void BurstTheGravity(const MissileConfig info);
 
 private:
 	std::list<IMissile*> missiles_;
