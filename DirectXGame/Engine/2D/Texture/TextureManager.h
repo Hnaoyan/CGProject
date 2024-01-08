@@ -37,7 +37,10 @@ public:
 	/// シングルトンインスタンス
 	/// </summary>
 	/// <returns></returns>
-	static TextureManager* GetInstance();
+	static TextureManager* GetInstance() {
+		static TextureManager instance;
+		return &instance;
+	}
 
 	/// <summary>
 	/// システム初期化
@@ -69,6 +72,13 @@ public:
 
 	uint32_t GetHeapIndex() { return indexNextDescriptorHeap_; }
 
+	static ID3D12DescriptorHeap* StaticGetDescriptorHeap() { return GetInstance()->descriptorHeap_.Get(); }
+
+	static D3D12_CPU_DESCRIPTOR_HANDLE StaticGetCPUDescriptorHandle(uint32_t index) { return GetInstance()->GetCPUDescriptorHandle(GetInstance()->descriptorHeap_.Get(), GetInstance()->device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), index); }
+
+	static D3D12_GPU_DESCRIPTOR_HANDLE StaticGetGPUDescriptorHandle(uint32_t index) { return GetInstance()->GetGPUDescriptorHandle(GetInstance()->descriptorHeap_.Get(), GetInstance()->device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), index); }
+
+
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	// デバイス
@@ -93,6 +103,11 @@ private:
 	/// <param name="fileName"></param>
 	/// <returns></returns>
 	uint32_t LoadInternal(const std::string& fileName);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
 
 
 private:

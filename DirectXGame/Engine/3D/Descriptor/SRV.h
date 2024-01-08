@@ -22,7 +22,7 @@ public:
 	ID3D12DescriptorHeap* GetHeap() { return heap_.Get(); }
 
 	//static const int max = 1052;
-	void Initialize() {};
+	void Initialize();
 	void Update() {};
 	void AddIndex() { index_++; }
 	uint32_t GetIndex() { return index_; }

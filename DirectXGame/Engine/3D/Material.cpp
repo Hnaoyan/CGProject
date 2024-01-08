@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "DirectXCommon.h"
 #include "D3D12Lib.h"
+//#include "TextureControl.h"
 
 Material* Material::Create()
 {

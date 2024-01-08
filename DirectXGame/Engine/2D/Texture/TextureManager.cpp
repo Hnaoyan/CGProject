@@ -123,12 +123,6 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	return handle;
 }
 
-TextureManager* TextureManager::GetInstance()
-{
-	static TextureManager instance;
-	return &instance;
-}
-
 void TextureManager::Initialize(DirectXCommon* dxCommon, std::string directoryPath)
 {
 	assert(dxCommon);
@@ -186,6 +180,20 @@ void TextureManager::SetGraphicsRootDescriptorTable(ID3D12GraphicsCommandList* c
 	commandList->SetGraphicsRootDescriptorTable(
 		rootParamIndex, textures_[textureHandle].gpuDescHandleSRV);
 
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index)
+{
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (descriptorSize * index);
+	return handleGPU;
 }
 
 DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath)
