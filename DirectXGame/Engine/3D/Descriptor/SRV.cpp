@@ -39,7 +39,7 @@ void SRV::StaticInitialize(DirectXCommon* dxCommon)
 
 	D3D12_DESCRIPTOR_HEAP_DESC srvDescriptorHeapDesc{};
 	srvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	srvDescriptorHeapDesc.NumDescriptors = 1;
+	srvDescriptorHeapDesc.NumDescriptors = 10000;
 	srvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
 	result = device_->CreateDescriptorHeap(&srvDescriptorHeapDesc, IID_PPV_ARGS(&heap_));
