@@ -11,7 +11,7 @@ uint32_t TextureManager::Load(const std::string& fileName)
 uint32_t TextureManager::LoadInternal(const std::string& fileName)
 {
 	HRESULT result = S_FALSE;
-
+#pragma region LoadInternal
 	assert(indexNextDescriptorHeap_ < kNumDescriptor);
 	uint32_t handle = indexNextDescriptorHeap_;
 
@@ -87,6 +87,8 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 		);
 		assert(SUCCEEDED(result));
 	}
+
+#pragma endregion
 
 	// SRVを作成するDescriptorHeapの場所を決める
 	texture.cpuDescHandleSRV = descriptorHeap_->GetCPUDescriptorHandleForHeapStart();
