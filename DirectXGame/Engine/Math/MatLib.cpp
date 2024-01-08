@@ -331,6 +331,14 @@ Matrix4x4 MatLib::MakeBillBoard(const Vector3& target, const Vector3& eye, const
 	};
 }
 
+Matrix4x4 MatLib::MakeBillBoard(const Vector3& scale, Matrix4x4 billboard, const Vector3& translate)
+{
+	Matrix4x4 scaleMat = MakeScaleMatrix(scale);
+	Matrix4x4 transmat = MakeTranslateMatrix(translate);
+
+	return Multiply(scaleMat, Multiply(billboard, transmat));
+}
+
 Matrix4x4 MatLib::DirectionToDirection(const Vector3& from, const Vector3& to)
 {
 	// cos

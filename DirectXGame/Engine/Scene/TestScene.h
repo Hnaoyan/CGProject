@@ -7,6 +7,7 @@
 #include "AudioManager.h"
 #include "Sprite.h"
 #include <memory>
+#include "Respect/TestParticle.h"
 
 
 class TestScene : public IScene
@@ -67,7 +68,9 @@ private:
 
 	int32_t testValue_;
 
-	
+	int a;
+
+	std::unique_ptr<TestParticle> particles_;
 
 	void ApplyGlobalVariables();
 };

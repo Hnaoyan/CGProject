@@ -57,7 +57,7 @@ void Framework::Initialize()
 	imguiManager->Initialize(dxCommon, winApp);
 
 	// テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(dxCommon->GetDevice());
+	TextureManager::GetInstance()->Initialize(dxCommon);
 	TextureManager::Load("white1x1.png");
 
 
@@ -70,6 +70,7 @@ void Framework::Initialize()
 	// パーティクルインスタンス
 	// 未完成
 	//Particle::GetInstance()->StaticInitialize();
+	NEngine::GetInstance()->Initialize(dxCommon, winApp);
 
 }
 

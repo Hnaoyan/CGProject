@@ -1,6 +1,7 @@
 #include "TextureManager.h"
 #include "StringManager.h"
 #include "D3D12Lib.h"
+#include "DirectXCommon.h"
 
 uint32_t TextureManager::Load(const std::string& fileName)
 {
@@ -91,9 +92,15 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	texture.cpuDescHandleSRV = descriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	texture.gpuDescHandleSRV = descriptorHeap_->GetGPUDescriptorHandleForHeapStart();
 
+	
+
+	//DirectXCommon::GetInstance()->GetSRV()->SetCPUHandle()
+
 	// 先頭は使われているためその次
 	texture.cpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
 	texture.gpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
+
+	//srv_->SetCPUHandle(srv_->GetHeap(), srv_->GetSizeSRV(), index);
 
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -111,6 +118,7 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 		texture.cpuDescHandleSRV);
 
 	indexNextDescriptorHeap_++;
+	DirectXCommon::GetInstance()->GetSRV()->AddIndex();
 
 	return handle;
 }
@@ -121,11 +129,13 @@ TextureManager* TextureManager::GetInstance()
 	return &instance;
 }
 
-void TextureManager::Initialize(ID3D12Device* device, std::string directoryPath)
+void TextureManager::Initialize(DirectXCommon* dxCommon, std::string directoryPath)
 {
-	assert(device);
+	assert(dxCommon);
 
-	device_ = device;
+	dxCommon_ = dxCommon;
+	device_ = dxCommon_->GetDevice();
+	//srv_ = dxCommon_->GetSRV();
 	directoryPath_ = directoryPath;
 
 	// デスクリプタサイズを取得
@@ -152,8 +162,8 @@ void TextureManager::ResetAll()
 	// 全テクスチャを初期化
 	for (size_t i = 0; i < kNumDescriptor; i++) {
 		textures_[i].resource.Reset();
-		textures_[i].cpuDescHandleSRV.ptr = 0;
-		textures_[i].gpuDescHandleSRV.ptr = 0;
+		//textures_[i].cpuDescHandleSRV.ptr = 0;
+		//textures_[i].gpuDescHandleSRV.ptr = 0;
 		textures_[i].name.clear();
 	}
 }

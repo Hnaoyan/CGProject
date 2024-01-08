@@ -10,6 +10,7 @@
 #include "Particle.h"
 #include "Sprite.h"
 #include "Graphics/Shader.h"
+#include "Respect/NEngine.h"
 #include <memory>
 
 class Framework

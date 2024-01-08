@@ -11,6 +11,9 @@ void TitleScene::Update()
 	if (input_->TriggerKey(DIK_RSHIFT)) {
 		sceneNum++;
 	}
+	if (input_->TriggerKey(DIK_LSHIFT)) {
+		sceneNum = 2;
+	}
 #endif // _DEBUG
 
 	XINPUT_STATE joyState;

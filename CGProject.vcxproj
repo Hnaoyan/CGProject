@@ -224,6 +224,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Respect\NEngine.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\Respect\TestParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
@@ -297,6 +298,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Respect\NEngine.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Respect\TestParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

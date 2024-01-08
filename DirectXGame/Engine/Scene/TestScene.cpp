@@ -3,6 +3,7 @@
 #include "DirectXCommon.h"
 #include "TextureManager.h"
 #include "Editor/Editor.h"
+#include "Respect/NEngine.h"
 
 void TestScene::Initialize()
 {
@@ -40,6 +41,9 @@ void TestScene::Initialize()
 
 	ApplyGlobalVariables();
 
+	particles_ = std::make_unique<TestParticle>();
+	particles_->Initialize(1000);
+
 }
 
 void TestScene::Update()
@@ -59,13 +63,13 @@ void TestScene::Update()
 	this->ImGuiQuaternionPrintf(rotation, "test");
 
 
-	Vector3 a = { 1,1,1 };
+	Vector3 a_ = { 1,1,1 };
 	Vector3 b = { 2,2,2 };
 
-	Vector3 Add_ab = a + b;
-	Vector3 Sub_ab = a - b;
-	Vector3 Mul_ab = a * b;
-	Vector3 Div_ab = a / b;
+	Vector3 Add_ab = a_ + b;
+	Vector3 Sub_ab = a_ - b;
+	Vector3 Mul_ab = a_ * b;
+	Vector3 Div_ab = a_ / b;
 
 	this->ImGuiVector3Printf(Add_ab, "Add");
 	this->ImGuiVector3Printf(Sub_ab, "Sub");
@@ -87,6 +91,8 @@ void TestScene::Update()
 
 	ImGui::ShowDemoWindow();
 	ApplyGlobalVariables();
+
+	particles_->Update();
 }
 
 void TestScene::Draw()
@@ -115,9 +121,19 @@ void TestScene::Draw()
 
 	planeModel_->Draw(objTransform_, view_, texture_);
 
+	NEngine::GetInstance()->ParticlePreDraw(commandList);
+
+	particles_->PreDraw(commandList);
+	particles_->Draw(view_, { 1,1,1,1 }, texture_);
+	particles_->PostDraw();
+
+
 	// 描画後処理
 	Model::PostDraw();
 #pragma endregion
+
+
+
 
 }
 

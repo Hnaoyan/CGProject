@@ -93,6 +93,7 @@ public:
 	/// <param name="up"></param>
 	/// <returns></returns>
 	static Matrix4x4 MakeBillBoard(const Vector3& target, const Vector3& eye, const Vector3& up);
+	static Matrix4x4 MakeBillBoard(const Vector3& scale, Matrix4x4 billboard, const Vector3& translate);
 
 	/// <summary>
 	/// 任意軸の回転行列を求める計算

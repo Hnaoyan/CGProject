@@ -13,6 +13,7 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
+
 namespace Pipeline 
 {
 	enum class RootParameter : int {
