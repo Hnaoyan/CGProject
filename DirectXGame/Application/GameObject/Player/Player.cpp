@@ -105,6 +105,19 @@ void Player::InputUpdate()
 		}
 	}
 
+	if (input_->TriggerKey(DIK_SPACE) && !isFire_) {
+		MissileManager::MissileConfig info;
+		// 左
+		info = { GetWorldPosition(),Vector3(0,0,0), enemyPtr_->GetTestPtr() };
+
+		//missileManager_->BurstTheGravity(info);
+
+		missileManager_->Ashen(info);
+
+		// 連射出来ないように
+		isFire_ = true;
+	}
+
 	missileManager_->SetPosition(GetWorldPosition());
 
 	if (isFire_) {

@@ -30,6 +30,13 @@ void Enemy::Update()
 
 	float moveSpeed = 5.0f;
 
+	if (GetWorldPosition().y > 28.0f) {
+		velocity_.y = -1.0f;
+	}
+	if (GetWorldPosition().y <= -30.0f) {
+		velocity_.y = 1.0f;
+	}
+
 	switch (moveType_)
 	{
 	case kOne:
