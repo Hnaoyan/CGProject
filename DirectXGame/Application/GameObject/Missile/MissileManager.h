@@ -15,6 +15,7 @@ enum MissileType {
 	kProt4,	// シンプルなやつ
 	kProt6,	// 距離に合わせるやつ
 	kProt7, // オフセット値で角度調整できるやつ
+	kV2,	// V1を途中で終了するやつ
 	kNone,
 };
 /// <summary>
@@ -56,6 +57,9 @@ public:
 	/// </summary>
 	/// <param name="viewProjection"></param>
 	void Draw(ViewProjection& viewProjection);
+
+	void ListUpdate();
+
 public:
 	void AddMissile(const MissileConfig info);
 
@@ -67,6 +71,14 @@ public:
 
 	// 一斉射撃Ver.1
 	void BurstTheGravity(const MissileConfig info);
+
+	void Ashen(const MissileConfig info);
+
+	void SetPosition(const Vector3& position) { playerPosition_ = position; }
+
+private:
+	// 分離後のミサイル出現
+	void SilhouetteDance();
 
 private:
 	std::list<IMissile*> missiles_;
@@ -80,5 +92,14 @@ private:
 	int missileType_ = 0;
 
 	ControlParam param_ = {};
+
+	Vector3 playerPosition_ = {};
+
+	Enemy* targetPtr_ = nullptr;
+
+	bool isSeparate_ = false;
+
+	int separateTime_ = 0;
+
 };
 

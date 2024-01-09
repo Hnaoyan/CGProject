@@ -4,6 +4,7 @@
 #include "TestScene.h"
 #include "GameScene.h"
 #include "TitleScene.h"
+#include "ClearScene.h"
 
 enum Scene {
 	TITLE, GAMESCENE, CLEAR,

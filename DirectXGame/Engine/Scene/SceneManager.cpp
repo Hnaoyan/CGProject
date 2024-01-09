@@ -1,13 +1,17 @@
 #include "SceneManager.h"
+#include "TextureManager.h"
 
 SceneManager::SceneManager() 
 { 
 	sceneArray_[TITLE] = std::make_unique<TitleScene>();
 	sceneArray_[GAMESCENE] = std::make_unique<GameScene>();
-	sceneArray_[CLEAR] = std::make_unique<TestScene>();
+	sceneArray_[CLEAR] = std::make_unique<ClearScene>();
 
 	sceneNum_ = GAMESCENE;
 	sceneArray_[sceneNum_]->Initialize();
+	//AudioManager* instance = AudioManager::GetInstance();
+	//instance->PlayAudio(instance->GetSound("BGM"), true, 0.5f);
+
 }
 
 SceneManager::~SceneManager() {}
@@ -26,4 +30,8 @@ void SceneManager::Update()
 }
 
 void SceneManager::Draw() 
-{ sceneArray_[sceneNum_]->Draw(); }
+{ 
+
+	sceneArray_[sceneNum_]->Draw();
+
+}

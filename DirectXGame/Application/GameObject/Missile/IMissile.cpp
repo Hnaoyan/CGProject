@@ -56,6 +56,11 @@ void IMissile::Update()
 	}
 
 	velocity_ += acceleration_;
+
+	if (type_ != kSlerp) {
+		velocity_ * 2.0f;
+	}
+
 	worldTransform_.translation_ += GetDeltaTimeVelocity();
 
 	Vector3 velocityVect = MathCalc::Normalize(velocity_);
@@ -112,31 +117,6 @@ void IMissile::ItanoUpdate()
 	direction_ = NLib::InductionNewVector(direction_, directToEnemy, p_);
 	acceleration_ = direction_ * NLib::GetDeltaTime(60.0f);
 	velocity_ += acceleration_ * NLib::GetDeltaTime(60.0f);
-
-}
-
-void IMissile::TrackingMissileV1()
-{
-	Vector3 toTarget = target_->GetWorldPosition() - GetWorldPosition();
-	Vector3 nowDirect = MathCalc::Normalize(velocity_);
-	float dot = MathCalc::Dot(toTarget, nowDirect);
-	Vector3 centripetalAccel = toTarget - (nowDirect * dot);
-	float centripetalAccelMagnitude = MathCalc::Length(centripetalAccel);
-
-	if (centripetalAccelMagnitude > 1.0f)
-	{
-		centripetalAccel /= centripetalAccelMagnitude;
-	}
-
-	float maxCentripetalAccel = std::powf(kBulletSpeed_, 2) / lerpRad_;
-	Vector3 force = centripetalAccel * maxCentripetalAccel;
-
-	float propulsion = kBulletSpeed_ * damping_;
-
-	force += nowDirect * propulsion;
-	force -= velocity_ * damping_;
-	acceleration_ = force * NLib::GetDeltaTime(60.0f);
-	//velocity_ += force * NLib::GetDeltaTime(60.0f);
 }
 
 void IMissile::HomingUpdate()
@@ -180,11 +160,69 @@ void IMissile::HomingUpdate()
 	case MissileType::kProt7:
 		ProportionalV7();
 		break;
+	case MissileType::kV2:
+		TrackingMissileV2();
+		break;
 	case MissileType::kNone:
 
 		break;
 	}
 	//velocity_ *= NLib::GetDeltaTime(60.0f);
+}
+
+void IMissile::TrackingMissileV1()
+{
+	Vector3 toTarget = target_->GetWorldPosition() - GetWorldPosition();
+	Vector3 nowDirect = MathCalc::Normalize(velocity_);
+	float dot = MathCalc::Dot(toTarget, nowDirect);
+	Vector3 centripetalAccel = toTarget - (nowDirect * dot);
+	float centripetalAccelMagnitude = MathCalc::Length(centripetalAccel);
+
+	if (centripetalAccelMagnitude > 1.0f)
+	{
+		centripetalAccel /= centripetalAccelMagnitude;
+	}
+
+	float maxCentripetalAccel = std::powf(kBulletSpeed_, 2) / lerpRad_;
+	Vector3 force = centripetalAccel * maxCentripetalAccel;
+
+	float propulsion = kBulletSpeed_ * damping_;
+
+	force += nowDirect * propulsion;
+	force -= velocity_ * damping_;
+	acceleration_ = force * NLib::GetDeltaTime(60.0f);
+	//velocity_ += force * NLib::GetDeltaTime(60.0f);
+}
+
+void IMissile::TrackingMissileV2()
+{
+	cancelCount_++;
+	int kCancelTime = 150;
+
+	Vector3 toTarget = target_->GetWorldPosition() - GetWorldPosition();
+	Vector3 nowDirect = MathCalc::Normalize(velocity_);
+	float dot = MathCalc::Dot(toTarget, nowDirect);
+	Vector3 centripetalAccel = toTarget - (nowDirect * dot);
+	float centripetalAccelMagnitude = MathCalc::Length(centripetalAccel);
+
+	if (centripetalAccelMagnitude > 1.0f)
+	{
+		centripetalAccel /= centripetalAccelMagnitude;
+	}
+
+	float maxCentripetalAccel = std::powf(kBulletSpeed_, 2) / lerpRad_;
+	Vector3 force = centripetalAccel * maxCentripetalAccel;
+
+	float propulsion = kBulletSpeed_ * damping_;
+
+	force += nowDirect * propulsion;
+	force -= velocity_ * damping_;
+	acceleration_ = force * NLib::GetDeltaTime(60.0f);
+
+	if (cancelCount_ > kCancelTime) {
+		target_ = nullptr;
+	}
+
 }
 
 void IMissile::ProportionaMissile()

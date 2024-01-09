@@ -9,7 +9,7 @@ void Enemy::Initialize(Model* model)
 	model_ = model;
 	worldTransform_.Initialize();
 	texture_ = TextureManager::Load("white1x1.png");
-	velocity_ = { 0,1,1 };
+	velocity_ = { 0,1,0.5f };
 
 	radius_ = 1.0f;
 	collider_.SetterRad(Vector3(radius_, radius_, radius_));
@@ -18,10 +18,62 @@ void Enemy::Initialize(Model* model)
 	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&Enemy::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
 	collider_.SetFunction(f);
 
+	isOnHit_ = false;
+	moveType_ = kOne;
 }
 
 void Enemy::Update()
 {
+	moveCount_++;
+
+	const int kChengeCount = 450;
+
+	float moveSpeed = 5.0f;
+
+	switch (moveType_)
+	{
+	case kOne:
+		if (moveCount_ > kChengeCount) {
+			moveCount_ = 0;
+			moveType_ = kTwo;
+			velocity_ = { 0.2f,-0.6f,0.1f };
+			velocity_ *= moveSpeed;
+		}
+		break;
+	case kTwo:
+		if (moveCount_ > kChengeCount) {
+			moveCount_ = 0;
+			moveType_ = kThree;
+			velocity_ = { -0.3f,-0.1f,0.2f };
+			velocity_ *= moveSpeed;
+		}
+		break;
+	case kThree:
+		if (moveCount_ > kChengeCount) {
+			moveCount_ = 0;
+			moveType_ = kFour;
+			velocity_ = { +0.3f,0.5f,-0.4f };
+			velocity_ *= moveSpeed;
+		}
+		break;
+	case kFour:
+		if (moveCount_ > kChengeCount) {
+			moveCount_ = 0;
+			moveType_ = kOne;
+			velocity_ = { 0.0f,0.5f,0.1f };
+			velocity_ *= moveSpeed;
+		}
+		break;
+	}
+
+	if (isDead_) {
+		invisibleTimer_++;
+		int kResetTime = 0;
+		if (invisibleTimer_ > kResetTime) {
+			isDead_ = false;
+			invisibleTimer_ = 0;
+		}
+	}
 
 	Vector3 moveVector{};
 
@@ -64,5 +116,8 @@ void Enemy::ImGuiWidget()
 void Enemy::OnCollision(uint32_t tag, WorldTransform* world)
 {
 	world, tag;
+	if (!isDead_) {
+		isOnHit_ = true;
+	}
 	isDead_ = true;
 }

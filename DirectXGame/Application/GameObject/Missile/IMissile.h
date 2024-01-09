@@ -77,6 +77,9 @@ private: // 内部の固有処理
 	void ItanoUpdate();
 
 	void TrackingMissileV1();
+
+	void TrackingMissileV2();
+
 	/// <summary>
 	/// 比例航法の追尾
 	/// </summary>
@@ -135,6 +138,7 @@ private:
 	int coolTime_ = 3;
 	int deathCount_ = 0;
 
+	int cancelCount_ = 0;
 private:
 	float lerpRad_ = 5.0f;
 	float damping_ = 0.1f;

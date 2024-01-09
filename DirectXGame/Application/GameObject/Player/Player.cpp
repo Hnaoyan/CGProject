@@ -11,6 +11,7 @@ void Player::Initialize(Model* model)
 	model_ = model;
 	input_ = Input::GetInstance();
 	worldTransform_.Initialize();
+	worldTransform_.translation_.y = -4.0f;
 
 }
 
@@ -21,25 +22,33 @@ void Player::Update()
 	Vector3 moveVector{};
 	float speedValue = 10.0f;
 
-	/*XINPUT_STATE joyState;
+	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		moveVector.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * SpeedDelta(speedValue);
-		moveVector.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * SpeedDelta(speedValue);
-	}*/
-
-	if (input_->PressKey(DIK_W)) {
-		moveVector.y += SpeedDelta(speedValue);
-	}
-	if (input_->PressKey(DIK_S)) {
-		moveVector.y -= SpeedDelta(speedValue);
-	}
-	if (input_->PressKey(DIK_A)) {
-		moveVector.x -= SpeedDelta(speedValue);
-	}
-	if (input_->PressKey(DIK_D)) {
-		moveVector.x += SpeedDelta(speedValue);
+		//moveVector.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * SpeedDelta(speedValue);
 	}
 
+	//if (input_->PressKey(DIK_W)) {
+	//	moveVector.y += SpeedDelta(speedValue);
+	//}
+	//if (input_->PressKey(DIK_S)) {
+	//	moveVector.y -= SpeedDelta(speedValue);
+	//}
+	//if (input_->PressKey(DIK_A)) {
+	//	moveVector.x -= SpeedDelta(speedValue);
+	//}
+	//if (input_->PressKey(DIK_D)) {
+	//	moveVector.x += SpeedDelta(speedValue);
+	//}
+	if (worldTransform_.translation_.x + moveVector.x > 10.0f) {
+		worldTransform_.translation_.x = 9.9f;
+		moveVector.x = 0;
+	}
+
+	if (worldTransform_.translation_.x - moveVector.x < -10.0f) {
+		worldTransform_.translation_.x = -9.9f;
+		moveVector.x = 0;
+	}
 
 	worldTransform_.translation_ += moveVector;
 	//worldTransform_.translation_.z += 0.1f;
@@ -73,35 +82,34 @@ void Player::InputUpdate()
 
 	// ジョイスティック状態取得
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER && !isFire_) {
+		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A && !isFire_) {
 			MissileManager::MissileConfig info;
 			// 左
 			info = { GetWorldPosition(),Vector3(0,0,0), enemyPtr_->GetTestPtr() };
-			
-			info.direct = Vector3(-1, 1.0, 0);
-			//missileManager_->AddMissile(info);
-			// 右
-			info.direct = Vector3(1, 1.0, 0);
-			//missileManager_->AddMissile(info);
+					
+			//missileManager_->BurstTheGravity(info);
 
-			// 上
-			info.direct = Vector3(0, 1, 0);
-			//missileManager_->AddMissile(info);
+			missileManager_->Ashen(info);
 
-			// 下
-			info.direct = Vector3(0, -1, 0);
-			//missileManager_->AddMissile(info);
-		
+			// 連射出来ないように
+			isFire_ = true;
+		}
+		else if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B && !isFire_) {
+			MissileManager::MissileConfig info;
+			// 左
+			info = { GetWorldPosition(),Vector3(0,0,0), enemyPtr_->GetTestPtr() };
+
 			missileManager_->BurstTheGravity(info);
-
 			// 連射出来ないように
 			isFire_ = true;
 		}
 	}
 
+	missileManager_->SetPosition(GetWorldPosition());
+
 	if (isFire_) {
 		coolTime_++;
-		if (coolTime_ > 20) {
+		if (coolTime_ > 120) {
 			coolTime_ = 0;
 			isFire_ = false;
 		}

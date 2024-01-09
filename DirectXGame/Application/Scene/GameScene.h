@@ -88,9 +88,11 @@ private:	// メンバポインタ
 
 	// 仮のオブジェクト
 	std::unique_ptr<Model> model_;
-	std::unique_ptr<Model> skyDomeModel_;
 
-	std::unique_ptr<SkyDome> skyDome_;
+	std::unique_ptr<Sprite> back_;
+
+	SpriteInfo uiInfo_;
+	std::unique_ptr<Sprite> ui_;
 
 	bool isDebug_ = false;
 

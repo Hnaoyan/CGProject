@@ -21,8 +21,6 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 	model_.reset(Model::CreateFromObj("Jett", true));
-	skyDomeModel_.reset(Model::CreateFromObj("skydome", true));
-
 	// プレイヤー
 	player_ = std::make_unique<Player>();
 	player_->Initialize(model_.get());
@@ -44,15 +42,21 @@ void GameScene::Initialize() {
 	player_->SetEnemyManager(enemyManager_.get());
 	player_->SetMissileManager(missileManager_.get());
 
-
-
-	skyDome_ = std::make_unique<SkyDome>();
-	skyDome_->Initialize(skyDomeModel_.get());
-
 	particleManager_ = std::make_unique<ParticleManager>();
 	particleManager_->Initialize();
 
 	missileManager_->SetParticleManager(particleManager_.get());
+
+	uint32_t texture = TextureManager::Load("UI/BackGround.png");
+	back_.reset(Sprite::Create(texture, { 0,0 }, { 1,1,1,1 }, { 0,0 }, false, false));
+
+	texture = TextureManager::Load("UI/Shot_B.png");
+	uiInfo_.position = { 80,620 };
+	uiInfo_.color = { 1,1,1,1 };
+	uiInfo_.anchor = { 0.5f,0.5f };
+
+	ui_.reset(Sprite::Create(texture, uiInfo_.position, uiInfo_.color, uiInfo_.anchor, false, false));
+
 }
 
 void GameScene::Update()
@@ -89,7 +93,9 @@ void GameScene::Update()
 	/// カメラ関係の更新処理
 	CameraUpdate();
 
-	skyDome_->Update();
+	if (enemyManager_->GetHP() <= 0) {
+		sceneNum++;
+	}
 
 }
 
@@ -102,6 +108,7 @@ void GameScene::Draw() {
 	// 描画前処理
 	Sprite::PreDraw(commandList);
 
+	back_->Draw();
 
 	// 描画後処理
 	Sprite::PostDraw();
@@ -113,7 +120,6 @@ void GameScene::Draw() {
 	// 描画前処理
 	Model::PreDraw(commandList);
 
-	skyDome_->Draw(viewProjection_);
 
 	enemyManager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
@@ -129,7 +135,7 @@ void GameScene::Draw() {
 	// 描画前処理
 	Sprite::PreDraw(commandList);
 
-
+	ui_->Draw();
 
 	// 描画後処理
 	Sprite::PostDraw();

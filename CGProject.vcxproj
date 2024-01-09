@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectXGame\Application\Scene\ClearScene.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.cpp" />
@@ -227,6 +228,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\3D\Respect\TestParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXGame\Application\Scene\ClearScene.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.h" />

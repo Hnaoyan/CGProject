@@ -9,9 +9,10 @@ void FixedPointCam::Initialize()
 	// ビュープロジェクションの初期化を担当
 	ICamera::Initialize();
 
-	offset_ = { 0,3.5f,-50.0f };
+	offset_ = { 0,11.0f,-50.0f };
 
 	viewProjection_.translate_ = offset_;
+	viewProjection_.rotation_.x = 0.12f;
 
 }
 
@@ -22,7 +23,7 @@ void FixedPointCam::Update()
 #endif // _DEBUG
 
 	// カメラの回転処理
-	RotationUpdate();
+	//RotationUpdate();
 
 	// 基本情報のウィジェットと行列の更新
 	ICamera::Update();
@@ -35,9 +36,12 @@ void FixedPointCam::ImGuiWidget()
 	// 位置
 	ImGui::SliderFloat3("translate", &viewProjection_.translate_.x, -50.0f, 50.0f);
 	// 回転
-	ImGui::DragFloat3("rotate", &viewProjection_.rotation_.x);
+	ImGui::DragFloat3("rotate", &viewProjection_.rotation_.x,0.01f,0,3.14f);
 	// 視野角
 	ImGui::SliderFloat("fov", &fov_, 5.0f, 100.0f);
+
+	ImGui::DragFloat3("offSet", &offset_.x, 0.01f, 0, 100.0f);
+
 	ImGui::End();
 
 }

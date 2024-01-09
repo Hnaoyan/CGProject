@@ -15,6 +15,12 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
+struct SpriteInfo {
+	Vector2 position;
+	Vector4 color;
+	Vector2 anchor;
+};
+
 class Sprite
 {
 public:	// サブクラス

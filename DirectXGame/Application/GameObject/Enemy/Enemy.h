@@ -42,7 +42,17 @@ public:
 
 	Collider* GetCollider() { return &collider_; }
 
+	bool GetIsHit() { return isOnHit_; }
+
+	void SetIsHit(bool isHit) { isOnHit_ = isHit; }
+
 private:
+	enum MoveType {
+		kOne,
+		kTwo,
+		kThree,
+		kFour,
+	};
 
 	Model* model_ = nullptr;
 	Collider collider_;
@@ -52,10 +62,17 @@ private:
 	Vector3 velocity_ = {};
 
 	float radius_ = 0;
+	int invisibleTimer_;
+
+	int moveCount_ = 0;
+
+	int moveType_ = 0;
 
 	bool isDead_ = false;
+	bool isOnHit_ = false;
 
 	float SpeedDelta(float moveValue) { return moveValue * (1.0f / 60.0f); }
+
 
 	void ImGuiWidget();
 

@@ -1,6 +1,9 @@
 #pragma once
 #include "IScene.h"
+#include "DirectXCommon.h"
 #include "Input.h"
+#include "Sprite.h"
+#include <memory>
 
 class TitleScene : public IScene
 {
@@ -23,6 +26,14 @@ public:
 private:
 
 	Input* input_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
+
+	std::unique_ptr<Sprite> buttonSprite_;
+	SpriteInfo buttonInfo_;
+
+	std::unique_ptr<Sprite> back_;
+	std::unique_ptr<Sprite> textSprite_;
+	SpriteInfo textInfo_;
 
 };
 

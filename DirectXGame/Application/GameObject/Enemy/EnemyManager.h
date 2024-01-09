@@ -24,11 +24,15 @@ public:
 
 	std::list<Enemy*> GetList() { return enemys_; }
 
+	int GetHP() { return hitPoint_; }
+
 private:
 	std::list<Enemy*> enemys_;
 	std::unique_ptr<Enemy> testEnemy_;
 
 	std::unique_ptr<Model> model_;
+
+	int hitPoint_ = 0;
 
 };
 

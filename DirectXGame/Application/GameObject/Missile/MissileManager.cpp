@@ -24,11 +24,36 @@ void MissileManager::Update()
 
 	ImGui::End();
 
-#endif // _DEBUG
-
 	if (Input::GetInstance()->TriggerKey(DIK_R)) {
 		missiles_.clear();
 	}
+
+#endif // _DEBUG
+
+	if (isSeparate_) {
+		separateTime_++;
+		if (separateTime_ > 60) {
+			separateTime_ = 0;
+			isSeparate_ = false;
+
+			SilhouetteDance();
+
+		}
+	}
+
+
+	ListUpdate();
+}
+
+void MissileManager::Draw(ViewProjection& viewProjection)
+{
+	for (IMissile* missile : missiles_) {
+		missile->Draw(viewProjection);
+	}
+}
+
+void MissileManager::ListUpdate()
+{
 
 	// 弾の消去
 	missiles_.remove_if([](IMissile* missile) {
@@ -41,14 +66,6 @@ void MissileManager::Update()
 
 	for (IMissile* missile : missiles_) {
 		missile->Update();
-	}
-
-}
-
-void MissileManager::Draw(ViewProjection& viewProjection)
-{
-	for (IMissile* missile : missiles_) {
-		missile->Draw(viewProjection);
 	}
 }
 
@@ -119,5 +136,44 @@ void MissileManager::BurstTheGravity(const MissileConfig info)
 	config.direct = { 1,-1,0 };
 	AddMissileNoneType(config, kProt7);
 #pragma endregion
+
+}
+
+void MissileManager::Ashen(const MissileConfig info)
+{
+	if (info.ptr == nullptr) {
+		return;
+	}
+
+	isSeparate_ = true;
+
+	MissileConfig config = info;
+	// 左下
+	config.direct = { -0.6f, -1.0f,0 };
+	AddMissileNoneType(config, kV1);
+
+	// 右下
+	config.direct = { 0.6f, -1.0f,0 };
+	AddMissileNoneType(config, kV1);
+
+	targetPtr_ = config.ptr;
+
+}
+
+void MissileManager::SilhouetteDance()
+{
+	if (targetPtr_ == nullptr) {
+		return;
+	}
+
+	MissileConfig config;
+
+	config.ptr = targetPtr_;
+	config.position = playerPosition_;
+	config.direct = {};
+
+	BurstTheGravity(config);
+
+	targetPtr_ = nullptr;
 
 }
