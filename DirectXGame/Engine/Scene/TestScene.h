@@ -7,6 +7,8 @@
 #include "AudioManager.h"
 #include "Sprite.h"
 #include <memory>
+#include "Editor/Editor.h"
+#include "Input.h"
 
 
 class TestScene : public IScene
@@ -49,8 +51,11 @@ private:
 	/// <param name="tag"></param>
 	void ImGuiQuaternionPrintf(const Quaternion& quat, const char* tag);
 
+	void GetMousePosition();
+
 private:
 	AudioManager* audio_;
+	Input* input_ = nullptr;
 
 	WorldTransform testTransform_;
 	WorldTransform objTransform_;
@@ -66,8 +71,15 @@ private:
 	float alphaValue_;
 
 	int32_t testValue_;
+	float editTest = 3.0f;
 
-	
+	int32_t TexValue;
+
+	EnemyInfo enemyInfo1_;
+
+	Vector3 savePoint_ = {};
+
+	Vector3 nowPoint_ = {};
 
 	void ApplyGlobalVariables();
 };
