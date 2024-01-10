@@ -53,6 +53,10 @@ private:
 
 	void GetMousePosition();
 
+	void PositionSave(Editor::HierarchicalName& names, std::string Key);
+
+	void EditTest();
+
 private:
 	AudioManager* audio_;
 	Input* input_ = nullptr;
