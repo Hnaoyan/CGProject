@@ -57,6 +57,8 @@ private:
 
 	void EditTest();
 
+	void EditEnemy();
+
 private:
 	AudioManager* audio_;
 	Input* input_ = nullptr;
@@ -84,6 +86,8 @@ private:
 	Vector3 savePoint_ = {};
 
 	Vector3 nowPoint_ = {};
+
+	int serialNumber_;
 
 	void ApplyGlobalVariables();
 };

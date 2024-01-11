@@ -161,46 +161,65 @@ void TestScene::EditTest()
 			ImGui::End();
 			return;
 		}
-
 		PositionSave(names, newKey);
 		std::string message = std::format("{}.json saved.", newG);
 		MessageBoxA(nullptr, message.c_str(), "Editors", 0);
 	}
 	ImGui::End();
+
+}
+
+void TestScene::EditEnemy()
+{
+	ImGui::Begin("EditEnemy");
+	static char newChar[256];
+	//static char newGroup[256];
+	static char newSection[256];
+
+	ImGui::InputInt("PositionNumber", &serialNumber_);
+
+	//ImGui::InputText("New Key", newChar, IM_ARRAYSIZE(newChar));
+	//if (ImGui::Button("Save")) {
+	//	std::string newString = newChar;
+	//	Editor::HierarchicalName CreateName = { "First",newString };
+	//	Editor::GetInstance()->CreateHierarchy(CreateName);
+	//	Editor::GetInstance()->SaveFile(CreateName);
+	//}
+	std::string newGroup = "Enemy";
+	//ImGui::InputText("New Group", newGroup, IM_ARRAYSIZE(newGroup));
+	ImGui::InputText("New Section", newSection, IM_ARRAYSIZE(newSection));
+	if (ImGui::Button("SaveKey")) {
+		//std::string newKey = newChar;
+		//std::string newG = newGroup;
+		//std::string newS = newSection;
+
+		//if (newG == "" || newS == "" || newKey == "") {
+		//}
+		//PositionSave(names, newKey);
+
+		//if (newSection == "") {
+		//	std::string message = "UnSaved";
+		//	MessageBoxA(nullptr, message.c_str(), "Error", 0);
+		//	ImGui::End();
+		//	return;
+		//}
+
+		Editor::HierarchicalName names = { newGroup , newSection + std::to_string(serialNumber_)};
+		std::string fullPath = newGroup + std::to_string(serialNumber_);
+		Editor* editorPtr = Editor::GetInstance();
+		editorPtr->CreateHierarchy(names);
+		editorPtr->AddItem(names, "Position" + std::to_string(serialNumber_), this->savePoint_);
+		editorPtr->SaveFile(names);
+
+		std::string message = std::format("{}.json saved.", fullPath);
+		MessageBoxA(nullptr, message.c_str(), "Editors", 0);
+	}
+	ImGui::End();
+
 }
 
 void TestScene::Update()
 {
-	Quaternion rotation =
-		QuatLib::MakeRotateAxisAngleQuaternion(MathCalc::Normalize({ 1.0f,0.4f,-0.2f }), 0.45f);
-	Vector3 pointY = { 2.1f,-0.9f,1.3f };
-
-	Matrix4x4 rotateMat = MatLib::MakeRotateMatrix(rotation);
-
-	Vector3 rotateByQuat = MatLib::RotateVector(pointY, rotation);
-	Vector3 rotateByMatrix = MatLib::Transform(pointY, rotateMat);
-
-
-
-	this->ImGuiMatrixPrintf(rotateMat,"zero");
-	this->ImGuiVector3Printf(rotateByQuat,"Quat");
-	this->ImGuiVector3Printf(rotateByMatrix, "Matrix");
-	this->ImGuiQuaternionPrintf(rotation, "test");
-
-
-	Vector3 a = { 1,1,1 };
-	Vector3 b = { 2,2,2 };
-
-	Vector3 Add_ab = a + b;
-	Vector3 Sub_ab = a - b;
-	Vector3 Mul_ab = a * b;
-	Vector3 Div_ab = a / b;
-
-	this->ImGuiVector3Printf(Add_ab, "Add");
-	this->ImGuiVector3Printf(Sub_ab, "Sub");
-	this->ImGuiVector3Printf(Mul_ab, "Mul");
-	this->ImGuiVector3Printf(Div_ab, "Div");
-
 	testTransform_.ImGuiWidget("test");
 	testTransform_.UpdateMatrix();
 	objTransform_.ImGuiWidget("obj");
@@ -213,13 +232,13 @@ void TestScene::Update()
 	ImGui::DragFloat("alpha", &alphaValue_, 0.01f, 0, 1.0f);
 	ImGui::End();
 
-	planeModel_->SetAlphaValue(alphaValue_);
-
 	ImGui::ShowDemoWindow();
 
 	GetMousePosition();
 
 	EditTest();
+
+	EditEnemy();
 
 	ApplyGlobalVariables();
 }
