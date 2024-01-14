@@ -50,6 +50,10 @@ void TestScene::Initialize()
 	nameGroup = { "Third","Beta" };
 	editor->CreateHierarchy(nameGroup);
 
+	nameGroup = { "Tex","a" };
+	editor->CreateHierarchy(nameGroup);
+	editor->AddItem(nameGroup, "A", testValue_);
+
 	ApplyGlobalVariables();
 
 }
@@ -165,7 +169,7 @@ void TestScene::EditTest()
 		std::string message = std::format("{}.json saved.", newG);
 		MessageBoxA(nullptr, message.c_str(), "Editors", 0);
 	}
-	ImGui::End();
+	ImGui::End();	
 
 }
 
@@ -178,13 +182,6 @@ void TestScene::EditEnemy()
 
 	ImGui::InputInt("PositionNumber", &serialNumber_);
 
-	//ImGui::InputText("New Key", newChar, IM_ARRAYSIZE(newChar));
-	//if (ImGui::Button("Save")) {
-	//	std::string newString = newChar;
-	//	Editor::HierarchicalName CreateName = { "First",newString };
-	//	Editor::GetInstance()->CreateHierarchy(CreateName);
-	//	Editor::GetInstance()->SaveFile(CreateName);
-	//}
 	std::string newGroup = "Enemy";
 	//ImGui::InputText("New Group", newGroup, IM_ARRAYSIZE(newGroup));
 	ImGui::InputText("New Section", newSection, IM_ARRAYSIZE(newSection));
@@ -203,12 +200,12 @@ void TestScene::EditEnemy()
 		//	ImGui::End();
 		//	return;
 		//}
-
-		Editor::HierarchicalName names = { newGroup , newSection + std::to_string(serialNumber_)};
 		std::string fullPath = newGroup + std::to_string(serialNumber_);
+		Editor::HierarchicalName names = { fullPath , newSection + std::to_string(serialNumber_)};
 		Editor* editorPtr = Editor::GetInstance();
 		editorPtr->CreateHierarchy(names);
 		editorPtr->AddItem(names, "Position" + std::to_string(serialNumber_), this->savePoint_);
+		//editorPtr->SaveFile
 		editorPtr->SaveFile(names);
 
 		std::string message = std::format("{}.json saved.", fullPath);

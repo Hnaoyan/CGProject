@@ -144,5 +144,7 @@ private:
 	const float kFabsValue_f = 2000.0f;
 	const int kFabsValue_i = 1000;
 
+	int kLoadMapNumber_ = 0;
+
 };
 

@@ -17,7 +17,7 @@ void Editor::Update()
 	for (std::map<std::string, Group>::iterator itGroup = datas_.begin();
 		itGroup != datas_.end(); ++itGroup) {
 		// 名を取得
-		const std::string& groupName = itGroup->first;
+		const std::string& groupName = itGroup->first + std::to_string(kLoadMapNumber_);
 		// 参照を取得
 		Group& group = itGroup->second;
 
@@ -221,51 +221,62 @@ void Editor::LoadFile(const std::string& groupName)
 	// ファイルを閉じる
 	ifs.close();
 
-	// グループを検索
-	json::iterator itGroup = root.find(groupName);
+	while (1) {
+		std::string newGroupName = groupName + std::to_string(kLoadMapNumber_);
 
-	// 未登録チェック
-	assert(itGroup != root.end());
+		// グループを検索
+		json::iterator itGroup = root.find(newGroupName);
 
-	// セクション区画
-	for (json::iterator itSection = itGroup->begin(); itSection != itGroup->end(); ++itSection) {
-		// 名を取得
-		const std::string& sectionName = itSection.key();
-
-		// アイテム区画
-		for (json::iterator itItem = itSection->begin();
-			itItem != itSection->end(); ++itItem) {
-			// アイテム名を取得
-			const std::string& itemName = itItem.key();
-
-			HierarchicalName prevNames = { groupName ,sectionName };
-
-			// int32_t型
-			if (itItem->is_number_integer()) {
-				// int型の値を登録
-				int32_t value = itItem->get<int32_t>();
-				SetValue(prevNames, itemName, value);
-			}
-			// float型
-			else if (itItem->is_number_float()) {
-				// int型の値を登録
-				double value = itItem->get<double>();
-				SetValue(prevNames, itemName, static_cast<float>(value));
-			}
-			// 要素数が2の配列であれば
-			else if (itItem->is_array() && itItem->size() == 2) {
-				// float型のjson配列登録
-				Vector2 value = { itItem->at(0), itItem->at(1) };
-				SetValue(prevNames, itemName, value);
-			}
-			// 要素数が3の配列であれば
-			else if (itItem->is_array() && itItem->size() == 3) {
-				// float型のjson配列登録
-				Vector3 value = { itItem->at(0), itItem->at(1), itItem->at(2) };
-				SetValue(prevNames, itemName, value);
-			}
-
+		// 未登録チェック
+		//assert(itGroup != root.end());
+		if (itGroup == root.end()) {
+			break;
 		}
+		else {
+			kLoadMapNumber_++;
+		}
+
+		// セクション区画
+		for (json::iterator itSection = itGroup->begin(); itSection != itGroup->end(); ++itSection) {
+			// 名を取得
+			const std::string& sectionName = itSection.key();
+
+			// アイテム区画
+			for (json::iterator itItem = itSection->begin();
+				itItem != itSection->end(); ++itItem) {
+				// アイテム名を取得
+				const std::string& itemName = itItem.key();
+
+				HierarchicalName prevNames = { groupName ,sectionName };
+
+				// int32_t型
+				if (itItem->is_number_integer()) {
+					// int型の値を登録
+					int32_t value = itItem->get<int32_t>();
+					SetValue(prevNames, itemName, value);
+				}
+				// float型
+				else if (itItem->is_number_float()) {
+					// int型の値を登録
+					double value = itItem->get<double>();
+					SetValue(prevNames, itemName, static_cast<float>(value));
+				}
+				// 要素数が2の配列であれば
+				else if (itItem->is_array() && itItem->size() == 2) {
+					// float型のjson配列登録
+					Vector2 value = { itItem->at(0), itItem->at(1) };
+					SetValue(prevNames, itemName, value);
+				}
+				// 要素数が3の配列であれば
+				else if (itItem->is_array() && itItem->size() == 3) {
+					// float型のjson配列登録
+					Vector3 value = { itItem->at(0), itItem->at(1), itItem->at(2) };
+					SetValue(prevNames, itemName, value);
+				}
+
+			}
+		}
+
 	}
 }
 
