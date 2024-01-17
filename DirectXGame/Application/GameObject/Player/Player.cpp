@@ -82,7 +82,8 @@ void Player::InputUpdate()
 
 	// ジョイスティック状態取得
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A && !isFire_) {
+		bool isControler = joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER && !isFire_;
+		if (isControler) {
 			MissileManager::MissileConfig info;
 			// 左
 			info = { GetWorldPosition(),Vector3(0,0,0), enemyPtr_->GetTestPtr() };
@@ -105,7 +106,16 @@ void Player::InputUpdate()
 		}
 	}
 
-	missileManager_->SetPosition(GetWorldPosition());
+	if (input_->TriggerKey(DIK_RETURN) && !isFire_) {
+		MissileManager::MissileConfig info;
+		// 左
+		info = { GetWorldPosition(),Vector3(0,0,0), enemyPtr_->GetTestPtr() };
+
+		missileManager_->BurstTheGravity(info);
+
+		// 連射出来ないように
+		isFire_ = true;
+	}
 
 	if (isFire_) {
 		coolTime_++;

@@ -24,6 +24,10 @@ void MissileManager::Update()
 
 	ImGui::End();
 
+	ImGuiUpdate();
+
+#endif // _DEBUG
+
 	if (Input::GetInstance()->TriggerKey(DIK_R)) {
 		missiles_.clear();
 	}
@@ -64,9 +68,41 @@ void MissileManager::ListUpdate()
 		return false;
 		});
 
-	for (IMissile* missile : missiles_) {
-		missile->Update();
+	if (Input::GetInstance()->TriggerKey(DIK_J)) {
+		isFrameStop_ = true;
 	}
+	if (Input::GetInstance()->TriggerKey(DIK_K)) {
+		isFrameStop_ = false;
+	}
+
+	if (!isFrameStop_) {
+		for (IMissile* missile : missiles_) {
+			missile->Update();
+		}
+	}
+}
+
+void MissileManager::Draw(ViewProjection& viewProjection)
+{
+	for (IMissile* missile : missiles_) {
+		missile->Draw(viewProjection);
+	}
+}
+
+void MissileManager::ImGuiUpdate()
+{
+
+	ImGui::Begin("MissileManager");
+	if (ImGui::BeginTabBar("Missiles")) {
+
+		for (IMissile* missile : missiles_) {
+			missile->ImGuiUpdate();
+		}
+
+		ImGui::EndTabBar();
+	}
+	ImGui::End();
+
 }
 
 void MissileManager::AddMissile(const MissileConfig info)

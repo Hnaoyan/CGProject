@@ -6,6 +6,16 @@
 
 #include <algorithm>
 
+uint32_t IMissile::sSerialNumber_ = 1;
+
+IMissile::IMissile()
+{
+	// 個体番号取得
+	serialNum_ = sSerialNumber_;
+	// 次の番号を加算
+	++sSerialNumber_;
+}
+
 void IMissile::Initialize(Model* model, const Vector3& position)
 {
 
@@ -27,24 +37,6 @@ void IMissile::Initialize(Model* model, const Vector3& position)
 
 void IMissile::Update()
 {
-#ifdef _DEBUG
-	ImGui::Begin("Missile");
-	ImGui::Text("P : %.3f", p_);
-	ImGui::InputInt("guidedTime", &guidedTime_);
-	ImGui::InputInt("coolTime", &coolTime_);
-	ImGui::DragFloat("lerpRad", &lerpRad_, 0.1f, 0, 30.0f);
-	ImGui::DragFloat("damping", &damping_, 0.01f, 0, 1.0f);
-	ImGui::DragInt("coolTime", &coolTime_, 1, 0, 100);
-	if (ImGui::TreeNode("Vector")) {
-		ImGui::DragFloat3("toEnemy", &toEnemy_.x);
-		ImGui::DragFloat3("velocity", &velocity_.x);
-		ImGui::DragFloat3("accleration", &acceleration_.x);
-
-		ImGui::TreePop();
-	}
-	ImGui::End();
-#endif // _DEBUG
-
 	if (Input::GetInstance()->TriggerKey(DIK_L)) {
 		target_ = nullptr;
 	}
@@ -77,6 +69,23 @@ void IMissile::Update()
 void IMissile::Draw(ViewProjection& viewProjection)
 {
 	model_->Draw(worldTransform_, viewProjection);
+}
+
+void IMissile::ImGuiUpdate()
+{
+	std::string tag = "M" + std::to_string(serialNum_);
+	if (ImGui::BeginTabItem(tag.c_str())) {
+		ImGui::Text(tag.c_str());
+		ImGui::InputInt(tag.c_str(), &guidedTime_);
+		if (ImGui::TreeNode("Vector")) {
+			ImGui::DragFloat3("toEnemy", &toEnemy_.x);
+			ImGui::DragFloat3("velocity", &velocity_.x);
+			ImGui::DragFloat3("accleration", &acceleration_.x);
+
+			ImGui::TreePop();
+		}
+		ImGui::EndTabItem();
+	}
 }
 
 void IMissile::InitMoveParameter(const Vector3& direct, float speed)
@@ -398,29 +407,29 @@ void IMissile::ProportionalV7()
 	Vector3 targetDirection = (target_->GetWorldPosition() - GetWorldPosition());
 	Vector3 currentDirection = MathCalc::Normalize(velocity_);
 
-	// プロポーショナルゲイン（誘導の割合）を設定します
+	// 誘導の割合を設定
 	float proportionalGain = 0.1f;
 
-	// 目標方向から少しオフセットされた方向を計算します
+	// 目標方向から少しオフセットされた方向を計算
 	Vector3 newDirection = (targetDirection * (1 - proportionalGain)) + (currentDirection * proportionalGain);
 	newDirection = MathCalc::Normalize(newDirection);
 
-	// 初速度の大きさを保持したまま、目標方向に対する微調整を計算します
+	// 初速度の大きさを保持したまま、目標方向に対する微調整を計算
 	float initialSpeed = MathCalc::Length(velocity_);
 	Vector3 adjustedAcceleration = (newDirection * initialSpeed) - velocity_;
 
-	// 最大調整角度を設定します（これにより小さな弧を描くように制御されます）
-	float maxAdjustmentAngle = 0.9f; // radians（適切な角度に調整してください）
+	// 最大調整角度を設定します（これにより小さな弧を描くように制御）
+	float maxAdjustmentAngle = 0.9f; // radians（適切な角度に調整）
 
-	// 新しい加速度が最大調整角度を超えないように制限します
+	// 新しい加速度が最大調整角度を超えないように制限
 	float currentAngle = acos(MathCalc::Dot(currentDirection, newDirection));
 	if (currentAngle > maxAdjustmentAngle) {
 		float limitFactor = maxAdjustmentAngle / currentAngle;
 		adjustedAcceleration = (newDirection - currentDirection) * (initialSpeed * limitFactor);
 	}
 	acceleration_ = adjustedAcceleration * NLib::GetDeltaTime(60.0f);
-	//// 速度を調整する係数を設定します（0.1から1の間の値）
-	//float speedAdjustmentFactor = 1.5f; // 適切な係数に調整してください
+	//// 速度を調整する係数を設定（0.1から1の間の値）
+	//float speedAdjustmentFactor = 1.5f; // 適切な係数に調整
 
 	//acceleration_ = adjustedAcceleration * speedAdjustmentFactor * NLib::GetDeltaTime(60.0f);
 #pragma endregion
