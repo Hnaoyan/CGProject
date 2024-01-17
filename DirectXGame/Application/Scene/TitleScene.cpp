@@ -1,6 +1,7 @@
 #include "TitleScene.h"
 #include "TextureManager.h"
 #include "imgui.h"
+#include "SceneManager.h"
 
 void TitleScene::Initialize()
 {
@@ -56,12 +57,12 @@ void TitleScene::Update()
 	XINPUT_STATE joyState;
 	if (input_->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
-			sceneNum++;
+			SceneManager::GetInstance()->ChangeScene("GAME");
 		}
 	}
 
 	if (input_->TriggerKey(DIK_SPACE)) {
-		sceneNum++;
+		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 
 }
