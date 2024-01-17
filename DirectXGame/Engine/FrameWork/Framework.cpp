@@ -71,7 +71,7 @@ void Framework::Initialize()
 	// パーティクルインスタンス
 	// 未完成
 	//Particle::GetInstance()->StaticInitialize();
-	NEngine::GetInstance()->Initialize(dxCommon, winApp);
+	//NEngine::GetInstance()->Initialize(dxCommon, winApp);
 
 }
 
