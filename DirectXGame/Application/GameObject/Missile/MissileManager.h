@@ -56,6 +56,9 @@ public:
 	/// </summary>
 	/// <param name="viewProjection"></param>
 	void Draw(ViewProjection& viewProjection);
+
+	void ImGuiUpdate();
+
 public:
 	void AddMissile(const MissileConfig info);
 
@@ -80,5 +83,7 @@ private:
 	int missileType_ = 0;
 
 	ControlParam param_ = {};
+
+	bool isFrameStop_ = false;
 };
 

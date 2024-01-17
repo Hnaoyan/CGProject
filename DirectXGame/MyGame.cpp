@@ -37,7 +37,7 @@ void MyGame::Update()
 	// json更新
 	GlobalVariables::GetInstance()->Update();
 	// Editor
-	Editor::GetInstance()->Update();
+	//Editor::GetInstance()->Update();
 #endif // _DEBUG
 
 	// ゲームシーン更新処理

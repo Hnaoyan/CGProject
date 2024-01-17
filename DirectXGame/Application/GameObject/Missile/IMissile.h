@@ -12,6 +12,10 @@
 class IMissile
 {
 public:
+	IMissile();
+	~IMissile() = default;
+
+public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -28,12 +32,24 @@ public:
 	/// <param name="viewProjection"></param>
 	void Draw(ViewProjection& viewProjection);
 
+	void ImGuiUpdate();
+
 private:
 	Collider collider_;
 
 	ParticleManager* manager_ = nullptr;
 
+private:
+	// シリアルナンバー
+	uint32_t serialNum_ = 0;
+
+	static uint32_t sSerialNumber_;
+
+
 public: // アクセッサ・初期化
+
+	uint32_t GetSerial() const { return serialNum_; }
+
 	/// <summary>
 	/// ワールド座標
 	/// </summary>
@@ -115,18 +131,18 @@ private:
 	bool isDelay_ = false;
 
 private:
-	WorldTransform worldTransform_;
+	WorldTransform worldTransform_{};
 	Model* model_ = nullptr;
 
 	Enemy* target_ = nullptr;
 
 private:
-	Vector3 velocity_;
-	Vector3 direction_;
-	Vector3 acceleration_;
+	Vector3 velocity_ = {};
+	Vector3 direction_ = {};
+	Vector3 acceleration_ = {};
 
-	Vector3 targetPosition_;
-	Vector3 toEnemy_;
+	Vector3 targetPosition_ = {};
+	Vector3 toEnemy_ = {};
 
 	float kBulletSpeed_ = 5.0f;
 	int guidedTime_ = 0;
