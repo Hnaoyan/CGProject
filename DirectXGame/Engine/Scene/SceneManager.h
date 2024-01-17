@@ -1,14 +1,8 @@
 #pragma once
 #include <memory>
 #include "IScene.h"
-#include "TestScene.h"
-#include "GameScene.h"
-#include "TitleScene.h"
-#include "ClearScene.h"
-
-enum Scene {
-	TITLE, GAMESCENE, CLEAR,
-};
+#include "SceneList.h"
+#include "AbstractSceneFactory.h"
 
 class SceneManager {
 private:
@@ -17,13 +11,33 @@ private:
 	int sceneNum_;
 	int prevSceneNum_;
 
+	/// <summary>
+	/// シーンファクトリー
+	/// </summary>
+	AbstractSceneFactory* sceneFactory_ = nullptr;
+
+	// 現在のシーン
+	IScene* nowScene_ = nullptr;
+	// 次のシーン
+	IScene* nextScene_ = nullptr;
+
 public:
 	SceneManager();
 	~SceneManager();
 
+	static SceneManager* GetInstance() {
+		static SceneManager instance;
+		return &instance;
+	}
+
+	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
+
+	//void Initialize();
 
 	void Update();
 
 	void Draw();
+
+	void ChangeScene(const std::string& sceneName);
 
 };

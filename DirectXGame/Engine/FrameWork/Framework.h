@@ -10,7 +10,7 @@
 #include "Particle.h"
 #include "Sprite.h"
 #include "Graphics/Shader.h"
-#include "Respect/NEngine.h"
+#include "AbstractSceneFactory.h"
 #include <memory>
 
 class Framework
@@ -67,6 +67,9 @@ protected:
 	Input* input;
 	ImGuiManager* imguiManager = nullptr;
 	DescriptorManager* descriptorManager = nullptr;
+	SceneManager* sceneManager_ = nullptr;
+
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 
 	std::unique_ptr<AudioManager> audioManager_;
 };
