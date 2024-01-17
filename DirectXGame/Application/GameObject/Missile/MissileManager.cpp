@@ -32,8 +32,6 @@ void MissileManager::Update()
 		missiles_.clear();
 	}
 
-#endif // _DEBUG
-
 	if (isSeparate_) {
 		separateTime_++;
 		if (separateTime_ > 60) {
@@ -79,13 +77,6 @@ void MissileManager::ListUpdate()
 		for (IMissile* missile : missiles_) {
 			missile->Update();
 		}
-	}
-}
-
-void MissileManager::Draw(ViewProjection& viewProjection)
-{
-	for (IMissile* missile : missiles_) {
-		missile->Draw(viewProjection);
 	}
 }
 
