@@ -71,6 +71,8 @@ void Framework::Initialize()
 
 void Framework::Finalize()
 {
+	delete sceneFactory_;
+	SafeDelete(sceneManager_);
 	imguiManager->Finalize();
 	descriptorManager->Finalize();
 	audio->Finalize();
