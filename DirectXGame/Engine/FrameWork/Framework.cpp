@@ -71,12 +71,14 @@ void Framework::Initialize()
 	// パーティクルインスタンス
 	// 未完成
 	//Particle::GetInstance()->StaticInitialize();
-	NEngine::GetInstance()->Initialize(dxCommon, winApp);
+	//NEngine::GetInstance()->Initialize(dxCommon, winApp);
 
 }
 
 void Framework::Finalize()
 {
+	delete sceneFactory_;
+	SafeDelete(sceneManager_);
 	imguiManager->Finalize();
 	descriptorManager->Finalize();
 	audio->Finalize();

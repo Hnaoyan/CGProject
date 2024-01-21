@@ -4,6 +4,12 @@
 #include <string>
 #include "StructManager.h"
 
+struct EnemyInfo {
+	Vector3 position;
+	float speed;
+	int coolTime;
+};
+
 class Editor
 {
 public: // サブクラス
@@ -73,6 +79,9 @@ public: // アクセッサ
 	/// 値のセット(Vector3)
 	/// </summary>
 	void SetValue(const HierarchicalName& names, const std::string& key, const Vector3& value);
+
+	void SetValue(const HierarchicalName& names, const std::string& key, const EnemyInfo& value);
+
 #pragma endregion
 
 #pragma region 追加
@@ -95,6 +104,9 @@ public: // アクセッサ
 	/// 項目の追加(Vector3)
 	/// </summary>
 	void AddItem(const HierarchicalName& names, const std::string& key, const Vector3& value);
+
+	void AddItem(const HierarchicalName& names, const std::string& key, const EnemyInfo& value);
+
 #pragma endregion
 
 #pragma region 取得
@@ -114,11 +126,13 @@ public: // アクセッサ
 	/// 値の取得(Vector3)
 	/// </summary>
 	Vector3 GetVector3Value(const HierarchicalName& names, const std::string& key);
+
+	EnemyInfo GetEnemyInfoValue(const HierarchicalName& names, const std::string& key);
 #pragma endregion
 
 private:
 	//// 項目
-	using Item = std::variant<int32_t, float, Vector2, Vector3>;
+	using Item = std::variant<int32_t, float, Vector2, Vector3, EnemyInfo>;
 	using Section = std::map<std::string, Item>;
 	using Group = std::map<std::string, Section>;
 
@@ -129,6 +143,8 @@ private:
 	const std::string kDirectoryPath = "Resources/Editor/";
 	const float kFabsValue_f = 2000.0f;
 	const int kFabsValue_i = 1000;
+
+	int kLoadMapNumber_ = 0;
 
 };
 

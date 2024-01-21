@@ -204,14 +204,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\MyGame.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\FollowCamera.cpp" />
     <ClCompile Include="DirectXGame\Engine\Other\GlobalVariables.cpp" />
-    <ClCompile Include="DirectXGame\Application\Scene\IScene.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Scene\IScene.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\GameScene.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\SceneManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp" />
     <ClCompile Include="DirectXGame\Engine\TimeCall\TimedCall.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Player\Weapon.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp" />
-    <ClCompile Include="DirectXGame\Engine\Scene\TestScene.cpp" />
+    <ClCompile Include="DirectXGame\Application\Scene\TestScene.cpp" />
     <ClCompile Include="DirectXGame\Engine\Map\MapLoader.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Graphics\PipelineManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Graphics\Shader.cpp" />
@@ -226,9 +226,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Respect\NEngine.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Respect\TestParticle.cpp" />
+    <ClCompile Include="DirectXGame\Engine\Scene\SceneFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\Scene\ClearScene.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\AbstractSceneFactory.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.h" />
@@ -273,17 +275,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Math\QuatLib.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector\VectorLib.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\NLib.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\SceneList.h" />
     <ClInclude Include="DirectXGame\MyGame.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\FollowCamera.h" />
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h" />
-    <ClInclude Include="DirectXGame\Application\Scene\IScene.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\IScene.h" />
     <ClInclude Include="DirectXGame\Application\Scene\GameScene.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SceneManager.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h" />
     <ClInclude Include="DirectXGame\Engine\TimeCall\TimedCall.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Player\Weapon.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\LockOn.h" />
-    <ClInclude Include="DirectXGame\Engine\Scene\TestScene.h" />
+    <ClInclude Include="DirectXGame\Application\Scene\TestScene.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector3.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector2.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector4.h" />
@@ -301,6 +304,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Respect\NEngine.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Respect\TestParticle.h" />
+    <ClInclude Include="DirectXGame\Engine\Scene\SceneFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

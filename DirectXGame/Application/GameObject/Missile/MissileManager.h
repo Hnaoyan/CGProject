@@ -58,6 +58,9 @@ public:
 	/// <param name="viewProjection"></param>
 	void Draw(ViewProjection& viewProjection);
 
+	void ImGuiUpdate();
+
+
 	void ListUpdate();
 
 public:
@@ -101,5 +104,7 @@ private:
 
 	int separateTime_ = 0;
 
+
+	bool isFrameStop_ = false;
 };
 

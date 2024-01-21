@@ -11,13 +11,16 @@ void MyGame::Initialize()
 
 	Editor::GetInstance()->LoadFiles();
 	// シーンの初期化
-	sceneManager = new SceneManager();
+	sceneFactory_ = new SceneFactory();
+	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
+	SceneManager::GetInstance()->ChangeScene("TITLE");
 }
 
 void MyGame::Finalize()
 {
 	// シーンのDelete
-	SafeDelete(sceneManager);
+	//SafeDelete(sceneManager);
+	delete sceneFactory_;
 	// 基底クラスの終了処理
 	Framework::Finalize();
 }
@@ -37,11 +40,12 @@ void MyGame::Update()
 	// json更新
 	GlobalVariables::GetInstance()->Update();
 	// Editor
-	Editor::GetInstance()->Update();
+	//Editor::GetInstance()->Update();
 #endif // _DEBUG
 
 	// ゲームシーン更新処理
-	sceneManager->Update();
+	SceneManager::GetInstance()->Update();
+	//sceneManager->Update();
 }
 
 void MyGame::Draw()
@@ -50,7 +54,7 @@ void MyGame::Draw()
 	dxCommon->PreDraw();
 
 	// ゲームシーン描画処理
-	sceneManager->Draw();
+	SceneManager::GetInstance()->Draw();
 
 	// ImGui受付終了
 	imguiManager->End();
