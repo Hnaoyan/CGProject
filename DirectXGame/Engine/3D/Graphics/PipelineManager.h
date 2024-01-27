@@ -68,9 +68,6 @@ public:
 
 public:
 	// パイプラインステート
-	//static std::array<
-	//	std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, size_t(Pipeline::BlendMode::kCountOfBlendMode)>,
-	//	size_t(Pipeline::DrawType::kCountOfDrawer)> sPipelineStates_;
 	static std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
 		size_t(Pipeline::BlendMode::kCountOfBlendMode)> sPipelineStates_;
 

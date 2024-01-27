@@ -14,9 +14,6 @@
 using namespace Microsoft::WRL;
 using namespace Pipeline;
 
-//std::array<
-//	std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, size_t(Pipeline::BlendMode::kCountOfBlendMode)>,
-//	size_t(Pipeline::DrawType::kCountOfDrawer)> PipelineManager::sPipelineStates_;
 Microsoft::WRL::ComPtr<ID3D12RootSignature> PipelineManager::sRootSignature_;
 std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
 	size_t(Pipeline::BlendMode::kCountOfBlendMode)> PipelineManager::sPipelineStates_;
