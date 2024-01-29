@@ -21,16 +21,16 @@ public:
 	/// </summary>
 	/// <param name="model"></param>
 	/// <param name="position"></param>
-	void Initialize(Model* model, const Vector3& position);
+	virtual void Initialize(Model* model, const Vector3& position);
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	virtual void Update();
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection"></param>
-	void Draw(ViewProjection& viewProjection);
+	virtual void Draw(ViewProjection& viewProjection);
 
 	void ImGuiUpdate();
 

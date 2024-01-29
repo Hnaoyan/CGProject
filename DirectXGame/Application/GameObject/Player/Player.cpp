@@ -42,15 +42,15 @@ void Player::Update()
 		//moveVector.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * SpeedDelta(speedValue);
 	}
 
-	if (worldTransform_.translation_.x + moveVector.x > 10.0f) {
-		worldTransform_.translation_.x = 9.9f;
-		moveVector.x = 0;
-	}
+	//if (worldTransform_.translation_.x + moveVector.x > 10.0f) {
+	//	worldTransform_.translation_.x = 9.9f;
+	//	moveVector.x = 0;
+	//}
 
-	if (worldTransform_.translation_.x - moveVector.x < -10.0f) {
-		worldTransform_.translation_.x = -9.9f;
-		moveVector.x = 0;
-	}
+	//if (worldTransform_.translation_.x - moveVector.x < -10.0f) {
+	//	worldTransform_.translation_.x = -9.9f;
+	//	moveVector.x = 0;
+	//}
 
 	worldTransform_.translation_ += moveVector;
 	worldTransform_.UpdateMatrix();

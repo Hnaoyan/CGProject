@@ -99,7 +99,7 @@ void Enemy::Update()
 #endif // _DEBUG
 	//velocity_ = {};
 
-	worldTransform_.translation_ += (velocity_ + moveVector) * NLib::GetDeltaTime(60.0f);
+	//worldTransform_.translation_ += (velocity_ + moveVector) * NLib::GetDeltaTime(60.0f);
 
 	worldTransform_.UpdateMatrix();
 	collider_.SetPosition(worldTransform_.GetWorld());
