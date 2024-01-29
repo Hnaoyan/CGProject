@@ -19,13 +19,35 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 #include "DirectXTex.h"
 #include "d3dx12.h"
 
+#include <wrl.h>
+
+#include "WorldTransform.h"
+#include "ViewProjection.h"
+
 
 class Sphere
 {
 public:
+	void CreatePipeline();
+
+	void CreateRootSignature();
+
+	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+
+	static void PostDraw();
+
+	void Draw(const ViewProjection& viewProjection);
+
+	void CreateMesh();
+
+	void Update();
+
 
 private:
+	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
+	static Microsoft::WRL::ComPtr<ID3D12PipelineState> sPipelineState_;
 
+	uint32_t texture_ = 0u;
 
 };
 
