@@ -417,7 +417,7 @@ void IMissile::ProportionalV7()
 	Vector3 currentDirection = MathCalc::Normalize(velocity_);
 
 	// 誘導の割合を設定
-	float proportionalGain = 0.1f;
+	float proportionalGain = 0.3f;
 
 	// 目標方向から少しオフセットされた方向を計算
 	Vector3 newDirection = (targetDirection * (1 - proportionalGain)) + (currentDirection * proportionalGain);
@@ -427,15 +427,15 @@ void IMissile::ProportionalV7()
 	float initialSpeed = MathCalc::Length(velocity_);
 	Vector3 adjustedAcceleration = (newDirection * initialSpeed) - velocity_;
 
-	// 最大調整角度を設定します（これにより小さな弧を描くように制御）
-	float maxAdjustmentAngle = 0.9f; // radians（適切な角度に調整）
+	//// 最大調整角度を設定します（これにより小さな弧を描くように制御）
+	//float maxAdjustmentAngle = 0.9f; // radians（適切な角度に調整）
 
-	// 新しい加速度が最大調整角度を超えないように制限
-	float currentAngle = acos(MathCalc::Dot(currentDirection, newDirection));
-	if (currentAngle > maxAdjustmentAngle) {
-		float limitFactor = maxAdjustmentAngle / currentAngle;
-		adjustedAcceleration = (newDirection - currentDirection) * (initialSpeed * limitFactor);
-	}
+	//// 新しい加速度が最大調整角度を超えないように制限
+	//float currentAngle = acos(MathCalc::Dot(currentDirection, newDirection));
+	//if (currentAngle > maxAdjustmentAngle) {
+	//	float limitFactor = maxAdjustmentAngle / currentAngle;
+	//	adjustedAcceleration = (newDirection - currentDirection) * (initialSpeed * limitFactor);
+	//}
 	acceleration_ = adjustedAcceleration * NLib::GetDeltaTime(60.0f);
 	//// 速度を調整する係数を設定（0.1から1の間の値）
 	//float speedAdjustmentFactor = 1.5f; // 適切な係数に調整
