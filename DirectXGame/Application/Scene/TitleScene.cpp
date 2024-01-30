@@ -18,7 +18,7 @@ void TitleScene::Initialize()
 		buttonInfo_.position, buttonInfo_.color,
 		buttonInfo_.anchor, false, false));
 	uint32_t texture = TextureManager::Load("UI/BackGround.png");
-	back_.reset(Sprite::Create(texture, { 0,0 }, { 1,1,1,1 }, { 0,0 }, false, false));
+	back_.reset(Sprite::Create(texture, { 0,0 }, { 1,1,1,0.85f }, { 0,0 }, false, false));
 
 	texture = TextureManager::Load("UI/Title.png");
 	textInfo_.position = { 1280 / 2, 380 };
@@ -49,6 +49,10 @@ void TitleScene::Update()
 	ImGui::DragFloat2("tPos", &textInfo_.position.x, 0.1f, 0, 1280);
 	ImGui::End();
 
+	buttonSprite_->SetPosition(buttonInfo_.position);
+
+#endif // _DEBUG
+	// タイトルの動きの部分を制御
 	waveAnimation_t_ += 0.01f;
 	// 振幅
 	float amplitude = 0.3f;
@@ -58,11 +62,9 @@ void TitleScene::Update()
 
 	textInfo_.position += waveVelocity_;
 
-	buttonSprite_->SetPosition(buttonInfo_.position);
 	textSprite_->SetPosition(textInfo_.position);
 
-#endif // _DEBUG
-
+	// シーンの切り替え部分
 	XINPUT_STATE joyState;
 	if (input_->GetJoystickState(0, joyState)) {
 		if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
@@ -80,6 +82,17 @@ void TitleScene::Draw()
 {
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+#pragma region 背景スプライト描画
+	// 描画前処理
+	Sprite::PreDraw(commandList);
+	
+	back_->Draw();
+
+	// 描画後処理
+	Sprite::PostDraw();
+	// 深度バッファクリア
+	dxCommon_->ClearDepthBuffer();
+#pragma endregion
 
 #pragma region 背景スプライト描画
 	// 描画前処理
@@ -87,7 +100,6 @@ void TitleScene::Draw()
 
 	buttonSprite_->Draw();
 	textSprite_->Draw();
-	back_->Draw();
 
 	// 描画後処理
 	Sprite::PostDraw();

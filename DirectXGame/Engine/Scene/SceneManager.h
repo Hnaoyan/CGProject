@@ -24,6 +24,8 @@ private:
 
 	std::unique_ptr<TransitionManager> transitionManager_;
 
+	std::string nextSceneName_;
+
 public:
 	SceneManager();
 	~SceneManager();
