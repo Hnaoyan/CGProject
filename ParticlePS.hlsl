@@ -26,20 +26,31 @@ struct PixelShaderOutput
 
 PixelShaderOutput main(VertexShaderOutput input)
 {
+ //   PixelShaderOutput output;
+ //   float32_t4 textureColor = gTexture.Sample(gSampler, input.texcoord);
+ //   if (gMaterial.enableLighting != 0)
+ //   {
+	//	// half lambert
+ //       float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+ //       float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+	//	//float cos = saturate(dot(normalize(input.normal), -gDirectionalLight.direction));
+ //       output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
+ //   }
+ //   else
+ //   { // Lightingしない場合。前回までと同じ演算
+ //       output.color = gMaterial.color * textureColor;
+ //   }
+	////output.color = gMaterial.color * textureColor;
+    
     PixelShaderOutput output;
+    //float32_t4 transformUV;
+    
     float32_t4 textureColor = gTexture.Sample(gSampler, input.texcoord);
-    if (gMaterial.enableLighting != 0)
+    output.color = gMaterial.color * textureColor;
+    
+    if(output.color.a == 0.0)
     {
-		// half lambert
-        float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-        float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-		//float cos = saturate(dot(normalize(input.normal), -gDirectionalLight.direction));
-        output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
+        discard;
     }
-    else
-    { // Lightingしない場合。前回までと同じ演算
-        output.color = gMaterial.color * textureColor;
-    }
-	//output.color = gMaterial.color * textureColor;
     return output;
 }
