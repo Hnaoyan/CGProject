@@ -31,6 +31,7 @@ private:
 	std::unique_ptr<Enemy> testEnemy_;
 
 	std::unique_ptr<Model> model_;
+	std::unique_ptr<Model> propModel_;
 
 	int hitPoint_ = 0;
 

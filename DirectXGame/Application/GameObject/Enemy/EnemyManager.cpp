@@ -5,9 +5,9 @@ void EnemyManager::Initialize()
 {
 
 	model_.reset(Model::CreateFromObj("enemy", true));
-
+	propModel_.reset(Model::CreateFromObj("E_Propeller", true));
 	testEnemy_ = std::make_unique<Enemy>();
-	testEnemy_->Initialize(model_.get());
+	testEnemy_->Initialize(model_.get(),propModel_.get());
 	testEnemy_->SetPosition({ 0,0,35.0f });
 
 	hitPoint_ = 20;
@@ -54,7 +54,7 @@ void EnemyManager::Draw(ViewProjection& viewProjection)
 void EnemyManager::AddEnemy(const AddInfo info)
 {
 	Enemy* newInstance = new Enemy();
-	newInstance->Initialize(model_.get());
+	newInstance->Initialize(model_.get(),propModel_.get());
 	newInstance->SetPosition(info.position);
 	enemys_.push_back(newInstance);
 }

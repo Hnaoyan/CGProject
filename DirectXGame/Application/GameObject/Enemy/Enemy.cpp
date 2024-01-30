@@ -3,14 +3,15 @@
 #include "NLib.h"
 #include "imgui.h"
 
-void Enemy::Initialize(Model* model)
+void Enemy::Initialize(Model* model,Model* propModel)
 {
 
 	model_ = model;
-	worldTransform_.Initialize();
+	propModel_ = propModel;
 	texture_ = TextureManager::Load("white1x1.png");
 	//velocity_ = { 0,1,0.5f };
-	worldTransform_.translation_.z = 50.0f;
+	TransformInitialize();
+
 	radius_ = 1.0f;
 	collider_.SetterRad(Vector3(radius_, radius_, radius_));
 	collider_.SetCollisionAttribute(kCollisionAttributeEnemy);
@@ -20,6 +21,22 @@ void Enemy::Initialize(Model* model)
 	
 	isOnHit_ = false;
 	moveType_ = kOne;
+}
+
+void Enemy::TransformInitialize()
+{
+	worldTransform_.Initialize();
+	worldTransform_.translation_.z = 50.0f;
+
+	bodyTransform_.Initialize();
+	propTransform_.Initialize();
+
+	bodyTransform_.parent_ = &worldTransform_;
+	propTransform_.parent_ = &bodyTransform_;
+
+	propTransform_.translation_.y = 2.0f;
+
+	//worldTransform_.rotation_.y = 3.14f;
 }
 
 void Enemy::Update()
@@ -36,6 +53,8 @@ void Enemy::Update()
 	//if (GetWorldPosition().y <= -30.0f) {
 	//	velocity_.y = 1.0f;
 	//}
+
+	propTransform_.rotation_.y += 0.1f;
 
 	if (Input::GetInstance()->PressKey(DIK_LEFT)) {
 		velocity_.x = -10.0f;
@@ -131,12 +150,35 @@ void Enemy::Update()
 	worldTransform_.translation_ += (velocity_ + moveVector) * NLib::GetDeltaTime(60.0f);
 
 	worldTransform_.UpdateMatrix();
+	
+	Animation();
+
+	bodyTransform_.UpdateMatrix();
+	propTransform_.UpdateMatrix();
 	collider_.SetPosition(worldTransform_.GetWorld());
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection)
 {
-	model_->Draw(worldTransform_, viewProjection, texture_);
+	model_->Draw(bodyTransform_, viewProjection);
+	propModel_->Draw(propTransform_, viewProjection);
+}
+
+void Enemy::Animation()
+{
+
+	// 1フレームでのパラメータ加算値
+	const float step = 2.0f * float(std::numbers::pi) / period;
+
+	// パラメータを1ステップ分加算
+	floatingParameter_ += step;
+	// 2πを超えたら0に戻す
+	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * float(std::numbers::pi));
+
+	// 浮遊を座標に反映
+	bodyTransform_.translation_.y = std::sin(floatingParameter_) * floatingWidth;
+	
+
 }
 
 void Enemy::ImGuiWidget()

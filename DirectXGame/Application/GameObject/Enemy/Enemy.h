@@ -13,7 +13,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="model"></param>
-	void Initialize(Model* model);
+	void Initialize(Model* model, Model* propModel);
 
 	/// <summary>
 	/// 更新処理
@@ -46,6 +46,18 @@ public:
 
 	void SetIsHit(bool isHit) { isOnHit_ = isHit; }
 
+	void Animation();
+
+private: //　アニメーション系
+	// 浮遊ギミックの媒介変数
+	float floatingParameter_ = 0.0f;
+
+	/// 浮遊の振幅<m>
+	float floatingWidth = 0.25f;
+
+	/// 浮遊移動のサイクル<frame>
+	int period = 60;
+
 private:
 	enum MoveType {
 		kOne,
@@ -55,8 +67,15 @@ private:
 	};
 
 	Model* model_ = nullptr;
+	Model* propModel_ = nullptr;
+
 	Collider collider_;
+
+	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
+	WorldTransform bodyTransform_;
+	WorldTransform propTransform_;
+
 	uint32_t texture_ = 0u;
 
 	Vector3 velocity_ = {};
@@ -77,6 +96,8 @@ private:
 	void ImGuiWidget();
 
 	void OnCollision(uint32_t tag, WorldTransform* world);
+
+	void TransformInitialize();
 
 };
 
