@@ -124,6 +124,7 @@ ModelData LoadObj(const std::string& directory, const std::string& fileName) {
 		if (identifier == "v") {
 			Vector4 pos;
 			s >> pos.x >> pos.y >> pos.z;
+			pos.x *= -1.0f;
 			pos.w = 1.0f;
 			positions.push_back(pos);
 		}
@@ -137,6 +138,7 @@ ModelData LoadObj(const std::string& directory, const std::string& fileName) {
 		else if (identifier == "vn") {
 			Vector3 normal;
 			s >> normal.x >> normal.y >> normal.z;
+			normal.x *= -1.0f;
 			normals.push_back(normal);
 		}
 		else if (identifier == "f") {
@@ -1034,7 +1036,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region Test
 
 	// モデル読み込み
-	ModelData modelData = LoadObj("Resources", "plane.obj");
+	ModelData modelData = LoadObj("Resources", "axis.obj");
 	// 頂点
 	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
 	// ビュー
@@ -1124,7 +1126,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region SRVの設定
 
 	// metaDataを基にSRVの設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc[2]{};
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc[3]{};
 	srvDesc[0].Format = metadata.format;
 	srvDesc[0].Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc[0].ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;	// 2Dテクスチャ
@@ -1135,10 +1137,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	srvDesc[1].ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;	// 2Dテクスチャ
 	srvDesc[1].Texture2D.MipLevels = UINT(metadata2.mipLevels);
 
+	srvDesc[2].Format = metadata.format;
+	srvDesc[2].Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc[2].ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;	// 2Dテクスチャ
+	srvDesc[2].Texture2D.MipLevels = UINT(metadata3.mipLevels);
 
 	// SRVを作成するDescriptorHeapの場所を決める
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[2];
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[3];
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[3];
 	textureSrvHandleCPU[0] = srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	textureSrvHandleGPU[0] = srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	// 先頭はImGuiが使っているのでその次を使う
@@ -1152,6 +1158,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	textureSrvHandleGPU[1] = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource[1].Get(), &srvDesc[1], textureSrvHandleCPU[1]);
+
+	// SRV3
+	textureSrvHandleCPU[2] = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
+	textureSrvHandleGPU[2] = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
+	// SRVの生成
+	device->CreateShaderResourceView(textureResource[2].Get(), &srvDesc[2], textureSrvHandleCPU[2]);
 
 #pragma endregion
 
@@ -1254,7 +1266,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// マテリアルCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
+			//commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
+			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[2]);
 			commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 			// ImGuiの内部コマンドを生成する
 			ImGui::Render();
