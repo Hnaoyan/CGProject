@@ -49,6 +49,15 @@ void TitleScene::Update()
 	ImGui::DragFloat2("tPos", &textInfo_.position.x, 0.1f, 0, 1280);
 	ImGui::End();
 
+	waveAnimation_t_ += 0.01f;
+	// 振幅
+	float amplitude = 0.3f;
+	// 振動数
+	float frequency = 1.0f;
+	waveVelocity_.y = amplitude * std::cosf(1.0f * float(std::numbers::pi) * frequency * waveAnimation_t_);
+
+	textInfo_.position += waveVelocity_;
+
 	buttonSprite_->SetPosition(buttonInfo_.position);
 	textSprite_->SetPosition(textInfo_.position);
 

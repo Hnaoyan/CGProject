@@ -35,5 +35,8 @@ private:
 	std::unique_ptr<Sprite> textSprite_;
 	SpriteInfo textInfo_;
 
+	Vector2 waveVelocity_ = {};
+	float waveAnimation_t_ = 0;
+
 };
 

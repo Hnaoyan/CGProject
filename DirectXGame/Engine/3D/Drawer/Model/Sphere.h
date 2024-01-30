@@ -22,21 +22,21 @@
 
 class Sphere
 {
-public:
-	void CreatePipeline();
-
-	void CreateRootSignature();
-
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
-
-	static void PostDraw();
-
-	void Draw(const ViewProjection& viewProjection);
-
-	void CreateMesh();
-
-	void Update();
-
+//public:
+//	void CreatePipeline();
+//
+//	void CreateRootSignature();
+//
+//	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+//
+//	static void PostDraw();
+//
+//	void Draw(const ViewProjection& viewProjection);
+//
+//	void CreateMesh();
+//
+//	void Update();
+//
 
 private:
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
