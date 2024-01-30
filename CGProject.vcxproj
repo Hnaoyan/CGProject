@@ -229,9 +229,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Scene\SceneFactory.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.cpp" />
+    <ClCompile Include="DirectXGame\Engine\NLib\TransitionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\Scene\ClearScene.h" />
+    <ClInclude Include="DirectXGame\Engine\NLib\NBase\Singleton.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\AbstractSceneFactory.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.h" />
@@ -309,6 +311,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Scene\SceneFactory.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.h" />
+    <ClInclude Include="DirectXGame\Engine\NLib\TransitionManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

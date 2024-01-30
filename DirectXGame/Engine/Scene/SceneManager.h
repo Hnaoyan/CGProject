@@ -3,6 +3,7 @@
 #include "IScene.h"
 #include "SceneList.h"
 #include "AbstractSceneFactory.h"
+#include "TransitionManager.h"
 
 class SceneManager {
 private:
@@ -20,6 +21,8 @@ private:
 	IScene* nowScene_ = nullptr;
 	// 次のシーン
 	IScene* nextScene_ = nullptr;
+
+	std::unique_ptr<TransitionManager> transitionManager_;
 
 public:
 	SceneManager();

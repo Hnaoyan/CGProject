@@ -3,6 +3,7 @@
 
 SceneManager::SceneManager() 
 { 
+	transitionManager_ = std::make_unique<TransitionManager>();
 }
 
 SceneManager::~SceneManager() 
