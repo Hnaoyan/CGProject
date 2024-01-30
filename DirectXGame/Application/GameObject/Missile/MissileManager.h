@@ -5,6 +5,7 @@
 #include <memory>
 
 class IMissile;
+class EnemyManager;
 
 /// <summary>
 /// ミサイル軌道の種類
@@ -63,6 +64,10 @@ public:
 
 	void ListUpdate();
 
+	void SetEnemyPtr(EnemyManager* manager) {
+		enemyManager_ = manager;
+	}
+
 public:
 	void AddMissile(const MissileConfig info);
 
@@ -97,6 +102,8 @@ private:
 	ControlParam param_ = {};
 
 	Vector3 playerPosition_ = {};
+
+	EnemyManager* enemyManager_ = nullptr;
 
 	Enemy* targetPtr_ = nullptr;
 

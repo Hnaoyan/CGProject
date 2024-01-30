@@ -40,7 +40,7 @@ void IMissile::Update()
 	if (Input::GetInstance()->TriggerKey(DIK_L)) {
 		target_ = nullptr;
 	}
-
+	
 	HomingUpdate();
 
 	if (guidedTime_ % 60 == 0) {
@@ -64,6 +64,14 @@ void IMissile::Update()
 
 	worldTransform_.UpdateMatrix();
 	collider_.SetPosition(worldTransform_.GetWorld());
+
+	if (isFade_) {
+		fadeTimer_--;
+		//if (fadeTimer_ < 0) {
+		//	fadeTimer_ = 0;
+		//}
+	}
+
 }
 
 void IMissile::Draw(ViewProjection& viewProjection)
@@ -77,6 +85,7 @@ void IMissile::ImGuiUpdate()
 	if (ImGui::BeginTabItem(tag.c_str())) {
 		ImGui::Text(tag.c_str());
 		ImGui::InputInt(tag.c_str(), &guidedTime_);
+		ImGui::InputInt(tag.c_str(), &fadeTimer_);
 		if (ImGui::TreeNode("Vector")) {
 			ImGui::DragFloat3("toEnemy", &toEnemy_.x);
 			ImGui::DragFloat3("velocity", &velocity_.x);

@@ -1,5 +1,6 @@
 #include "MissileManager.h"
 #include "imgui.h"
+#include "EnemyManager.h"
 
 void MissileManager::Initialize()
 {
@@ -21,7 +22,8 @@ void MissileManager::Update()
 		ImGui::InputFloat("Damping", &param_.damping);
 		ImGui::TreePop();
 	}
-
+	Vector3 TargetVect = enemyManager_->GetTestPtr()->GetWorldPosition();
+	ImGui::DragFloat3("Pos", &TargetVect.x);
 	ImGui::End();
 
 	ImGuiUpdate();
@@ -32,16 +34,16 @@ void MissileManager::Update()
 		missiles_.clear();
 	}
 
-	if (isSeparate_) {
-		separateTime_++;
-		if (separateTime_ > 60) {
-			separateTime_ = 0;
-			isSeparate_ = false;
+	//if (isSeparate_) {
+	//	separateTime_++;
+	//	if (separateTime_ > 60) {
+	//		separateTime_ = 0;
+	//		isSeparate_ = false;
 
-			SilhouetteDance();
+	//		SilhouetteDance();
 
-		}
-	}
+	//	}
+	//}
 
 
 	ListUpdate();
@@ -58,8 +60,14 @@ void MissileManager::ListUpdate()
 {
 
 	// 弾の消去
-	missiles_.remove_if([](IMissile* missile) {
-		if (missile->GetIsDead()) {
+	missiles_.remove_if([this](IMissile* missile) {
+		if (/*missile->GetIsDead() &&*/ missile->GetIsFade()) {
+			MissileConfig info = { missile->GetWorldPosition(),{},enemyManager_->GetTestPtr() };
+			BurstTheGravity(info);
+			delete missile;
+			return true;
+		}
+		else if (missile->GetIsDead()) {
 			delete missile;
 			return true;
 		}
@@ -122,12 +130,17 @@ void MissileManager::AddMissileNoneType(const MissileConfig info, int type)
 	newInstance->SetTargetPosition(info.ptr->GetWorldPosition());
 	newInstance->SettingParameter(param_.lerpRad, param_.damping);
 	newInstance->SetParticle(particleManager_);
+
+	if (type == kV1) {
+		newInstance->SetFade(100);
+	}
+
 	missiles_.push_back(newInstance);
 }
 
 void MissileManager::BurstTheGravity(const MissileConfig info)
 {
-	if (info.ptr == nullptr) {
+ 	if (info.ptr == nullptr) {
 		return;
 	}
 	MissileConfig config = info;

@@ -46,6 +46,7 @@ void GameScene::Initialize() {
 	particleManager_->Initialize();
 
 	missileManager_->SetParticleManager(particleManager_.get());
+	missileManager_->SetEnemyPtr(enemyManager_.get());
 
 	uint32_t texture = TextureManager::Load("UI/BackGround.png");
 	back_.reset(Sprite::Create(texture, { 0,0 }, { 1,1,1,1 }, { 0,0 }, false, false));

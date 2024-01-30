@@ -79,7 +79,10 @@ public: // アクセッサ・初期化
 		lerpRad_ = lerpRad;
 		damping_ = damping;
 	}
-
+	void SetFade(int timer) {
+		isFade_ = true;
+		fadeTimer_ = timer;
+	}
 	void SetParticle(ParticleManager* manager) { manager_ = manager; }
 
 private: // 内部の固有処理
@@ -118,6 +121,10 @@ private: // 内部の固有処理
 
 	Vector3 GetDeltaTimeVelocity();
 
+public:
+	bool GetIsFade() { return (isFade_ && fadeTimer_ <= 0); }
+
+
 private:
 	/// <summary>
 	/// ホーミング処理の管理
@@ -132,6 +139,9 @@ private:
 
 	bool isDead_ = false;
 	bool isDelay_ = false;
+
+	int fadeTimer_ = 0;
+	bool isFade_ = false;
 
 private:
 	WorldTransform worldTransform_{};
