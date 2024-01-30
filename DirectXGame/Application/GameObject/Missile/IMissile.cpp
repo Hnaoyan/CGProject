@@ -369,7 +369,7 @@ void IMissile::ProportionalV4()
 
 	newVd = MathCalc::Normalize(newVd);
 
-	float kSpeedValue = 30.0f;
+	float kSpeedValue = 20.0f;
 
 	velocity_ += (newVd * kSpeedValue) * NLib::GetDeltaTime(60.0f);
 

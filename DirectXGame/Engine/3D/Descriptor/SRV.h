@@ -56,11 +56,11 @@ private:
 	//uint32_t kDescriptorSize_;
 	//uint32_t size_;
 
-	uint32_t index_;
-	uint32_t descriptorSizeSRV_;
+	uint32_t index_ = 0;
+	uint32_t descriptorSizeSRV_ = 0;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU[max];
-	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU[max];
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU[max] = {};
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU[max] = {};
 
 };
 
