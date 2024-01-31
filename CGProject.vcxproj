@@ -159,6 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\ClearScene.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\Enemy.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.cpp" />
@@ -232,6 +233,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\NLib\TransitionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.h" />
+    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileList.h" />
     <ClInclude Include="DirectXGame\Application\Scene\ClearScene.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\NBase\Singleton.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\AbstractSceneFactory.h" />

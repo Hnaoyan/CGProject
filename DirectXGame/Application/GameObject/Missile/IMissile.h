@@ -143,7 +143,7 @@ private:
 	int fadeTimer_ = 0;
 	bool isFade_ = false;
 
-private:
+protected:
 	WorldTransform worldTransform_{};
 	Model* model_ = nullptr;
 
