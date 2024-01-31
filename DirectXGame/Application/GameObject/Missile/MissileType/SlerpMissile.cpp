@@ -2,5 +2,5 @@
 
 void SlerpMissile::Initialize(Model* model, const Vector3& position)
 {
-
+	model, position;
 }
