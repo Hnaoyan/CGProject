@@ -417,7 +417,7 @@ void IMissile::ProportionalV7()
 	Vector3 currentDirection = MathCalc::Normalize(velocity_);
 
 	// 誘導の割合を設定
-	float proportionalGain = 0.3f;
+	float proportionalGain = 0.75f;
 
 	// 目標方向から少しオフセットされた方向を計算
 	Vector3 newDirection = (targetDirection * (1 - proportionalGain)) + (currentDirection * proportionalGain);

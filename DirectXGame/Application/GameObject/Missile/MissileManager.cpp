@@ -164,17 +164,17 @@ void MissileManager::BurstTheGravity(const MissileConfig info)
 #pragma region 斜め
 	// 左上
 	config.direct = { -1,1,0 };
-	AddMissileNoneType(config, kProt4);
+	AddMissileNoneType(config, kV2);
 	// 左下
 	config.direct = { -1,-1,0 };
-	AddMissileNoneType(config, kProt4);
+	AddMissileNoneType(config, kV2);
 
 	// 右上
 	config.direct = { 1,1,0 };
-	AddMissileNoneType(config, kProt4);
+	AddMissileNoneType(config, kV2);
 	// 右下
 	config.direct = { 1,-1,0 };
-	AddMissileNoneType(config, kProt4);
+	AddMissileNoneType(config, kV2);
 #pragma endregion
 
 }
