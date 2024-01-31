@@ -52,9 +52,14 @@ struct VertexData {
 	Vector3 normal;
 };
 
+struct CameraForGPU {
+	Vector3 worldPos;
+};
+
 struct Material {
 	Vector4 color;
 	int32_t enableLighting;
+	float shininess;
 };
 
 struct TransformationMatrix
@@ -679,9 +684,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;	 // SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;	// Offsetを自動計算
 
-	// RootParameter作成。複数設定できるので配列。今回は結果1つだけなので長さ1の配列
-	// PixelShaderのMaterialとVertexShaderのTransform
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	D3D12_ROOT_PARAMETER rootParameters[5] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	// CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	// PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;			// レジスタ番号0とバインド
@@ -695,6 +698,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	// CBVを使う
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	// PixelShaderで使う
 	rootParameters[3].Descriptor.ShaderRegister = 1;	// レジスタ番号1を使う
+
+	// カメラ用
+	D3D12_ROOT_PARAMETER rootParam{};
+	rootParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParam.Descriptor.RegisterSpace = 0;
+	rootParam.Descriptor.ShaderRegister = 2;
+	rootParameters[4] = rootParam;
+
 	descriptionRootSignature.pParameters = rootParameters;	// ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);	// 配列の長さ
 
@@ -717,14 +729,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// 今回は赤を書き込んでみる
-	*materialData = Material({ 1.0f, 1.0f, 1.0f, 1.0f }, { true });
+	*materialData = Material({ 1.0f, 1.0f, 1.0f, 1.0f }, { true },0.1f);
 
 	// Sprite用のマテリアルリソースを作る
 	ID3D12Resource* materialResourceSprite = CreateBufferResource(device, sizeof(Material));
 	// Mapしてデータを書き込む
 	Material* materialDataSprite = nullptr;
 	materialResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprite));
-	*materialDataSprite = Material{ {1.0f,1.0f,1.0f,1.0f},false };
+	*materialDataSprite = Material{ {1.0f,1.0f,1.0f,1.0f},false ,0.1f};
 
 	// Lighting用のリソース
 	ID3D12Resource* directionalLightResource = CreateBufferResource(device, sizeof(DirectionalLight));
@@ -735,6 +747,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	directionalLightData->color = { 1.0f,1.0f,1.0f,1.0f };
 	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
 	directionalLightData->intensity = 1.0f;
+
+	// Camera用のリソース
+	ID3D12Resource* cameraResource = CreateBufferResource(device, sizeof(CameraForGPU));
+	CameraForGPU* cameraData = nullptr;
+	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData));
+	*cameraData = CameraForGPU{ 0,0,0 };
+
 
 	// シリアライズしてバイナリにする
 	ID3DBlob* signatureBlob = nullptr;
@@ -867,128 +886,128 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	indexDataSprite[3] = 1;	indexDataSprite[4] = 3;	indexDataSprite[5] = 2;
 
 #pragma region 球
-	//// 分割数
-	//const uint32_t kSubdivision = 512;
-	//const uint32_t kVertexIndex = kSubdivision * kSubdivision * 6;
+	// 分割数
+	const uint32_t kSubdivision = 512;
+	const uint32_t kVertexIndex = kSubdivision * kSubdivision * 6;
 
-	//ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * kVertexIndex);
+	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * kVertexIndex);
 
-	//// 頂点バッファビューを作成する
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	//// リソースの先頭のアドレスから使う
-	//vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	//// 使用するリソースのサイズは頂点３つ分のサイズ
-	//vertexBufferView.SizeInBytes = sizeof(VertexData) * kVertexIndex;
-	//vertexBufferView.StrideInBytes = sizeof(VertexData);
+	// 頂点バッファビューを作成する
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	// リソースの先頭のアドレスから使う
+	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	// 使用するリソースのサイズは頂点３つ分のサイズ
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * kVertexIndex;
+	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
-	//// 頂点リソースにデータを書き込む
-	//VertexData* vertexData = nullptr;
-	//// 書き込むためのアドレスを取得
-	//vertexResource->Map(0, nullptr,
-	//	reinterpret_cast<void**>(&vertexData));
-	////// 左下
-	////vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
-	////vertexData[0].texcoord = { 0.0f,1.0f };
-	////// 上
-	////vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };
-	////vertexData[1].texcoord = { 0.5f,0.0f };
-	////// 右下
-	////vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
-	////vertexData[2].texcoord = { 1.0f,1.0f };
-	////// 左下2
-	////vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };
-	////vertexData[3].texcoord = { 0.0f,1.0f };
-	////// 上2
-	////vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };
-	////vertexData[4].texcoord = { 0.5f,0.0f };
-	////// 右下2
-	////vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
-	////vertexData[5].texcoord = { 1.0f,1.0f };
+	// 頂点リソースにデータを書き込む
+	VertexData* vertexData = nullptr;
+	// 書き込むためのアドレスを取得
+	vertexResource->Map(0, nullptr,
+		reinterpret_cast<void**>(&vertexData));
+	//// 左下
+	//vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
+	//vertexData[0].texcoord = { 0.0f,1.0f };
+	//// 上
+	//vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };
+	//vertexData[1].texcoord = { 0.5f,0.0f };
+	//// 右下
+	//vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
+	//vertexData[2].texcoord = { 1.0f,1.0f };
+	//// 左下2
+	//vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };
+	//vertexData[3].texcoord = { 0.0f,1.0f };
+	//// 上2
+	//vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };
+	//vertexData[4].texcoord = { 0.5f,0.0f };
+	//// 右下2
+	//vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
+	//vertexData[5].texcoord = { 1.0f,1.0f };
 
-	//// 経度分割１つ分の角度 φd
-	//const float kLonEvery = float(M_PI) * 2.0f / float(kSubdivision);
-	//// 緯度分割１つ分の角度 θd
-	//const float kLatEvery = float(M_PI) / float(kSubdivision);
-	//// 緯度の方向に分割
-	//for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
-	//	float lat = float(-M_PI) / 2.0f + kLatEvery * latIndex; // θ
-	//	for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
-	//		uint32_t index = (latIndex * kSubdivision + lonIndex) * 6;
-	//		float lon = lonIndex * kLonEvery; // φ
-	//		// 頂点にデータを入力する。基準点a 1
-	//		vertexData[index].position.x = std::cosf(lat) * std::cosf(lon);
-	//		vertexData[index].position.y = std::sinf(lat);
-	//		vertexData[index].position.z = std::cosf(lat) * std::sinf(lon);
-	//		vertexData[index].position.w = 1.0f;
-	//		vertexData[index].texcoord.x = float(lonIndex) / float(kSubdivision);
-	//		vertexData[index].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+	// 経度分割１つ分の角度 φd
+	const float kLonEvery = float(M_PI) * 2.0f / float(kSubdivision);
+	// 緯度分割１つ分の角度 θd
+	const float kLatEvery = float(M_PI) / float(kSubdivision);
+	// 緯度の方向に分割
+	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
+		float lat = float(-M_PI) / 2.0f + kLatEvery * latIndex; // θ
+		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
+			uint32_t index = (latIndex * kSubdivision + lonIndex) * 6;
+			float lon = lonIndex * kLonEvery; // φ
+			// 頂点にデータを入力する。基準点a 1
+			vertexData[index].position.x = std::cosf(lat) * std::cosf(lon);
+			vertexData[index].position.y = std::sinf(lat);
+			vertexData[index].position.z = std::cosf(lat) * std::sinf(lon);
+			vertexData[index].position.w = 1.0f;
+			vertexData[index].texcoord.x = float(lonIndex) / float(kSubdivision);
+			vertexData[index].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
 
-	//		vertexData[index].normal.x = vertexData[index].position.x;
-	//		vertexData[index].normal.y = vertexData[index].position.y;
-	//		vertexData[index].normal.z = vertexData[index].position.z;
+			vertexData[index].normal.x = vertexData[index].position.x;
+			vertexData[index].normal.y = vertexData[index].position.y;
+			vertexData[index].normal.z = vertexData[index].position.z;
 
-	//		// 頂点b 2
-	//		vertexData[index + 1].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
-	//		vertexData[index + 1].position.y = std::sinf(lat + kLatEvery);
-	//		vertexData[index + 1].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon);
-	//		vertexData[index + 1].position.w = 1.0f;
-	//		vertexData[index + 1].texcoord.x = float(lonIndex) / float(kSubdivision);
-	//		vertexData[index + 1].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+			// 頂点b 2
+			vertexData[index + 1].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
+			vertexData[index + 1].position.y = std::sinf(lat + kLatEvery);
+			vertexData[index + 1].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon);
+			vertexData[index + 1].position.w = 1.0f;
+			vertexData[index + 1].texcoord.x = float(lonIndex) / float(kSubdivision);
+			vertexData[index + 1].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
 
-	//		vertexData[index + 1].normal.x = vertexData[index + 1].position.x;
-	//		vertexData[index + 1].normal.y = vertexData[index + 1].position.y;
-	//		vertexData[index + 1].normal.z = vertexData[index + 1].position.z;
+			vertexData[index + 1].normal.x = vertexData[index + 1].position.x;
+			vertexData[index + 1].normal.y = vertexData[index + 1].position.y;
+			vertexData[index + 1].normal.z = vertexData[index + 1].position.z;
 
-	//		// 頂点c 3
-	//		vertexData[index + 2].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
-	//		vertexData[index + 2].position.y = std::sinf(lat);
-	//		vertexData[index + 2].position.z = std::cosf(lat) * std::sinf(lon + kLonEvery);
-	//		vertexData[index + 2].position.w = 1.0f;
-	//		vertexData[index + 2].texcoord.x = float(lonIndex) / float(kSubdivision);
-	//		vertexData[index + 2].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+			// 頂点c 3
+			vertexData[index + 2].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
+			vertexData[index + 2].position.y = std::sinf(lat);
+			vertexData[index + 2].position.z = std::cosf(lat) * std::sinf(lon + kLonEvery);
+			vertexData[index + 2].position.w = 1.0f;
+			vertexData[index + 2].texcoord.x = float(lonIndex) / float(kSubdivision);
+			vertexData[index + 2].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
 
-	//		vertexData[index + 2].normal.x = vertexData[index + 2].position.x;
-	//		vertexData[index + 2].normal.y = vertexData[index + 2].position.y;
-	//		vertexData[index + 2].normal.z = vertexData[index + 2].position.z;
+			vertexData[index + 2].normal.x = vertexData[index + 2].position.x;
+			vertexData[index + 2].normal.y = vertexData[index + 2].position.y;
+			vertexData[index + 2].normal.z = vertexData[index + 2].position.z;
 
-	//		// 頂点c 4
-	//		vertexData[index + 3].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
-	//		vertexData[index + 3].position.y = std::sinf(lat);
-	//		vertexData[index + 3].position.z = std::cosf(lat) * std::sinf(lon + kLonEvery);
-	//		vertexData[index + 3].position.w = 1.0f;
-	//		vertexData[index + 3].texcoord.x = float(lonIndex) / float(kSubdivision);
-	//		vertexData[index + 3].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+			// 頂点c 4
+			vertexData[index + 3].position.x = std::cosf(lat) * std::cosf(lon + kLonEvery);
+			vertexData[index + 3].position.y = std::sinf(lat);
+			vertexData[index + 3].position.z = std::cosf(lat) * std::sinf(lon + kLonEvery);
+			vertexData[index + 3].position.w = 1.0f;
+			vertexData[index + 3].texcoord.x = float(lonIndex) / float(kSubdivision);
+			vertexData[index + 3].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
 
-	//		vertexData[index + 3].normal.x = vertexData[index + 3].position.x;
-	//		vertexData[index + 3].normal.y = vertexData[index + 3].position.y;
-	//		vertexData[index + 3].normal.z = vertexData[index + 3].position.z;
+			vertexData[index + 3].normal.x = vertexData[index + 3].position.x;
+			vertexData[index + 3].normal.y = vertexData[index + 3].position.y;
+			vertexData[index + 3].normal.z = vertexData[index + 3].position.z;
 
-	//		// 頂点b 5
-	//		vertexData[index + 4].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
-	//		vertexData[index + 4].position.y = std::sinf(lat + kLatEvery);
-	//		vertexData[index + 4].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon);
-	//		vertexData[index + 4].position.w = 1.0f;
-	//		vertexData[index + 4].texcoord.x = float(lonIndex) / float(kSubdivision);
-	//		vertexData[index + 4].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+			// 頂点b 5
+			vertexData[index + 4].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon);
+			vertexData[index + 4].position.y = std::sinf(lat + kLatEvery);
+			vertexData[index + 4].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon);
+			vertexData[index + 4].position.w = 1.0f;
+			vertexData[index + 4].texcoord.x = float(lonIndex) / float(kSubdivision);
+			vertexData[index + 4].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
 
-	//		vertexData[index + 4].normal.x = vertexData[index + 4].position.x;
-	//		vertexData[index + 4].normal.y = vertexData[index + 4].position.y;
-	//		vertexData[index + 4].normal.z = vertexData[index + 4].position.z;
+			vertexData[index + 4].normal.x = vertexData[index + 4].position.x;
+			vertexData[index + 4].normal.y = vertexData[index + 4].position.y;
+			vertexData[index + 4].normal.z = vertexData[index + 4].position.z;
 
-	//		// 頂点d 6
-	//		vertexData[index + 5].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon + kLonEvery);
-	//		vertexData[index + 5].position.y = std::sinf(lat + kLatEvery);
-	//		vertexData[index + 5].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon + kLonEvery);
-	//		vertexData[index + 5].position.w = 1.0f;
-	//		vertexData[index + 5].texcoord.x = float(lonIndex) / float(kSubdivision);
-	//		vertexData[index + 5].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
+			// 頂点d 6
+			vertexData[index + 5].position.x = std::cosf(lat + kLatEvery) * std::cosf(lon + kLonEvery);
+			vertexData[index + 5].position.y = std::sinf(lat + kLatEvery);
+			vertexData[index + 5].position.z = std::cosf(lat + kLatEvery) * std::sinf(lon + kLonEvery);
+			vertexData[index + 5].position.w = 1.0f;
+			vertexData[index + 5].texcoord.x = float(lonIndex) / float(kSubdivision);
+			vertexData[index + 5].texcoord.y = 1.0f - float(latIndex) / float(kSubdivision);
 
-	//		vertexData[index + 5].normal.x = vertexData[index + 5].position.x;
-	//		vertexData[index + 5].normal.y = vertexData[index + 5].position.y;
-	//		vertexData[index + 5].normal.z = vertexData[index + 5].position.z;
+			vertexData[index + 5].normal.x = vertexData[index + 5].position.x;
+			vertexData[index + 5].normal.y = vertexData[index + 5].position.y;
+			vertexData[index + 5].normal.z = vertexData[index + 5].position.z;
 
-	//	}
-	//}
+		}
+	}
 
 #pragma endregion
 #pragma region スプライト
@@ -1035,20 +1054,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region Test
 
-	// モデル読み込み
-	ModelData modelData = LoadObj("Resources", "axis.obj");
-	// 頂点
-	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
-	// ビュー
-	D3D12_VERTEX_BUFFER_VIEW vbView{};
-	vbView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	vbView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	vbView.StrideInBytes = sizeof(VertexData);	//
+	//// モデル読み込み
+	//ModelData modelData = LoadObj("Resources", "axis.obj");
+	//// 頂点
+	//ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
+	//// ビュー
+	//D3D12_VERTEX_BUFFER_VIEW vbView{};
+	//vbView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	//vbView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	//vbView.StrideInBytes = sizeof(VertexData);	//
 
-	// データを書き込む
-	VertexData* vertexData = nullptr;
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
+	//// データを書き込む
+	//VertexData* vertexData = nullptr;
+	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	//std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
 
 #pragma endregion
 
@@ -1105,11 +1124,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	textureResource[1] = CreateTextureResource(device, metadata2);
 	intermediateResource = UploadTextureData(textureResource[1].Get(), mipImages[1], device, commandList);
 
-	// Texture 3
-	mipImages[2] = LoadTexture(modelData.material.textureFilePath);
-	const DirectX::TexMetadata& metadata3 = mipImages[2].GetMetadata();
-	textureResource[2] = CreateTextureResource(device, metadata3);
-	intermediateResource = UploadTextureData(textureResource[2].Get(), mipImages[2], device, commandList);
+	//// Texture 3
+	//mipImages[2] = LoadTexture(modelData.material.textureFilePath);
+	//const DirectX::TexMetadata& metadata3 = mipImages[2].GetMetadata();
+	//textureResource[2] = CreateTextureResource(device, metadata3);
+	//intermediateResource = UploadTextureData(textureResource[2].Get(), mipImages[2], device, commandList);
 
 	// DepthStencilTextureをウィンドウのサイズで作成
 	ID3D12Resource* depthStencilResource = CreateDepthStencilTextureResource(device, kClientWidth, kClientHeight);
@@ -1137,10 +1156,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	srvDesc[1].ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;	// 2Dテクスチャ
 	srvDesc[1].Texture2D.MipLevels = UINT(metadata2.mipLevels);
 
-	srvDesc[2].Format = metadata.format;
-	srvDesc[2].Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc[2].ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;	// 2Dテクスチャ
-	srvDesc[2].Texture2D.MipLevels = UINT(metadata3.mipLevels);
+	//srvDesc[2].Format = metadata.format;
+	//srvDesc[2].Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	//srvDesc[2].ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;	// 2Dテクスチャ
+	//srvDesc[2].Texture2D.MipLevels = UINT(metadata3.mipLevels);
 
 	// SRVを作成するDescriptorHeapの場所を決める
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[3];
@@ -1159,11 +1178,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource[1].Get(), &srvDesc[1], textureSrvHandleCPU[1]);
 
-	// SRV3
-	textureSrvHandleCPU[2] = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
-	textureSrvHandleGPU[2] = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
-	// SRVの生成
-	device->CreateShaderResourceView(textureResource[2].Get(), &srvDesc[2], textureSrvHandleCPU[2]);
+	//// SRV3
+	//textureSrvHandleCPU[2] = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
+	//textureSrvHandleGPU[2] = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
+	//// SRVの生成
+	//device->CreateShaderResourceView(textureResource[2].Get(), &srvDesc[2], textureSrvHandleCPU[2]);
 
 #pragma endregion
 
@@ -1214,6 +1233,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			transformSprite.translate.x = float3[0];
 			transformSprite.translate.y = float3[1];
 			transformSprite.translate.z = float3[2];
+
+			cameraData->worldPos = cameraTransform.translate;
+
 #pragma endregion
 
 			// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
@@ -1258,17 +1280,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// RootSigunatureを設定。PSOに設定しているけど別途設定が必要
 			commandList->SetGraphicsRootSignature(rootSignature);
 			commandList->SetPipelineState(graphicsPipelineState);	// PSOを設定
-			commandList->IASetVertexBuffers(0, 1, &vbView);	// VBVを設定
 			commandList->IASetIndexBuffer(&indexBufferViewSprite);	// IBVを設定
+
+			// 球用
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	// VBVを設定
+			// モデル用
+			//commandList->IASetVertexBuffers(0, 1, &vbView);	// VBVを設定
 
 			// 形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い
 			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			// マテリアルCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 			// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
-			//commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
-			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[2]);
+			commandList->SetGraphicsRootDescriptorTable(2, useMonsterBall ? textureSrvHandleGPU[1] : textureSrvHandleGPU[0]);
+			//commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[2]);
+
+			// ライティング
 			commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+
+			// カメラ
+			commandList->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
+			
 			// ImGuiの内部コマンドを生成する
 			ImGui::Render();
 
@@ -1276,7 +1308,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// 球体
 			commandList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-			commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+			commandList->DrawInstanced(kVertexIndex, 1, 0, 0);
+
+			//commandList->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 
 			commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
 
