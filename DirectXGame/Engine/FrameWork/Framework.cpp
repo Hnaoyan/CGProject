@@ -31,8 +31,8 @@ void Framework::Initialize()
 	winApp->CreateGameWindow();
 
 	// Heap初期化
-	descriptorManager = DescriptorManager::GetInstance();
-	descriptorManager->StaticInitialize();
+	descriptorManager_ = DescriptorManager::GetInstance();
+	descriptorManager_->StaticInitialize();
 	// DirectX
 	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(winApp);
@@ -55,8 +55,8 @@ void Framework::Initialize()
 	audioManager_->AddSound(bgm, "BGM");
 
 	// Imgui
-	imguiManager = ImGuiManager::GetInstance();
-	imguiManager->Initialize(dxCommon, winApp);
+	imguiManager_ = ImGuiManager::GetInstance();
+	imguiManager_->Initialize(dxCommon, winApp);
 
 	// テクスチャマネージャの初期化
 	TextureManager::GetInstance()->Initialize(dxCommon);
@@ -79,8 +79,8 @@ void Framework::Finalize()
 {
 	delete sceneFactory_;
 	SafeDelete(sceneManager_);
-	imguiManager->Finalize();
-	descriptorManager->Finalize();
+	imguiManager_->Finalize();
+	descriptorManager_->Finalize();
 	audio->Finalize();
 	CoUninitialize();
 }

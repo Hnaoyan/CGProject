@@ -236,6 +236,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileList.h" />
     <ClInclude Include="DirectXGame\Application\Scene\ClearScene.h" />
+    <ClInclude Include="DirectXGame\Engine\Base\ManagerList.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\NBase\Singleton.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\AbstractSceneFactory.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />

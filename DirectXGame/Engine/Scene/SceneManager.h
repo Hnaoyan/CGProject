@@ -22,7 +22,7 @@ private:
 	// 次のシーン
 	IScene* nextScene_ = nullptr;
 
-	std::unique_ptr<TransitionManager> transitionManager_;
+	TransitionManager* transitionManager_;
 
 	std::string nextSceneName_;
 

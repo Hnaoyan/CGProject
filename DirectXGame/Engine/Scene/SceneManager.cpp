@@ -3,7 +3,7 @@
 
 SceneManager::SceneManager() 
 { 
-	transitionManager_ = std::make_unique<TransitionManager>();
+	transitionManager_ = TransitionManager::GetInstance();
 	transitionManager_->Initialize();
 }
 

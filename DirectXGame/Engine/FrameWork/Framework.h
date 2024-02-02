@@ -2,15 +2,12 @@
 #include "WindowAPI.h"
 #include "DirectXCommon.h"
 #include "Audio.h"
-#include "AudioManager.h"
-#include "ImGuiManager.h"
-#include "SceneManager.h"
-#include "TextureManager.h"
 #include "Model.h"
 #include "Particle.h"
 #include "Sprite.h"
 #include "Graphics/Shader.h"
 #include "AbstractSceneFactory.h"
+#include "ManagerList.h"
 #include <memory>
 
 class Framework
@@ -65,9 +62,11 @@ protected:
 	DirectXCommon* dxCommon;
 	Audio* audio;
 	Input* input;
-	ImGuiManager* imguiManager = nullptr;
-	DescriptorManager* descriptorManager = nullptr;
+
+	DescriptorManager* descriptorManager_ = nullptr;
 	SceneManager* sceneManager_ = nullptr;
+	ImGuiManager* imguiManager_ = nullptr;
+	TransitionManager* transitionManager_ = nullptr;
 
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 

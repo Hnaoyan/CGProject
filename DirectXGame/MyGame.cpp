@@ -35,7 +35,7 @@ void MyGame::Update()
 	// 入力処理
 	input->Update();
 	// ImGui受付開始
-	imguiManager->Begin();
+	imguiManager_->Begin();
 #ifdef _DEBUG
 	// json更新
 	GlobalVariables::GetInstance()->Update();
@@ -57,10 +57,10 @@ void MyGame::Draw()
 	SceneManager::GetInstance()->Draw();
 
 	// ImGui受付終了
-	imguiManager->End();
+	imguiManager_->End();
 
 	// ImGui描画
-	imguiManager->Draw();
+	imguiManager_->Draw();
 
 	// 描画後処理
 	dxCommon->PostDraw();
