@@ -12,14 +12,14 @@ void MyGame::Initialize()
 	Editor::GetInstance()->LoadFiles();
 	// シーンの初期化
 	sceneFactory_ = new SceneFactory();
-	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
-	SceneManager::GetInstance()->ChangeScene("TITLE");
+	sceneManager_ = SceneManager::GetInstance();
+	sceneManager_->SetSceneFactory(sceneFactory_);
+	sceneManager_->ChangeScene("TITLE");
 }
 
 void MyGame::Finalize()
 {
 	// シーンのDelete
-	//SafeDelete(sceneManager);
 	delete sceneFactory_;
 	// 基底クラスの終了処理
 	Framework::Finalize();
@@ -44,8 +44,8 @@ void MyGame::Update()
 #endif // _DEBUG
 
 	// ゲームシーン更新処理
-	SceneManager::GetInstance()->Update();
-	//sceneManager->Update();
+	sceneManager_->Update();
+
 }
 
 void MyGame::Draw()
@@ -54,7 +54,7 @@ void MyGame::Draw()
 	dxCommon->PreDraw();
 
 	// ゲームシーン描画処理
-	SceneManager::GetInstance()->Draw();
+	sceneManager_->Draw();
 
 	// ImGui受付終了
 	imguiManager_->End();

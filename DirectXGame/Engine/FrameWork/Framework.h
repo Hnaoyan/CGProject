@@ -58,19 +58,17 @@ protected:
 	/// <summary>
 	/// ポインタ系
 	/// </summary>
-	WindowAPI* winApp;
-	DirectXCommon* dxCommon;
-	Audio* audio;
-	Input* input;
+	WindowAPI* winApp = nullptr;
+	DirectXCommon* dxCommon = nullptr;
+	Audio* audio = nullptr;
+	Input* input = nullptr;
 
 	DescriptorManager* descriptorManager_ = nullptr;
 	SceneManager* sceneManager_ = nullptr;
 	ImGuiManager* imguiManager_ = nullptr;
 	TransitionManager* transitionManager_ = nullptr;
+	AudioManager* audioManager_ = nullptr;
 
-	AbstractSceneFactory* sceneFactory_ = nullptr;
-
-	std::unique_ptr<AudioManager> audioManager_;
 };
 
 

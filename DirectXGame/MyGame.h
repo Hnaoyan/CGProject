@@ -27,7 +27,6 @@ public:
 
 private:
 	AbstractSceneFactory* sceneFactory_ = nullptr;
-	//SceneManager* sceneManager = nullptr;
 
 };
 
