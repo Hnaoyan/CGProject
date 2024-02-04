@@ -19,6 +19,14 @@ std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
 	size_t(Pipeline::BlendMode::kCountOfBlendMode)> PipelineManager::sPipelineStates_;
 void PipelineManager::CreatePipeline()
 {
+	CreateModelPipeline();
+
+	CreateParticlePipeline();
+
+}
+
+void PipelineManager::CreateModelPipeline()
+{
 	HRESULT result = S_FALSE;
 	ComPtr<IDxcBlob> vsBlob;
 	ComPtr<IDxcBlob> psBlob;
@@ -49,16 +57,15 @@ void PipelineManager::CreatePipeline()
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
 	gpipeline.VS = D3D12Lib::ShaderByteCode(vsBlob.Get());
 	gpipeline.PS = D3D12Lib::ShaderByteCode(psBlob.Get());
-	
+
 	// サンプルマスク
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// ラスタライザステート
-	D3D12_RASTERIZER_DESC rasterizer= SetRasterizerState(D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_BACK);
+	D3D12_RASTERIZER_DESC rasterizer = SetRasterizerState(D3D12_FILL_MODE_SOLID, D3D12_CULL_MODE_BACK);
 	gpipeline.RasterizerState = rasterizer;
 	// デプスステンシルステート
 	gpipeline.DepthStencilState.DepthEnable = true;
 	gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	//gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 	// 深度バッファのフォーマット
@@ -125,7 +132,7 @@ void PipelineManager::CreatePipeline()
 	gpipeline.pRootSignature = sRootSignature_.Get();
 
 #pragma region Blend
-// ブレンドなし
+	// ブレンドなし
 	D3D12_BLEND_DESC blenddesc{};
 	blenddesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	blenddesc.RenderTarget[0].BlendEnable = false;
@@ -187,6 +194,35 @@ void PipelineManager::CreatePipeline()
 			&gpipeline, IID_PPV_ARGS(&sPipelineStates_[size_t(BlendMode::kScreen)]));
 	assert(SUCCEEDED(result));
 #pragma endregion
+
+}
+
+void PipelineManager::CreateParticlePipeline()
+{
+	//ComPtr<IDxcBlob> vsBlob;
+	//ComPtr<IDxcBlob> psBlob;
+	//ComPtr<ID3DBlob> errorBlob;
+	//ComPtr<ID3DBlob> rootSigBlob;
+
+	//// 頂点シェーダの読み込みとコンパイル
+	//vsBlob = Shader::GetInstance()->Compile(L"ParticleVS.hlsl", L"vs_6_0");
+	//assert(vsBlob != nullptr);
+
+	//// ピクセルシェーダの読み込みとコンパイル
+	//psBlob = Shader::GetInstance()->Compile(L"ParticlePS.hlsl", L"ps_6_0");
+	//assert(psBlob != nullptr);
+
+	//D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
+	//{
+	//	SetInputLayout("POSITION", DXGI_FORMAT_R32G32B32_FLOAT)
+	//},
+	//{
+	//	SetInputLayout("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT)
+	//},
+	//{
+	//	SetInputLayout("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT)
+	//},
+	//};
 
 }
 

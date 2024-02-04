@@ -70,7 +70,7 @@ public:
 	void SetGraphicsRootDescriptorTable(
 		ID3D12GraphicsCommandList* commandList, UINT rootParamIndex, uint32_t textureHandle);
 
-	uint32_t GetHeapIndex() { return indexNextDescriptorHeap_; }
+	uint32_t GetHeapIndex() { return descriptorHeapIndex_; }
 
 	static ID3D12DescriptorHeap* StaticGetDescriptorHeap() { return GetInstance()->descriptorHeap_.Get(); }
 
@@ -92,10 +92,19 @@ private:
 	// デスクリプタヒープ
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap_;
 	// 次に使うデスクリプタヒープの番号
-	uint32_t indexNextDescriptorHeap_ = 0u;
+	uint32_t descriptorHeapIndex_ = 0u;
 	// テクスチャコンテナ
 	std::array<Texture, kNumDescriptor> textures_;
 	//std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, kNumDescriptor> texResources_;
+	// テクスチャリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> resource[kNumDescriptor];
+	// シェーダーリソースビューのハンドル（CPU）
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV[kNumDescriptor];
+	// シェーダーリソースビューのハンドル（GPU）
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV[kNumDescriptor];
+	// 名前
+	std::string name[kNumDescriptor];
+	Texture texture_[kNumDescriptor];
 
 	/// <summary>
 	/// 読み込み設定
@@ -112,6 +121,6 @@ private:
 
 private:
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);
-	ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata);
+	//ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata);
 
 };

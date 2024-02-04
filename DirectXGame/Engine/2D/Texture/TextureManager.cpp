@@ -12,8 +12,9 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 {
 	HRESULT result = S_FALSE;
 #pragma region LoadInternal
-	assert(indexNextDescriptorHeap_ < kNumDescriptor);
-	uint32_t handle = indexNextDescriptorHeap_;
+	assert(descriptorHeapIndex_ < kNumDescriptor);
+	descriptorHeapIndex_++;
+	uint32_t handle = descriptorHeapIndex_ + 3;
 
 	// 読み込み済みテクスチャを検索
 	auto it = std::find_if(textures_.begin(), textures_.end(), [&](const auto& texture) {
@@ -94,15 +95,10 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	texture.cpuDescHandleSRV = descriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	texture.gpuDescHandleSRV = descriptorHeap_->GetGPUDescriptorHandleForHeapStart();
 
-	
-
-	//DirectXCommon::GetInstance()->GetSRV()->SetCPUHandle()
-
 	// 先頭は使われているためその次
+	uint32_t handle = descriptorHeapIndex_ + 3;
 	texture.cpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
 	texture.gpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
-
-	//srv_->SetCPUHandle(srv_->GetHeap(), srv_->GetSizeSRV(), index);
 
 	// metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -119,7 +115,7 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 		&srvDesc,
 		texture.cpuDescHandleSRV);
 
-	indexNextDescriptorHeap_++;
+	//indexNextDescriptorHeap_++;
 	DirectXCommon::GetInstance()->GetSRV()->AddIndex();
 
 	return handle;
@@ -153,13 +149,13 @@ void TextureManager::ResetAll()
 	result = device_->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descriptorHeap_));
 	assert(SUCCEEDED(result));
 
-	indexNextDescriptorHeap_ = 0;
+	descriptorHeapIndex_ = 0;
 
 	// 全テクスチャを初期化
 	for (size_t i = 0; i < kNumDescriptor; i++) {
 		textures_[i].resource.Reset();
-		//textures_[i].cpuDescHandleSRV.ptr = 0;
-		//textures_[i].gpuDescHandleSRV.ptr = 0;
+		textures_[i].cpuDescHandleSRV.ptr = 0;
+		textures_[i].gpuDescHandleSRV.ptr = 0;
 		textures_[i].name.clear();
 	}
 }
@@ -215,34 +211,34 @@ DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath)
 	return mipImages;
 }
 
-ID3D12Resource* TextureManager::CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata)
-{
-	// metadataを基にReasourceの設定
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Width = UINT(metadata.width);	// Textureの幅
-	resourceDesc.Height = UINT(metadata.height);	// Textureの高さ
-	resourceDesc.MipLevels = UINT16(metadata.mipLevels);	// mipmapの数
-	resourceDesc.DepthOrArraySize = UINT16(metadata.arraySize);	// 奥行き or 配列Textureの配列数
-	resourceDesc.Format = metadata.format;	// TexutureのFormat
-	resourceDesc.SampleDesc.Count = 1;	// サンプリングカウント。1固定
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);	// Textureの次元数。普段使っているのは2次元
-
-	// 利用するHeapの設定。非常に特殊な運用。02_04exで一般的なケース版がある
-	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;	// 細かい設定を行う
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;	// WriteBackポリシーでVPUアクセス可能
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;	// プロセッサ
-
-	// Resourceの生成
-	ID3D12Resource* resource = nullptr;
-	HRESULT hr = S_FALSE;
-	hr = device->CreateCommittedResource(
-		&heapProperties,	// Heapの設定
-		D3D12_HEAP_FLAG_NONE,	// Heapの特殊な設定。特になし
-		&resourceDesc,	// Resourceの設定
-		D3D12_RESOURCE_STATE_GENERIC_READ,	// 初回のResourceState。Textureは基本読むだけ
-		nullptr,	// Clear最適値。使わないのでnullptr
-		IID_PPV_ARGS(&resource));
-	assert(SUCCEEDED(hr));
-	return resource;
-}
+//ID3D12Resource* TextureManager::CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata)
+//{
+//	// metadataを基にReasourceの設定
+//	D3D12_RESOURCE_DESC resourceDesc{};
+//	resourceDesc.Width = UINT(metadata.width);	// Textureの幅
+//	resourceDesc.Height = UINT(metadata.height);	// Textureの高さ
+//	resourceDesc.MipLevels = UINT16(metadata.mipLevels);	// mipmapの数
+//	resourceDesc.DepthOrArraySize = UINT16(metadata.arraySize);	// 奥行き or 配列Textureの配列数
+//	resourceDesc.Format = metadata.format;	// TexutureのFormat
+//	resourceDesc.SampleDesc.Count = 1;	// サンプリングカウント。1固定
+//	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);	// Textureの次元数。普段使っているのは2次元
+//
+//	// 利用するHeapの設定。非常に特殊な運用。02_04exで一般的なケース版がある
+//	D3D12_HEAP_PROPERTIES heapProperties{};
+//	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;	// 細かい設定を行う
+//	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;	// WriteBackポリシーでVPUアクセス可能
+//	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;	// プロセッサ
+//
+//	// Resourceの生成
+//	ID3D12Resource* resource = nullptr;
+//	HRESULT hr = S_FALSE;
+//	hr = device->CreateCommittedResource(
+//		&heapProperties,	// Heapの設定
+//		D3D12_HEAP_FLAG_NONE,	// Heapの特殊な設定。特になし
+//		&resourceDesc,	// Resourceの設定
+//		D3D12_RESOURCE_STATE_GENERIC_READ,	// 初回のResourceState。Textureは基本読むだけ
+//		nullptr,	// Clear最適値。使わないのでnullptr
+//		IID_PPV_ARGS(&resource));
+//	assert(SUCCEEDED(hr));
+//	return resource;
+//}

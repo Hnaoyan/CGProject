@@ -66,16 +66,21 @@ public:
 		return &instance;
 	}
 
+	static void CreatePipeline();
+
 public:
-	// パイプラインステート
+	// Model用
 	static std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
 		size_t(Pipeline::BlendMode::kCountOfBlendMode)> sPipelineStates_;
-
-	// ルートシグネチャ
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
 
-public:
-	static void CreatePipeline();
+	// Particle用（インスタンシング
+	static Microsoft::WRL::ComPtr<ID3D12PipelineState> sParticlePipelineStates_;
+	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sParticleRootSignature_;
+
+public: // 作成関数
+	static void CreateModelPipeline();
+	static void CreateParticlePipeline();
 
 public:
 	static D3D12_RASTERIZER_DESC SetRasterizerState(D3D12_FILL_MODE fillMode, D3D12_CULL_MODE cullMode);

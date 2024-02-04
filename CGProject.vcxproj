@@ -231,6 +231,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.cpp" />
     <ClCompile Include="DirectXGame\Engine\NLib\TransitionManager.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\Drawer\Instancing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.h" />
@@ -316,6 +317,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\TransitionManager.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Instancing.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

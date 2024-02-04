@@ -67,7 +67,7 @@ void Model::PreDraw(ID3D12GraphicsCommandList* commandList)
 	sCommandList_ = commandList;
 
 	// ルートシグネチャの設定
-	commandList->SetGraphicsRootSignature(PipelineManager::GetInstance()->sRootSignature_.Get());
+	commandList->SetGraphicsRootSignature(PipelineManager::sRootSignature_.Get());
 	
 	// プリミティブ形状を設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -78,7 +78,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	// アルファ値の更新
 	Update();
 	// パイプラインステートの設定
-	sCommandList_->SetPipelineState(PipelineManager::GetInstance()->sPipelineStates_[size_t(blendMode_)].Get());
+	sCommandList_->SetPipelineState(PipelineManager::sPipelineStates_[size_t(blendMode_)].Get());
 	// ライト
 	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
 
@@ -105,7 +105,7 @@ void Model::Draw(const WorldTransform& worldTransform, const ViewProjection& vie
 	// アルファ値の更新
 	Update();
 	// パイプラインステートの設定
-	sCommandList_->SetPipelineState(PipelineManager::GetInstance()->sPipelineStates_[size_t(blendMode_)].Get());
+	sCommandList_->SetPipelineState(PipelineManager::sPipelineStates_[size_t(blendMode_)].Get());
 	// ライト
 	lightGroup_->Draw(sCommandList_, static_cast<UINT>(RootParameter::kLight));
 
