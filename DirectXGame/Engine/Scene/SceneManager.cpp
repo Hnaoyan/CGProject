@@ -22,6 +22,7 @@ void SceneManager::Update()
 
 #endif // _DEBUG
 
+	GEYOU();
 
 	// 遷移
 	transitionManager_->Update();
@@ -107,4 +108,35 @@ void SceneManager::ChangeScene(const std::string & sceneName)
 	transitionManager_->Start();
 	//nextScene_ = sceneFactory_->CreateScene(sceneName);
 
+}
+
+void SceneManager::GEYOU()
+{
+	if (transitionManager_->ChangeScene()) {
+		isChangeNow_ = false;
+	}
+
+	if (Input::GetInstance()->TriggerKey(DIK_7)) {
+		if (!isChangeNow_) {
+			ChangeScene("TITLE");
+		}
+	}
+	if (Input::GetInstance()->TriggerKey(DIK_8)) {
+		if (!isChangeNow_) {
+			ChangeScene("GAME");
+		}
+
+	}
+	if (Input::GetInstance()->TriggerKey(DIK_9)) {
+		if (!isChangeNow_) {
+			ChangeScene("CLEAR");
+		}
+
+	}
+	if (Input::GetInstance()->TriggerKey(DIK_0)) {
+		if (!isChangeNow_) {
+			ChangeScene("SAMPLE");
+		}
+
+	}
 }

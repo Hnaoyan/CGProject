@@ -49,4 +49,6 @@ public:
 
 	void ChangeScene(const std::string& sceneName);
 
+	void GEYOU();
+
 };
