@@ -16,8 +16,8 @@ public:
 
 private:
 
-	WorldTransform world_;
+	WorldTransform world_ = {};
 
-	Model* model_;
+	Model* model_ = nullptr;
 
 };

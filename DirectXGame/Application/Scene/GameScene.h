@@ -85,7 +85,7 @@ private:	// メンバポインタ
 
 	std::unique_ptr<Sprite> back_;
 
-	SpriteInfo uiInfo_;
+	SpriteInfo uiInfo_ = {};
 	std::unique_ptr<Sprite> ui_;
 
 	bool isDebug_ = false;
