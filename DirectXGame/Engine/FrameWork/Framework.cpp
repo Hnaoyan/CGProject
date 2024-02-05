@@ -50,7 +50,7 @@ void Framework::Initialize()
 	audio = Audio::GetInstance();
 	audio->Initialize();
 
-	audioManager_ = AudioManager::GetInstance();
+	audioManager_ = std::make_unique<AudioManager>();
 	uint32_t bgm = audio->LoadWave("bgm1.wav");
 	audioManager_->AddSound(bgm, "BGM");
 
@@ -77,6 +77,7 @@ void Framework::Initialize()
 
 void Framework::Finalize()
 {
+	delete sceneFactory_;
 	SafeDelete(sceneManager_);
 	imguiManager_->Finalize();
 	descriptorManager_->Finalize();
