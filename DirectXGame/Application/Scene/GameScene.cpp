@@ -14,11 +14,8 @@ GameScene::~GameScene()
 }
 
 void GameScene::Initialize() {
-	dxCommon_ = DirectXCommon::GetInstance();
-	input_ = Input::GetInstance();
-	audio_ = Audio::GetInstance();
 
-	viewProjection_.Initialize();
+	IScene::Initialize();
 
 	model_.reset(Model::CreateFromObj("Jett", true));
 	// プレイヤー

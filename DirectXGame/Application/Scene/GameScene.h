@@ -64,12 +64,6 @@ private:
 	void CheckCollision();
 
 private: // メンバ変数
-	DirectXCommon* dxCommon_ = nullptr;
-	Input* input_ = nullptr;
-	Audio* audio_ = nullptr;
-
-	ViewProjection viewProjection_;
-
 private:
 	std::unique_ptr<CollisionManager> colliderManager_;
 	std::unique_ptr<Player> player_;

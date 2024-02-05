@@ -22,6 +22,8 @@ private:
 	// 次のシーン
 	IScene* nextScene_ = nullptr;
 
+	bool isChangeNow_ = false;
+
 	TransitionManager* transitionManager_;
 
 	std::string nextSceneName_;
@@ -42,6 +44,8 @@ public:
 	void Update();
 
 	void Draw();
+
+	void ImGuiController();
 
 	void ChangeScene(const std::string& sceneName);
 

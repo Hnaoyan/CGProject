@@ -15,9 +15,9 @@ public:
 	void Update();
 	void Draw();
 
-	bool ChangeTiming() {
-		return !isStart_ && isEnd_;
-	}
+	bool ChangeTiming() { return !isStart_ && isEnd_; }
+
+	bool ChangeScene() { return !isStart_ && !isEnd_; }
 
 private:
 	std::unique_ptr<Sprite> blackSprite_;
@@ -26,8 +26,8 @@ private:
 
 	float changeFrame_;
 
-	bool isStart_;
-	bool isEnd_;
+	bool isStart_ = false;
+	bool isEnd_ = false;
 
 };
 

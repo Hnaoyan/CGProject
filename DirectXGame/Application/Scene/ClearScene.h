@@ -25,9 +25,6 @@ public:
 
 private:
 
-	Input* input_ = nullptr;
-	DirectXCommon* dxCommon_ = nullptr;
-
 	std::unique_ptr<Sprite> buttonSprite_;
 	SpriteInfo buttonInfo_;
 

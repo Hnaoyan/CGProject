@@ -1,10 +1,12 @@
 #include "SceneManager.h"
+#include "imgui.h"
 #include <assert.h>
 
 SceneManager::SceneManager() 
 { 
 	transitionManager_ = TransitionManager::GetInstance();
 	transitionManager_->Initialize();
+	isChangeNow_ = false;
 }
 
 SceneManager::~SceneManager() 
@@ -14,6 +16,13 @@ SceneManager::~SceneManager()
 
 void SceneManager::Update() 
 { 
+#ifdef _DEBUG
+
+	ImGuiController();
+
+#endif // _DEBUG
+
+
 	// 遷移
 	transitionManager_->Update();
 
@@ -47,10 +56,46 @@ void SceneManager::Draw()
 	transitionManager_->Draw();
 }
 
+void SceneManager::ImGuiController()
+{
+
+	if (transitionManager_->ChangeScene()) {
+		isChangeNow_ = false;
+	}
+
+	ImGui::Begin("Controller");
+
+	if (ImGui::Button("TITLE")) {
+		if (!isChangeNow_) {
+			ChangeScene("TITLE");
+		}
+	}
+	if (ImGui::Button("GAME")) {
+		if (!isChangeNow_) {
+			ChangeScene("GAME");
+		}
+	}
+	if (ImGui::Button("CLEAR")) {
+		if (!isChangeNow_) {
+			ChangeScene("CLEAR");
+		}
+	}
+	if (ImGui::Button("SAMPLE")) {
+		if (!isChangeNow_) {
+			ChangeScene("SAMPLE");
+		}
+	}
+
+	ImGui::End();
+
+}
+
 void SceneManager::ChangeScene(const std::string & sceneName)
 {
 	assert(sceneFactory_);
 	assert(nextScene_ == nullptr);
+
+	isChangeNow_ = true;
 
 	if (nowScene_ == nullptr) {
 		nextScene_ = sceneFactory_->CreateScene(sceneName);

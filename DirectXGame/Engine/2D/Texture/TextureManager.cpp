@@ -96,7 +96,6 @@ uint32_t TextureManager::LoadInternal(const std::string& fileName)
 	texture.gpuDescHandleSRV = descriptorHeap_->GetGPUDescriptorHandleForHeapStart();
 
 	// 先頭は使われているためその次
-	uint32_t handle = descriptorHeapIndex_ + 3;
 	texture.cpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
 	texture.gpuDescHandleSRV.ptr += handle * sDescriptorHandleIncrementSize_;
 

@@ -22,5 +22,9 @@ IScene* SceneFactory::CreateScene(const std::string& sceneName)
 		newScene = new ClearScene();
 	}
 
+	else if (sceneName == "SAMPLE") {
+		newScene = new SampleScene();
+	}
+
 	return newScene;
 }
