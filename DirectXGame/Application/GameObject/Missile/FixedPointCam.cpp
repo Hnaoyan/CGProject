@@ -25,6 +25,13 @@ void FixedPointCam::Update()
 	// カメラの回転処理
 	//RotationUpdate();
 
+	if (Input::GetInstance()->PressKey(DIK_U)) {
+		viewProjection_.rotation_.y += 0.001f;
+	}
+	else if (Input::GetInstance()->PressKey(DIK_I)) {
+		viewProjection_.rotation_.y -= 0.001f;
+	}
+
 	// 基本情報のウィジェットと行列の更新
 	ICamera::Update();
 }
