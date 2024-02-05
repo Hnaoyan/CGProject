@@ -257,6 +257,11 @@ void Instancing::Initialize()
 		//particles_.push_back(MakeNew(randomEngine_));
 	}
 	cameraTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+	emitter_.count = 5;
+	emitter_.frequency = 1.0f;
+	emitter_.frequencyTime = 0.0f;
+	emitter_.transform = { {1,1,1},{},{} };
+
 }
 
 void Instancing::Update()
@@ -270,10 +275,23 @@ void Instancing::Update()
 
 	}
 
+	if (Input::GetInstance()->PressKey(DIK_A)) {
+		emitter_.transform.translate.x -= 0.01f;
+	}
+	else if (Input::GetInstance()->PressKey(DIK_D)) {
+		emitter_.transform.translate.x += 0.01f;
+	}
+
+
 	ImGuiWidget();
 
 	UpdateMatrix();
 
+	emitter_.frequencyTime += (1.0f / 120.0f);
+	if (emitter_.frequency <= emitter_.frequencyTime) {
+		particles_.splice(particles_.end(), Emit(emitter_, randomEngine_));
+		emitter_.frequencyTime -= emitter_.frequency;
+	}
 
 }
 
@@ -341,12 +359,11 @@ void Instancing::ImGuiWidget()
 	
 	ImGui::DragFloat3("Camera", &cameraTransform_.translate.x);
 	
-	//for (int i = 0; i < (int)kMaxCount_; ++i) {
-	//	std::string name = "Pos" + std::to_string(i);
-	//	ImGui::DragFloat3(name.c_str(), &transforms[i].transform.translate.x);
-	//	name = "Color" + std::to_string(i);
-	//	ImGui::DragFloat3(name.c_str(), &transforms[i].color.x);
-	//}
+	ImGui::DragFloat3("pos", &emitter_.transform.translate.x, 0.01f);
+
+	if (ImGui::Button("Add")) {
+		particles_.splice(particles_.end(), Emit(emitter_, randomEngine_));
+	}
 
 	ImGui::End();
 }
@@ -420,6 +437,37 @@ Instancing::ParticleStruct Instancing::MakeNew(std::mt19937& randomEngine)
 	instance.currentTime = 0;
 
 	return instance;
+}
+
+Instancing::ParticleStruct Instancing::MakeNew(std::mt19937& randomEngine, const Vector3& translate)
+{
+	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+	ParticleStruct instance;
+	instance.transform.scale = { 1,1,1 };
+	instance.transform.rotate = {};
+	Vector3 randomPoint = { distribution(randomEngine),distribution(randomEngine),3.0f };
+	instance.transform.translate = translate + randomPoint;
+
+
+	instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
+
+	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	instance.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine), 1.0f };
+
+	std::uniform_real_distribution<float> distTime(2.0f, 6.0f);
+	instance.lifeTime = distTime(randomEngine);
+	instance.currentTime = 0;
+
+	return instance;
+}
+
+std::list<Instancing::ParticleStruct> Instancing::Emit(const Emitter& emitter, std::mt19937& randomEngine)
+{
+	std::list<ParticleStruct> particles;
+	for (uint32_t count = 0; count < emitter.count; ++count) {
+		particles.push_back(MakeNew(randomEngine,emitter.transform.translate));
+	}
+	return particles;
 }
 
 ModelData Instancing::LoadPlane(const std::string& directory, const std::string& fileName)

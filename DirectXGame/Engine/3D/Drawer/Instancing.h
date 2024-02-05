@@ -101,8 +101,11 @@ public:
 
 private:
 	ParticleStruct MakeNew(std::mt19937& randomEngine);
+	ParticleStruct MakeNew(std::mt19937& randomEngine,const Vector3& translate);
 
-	//std::list<ParticleStruct> Emit(const Emitter& emitter, std::mt19937& randomEngine);
+	std::list<ParticleStruct> Emit(const Emitter& emitter, std::mt19937& randomEngine);
+
+	Emitter emitter_;
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
