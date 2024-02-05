@@ -13,15 +13,15 @@ SampleScene::~SampleScene()
 void SampleScene::Initialize()
 {
 	IScene::Initialize();
-	inst_ = new Instancing();
-	inst_->Create();
-	inst_->Initialize();
+	//inst_ = new Instancing();
+	//inst_->Create();
+	//inst_->Initialize();
 }
 
 void SampleScene::Update()
 {
 
-	inst_->Update();
+	//inst_->Update();
 
 	// 更新
 	viewProjection_.UpdateMatrix();
@@ -49,8 +49,8 @@ void SampleScene::Draw()
 	// 描画後処理
 	Model::PostDraw();
 
-	inst_->PreDraw(commandList);
-	inst_->Draw();
-	inst_->PostDraw();
+	//inst_->PreDraw(commandList);
+	//inst_->Draw();
+	//inst_->PostDraw();
 
 }
