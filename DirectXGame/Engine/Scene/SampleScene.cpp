@@ -28,7 +28,7 @@ void SampleScene::Update()
 	plWTF_.ImGuiWidget("TestModel");
 	plWTF_.UpdateMatrix();
 
-	//inst_->Update();
+	inst_->Update();
 
 	// 更新
 	viewProjection_.UpdateMatrix();

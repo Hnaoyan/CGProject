@@ -27,10 +27,10 @@ private:
 		int32_t enableLighting;
 	};
 
-	struct Transform {
-		Vector3 translate;
+	struct TransformInstance {
 		Vector3 scale;
 		Vector3 rotate;
+		Vector3 translate;
 	};
 
 	struct TransformationMatrix
@@ -49,8 +49,8 @@ private:
 	uint32_t instancingCount_;
 
 private:
-	Transform transforms[20];
-	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+	TransformInstance transforms[20];
+	TransformInstance cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
 public:
 	void Create();

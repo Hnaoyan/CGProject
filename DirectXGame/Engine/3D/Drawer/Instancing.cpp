@@ -13,7 +13,8 @@ DirectX::ScratchImage LoadTexture(const std::string& filePath)
 	// テクスチャファイルを読んでプログラムで扱えるようにする
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	HRESULT hr;
+	hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	assert(SUCCEEDED(hr));
 
 	// ミップマップの作成
@@ -27,7 +28,8 @@ DirectX::ScratchImage LoadTexture(const std::string& filePath)
 
 ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
 	IDXGIFactory7* dxgiFactory = nullptr;
-	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
+	HRESULT hr;
+	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
 	// 頂点リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
 	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;	// UploadHeapを使う
@@ -87,7 +89,8 @@ ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMe
 
 	// Resourceの生成
 	ID3D12Resource* resource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(
+	HRESULT hr;
+	hr = device->CreateCommittedResource(
 		&heapProperties,	// Heapの設定
 		D3D12_HEAP_FLAG_NONE,	// Heapの特殊な設定。特になし
 		&resourceDesc,	// Resourceの設定
@@ -283,9 +286,12 @@ void Instancing::UpdateMatrix()
 void Instancing::ImGuiWidget()
 {
 	ImGui::Begin("Instancing");
+	
+	ImGui::DragFloat3("Camera", &cameraTransform_.translate.x);
+	
 	for (int i = 0; i < (int)kMaxCount_; ++i) {
 		std::string name = "Pos" + std::to_string(i);
-		ImGui::DragFloat3(name.c_str(), &transforms->translate.x);
+		ImGui::DragFloat3(name.c_str(), &transforms[i].translate.x);
 	}
 
 	ImGui::End();
