@@ -14,8 +14,8 @@ private:
 
 private:
 
-	Vector3 defaultPoint_;
-	Vector3 offset_;
+	Vector3 defaultPoint_ = {};
+	Vector3 offset_ = {};
 
 };
 

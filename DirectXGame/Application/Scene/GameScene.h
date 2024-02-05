@@ -68,7 +68,7 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
-	ViewProjection viewProjection_;
+	ViewProjection viewProjection_{};
 
 private:
 	std::unique_ptr<CollisionManager> colliderManager_;
@@ -91,7 +91,7 @@ private:	// メンバポインタ
 
 	std::unique_ptr<Sprite> back_;
 
-	SpriteInfo uiInfo_;
+	SpriteInfo uiInfo_ = {};
 	std::unique_ptr<Sprite> ui_;
 
 	bool isDebug_ = false;
