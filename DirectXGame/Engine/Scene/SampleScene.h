@@ -1,6 +1,7 @@
 #pragma once
 #include "IScene.h"
 #include "Drawer/Instancing.h"
+#include "Player.h"
 
 class SampleScene : public IScene
 {
@@ -32,6 +33,9 @@ public: // メンバ関数
 
 private:
 	Instancing* inst_;
+
+	WorldTransform plWTF_;
+	std::unique_ptr<Model> testModel_;
 
 };
 

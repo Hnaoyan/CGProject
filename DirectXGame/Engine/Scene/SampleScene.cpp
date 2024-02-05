@@ -13,13 +13,20 @@ SampleScene::~SampleScene()
 void SampleScene::Initialize()
 {
 	IScene::Initialize();
-	//inst_ = new Instancing();
-	//inst_->Create();
-	//inst_->Initialize();
+	inst_ = new Instancing();
+	inst_->Create();
+	inst_->Initialize();
+
+	plWTF_.Initialize();
+	testModel_.reset(Model::Create());
+
 }
 
 void SampleScene::Update()
 {
+
+	plWTF_.ImGuiWidget("TestModel");
+	plWTF_.UpdateMatrix();
 
 	//inst_->Update();
 
@@ -45,12 +52,13 @@ void SampleScene::Draw()
 	// 描画前処理
 	Model::PreDraw(commandList);
 
+	testModel_->Draw(plWTF_, viewProjection_);
 
 	// 描画後処理
 	Model::PostDraw();
 
-	//inst_->PreDraw(commandList);
-	//inst_->Draw();
-	//inst_->PostDraw();
+	inst_->PreDraw(commandList);
+	inst_->Draw();
+	inst_->PostDraw();
 
 }

@@ -2,6 +2,7 @@
 #include "Graphics/PipelineManager.h"
 #include "StringManager.h"
 #include "MathLib.h"
+#include "imgui.h"
 
 #include <fstream>
 #include <sstream>
@@ -241,17 +242,18 @@ void Instancing::Initialize()
 {
 	instancingCount_ = 10;
 
-	for (uint32_t i = 0; i < instancingCount_; ++i) {
+	for (uint32_t i = 0; i < kMaxCount_; ++i) {
 		transforms[i].scale = { 1,1,1 };
 		transforms[i].rotate = {};
 		transforms[i].translate = { i * 0.1f,i * 0.1f,i * 0.1f };
 	}
-
+	cameraTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 }
 
 void Instancing::Update()
 {
 
+	ImGuiWidget();
 
 	UpdateMatrix();
 
@@ -265,11 +267,8 @@ void Instancing::UpdateMatrix()
 	float kClientWidth = WindowAPI::kClientWidth;
 	float kClientHeight = WindowAPI::kClientHeight;
 	Matrix4x4 projectionMatrix = MatLib::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
-	//Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
-	//wvpData->World = worldMatrix;
-	//wvpData->WVP = worldViewProjectionMatrix;
 
-	for (uint32_t i = 0; i < instancingCount_; ++i) {
+	for (uint32_t i = 0; i < kMaxCount_; ++i) {
 		Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix(transforms[i].scale, transforms[i].rotate, transforms[i].translate);
 		Matrix4x4 worldViewProjectionMatrix = MatLib::Multiply(worldMatrix, MatLib::Multiply(viewMatrix, projectionMatrix));
 
@@ -279,6 +278,17 @@ void Instancing::UpdateMatrix()
 		//tag[i] = name + std::to_string(i);
 
 	}
+}
+
+void Instancing::ImGuiWidget()
+{
+	ImGui::Begin("Instancing");
+	for (int i = 0; i < (int)kMaxCount_; ++i) {
+		std::string name = "Pos" + std::to_string(i);
+		ImGui::DragFloat3(name.c_str(), &transforms->translate.x);
+	}
+
+	ImGui::End();
 }
 
 void Instancing::Draw()
@@ -301,7 +311,7 @@ void Instancing::Draw()
 	// インデックスバッファをセット
 	//sCommandList_->IASetIndexBuffer(&vbView);
 
-	sCommandList_->DrawInstanced(UINT(modelData_.vertices.size()), 5, 0, 0);
+	sCommandList_->DrawInstanced(UINT(modelData_.vertices.size()), kMaxCount_, 0, 0);
 
 }
 

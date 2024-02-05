@@ -49,7 +49,7 @@ private:
 	uint32_t instancingCount_;
 
 private:
-	Transform transforms[10];
+	Transform transforms[20];
 	Transform cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
 public:
@@ -61,6 +61,7 @@ public:
 	void Initialize();
 	void Update();
 	void UpdateMatrix();
+	void ImGuiWidget();
 	void Draw();
 
 public:
