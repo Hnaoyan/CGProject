@@ -601,6 +601,8 @@
     <FxCompile Include="Resources\shaders\ParticleVS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shaders\InstancingVS.hlsl" />
+    <FxCompile Include="Resources\shaders\InstancingPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -612,5 +614,6 @@
     <None Include="Resources\shaders\Particle.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
+    <None Include="Resources\shaders\Instancing.hlsli" />
   </ItemGroup>
 </Project>

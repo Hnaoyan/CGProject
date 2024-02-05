@@ -1,5 +1,6 @@
 #pragma once
 #include "IScene.h"
+#include "Drawer/Instancing.h"
 
 class SampleScene : public IScene
 {
@@ -28,6 +29,9 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw() override;
+
+private:
+	Instancing* inst_;
 
 };
 
