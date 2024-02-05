@@ -137,7 +137,7 @@ void Instancing::Create()
 	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	instancingSrvDesc.Buffer.FirstElement = 0;
 	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	instancingSrvDesc.Buffer.NumElements = kMaxCount_;
+	instancingSrvDesc.Buffer.NumElements = kMaxSize;
 	instancingSrvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
@@ -160,13 +160,13 @@ void Instancing::Create()
 
 void Instancing::CreateData()
 {
-	instancingResource_ = CreateBufferResource(device_, sizeof(ParticleForGPU) * kMaxCount_);
+	instancingResource_ = CreateBufferResource(device_, sizeof(ParticleForGPU) * kMaxSize);
 	// データを書き込む
 	instancingData_ = nullptr;
 	// 書き込むためのアドレスを取得
 	instancingResource_->Map(0, nullptr, reinterpret_cast<void**>(&instancingData_));
 	// 単位行列を書き込んでおく
-	for (uint32_t index = 0; index < kMaxCount_; ++index) {
+	for (uint32_t index = 0; index < kMaxSize; ++index) {
 		instancingData_[index].WVP = MatLib::MakeIdentity4x4();
 		instancingData_[index].World = MatLib::MakeIdentity4x4();
 		instancingData_[index].color = { 1.0f,1.0f,1.0f,1.0f };
@@ -229,7 +229,7 @@ void Instancing::CreateTexture()
 	instancingSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	instancingSrvDesc.Buffer.FirstElement = 0;
 	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	instancingSrvDesc.Buffer.NumElements = kMaxCount_;
+	instancingSrvDesc.Buffer.NumElements = kMaxSize;
 	instancingSrvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -254,13 +254,21 @@ void Instancing::Initialize()
 		//transforms[i].transform.rotate = {};
 		//transforms[i].transform.translate = { i * 0.1f,i * 0.1f,i * 0.1f };
 		//transforms[i].velocity = { randi(randomEngine_),randi(randomEngine_),randi(randomEngine_) };
-		transforms[i] = MakeNew(randomEngine_);
+		//particles_.push_back(MakeNew(randomEngine_));
 	}
 	cameraTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 }
 
 void Instancing::Update()
 {
+
+	if (Input::GetInstance()->TriggerKey(DIK_H)) {
+		uint32_t num = 5;
+		for (uint32_t i = 0; i < num; ++i) {
+			particles_.push_back(MakeNew(randomEngine_));
+		}
+
+	}
 
 	ImGuiWidget();
 
@@ -277,26 +285,54 @@ void Instancing::UpdateMatrix()
 	float kClientHeight = WindowAPI::kClientHeight;
 	Matrix4x4 projectionMatrix = MatLib::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
 	numCount_ = 0;
-	for (uint32_t i = 0; i < kMaxCount_; ++i) {
-		if (transforms[i].lifeTime <= transforms[i].currentTime) {
+	//for (uint32_t i = 0; i < kMaxCount_; ++i) {
+	//	if (transforms[i].lifeTime <= transforms[i].currentTime) {
+	//		continue;
+	//	}
+
+	//	Vector3 newVelocity = transforms[i].velocity * (1.0f / 60.0f);
+	//	Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix(transforms[i].transform.scale, transforms[i].transform.rotate, transforms[i].transform.translate);
+	//	Matrix4x4 worldViewProjectionMatrix = MatLib::Multiply(worldMatrix, MatLib::Multiply(viewMatrix, projectionMatrix));
+
+	//	transforms[i].transform.translate += newVelocity;
+	//	transforms[i].currentTime += (1.0f / 60.0f);
+
+	//	float alpha = 1.0f - (transforms[i].currentTime / transforms[i].lifeTime);
+
+	//	instancingData_[numCount_].WVP = worldViewProjectionMatrix;
+	//	instancingData_[numCount_].World = worldMatrix;
+	//	instancingData_[numCount_].color = transforms[i].color;
+	//	instancingData_[numCount_].color.w = alpha;
+	//	++numCount_;
+	//}
+
+	for (std::list<ParticleStruct>::iterator particleIte = particles_.begin();
+		particleIte != particles_.end();) {
+		if ((*particleIte).lifeTime <= (*particleIte).currentTime) {
+			particleIte = particles_.erase(particleIte);
 			continue;
 		}
 
-		Vector3 newVelocity = transforms[i].velocity * (1.0f / 60.0f);
-		Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix(transforms[i].transform.scale, transforms[i].transform.rotate, transforms[i].transform.translate);
-		Matrix4x4 worldViewProjectionMatrix = MatLib::Multiply(worldMatrix, MatLib::Multiply(viewMatrix, projectionMatrix));
+		Vector3 newVelocity = (*particleIte).velocity * (1.0f / 60.0f);
+		Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix((*particleIte).transform.scale, (*particleIte).transform.rotate, (*particleIte).transform.translate);
 
-		transforms[i].transform.translate += newVelocity;
-		transforms[i].currentTime += (1.0f / 60.0f);
+		(*particleIte).transform.translate += newVelocity;
+		(*particleIte).currentTime += (1.0f / 60.0f);
 
-		float alpha = 1.0f - (transforms[i].currentTime / transforms[i].lifeTime);
+		float alpha = 1.0f - ((*particleIte).currentTime / (*particleIte).lifeTime);
+		if (numCount_ < kMaxSize) {
 
-		instancingData_[numCount_].WVP = worldViewProjectionMatrix;
-		instancingData_[numCount_].World = worldMatrix;
-		instancingData_[numCount_].color = transforms[i].color;
-		instancingData_[numCount_].color.w = alpha;
-		++numCount_;
+			Matrix4x4 worldViewProjectionMatrix = MatLib::Multiply(worldMatrix, MatLib::Multiply(viewMatrix, projectionMatrix));
+			
+			instancingData_[numCount_].WVP = worldViewProjectionMatrix;
+			instancingData_[numCount_].World = worldMatrix;
+			instancingData_[numCount_].color = (*particleIte).color;
+			instancingData_[numCount_].color.w = alpha;
+			++numCount_;
+		}
+		++particleIte;
 	}
+
 }
 
 void Instancing::ImGuiWidget()
@@ -305,12 +341,12 @@ void Instancing::ImGuiWidget()
 	
 	ImGui::DragFloat3("Camera", &cameraTransform_.translate.x);
 	
-	for (int i = 0; i < (int)kMaxCount_; ++i) {
-		std::string name = "Pos" + std::to_string(i);
-		ImGui::DragFloat3(name.c_str(), &transforms[i].transform.translate.x);
-		name = "Color" + std::to_string(i);
-		ImGui::DragFloat3(name.c_str(), &transforms[i].color.x);
-	}
+	//for (int i = 0; i < (int)kMaxCount_; ++i) {
+	//	std::string name = "Pos" + std::to_string(i);
+	//	ImGui::DragFloat3(name.c_str(), &transforms[i].transform.translate.x);
+	//	name = "Color" + std::to_string(i);
+	//	ImGui::DragFloat3(name.c_str(), &transforms[i].color.x);
+	//}
 
 	ImGui::End();
 }

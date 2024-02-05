@@ -40,6 +40,13 @@ private:
 		Vector3 translate;
 	};
 
+	struct Emitter {
+		TransformInstance transform;
+		uint32_t count;
+		float frequency;
+		float frequencyTime;
+	};
+
 	struct ParticleStruct {
 		TransformInstance transform;
 		Vector3 velocity;
@@ -61,6 +68,7 @@ private:
 		float intensity;	// 輝度
 	};
 private:
+	const uint32_t kMaxSize = 200;
 	uint32_t kMaxCount_ = 20;
 	uint32_t numCount_ = 0;
 
@@ -69,7 +77,8 @@ private:
 	std::mt19937 randomEngine_;
 
 private:
-	ParticleStruct transforms[20];
+	std::list<ParticleStruct> particles_;
+	//ParticleStruct transforms[20];
 	TransformInstance cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
 public:
@@ -92,6 +101,8 @@ public:
 
 private:
 	ParticleStruct MakeNew(std::mt19937& randomEngine);
+
+	//std::list<ParticleStruct> Emit(const Emitter& emitter, std::mt19937& randomEngine);
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
