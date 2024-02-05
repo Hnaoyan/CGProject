@@ -12,9 +12,8 @@ void MyGame::Initialize()
 	Editor::GetInstance()->LoadFiles();
 	// シーンの初期化
 	sceneFactory_ = new SceneFactory();
-	sceneManager_ = SceneManager::GetInstance();
-	sceneManager_->SetSceneFactory(sceneFactory_);
-	sceneManager_->ChangeScene("TITLE");
+	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
+	SceneManager::GetInstance()->ChangeScene("TITLE");
 }
 
 void MyGame::Finalize()
@@ -44,7 +43,7 @@ void MyGame::Update()
 #endif // _DEBUG
 
 	// ゲームシーン更新処理
-	sceneManager_->Update();
+	SceneManager::GetInstance()->Update();
 
 }
 
@@ -54,7 +53,7 @@ void MyGame::Draw()
 	dxCommon->PreDraw();
 
 	// ゲームシーン描画処理
-	sceneManager_->Draw();
+	SceneManager::GetInstance()->Draw();
 
 	// ImGui受付終了
 	imguiManager_->End();

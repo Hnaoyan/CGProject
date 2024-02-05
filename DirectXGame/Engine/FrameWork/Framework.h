@@ -67,7 +67,8 @@ protected:
 	SceneManager* sceneManager_ = nullptr;
 	ImGuiManager* imguiManager_ = nullptr;
 	TransitionManager* transitionManager_ = nullptr;
-	AudioManager* audioManager_ = nullptr;
+	std::unique_ptr<AudioManager> audioManager_;
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 
 };
 
