@@ -3,6 +3,7 @@
 #include "StringManager.h"
 #include "MathLib.h"
 #include "imgui.h"
+#include "Input.h"
 
 #include <fstream>
 #include <sstream>
@@ -137,7 +138,7 @@ void Instancing::Create()
 	instancingSrvDesc.Buffer.FirstElement = 0;
 	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	instancingSrvDesc.Buffer.NumElements = kMaxCount_;
-	instancingSrvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
 	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
 	materialResource_ = CreateBufferResource(device_, sizeof(MaterialInfo));
@@ -159,7 +160,7 @@ void Instancing::Create()
 
 void Instancing::CreateData()
 {
-	instancingResource_ = CreateBufferResource(device_, sizeof(TransformationMatrix) * kMaxCount_);
+	instancingResource_ = CreateBufferResource(device_, sizeof(ParticleForGPU) * kMaxCount_);
 	// データを書き込む
 	instancingData_ = nullptr;
 	// 書き込むためのアドレスを取得
@@ -168,6 +169,7 @@ void Instancing::CreateData()
 	for (uint32_t index = 0; index < kMaxCount_; ++index) {
 		instancingData_[index].WVP = MatLib::MakeIdentity4x4();
 		instancingData_[index].World = MatLib::MakeIdentity4x4();
+		instancingData_[index].color = { 1.0f,1.0f,1.0f,1.0f };
 	}
 
 }
@@ -228,7 +230,7 @@ void Instancing::CreateTexture()
 	instancingSrvDesc.Buffer.FirstElement = 0;
 	instancingSrvDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	instancingSrvDesc.Buffer.NumElements = kMaxCount_;
-	instancingSrvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
+	instancingSrvDesc.Buffer.StructureByteStride = sizeof(ParticleForGPU);
 
 	const uint32_t descriptorSizeSRV = device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
@@ -243,12 +245,16 @@ void Instancing::CreateTexture()
 
 void Instancing::Initialize()
 {
-	instancingCount_ = 10;
+	numCount_ = 0;
+
+	std::uniform_real_distribution<float> randi(-1.0f, 1.0f);
 
 	for (uint32_t i = 0; i < kMaxCount_; ++i) {
-		transforms[i].scale = { 1,1,1 };
-		transforms[i].rotate = {};
-		transforms[i].translate = { i * 0.1f,i * 0.1f,i * 0.1f };
+		//transforms[i].transform.scale = { 1,1,1 };
+		//transforms[i].transform.rotate = {};
+		//transforms[i].transform.translate = { i * 0.1f,i * 0.1f,i * 0.1f };
+		//transforms[i].velocity = { randi(randomEngine_),randi(randomEngine_),randi(randomEngine_) };
+		transforms[i] = MakeNew(randomEngine_);
 	}
 	cameraTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 }
@@ -270,16 +276,26 @@ void Instancing::UpdateMatrix()
 	float kClientWidth = WindowAPI::kClientWidth;
 	float kClientHeight = WindowAPI::kClientHeight;
 	Matrix4x4 projectionMatrix = MatLib::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
-
+	numCount_ = 0;
 	for (uint32_t i = 0; i < kMaxCount_; ++i) {
-		Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix(transforms[i].scale, transforms[i].rotate, transforms[i].translate);
+		if (transforms[i].lifeTime <= transforms[i].currentTime) {
+			continue;
+		}
+
+		Vector3 newVelocity = transforms[i].velocity * (1.0f / 60.0f);
+		Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix(transforms[i].transform.scale, transforms[i].transform.rotate, transforms[i].transform.translate);
 		Matrix4x4 worldViewProjectionMatrix = MatLib::Multiply(worldMatrix, MatLib::Multiply(viewMatrix, projectionMatrix));
 
-		instancingData_[i].WVP = worldViewProjectionMatrix;
-		instancingData_[i].World = worldMatrix;
+		transforms[i].transform.translate += newVelocity;
+		transforms[i].currentTime += (1.0f / 60.0f);
 
-		//tag[i] = name + std::to_string(i);
+		float alpha = 1.0f - (transforms[i].currentTime / transforms[i].lifeTime);
 
+		instancingData_[numCount_].WVP = worldViewProjectionMatrix;
+		instancingData_[numCount_].World = worldMatrix;
+		instancingData_[numCount_].color = transforms[i].color;
+		instancingData_[numCount_].color.w = alpha;
+		++numCount_;
 	}
 }
 
@@ -291,7 +307,9 @@ void Instancing::ImGuiWidget()
 	
 	for (int i = 0; i < (int)kMaxCount_; ++i) {
 		std::string name = "Pos" + std::to_string(i);
-		ImGui::DragFloat3(name.c_str(), &transforms[i].translate.x);
+		ImGui::DragFloat3(name.c_str(), &transforms[i].transform.translate.x);
+		name = "Color" + std::to_string(i);
+		ImGui::DragFloat3(name.c_str(), &transforms[i].color.x);
 	}
 
 	ImGui::End();
@@ -317,7 +335,13 @@ void Instancing::Draw()
 	// インデックスバッファをセット
 	//sCommandList_->IASetIndexBuffer(&vbView);
 
-	sCommandList_->DrawInstanced(UINT(modelData_.vertices.size()), kMaxCount_, 0, 0);
+	sCommandList_->DrawInstanced(UINT(modelData_.vertices.size()), numCount_, 0, 0);
+
+}
+
+void Instancing::Reset()
+{
+	
 
 }
 
@@ -340,6 +364,26 @@ void Instancing::PostDraw()
 {
 	// 解除
 	sCommandList_ = nullptr;
+}
+
+Instancing::ParticleStruct Instancing::MakeNew(std::mt19937& randomEngine)
+{
+	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+	ParticleStruct instance;
+	instance.transform.scale = { 1,1,1 };
+	instance.transform.rotate = {};
+	instance.transform.translate = { distribution(randomEngine),distribution(randomEngine),3.0f };
+	
+	instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
+	
+	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	instance.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine), 1.0f };
+
+	std::uniform_real_distribution<float> distTime(2.0f, 6.0f);
+	instance.lifeTime = distTime(randomEngine);
+	instance.currentTime = 0;
+
+	return instance;
 }
 
 ModelData Instancing::LoadPlane(const std::string& directory, const std::string& fileName)

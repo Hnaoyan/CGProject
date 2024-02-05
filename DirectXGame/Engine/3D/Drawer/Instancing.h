@@ -1,6 +1,7 @@
 #pragma once
 #include "StructManager.h"
 #include "DirectXCommon.h"
+#include <random>
 #include <memory>
 
 struct VertexDataInst {
@@ -20,6 +21,12 @@ struct ModelData {
 
 class Instancing
 {
+public:	
+	Instancing() : seedGenerator_(), randomEngine_(seedGenerator_())
+	{
+
+	}
+
 private:
 
 	struct MaterialInfo {
@@ -33,10 +40,19 @@ private:
 		Vector3 translate;
 	};
 
-	struct TransformationMatrix
+	struct ParticleStruct {
+		TransformInstance transform;
+		Vector3 velocity;
+		Vector4 color;
+		float lifeTime;
+		float currentTime;
+	};
+
+	struct ParticleForGPU
 	{
 		Matrix4x4 WVP;
 		Matrix4x4 World;
+		Vector4 color;
 	};
 
 	struct DirectionalLight {
@@ -46,10 +62,14 @@ private:
 	};
 private:
 	uint32_t kMaxCount_ = 20;
-	uint32_t instancingCount_;
+	uint32_t numCount_ = 0;
+
+
+	std::random_device seedGenerator_;
+	std::mt19937 randomEngine_;
 
 private:
-	TransformInstance transforms[20];
+	ParticleStruct transforms[20];
 	TransformInstance cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
 public:
@@ -64,9 +84,14 @@ public:
 	void ImGuiWidget();
 	void Draw();
 
+	void Reset();
+
 public:
 	void PreDraw(ID3D12GraphicsCommandList* commandList);
 	void PostDraw();
+
+private:
+	ParticleStruct MakeNew(std::mt19937& randomEngine);
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
@@ -93,18 +118,18 @@ private:
 	ID3D12Resource* vertexResource_ = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW vbView{};
 
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[1];
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[1];
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU[1]{};
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU[1]{};
 
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> texResource_;
 
-	TransformationMatrix* instancingData_ = nullptr;
+	ParticleForGPU* instancingData_ = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource_;
 
 
-	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU;
-	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU;
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU{};
+	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU{};
 
 };
 
