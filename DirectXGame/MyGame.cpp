@@ -13,7 +13,7 @@ void MyGame::Initialize()
 	// シーンの初期化
 	sceneFactory_ = new SceneFactory();
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
-	SceneManager::GetInstance()->ChangeScene("TITLE");
+	SceneManager::GetInstance()->ChangeScene("SAMPLE");
 }
 
 void MyGame::Finalize()
