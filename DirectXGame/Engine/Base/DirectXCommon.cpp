@@ -2,6 +2,7 @@
 #include "Graphics/PipelineManager.h"
 #include "DescriptorManager.h"
 #include <cassert>
+#include <thread>
 
 using namespace Microsoft::WRL;
 

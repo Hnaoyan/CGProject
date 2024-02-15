@@ -303,26 +303,7 @@ void Instancing::UpdateMatrix()
 	float kClientHeight = WindowAPI::kClientHeight;
 	Matrix4x4 projectionMatrix = MatLib::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
 	numCount_ = 0;
-	//for (uint32_t i = 0; i < kMaxCount_; ++i) {
-	//	if (transforms[i].lifeTime <= transforms[i].currentTime) {
-	//		continue;
-	//	}
 
-	//	Vector3 newVelocity = transforms[i].velocity * (1.0f / 60.0f);
-	//	Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix(transforms[i].transform.scale, transforms[i].transform.rotate, transforms[i].transform.translate);
-	//	Matrix4x4 worldViewProjectionMatrix = MatLib::Multiply(worldMatrix, MatLib::Multiply(viewMatrix, projectionMatrix));
-
-	//	transforms[i].transform.translate += newVelocity;
-	//	transforms[i].currentTime += (1.0f / 60.0f);
-
-	//	float alpha = 1.0f - (transforms[i].currentTime / transforms[i].lifeTime);
-
-	//	instancingData_[numCount_].WVP = worldViewProjectionMatrix;
-	//	instancingData_[numCount_].World = worldMatrix;
-	//	instancingData_[numCount_].color = transforms[i].color;
-	//	instancingData_[numCount_].color.w = alpha;
-	//	++numCount_;
-	//}
 
 	for (std::list<ParticleStruct>::iterator particleIte = particles_.begin();
 		particleIte != particles_.end();) {
