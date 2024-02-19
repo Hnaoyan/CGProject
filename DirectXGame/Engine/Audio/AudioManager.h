@@ -1,20 +1,20 @@
 #pragma once
 #include "Audio.h"
+#include "NLib/NBase/Singleton.h"
 #include <vector>
 
 /// <summary>
 /// 音源を管理するクラス
 /// </summary>
-class AudioManager
+class AudioManager : public Singleton<AudioManager>
 {
 public:
 	AudioManager();
-	~AudioManager() = default;
 
-	static AudioManager* GetInstance() {
-		static AudioManager instance;
-		return &instance;
-	}
+	//static AudioManager* GetInstance() {
+	//	static AudioManager instance;
+	//	return &instance;
+	//}
 
 public:
 	/// <summary>

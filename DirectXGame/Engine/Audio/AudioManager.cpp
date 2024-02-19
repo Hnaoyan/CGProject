@@ -9,24 +9,24 @@ AudioManager::AudioManager()
 
 void AudioManager::PlayAudio(uint32_t soundHandle, bool isLoop, float volume)
 {
-	if (!Audio::GetInstance()->IsPlaying(soundHandle)) {
-		Audio::GetInstance()->PlayWave(soundHandle, isLoop, volume);
+	if (!audio_->IsPlaying(soundHandle)) {
+		audio_->PlayWave(soundHandle, isLoop, volume);
 	}
 	else {
-		Audio::GetInstance()->StopWave(soundHandle);
-		Audio::GetInstance()->PlayWave(soundHandle, isLoop, volume);
+		audio_->StopWave(soundHandle);
+		audio_->PlayWave(soundHandle, isLoop, volume);
 	}
 }
 
 void AudioManager::PlayAudio(const char* soundID, bool isLoop, float volume)
 {
-	Audio::GetInstance()->PlayWave(GetSound(soundID), isLoop, volume);
-	if (!Audio::GetInstance()->IsPlaying(GetSound(soundID))) {
-		Audio::GetInstance()->PlayWave(GetSound(soundID), isLoop, volume);
+	audio_->PlayWave(GetSound(soundID), isLoop, volume);
+	if (!audio_->IsPlaying(GetSound(soundID))) {
+		audio_->PlayWave(GetSound(soundID), isLoop, volume);
 	}
 	else {
-		Audio::GetInstance()->StopWave(GetSound(soundID));
-		Audio::GetInstance()->PlayWave(GetSound(soundID), isLoop, volume);
+		audio_->StopWave(GetSound(soundID));
+		audio_->PlayWave(GetSound(soundID), isLoop, volume);
 	}
 }
 
