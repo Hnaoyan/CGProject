@@ -1,8 +1,10 @@
 #pragma once
-#include "BaseCharacter.h"
 #include "Enemy/EnemyManager.h"
 #include "Missile/MissileManager.h"
 #include "Input.h"
+#include "Model.h"
+#include "ViewProjection.h"
+#include "WorldTransform.h"
 
 #include <optional>
 #include <functional>

@@ -1,7 +1,9 @@
 #pragma once
-#include "BaseCharacter.h"
 #include "Input.h"
 #include "Collider.h"
+#include "Model.h"
+#include "ViewProjection.h"
+#include "WorldTransform.h"
 
 #include <optional>
 #include <functional>
