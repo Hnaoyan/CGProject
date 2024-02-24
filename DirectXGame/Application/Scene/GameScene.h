@@ -83,6 +83,9 @@ private:	// メンバポインタ
 	// 仮のオブジェクト
 	std::unique_ptr<Model> model_;
 
+	std::unique_ptr<Model> planeModel_;
+	WorldTransform planeWTF_;
+
 	std::unique_ptr<Sprite> back_;
 
 	SpriteInfo uiInfo_ = {};

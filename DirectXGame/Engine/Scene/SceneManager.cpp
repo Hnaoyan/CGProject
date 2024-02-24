@@ -116,27 +116,27 @@ void SceneManager::GEYOU()
 		isChangeNow_ = false;
 	}
 
-	if (Input::GetInstance()->TriggerKey(DIK_7)) {
-		if (!isChangeNow_) {
-			ChangeScene("TITLE");
-		}
-	}
-	if (Input::GetInstance()->TriggerKey(DIK_8)) {
-		if (!isChangeNow_) {
-			ChangeScene("GAME");
-		}
+	//if (Input::GetInstance()->TriggerKey(DIK_7)) {
+	//	if (!isChangeNow_) {
+	//		ChangeScene("TITLE");
+	//	}
+	//}
+	//if (Input::GetInstance()->TriggerKey(DIK_8)) {
+	//	if (!isChangeNow_) {
+	//		ChangeScene("GAME");
+	//	}
 
-	}
-	if (Input::GetInstance()->TriggerKey(DIK_9)) {
-		if (!isChangeNow_) {
-			ChangeScene("CLEAR");
-		}
+	//}
+	//if (Input::GetInstance()->TriggerKey(DIK_9)) {
+	//	if (!isChangeNow_) {
+	//		ChangeScene("CLEAR");
+	//	}
 
-	}
-	if (Input::GetInstance()->TriggerKey(DIK_0)) {
-		if (!isChangeNow_) {
-			ChangeScene("SAMPLE");
-		}
+	//}
+	//if (Input::GetInstance()->TriggerKey(DIK_0)) {
+	//	if (!isChangeNow_) {
+	//		ChangeScene("SAMPLE");
+	//	}
 
-	}
+	//}
 }

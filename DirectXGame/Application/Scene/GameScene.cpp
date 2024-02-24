@@ -6,6 +6,7 @@
 GameScene::GameScene() 
 {
 	model_.reset(Model::Create());
+	planeModel_.reset(Model::CreatePlane());
 	//model_.reset(Model::CreateFromObj("Bullet", false));
 }
 
@@ -55,6 +56,11 @@ void GameScene::Initialize() {
 
 	ui_.reset(Sprite::Create(texture, uiInfo_.position, uiInfo_.color, uiInfo_.anchor, false, false));
 
+	planeWTF_.Initialize();
+	planeWTF_.translation_.y = -30.0f / 2;
+	planeWTF_.scale_ = { 50.0f,50.0f,1.0f };
+	planeWTF_.rotation_.x = 1.57f;
+	planeWTF_.UpdateMatrix();
 }
 
 void GameScene::Update()
@@ -71,9 +77,14 @@ void GameScene::Update()
 	}
 	ImGui::Begin("test");
 	ImGui::Text("MaxFPS : %f", frame_);
+
+	ImGui::DragFloat3("positionPlane", &planeWTF_.translation_.x, 0.01f);
+	ImGui::DragFloat3("scalePlane", &planeWTF_.scale_.x, 0.01f);
+	ImGui::DragFloat3("RotatePlane", &planeWTF_.rotation_.x,0.01f);
+
 	ImGui::End();
 #endif // _DEBUG
-
+	planeWTF_.UpdateMatrix();
 	particleManager_->Update();
 	particleManager_->SetView(&viewProjection_);
 
@@ -122,6 +133,8 @@ void GameScene::Draw() {
 	enemyManager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 	missileManager_->Draw(viewProjection_);
+
+	planeModel_->Draw(planeWTF_, viewProjection_);
 
 	particleManager_->Draw(viewProjection_);
 
