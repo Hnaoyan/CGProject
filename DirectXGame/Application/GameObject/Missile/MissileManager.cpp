@@ -147,33 +147,33 @@ void MissileManager::BurstTheGravity(const MissileConfig info)
 
 #pragma region 上下左右
 	// 上
-	config.direct = { 0,1,0 };
-	AddMissileNoneType(config, kSlerp);
+	config.direct = { 0,1,0.2f };
+	AddMissileNoneType(config, kV2);
 	// 下
-	config.direct = { 0,-1,0 };
-	AddMissileNoneType(config, kSlerp);
+	config.direct = { 0,-1,0.2f };
+	AddMissileNoneType(config, kV2);
 
 	// 右
-	config.direct = { 1,0,0 };
-	AddMissileNoneType(config, kSlerp);
+	config.direct = { 1,0,0.2f };
+	AddMissileNoneType(config, kV2);
 	// 左
-	config.direct = { -1,0,0 };
-	AddMissileNoneType(config, kSlerp);
+	config.direct = { -1,0,0.2f };
+	AddMissileNoneType(config, kV2);
 #pragma endregion
 
 #pragma region 斜め
 	// 左上
-	config.direct = { -1,1,0 };
+	config.direct = { -1,1,0.2f };
 	AddMissileNoneType(config, kV2);
 	// 左下
-	config.direct = { -1,-1,0 };
+	config.direct = { -1,-1,0.2f };
 	AddMissileNoneType(config, kV2);
 
 	// 右上
-	config.direct = { 1,1,0 };
+	config.direct = { 1,1,0.2f };
 	AddMissileNoneType(config, kV2);
 	// 右下
-	config.direct = { 1,-1,0 };
+	config.direct = { 1,-1,0.2f };
 	AddMissileNoneType(config, kV2);
 #pragma endregion
 
@@ -189,11 +189,11 @@ void MissileManager::Ashen(const MissileConfig info)
 
 	MissileConfig config = info;
 	// 左下
-	config.direct = { -0.6f, -1.0f,0 };
+	config.direct = { -0.6f, 1.0f,1.0f };
 	AddMissileNoneType(config, kV1);
 
 	// 右下
-	config.direct = { 0.6f, -1.0f,0 };
+	config.direct = { 0.6f, 1.0f,1.0f };
 	AddMissileNoneType(config, kV1);
 
 	targetPtr_ = config.ptr;

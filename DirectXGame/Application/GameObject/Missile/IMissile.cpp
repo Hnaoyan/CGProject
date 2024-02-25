@@ -5,6 +5,7 @@
 #include "WindowAPI.h"
 
 #include <algorithm>
+#include <cmath>
 
 uint32_t IMissile::sSerialNumber_ = 1;
 
@@ -202,13 +203,15 @@ void IMissile::TrackingMissileV1()
 	}
 
 	float maxCentripetalAccel = std::powf(kBulletSpeed_, 2) / lerpRad_;
+	//float maxAccelLimit = 5.0f;
+	//float maxCentripetalAccel = std::min(std::powf(kBulletSpeed_, 2) / lerpRad_, maxAccelLimit);
 	Vector3 force = centripetalAccel * maxCentripetalAccel;
 
 	float propulsion = kBulletSpeed_ * damping_;
 
 	force += nowDirect * propulsion;
 	force -= velocity_ * damping_;
-	acceleration_ = force * NLib::GetDeltaTime(60.0f);
+	acceleration_ = force * NLib::GetDeltaTime(240.0f);
 	//velocity_ += force * NLib::GetDeltaTime(60.0f);
 }
 
@@ -235,7 +238,7 @@ void IMissile::TrackingMissileV2()
 
 	force += nowDirect * propulsion;
 	force -= velocity_ * damping_;
-	acceleration_ = force * NLib::GetDeltaTime(60.0f);
+	acceleration_ = force * NLib::GetDeltaTime(120.0f);
 
 	if (cancelCount_ > kCancelTime) {
 		target_ = nullptr;
@@ -374,6 +377,28 @@ void IMissile::ProportionalV4()
 	velocity_ += (newVd * kSpeedValue) * NLib::GetDeltaTime(60.0f);
 
 #pragma endregion
+	//Vector3 toTarget = target_->GetWorldPosition() - GetWorldPosition();
+	//Vector3 nowDirect = MathCalc::Normalize(velocity_);
+	//float dot = MathCalc::Dot(toTarget, nowDirect);
+	//Vector3 centripetalAccel = toTarget - (nowDirect * dot);
+	//float centripetalAccelMagnitude = MathCalc::Length(centripetalAccel);
+
+	//if (centripetalAccelMagnitude > 1.0f)
+	//{
+	//	centripetalAccel /= centripetalAccelMagnitude;
+	//}
+
+	//float maxCentripetalAccel = std::powf(kBulletSpeed_, 2) / lerpRad_;
+	////float maxAccelLimit = 5.0f;
+	////float maxCentripetalAccel = std::min(std::powf(kBulletSpeed_, 2) / lerpRad_, maxAccelLimit);
+	//Vector3 force = centripetalAccel * maxCentripetalAccel;
+
+	//float propulsion = kBulletSpeed_ * damping_;
+
+	//force += nowDirect * propulsion;
+	//force -= velocity_ * damping_;
+	//acceleration_ = force * NLib::GetDeltaTime(60.0f);
+
 }
 
 void IMissile::ProportionalV6()

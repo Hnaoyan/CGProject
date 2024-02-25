@@ -33,6 +33,11 @@ void GameScene::Initialize() {
 	fixedPointCamera_ = std::make_unique<FixedPointCam>();
 	fixedPointCamera_->Initialize();
 
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+	followCamera_->SetPlayer(player_.get());
+	followCamera_->SetTarget(player_->GetTargetAddress());
+
 	viewProjection_.translate_ = { 0,6.0f,-75.0f };
 	missileManager_ = std::make_unique<MissileManager>();
 	missileManager_->Initialize();
@@ -61,6 +66,7 @@ void GameScene::Initialize() {
 	planeWTF_.scale_ = { 50.0f,50.0f,1.0f };
 	planeWTF_.rotation_.x = 1.57f;
 	planeWTF_.UpdateMatrix();
+	planeModel_->SetAlphaValue(0.5f);
 }
 
 void GameScene::Update()
@@ -169,6 +175,7 @@ void GameScene::CameraUpdate()
 #endif // DEBUG
 
 	fixedPointCamera_->Update();
+	followCamera_->Update();
 
 
 	// デバックカメラ
@@ -176,8 +183,10 @@ void GameScene::CameraUpdate()
 
 	}
 	else {
-		viewProjection_.matView = fixedPointCamera_->GetView().matView;
-		viewProjection_.matProjection = fixedPointCamera_->GetView().matProjection;
+		//viewProjection_.matView = fixedPointCamera_->GetView().matView;
+		//viewProjection_.matProjection = fixedPointCamera_->GetView().matProjection;
+		viewProjection_.matView = followCamera_->GetView().matView;
+		viewProjection_.matProjection = followCamera_->GetView().matProjection;
 		viewProjection_.TransferMatrix();
 	}
 }

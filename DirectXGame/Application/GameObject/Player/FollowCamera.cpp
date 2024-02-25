@@ -9,7 +9,7 @@ void FollowCamera::Initialize() {
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	defaultTranslate_ = viewProjection_.translate_;
-	defaultOffset = {0.0f, 6.0f, -25.0f};
+	defaultOffset = {0.0f, 6.0f, -35.0f};
 
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "FollowCamera";
@@ -35,11 +35,11 @@ void FollowCamera::Update() {
 			float rotateSpeed = 0.02f;
 
 			destinationAngleY_ += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * rotateSpeed;
-			//viewProjection_.rotation_.x += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * rotateSpeed;
+			viewProjection_.rotation_.x += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * rotateSpeed;
 
 		}
 
-		viewProjection_.rotation_.y = MathCalc::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, 0.1f);
+		//viewProjection_.rotation_.y = MathCalc::LerpShortAngle(viewProjection_.rotation_.y, destinationAngleY_, 0.1f);
 
 		// 遅延追尾
 		interTarget_ = MathCalc::Lerp(interTarget_, worldPosition, delayRate_);
@@ -48,6 +48,8 @@ void FollowCamera::Update() {
 	}
 
 	// ビュー行列の更新・転送
+	Vector3 move = targetObject_->GetMoveVector();
+	viewProjection_.rotation_.y = MathCalc::CalculateYawFromVector(Vector3(move.x, 0, move.z));
 	viewProjection_.UpdateMatrix();
 }
 
@@ -78,6 +80,10 @@ Vector3 FollowCamera::SetOffset() const
 {
 	// カメラまでのオフセット
 	Vector3 offset = defaultOffset;
+	//if (targetObject_) {
+	//	float distance = 50.0f;
+	//	offset = targetObject_->GetMoveVector() * -distance;
+	//}
 	// 回転行列の合成
 	Matrix4x4 rotateMatrix = MatLib::Multiply(
 		MatLib::MakeRotateXMatrix(viewProjection_.rotation_.x),

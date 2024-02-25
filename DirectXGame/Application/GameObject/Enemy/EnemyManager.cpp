@@ -8,7 +8,7 @@ void EnemyManager::Initialize()
 	propModel_.reset(Model::CreateFromObj("E_Propeller", true));
 	testEnemy_ = std::make_unique<Enemy>();
 	testEnemy_->Initialize(model_.get(),propModel_.get());
-	testEnemy_->SetPosition({ 0,0,35.0f });
+	//testEnemy_->SetPosition({ 0,0,35.0f });
 
 	hitPoint_ = 20;
 

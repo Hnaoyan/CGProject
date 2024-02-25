@@ -40,6 +40,8 @@ public:
 	void SetEnemyManager(EnemyManager* ptr) { enemyPtr_ = ptr; }
 	void SetMissileManager(MissileManager* ptr) { missileManager_ = ptr; }
 
+	Vector3 GetMoveVector() { return MathCalc::Normalize(moveDirect_); }
+
 private:
 	Input* input_ = nullptr;
 
@@ -59,6 +61,8 @@ private:
 	Vector3 missileDirect = {};
 
 	int missileType_ = MissileType::kSlerp;
+
+	Vector3 moveDirect_ = {};
 
 };
 

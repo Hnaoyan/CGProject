@@ -26,7 +26,7 @@ void Enemy::Initialize(Model* model,Model* propModel)
 void Enemy::TransformInitialize()
 {
 	worldTransform_.Initialize();
-	worldTransform_.translation_.z = 50.0f;
+	worldTransform_.translation_.z = 150.0f;
 
 	bodyTransform_.Initialize();
 	propTransform_.Initialize();
@@ -83,8 +83,9 @@ void Enemy::Update()
 		velocity_.z = -10.0f;
 	}
 	else {
-		velocity_.z = 0;
+
 	}
+	velocity_.z = 10.0f;
 
 	//switch (moveType_)
 	//{
@@ -131,23 +132,23 @@ void Enemy::Update()
 		}
 	}
 
-	Vector3 moveVector{};
+//	Vector3 moveVector{};
+//
+//#ifdef _DEBUG
+//	float speedValue = 10.0f;
+//
+//	XINPUT_STATE joyState;
+//	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+//		moveVector.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * speedValue;
+//		moveVector.y += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * speedValue;
+//		moveVector.z += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speedValue;
+//	}
+//
+//	ImGuiWidget();
+//
+//#endif // _DEBUG
 
-#ifdef _DEBUG
-	float speedValue = 10.0f;
-
-	XINPUT_STATE joyState;
-	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		moveVector.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * speedValue;
-		moveVector.y += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * speedValue;
-		moveVector.z += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speedValue;
-	}
-
-	ImGuiWidget();
-
-#endif // _DEBUG
-
-	worldTransform_.translation_ += (velocity_ + moveVector) * NLib::GetDeltaTime(60.0f);
+	worldTransform_.translation_ += (velocity_) * NLib::GetDeltaTime(60.0f);
 
 	worldTransform_.UpdateMatrix();
 	

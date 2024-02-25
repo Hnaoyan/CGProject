@@ -1,6 +1,7 @@
 #pragma once
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Player.h"
 
 class FollowCamera {
 public:
@@ -19,6 +20,8 @@ public:
 	/// </summary>
 	/// <param name="target"></param>
 	void SetTarget(const WorldTransform* target);
+
+	void SetPlayer(Player* player) { targetObject_ = player; }
 
 	ViewProjection GetView() { return viewProjection_; }
 
@@ -41,6 +44,8 @@ public:
 private:
 	// 追従対象
 	const WorldTransform* target_ = nullptr;
+
+	Player* targetObject_ = nullptr;
 
 	// ビュープロジェクション
 	ViewProjection viewProjection_;

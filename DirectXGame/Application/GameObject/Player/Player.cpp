@@ -12,6 +12,7 @@ void Player::Initialize(Model* model)
 	input_ = Input::GetInstance();
 	worldTransform_.Initialize();
 	worldTransform_.translation_.y = -4.0f;
+	moveDirect_ = {};
 
 }
 
@@ -39,7 +40,8 @@ void Player::Update()
 	XINPUT_STATE joyState;
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		moveVector.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * SpeedDelta(speedValue);
-		//moveVector.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * SpeedDelta(speedValue);
+		moveDirect_.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX;
+		//worldTransform_.rotation_.z = -moveDirect_.x;
 	}
 
 	//if (worldTransform_.translation_.x + moveVector.x > 10.0f) {
@@ -51,8 +53,14 @@ void Player::Update()
 	//	worldTransform_.translation_.x = -9.9f;
 	//	moveVector.x = 0;
 	//}
+	moveDirect_.z = 1.0f;
+	//moveDirect_.z *= 5.0f;
+	moveDirect_ = MathCalc::Normalize(moveDirect_) * 0.25f;
+	worldTransform_.translation_ += moveDirect_;
 
-	worldTransform_.translation_ += moveVector;
+	Vector3 move = MathCalc::Normalize(moveDirect_);
+	worldTransform_.rotation_.y = MathCalc::CalculateYawFromVector(Vector3(move.x, 0, move.z));
+
 	worldTransform_.UpdateMatrix();
 }
 
@@ -74,6 +82,7 @@ void Player::InputUpdate()
 		ImGui::TreePop();
 	}
 	ImGui::InputFloat3("rotate", &worldTransform_.rotation_.x);
+	ImGui::DragFloat3("MoveDirect", &moveDirect_.x);
 
 	ImGui::End();
 
