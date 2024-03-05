@@ -2,6 +2,10 @@
 #include "IScene.h"
 #include "Drawer/Instancing.h"
 #include "Player.h"
+#include "Sample/SamplePlayer.h"
+#include "Sample/SampleMissile.h"
+
+#include <list>
 
 class SampleScene : public IScene
 {
@@ -31,11 +35,22 @@ public: // メンバ関数
 	/// </summary>
 	void Draw() override;
 
+	void ImGuiUpdate();
+
 private:
 	Instancing* inst_;
 
 	WorldTransform plWTF_;
+
 	std::unique_ptr<Model> testModel_;
+
+	std::unique_ptr<SamplePlayer> target_;
+
+	std::list<SamplePlayer*> targetObjs_;
+
+	void RegisterList(const Vector3& position);
+
+	Vector3 newPoint = {};
 
 };
 
