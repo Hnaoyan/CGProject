@@ -91,7 +91,7 @@ public:
 	void Update();
 	void UpdateMatrix();
 	void ImGuiWidget();
-	void Draw();
+	void Draw(uint32_t tex);
 
 	void Reset();
 

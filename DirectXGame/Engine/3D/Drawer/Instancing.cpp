@@ -349,7 +349,7 @@ void Instancing::ImGuiWidget()
 	ImGui::End();
 }
 
-void Instancing::Draw()
+void Instancing::Draw(uint32_t tex)
 {
 	sCommandList_->SetPipelineState(PipelineManager::sParticlePipelineStates_.Get());
 
@@ -361,7 +361,10 @@ void Instancing::Draw()
 	// テーブル
 	sCommandList_->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
 	// テクスチャ
-	sCommandList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
+	//sCommandList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
+	 
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(sCommandList_, 2, tex);
+	
 	// ライティング
 	sCommandList_->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
 

@@ -24,7 +24,8 @@ void SampleScene::Initialize()
 	target_ = std::make_unique<SamplePlayer>();
 	target_->Initialize(testModel_.get());
 	target_->InitSetting({ 10.0f,0,100.0f });
-
+	texture_[0] = TextureManager::Load("uvChecker.png");
+	texture_[1] = TextureManager::Load("Texture/Circle.png");
 }
 
 void SampleScene::Update()
@@ -32,7 +33,7 @@ void SampleScene::Update()
 
 	ImGuiUpdate();
 
-	//inst_->Update();
+	inst_->Update();
 	target_->Update();
 
 	for (SamplePlayer* obj : targetObjs_) {
@@ -71,7 +72,7 @@ void SampleScene::Draw()
 	Model::PostDraw();
 
 	inst_->PreDraw(commandList);
-	//inst_->Draw();
+	inst_->Draw(texture_[1]);
 	inst_->PostDraw();
 
 }

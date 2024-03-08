@@ -52,5 +52,7 @@ private:
 
 	Vector3 newPoint = {};
 
+	uint32_t texture_[2];
+
 };
 
