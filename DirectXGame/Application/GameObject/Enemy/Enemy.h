@@ -62,6 +62,8 @@ private: //　アニメーション系
 	/// 浮遊移動のサイクル<frame>
 	int period = 60;
 
+	Vector3 stickVector_ = {};
+
 private:
 	enum MoveType {
 		kOne,

@@ -1,6 +1,7 @@
 #pragma once
 #include "StructManager.h"
 #include "DirectXCommon.h"
+#include "ViewProjection.h"
 #include <random>
 #include <memory>
 
@@ -81,19 +82,23 @@ private:
 	//ParticleStruct transforms[20];
 	TransformInstance cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
+	ViewProjection* camera_;
+
 public:
 	void Create();
 	void CreateData();
 	void CreateMesh();
 	void CreateTexture();
 
-	void Initialize();
+	void Initialize(ViewProjection* viewProjection);
 	void Update();
 	void UpdateMatrix();
 	void ImGuiWidget();
 	void Draw(uint32_t tex);
 
 	void Reset();
+
+	void AddEmitter(const Vector3& position);
 
 public:
 	void PreDraw(ID3D12GraphicsCommandList* commandList);
@@ -106,6 +111,8 @@ private:
 	std::list<ParticleStruct> Emit(const Emitter& emitter, std::mt19937& randomEngine);
 
 	Emitter emitter_;
+
+	std::list<Emitter> emitterLists_;
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;

@@ -188,6 +188,8 @@ void MissileManager::Ashen(const MissileConfig info)
 	isSeparate_ = true;
 
 	MissileConfig config = info;
+	// 対象の設定
+	targetPtr_ = config.ptr;
 	// 左下
 	config.direct = { -0.6f, 1.0f,1.0f };
 	AddMissileNoneType(config, kV1);
@@ -196,7 +198,6 @@ void MissileManager::Ashen(const MissileConfig info)
 	config.direct = { 0.6f, 1.0f,1.0f };
 	AddMissileNoneType(config, kV1);
 
-	targetPtr_ = config.ptr;
 
 }
 

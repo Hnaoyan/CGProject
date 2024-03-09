@@ -16,7 +16,7 @@ void SampleScene::Initialize()
 	IScene::Initialize();
 	inst_ = new Instancing();
 	inst_->Create();
-	inst_->Initialize();
+	inst_->Initialize(nullptr);
 
 	plWTF_.Initialize();
 	testModel_.reset(Model::Create());
@@ -33,7 +33,7 @@ void SampleScene::Update()
 
 	ImGuiUpdate();
 
-	inst_->Update();
+	//inst_->Update();
 	target_->Update();
 
 	for (SamplePlayer* obj : targetObjs_) {
@@ -72,7 +72,7 @@ void SampleScene::Draw()
 	Model::PostDraw();
 
 	inst_->PreDraw(commandList);
-	inst_->Draw(texture_[1]);
+	//inst_->Draw(texture_[1]);
 	inst_->PostDraw();
 
 }

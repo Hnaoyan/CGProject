@@ -241,7 +241,7 @@ void IMissile::TrackingMissileV2()
 	acceleration_ = force * NLib::GetDeltaTime(120.0f);
 
 	if (cancelCount_ > kCancelTime) {
-		target_ = nullptr;
+		//target_ = nullptr;
 	}
 
 }

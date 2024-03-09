@@ -41,6 +41,7 @@ void Player::Update()
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		moveVector.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * SpeedDelta(speedValue);
 		moveDirect_.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX;
+		moveDirect_.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX;
 		//worldTransform_.rotation_.z = -moveDirect_.x;
 	}
 
@@ -58,8 +59,8 @@ void Player::Update()
 	moveDirect_ = MathCalc::Normalize(moveDirect_) * 0.25f;
 	worldTransform_.translation_ += moveDirect_;
 
-	Vector3 move = MathCalc::Normalize(moveDirect_);
-	worldTransform_.rotation_.y = MathCalc::CalculateYawFromVector(Vector3(move.x, 0, move.z));
+	//Vector3 move = MathCalc::Normalize(moveDirect_);
+	//worldTransform_.rotation_.y = MathCalc::CalculateYawFromVector(Vector3(move.x, 0, move.z));
 
 	worldTransform_.UpdateMatrix();
 }

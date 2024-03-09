@@ -42,7 +42,7 @@ void Enemy::TransformInitialize()
 void Enemy::Update()
 {
 	moveCount_++;
-
+	//stickVector_ = {};
 	//const int kChengeCount = 450;
 
 	//float moveSpeed = 5.0f;
@@ -122,6 +122,13 @@ void Enemy::Update()
 	//	}
 	//	break;
 	//}
+	XINPUT_STATE joyState;
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		//moveVector.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * SpeedDelta(5.0f);
+		stickVector_.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * SpeedDelta(5.0f);
+		stickVector_.y += (float)joyState.Gamepad.sThumbRY / SHRT_MAX * SpeedDelta(5.0f);
+		//worldTransform_.rotation_.z = -moveDirect_.x;
+	}
 
 	if (isDead_) {
 		invisibleTimer_++;
@@ -144,11 +151,15 @@ void Enemy::Update()
 //		moveVector.z += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * speedValue;
 //	}
 //
-//	ImGuiWidget();
+	ImGuiWidget();
 //
 //#endif // _DEBUG
 
 	worldTransform_.translation_ += (velocity_) * NLib::GetDeltaTime(60.0f);
+
+	worldTransform_.translation_ += (stickVector_) * NLib::GetDeltaTime(60.0f);
+
+	worldTransform_.translation_.z += 3.0f * NLib::GetDeltaTime(60.0f);
 
 	worldTransform_.UpdateMatrix();
 	

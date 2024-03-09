@@ -243,7 +243,7 @@ void Instancing::CreateTexture()
 
 }
 
-void Instancing::Initialize()
+void Instancing::Initialize(ViewProjection* viewProjection)
 {
 	numCount_ = 0;
 
@@ -261,6 +261,8 @@ void Instancing::Initialize()
 	emitter_.frequency = 1.0f;
 	emitter_.frequencyTime = 0.0f;
 	emitter_.transform = { {1,1,1},{},{} };
+
+	camera_ = viewProjection;
 
 }
 
@@ -297,11 +299,11 @@ void Instancing::Update()
 
 void Instancing::UpdateMatrix()
 {
-	Matrix4x4 cameraMatrix = MatLib::MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
-	Matrix4x4 viewMatrix = MatLib::MakeInverse(cameraMatrix);
-	float kClientWidth = WindowAPI::kClientWidth;
-	float kClientHeight = WindowAPI::kClientHeight;
-	Matrix4x4 projectionMatrix = MatLib::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
+	//Matrix4x4 cameraMatrix = MatLib::MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
+	//Matrix4x4 viewMatrix = MatLib::MakeInverse(cameraMatrix);
+	//float kClientWidth = WindowAPI::kClientWidth;
+	//float kClientHeight = WindowAPI::kClientHeight;
+	//Matrix4x4 projectionMatrix = MatLib::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
 	numCount_ = 0;
 
 
@@ -312,16 +314,16 @@ void Instancing::UpdateMatrix()
 			continue;
 		}
 
-		Vector3 newVelocity = (*particleIte).velocity * (1.0f / 60.0f);
+		//Vector3 newVelocity = (*particleIte).velocity * (1.0f / 60.0f);
 		Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix((*particleIte).transform.scale, (*particleIte).transform.rotate, (*particleIte).transform.translate);
 
-		(*particleIte).transform.translate += newVelocity;
+		//(*particleIte).transform.translate += newVelocity;
 		(*particleIte).currentTime += (1.0f / 60.0f);
 
 		float alpha = 1.0f - ((*particleIte).currentTime / (*particleIte).lifeTime);
 		if (numCount_ < kMaxSize) {
 
-			Matrix4x4 worldViewProjectionMatrix = MatLib::Multiply(worldMatrix, MatLib::Multiply(viewMatrix, projectionMatrix));
+			Matrix4x4 worldViewProjectionMatrix = MatLib::Multiply(worldMatrix, MatLib::Multiply(camera_->matView, camera_->matProjection));
 			
 			instancingData_[numCount_].WVP = worldViewProjectionMatrix;
 			instancingData_[numCount_].World = worldMatrix;
@@ -380,6 +382,11 @@ void Instancing::Reset()
 {
 	
 
+}
+
+void Instancing::AddEmitter(const Vector3& position)
+{
+	position;
 }
 
 void Instancing::PreDraw(ID3D12GraphicsCommandList* commandList)
