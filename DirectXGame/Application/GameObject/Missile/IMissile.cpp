@@ -34,6 +34,9 @@ void IMissile::Initialize(Model* model, const Vector3& position)
 	std::function<void(uint32_t, WorldTransform*)> f = std::function<void(uint32_t, WorldTransform*)>(std::bind(&IMissile::OnCollision, this, std::placeholders::_1, std::placeholders::_2));
 	collider_.SetFunction(f);
 
+	smokePaticle_ = std::make_unique<IEmitter>();
+	smokePaticle_->Initialize(1, 1);
+
 }
 
 void IMissile::Update()
@@ -45,7 +48,7 @@ void IMissile::Update()
 	HomingUpdate();
 
 	if (guidedTime_ % 60 == 0) {
-		manager_->AddParticle(GetWorldPosition(), 60);
+		//manager_->AddParticle(GetWorldPosition(), 60);
 	}
 
 	velocity_ += acceleration_;
@@ -73,6 +76,7 @@ void IMissile::Update()
 		//}
 	}
 
+	smokePaticle_->Update(worldTransform_.GetWorld());
 }
 
 void IMissile::Draw(ViewProjection& viewProjection)

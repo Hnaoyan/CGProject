@@ -1,6 +1,7 @@
 #pragma once
 #include "IMissile.h"
 #include "Particle/ParticleManager.h"
+#include "Drawer/Instancing.h"
 #include <list>
 #include <memory>
 
@@ -84,6 +85,10 @@ public:
 
 	void SetPosition(const Vector3& position) { playerPosition_ = position; }
 
+	void SetInstancing(Instancing* instancing) {
+		particlePtr_ = instancing;
+	}
+
 private:
 	// 分離後のミサイル出現
 	void SilhouetteDance();
@@ -111,6 +116,7 @@ private:
 
 	int separateTime_ = 0;
 
+	Instancing* particlePtr_ = nullptr;
 
 	bool isFrameStop_ = false;
 };

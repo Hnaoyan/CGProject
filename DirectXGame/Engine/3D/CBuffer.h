@@ -36,10 +36,10 @@ struct ParticleData_Test {
 	float currentTime;
 	bool isAlive;
 };
-struct ParticleForGPU {
-	Matrix4x4 World;
-	Vector4 Color;
-};
+//struct ParticleForGPU {
+//	Matrix4x4 World;
+//	Vector4 Color;
+//};
 struct Transformmatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;

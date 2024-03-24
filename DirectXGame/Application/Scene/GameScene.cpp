@@ -17,6 +17,9 @@ GameScene::~GameScene()
 void GameScene::Initialize() {
 
 	IScene::Initialize();
+	whiteTex_ = TextureManager::Load("white1x1.png");
+	particles_ = std::make_unique<Instancing>();
+	particles_->Create();
 
 	model_.reset(Model::CreateFromObj("Jett", true));
 	// プレイヤー
@@ -67,6 +70,12 @@ void GameScene::Initialize() {
 	planeWTF_.rotation_.x = 1.57f;
 	planeWTF_.UpdateMatrix();
 	planeModel_->SetAlphaValue(0.5f);
+
+	particles_->Initialize(&viewProjection_);
+
+	//particles_->AddEmitter(player_->smokePaticle_.get());
+
+	missileManager_->SetInstancing(particles_.get());
 }
 
 void GameScene::Update()
@@ -100,6 +109,9 @@ void GameScene::Update()
 	player_->Update();
 	enemyManager_->Update();
 	missileManager_->Update();
+
+	// インスタンシング
+	particles_->Update();
 
 	if (input_->TriggerKey(DIK_R)) {
 		//particleManager_->AddParticle(player_->GetWorldPosition(), 30, &viewProjection_);
@@ -158,6 +170,13 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+
+	Instancing::PreDraw(commandList);
+
+	particles_->Draw(whiteTex_);
+
+	Instancing::PostDraw();
+
 }
 
 

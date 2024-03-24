@@ -5,6 +5,7 @@
 #include "Enemy/Enemy.h"
 #include "Collider.h"
 #include "Particle/ParticleManager.h"
+#include "Drawer/IEmitter.h"
 
 /// <summary>
 /// ミサイルクラス
@@ -84,6 +85,8 @@ public: // アクセッサ・初期化
 		fadeTimer_ = timer;
 	}
 	void SetParticle(ParticleManager* manager) { manager_ = manager; }
+
+	std::unique_ptr<IEmitter> smokePaticle_;
 
 private: // 内部の固有処理
 	/// <summary>

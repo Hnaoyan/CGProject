@@ -13,12 +13,15 @@ void Player::Initialize(Model* model)
 	worldTransform_.Initialize();
 	worldTransform_.translation_.y = -4.0f;
 	moveDirect_ = {};
-
+	smokePaticle_ = std::make_unique<IEmitter>();
+	smokePaticle_->Initialize(1, 1);
 }
 
 void Player::Update()
 {
 	InputUpdate();
+
+	smokePaticle_->Update(worldTransform_.GetWorld());
 
 	Vector3 moveVector{};
 	float speedValue = 10.0f;

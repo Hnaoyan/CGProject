@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Drawer/IEmitter.h"
 
 #include <optional>
 #include <functional>
@@ -42,6 +43,8 @@ public:
 
 	Vector3 GetMoveVector() { return MathCalc::Normalize(moveDirect_); }
 
+	std::unique_ptr<IEmitter> smokePaticle_;
+
 private:
 	Input* input_ = nullptr;
 
@@ -63,6 +66,7 @@ private:
 	int missileType_ = MissileType::kSlerp;
 
 	Vector3 moveDirect_ = {};
+
 
 };
 

@@ -117,6 +117,7 @@ void MissileManager::AddMissile(const MissileConfig info)
 	newInstance->SetTargetPosition(info.ptr->GetWorldPosition());
 	newInstance->SettingParameter(param_.lerpRad, param_.damping);
 	newInstance->SetParticle(particleManager_);
+	particlePtr_->AddEmitter(newInstance->smokePaticle_.get());
 	missiles_.push_back(newInstance);
 }
 
@@ -130,6 +131,7 @@ void MissileManager::AddMissileNoneType(const MissileConfig info, int type)
 	newInstance->SetTargetPosition(info.ptr->GetWorldPosition());
 	newInstance->SettingParameter(param_.lerpRad, param_.damping);
 	newInstance->SetParticle(particleManager_);
+	particlePtr_->AddEmitter(newInstance->smokePaticle_.get());
 
 	if (type == kV1) {
 		newInstance->SetFade(100);

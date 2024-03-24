@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "3D/Drawer/Instancing.h"
 
 #include "CollisionManager.h"
 #include "Missile/MissileManager.h"
@@ -72,6 +73,9 @@ private:
 	std::unique_ptr<ParticleManager> particleManager_;
 
 private:	// メンバポインタ
+
+	std::unique_ptr<Instancing> particles_;
+
 	// カメラ
 	// フォローカメラ
 	std::unique_ptr<FollowCamera> followCamera_;
@@ -90,6 +94,8 @@ private:	// メンバポインタ
 
 	SpriteInfo uiInfo_ = {};
 	std::unique_ptr<Sprite> ui_;
+
+	uint32_t whiteTex_ = 0u;
 
 	bool isDebug_ = false;
 

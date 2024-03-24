@@ -2,6 +2,8 @@
 #include "StructManager.h"
 #include "DirectXCommon.h"
 #include "ViewProjection.h"
+#include "IEmitter.h"
+
 #include <random>
 #include <memory>
 
@@ -29,7 +31,7 @@ public:
 	}
 
 private:
-
+#pragma region Struct系
 	struct MaterialInfo {
 		Vector4 color;
 		int32_t enableLighting;
@@ -68,19 +70,23 @@ private:
 		Vector3 direction;	// ライトの向き
 		float intensity;	// 輝度
 	};
+#pragma endregion
+
 private:
-	const uint32_t kMaxSize = 200;
+	const uint32_t kMaxSize = 20000;
 	uint32_t kMaxCount_ = 20;
 	uint32_t numCount_ = 0;
-
 
 	std::random_device seedGenerator_;
 	std::mt19937 randomEngine_;
 
 private:
+	// パーティクルのリスト
 	std::list<ParticleStruct> particles_;
+	// エミッターのリスト
+	std::list<IEmitter*> emitters_;
 	//ParticleStruct transforms[20];
-	TransformInstance cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+	//TransformInstance cameraTransform_{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
 
 	ViewProjection* camera_;
 
@@ -99,26 +105,28 @@ public:
 	void Reset();
 
 	void AddEmitter(const Vector3& position);
+	void AddEmitter(IEmitter* emitter);
 
 public:
-	void PreDraw(ID3D12GraphicsCommandList* commandList);
-	void PostDraw();
+	static void PreDraw(ID3D12GraphicsCommandList* commandList);
+	static void PostDraw();
 
 private:
 	ParticleStruct MakeNew(std::mt19937& randomEngine);
 	ParticleStruct MakeNew(std::mt19937& randomEngine,const Vector3& translate);
-
+	
 	std::list<ParticleStruct> Emit(const Emitter& emitter, std::mt19937& randomEngine);
+	std::list<ParticleStruct> Emit(const Vector3& emitterPos, uint32_t count, std::mt19937& randomEngine);
 
-	Emitter emitter_;
+	//Emitter emitter_;
 
-	std::list<Emitter> emitterLists_;
+	//std::list<Emitter> emitterLists_;
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	ID3D12Device* device_ = nullptr;
 	// コマンドリスト
-	ID3D12GraphicsCommandList* sCommandList_;
+	static ID3D12GraphicsCommandList* sCommandList_;
 
 private:
 	ModelData LoadPlane(const std::string& directory, const std::string& fileName);

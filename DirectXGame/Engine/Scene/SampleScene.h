@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Sample/SamplePlayer.h"
 #include "Sample/SampleMissile.h"
+#include "Drawer/IEmitter.h"
 
 #include <list>
 
@@ -41,6 +42,8 @@ private:
 	Instancing* inst_;
 
 	WorldTransform plWTF_;
+
+	std::unique_ptr<IEmitter> emitter_;
 
 	std::unique_ptr<Model> testModel_;
 

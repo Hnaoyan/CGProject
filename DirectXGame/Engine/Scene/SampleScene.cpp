@@ -16,7 +16,7 @@ void SampleScene::Initialize()
 	IScene::Initialize();
 	inst_ = new Instancing();
 	inst_->Create();
-	inst_->Initialize(nullptr);
+	inst_->Initialize(&viewProjection_);
 
 	plWTF_.Initialize();
 	testModel_.reset(Model::Create());
@@ -25,7 +25,12 @@ void SampleScene::Initialize()
 	target_->Initialize(testModel_.get());
 	target_->InitSetting({ 10.0f,0,100.0f });
 	texture_[0] = TextureManager::Load("uvChecker.png");
-	texture_[1] = TextureManager::Load("Texture/Circle.png");
+	texture_[1] = TextureManager::Load("white1x1.png");
+
+	emitter_ = std::make_unique<IEmitter>();
+	emitter_->Initialize(1, 30);
+	emitter_->transform.translate = newPoint;
+
 }
 
 void SampleScene::Update()
@@ -33,8 +38,9 @@ void SampleScene::Update()
 
 	ImGuiUpdate();
 
-	//inst_->Update();
+	inst_->Update();
 	target_->Update();
+	emitter_->Update(newPoint);
 
 	for (SamplePlayer* obj : targetObjs_) {
 		obj->Update();
@@ -71,9 +77,9 @@ void SampleScene::Draw()
 	// 描画後処理
 	Model::PostDraw();
 
-	inst_->PreDraw(commandList);
-	//inst_->Draw(texture_[1]);
-	inst_->PostDraw();
+	Instancing::PreDraw(commandList);
+	inst_->Draw(texture_[1]);
+	Instancing::PostDraw();
 
 }
 
@@ -86,6 +92,12 @@ void SampleScene::ImGuiUpdate()
 
 	if (ImGui::Button("RegisterObject")) {
 		RegisterList(newPoint);
+	}
+
+	if (ImGui::Button("CreateEmitter")) {
+
+
+		inst_->AddEmitter(emitter_.get());
 	}
 
 	ImGui::End();

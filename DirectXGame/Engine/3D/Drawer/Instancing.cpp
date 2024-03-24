@@ -9,6 +9,8 @@
 #include <sstream>
 #include <cassert>
 
+ID3D12GraphicsCommandList* Instancing::sCommandList_;
+
 DirectX::ScratchImage LoadTexture(const std::string& filePath)
 {
 	// テクスチャファイルを読んでプログラムで扱えるようにする
@@ -256,11 +258,11 @@ void Instancing::Initialize(ViewProjection* viewProjection)
 		//transforms[i].velocity = { randi(randomEngine_),randi(randomEngine_),randi(randomEngine_) };
 		//particles_.push_back(MakeNew(randomEngine_));
 	}
-	cameraTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
-	emitter_.count = 5;
-	emitter_.frequency = 1.0f;
-	emitter_.frequencyTime = 0.0f;
-	emitter_.transform = { {1,1,1},{},{} };
+	//cameraTransform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+	//emitter_.count = 5;
+	//emitter_.frequency = 1.0f;
+	//emitter_.frequencyTime = 0.0f;
+	//emitter_.transform = { {1,1,1},{},{} };
 
 	camera_ = viewProjection;
 
@@ -277,33 +279,31 @@ void Instancing::Update()
 
 	}
 
-	if (Input::GetInstance()->PressKey(DIK_A)) {
-		emitter_.transform.translate.x -= 0.01f;
-	}
-	else if (Input::GetInstance()->PressKey(DIK_D)) {
-		emitter_.transform.translate.x += 0.01f;
-	}
-
 
 	ImGuiWidget();
 
 	UpdateMatrix();
 
-	emitter_.frequencyTime += (1.0f / 120.0f);
-	if (emitter_.frequency <= emitter_.frequencyTime) {
-		particles_.splice(particles_.end(), Emit(emitter_, randomEngine_));
-		emitter_.frequencyTime -= emitter_.frequency;
+	for (IEmitter* emitter : emitters_) {
+
+		if (1.0f <= emitter->frequencyTime_) {
+			particles_.splice(particles_.end(), Emit(emitter->transform.translate, emitter->count_, randomEngine_));
+			emitter->Reset();
+		}
+
 	}
+
+
+	//emitter_.frequencyTime += (1.0f / 120.0f);
+	//if (emitter_.frequency <= emitter_.frequencyTime) {
+	//	particles_.splice(particles_.end(), Emit(emitter_, randomEngine_));
+	//	emitter_.frequencyTime -= emitter_.frequency;
+	//}
 
 }
 
 void Instancing::UpdateMatrix()
 {
-	//Matrix4x4 cameraMatrix = MatLib::MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
-	//Matrix4x4 viewMatrix = MatLib::MakeInverse(cameraMatrix);
-	//float kClientWidth = WindowAPI::kClientWidth;
-	//float kClientHeight = WindowAPI::kClientHeight;
-	//Matrix4x4 projectionMatrix = MatLib::MakePerspectiveFovMatrix(0.45f, float(kClientWidth) / float(kClientHeight), 0.1f, 100.0f);
 	numCount_ = 0;
 
 
@@ -316,11 +316,16 @@ void Instancing::UpdateMatrix()
 
 		//Vector3 newVelocity = (*particleIte).velocity * (1.0f / 60.0f);
 		Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix((*particleIte).transform.scale, (*particleIte).transform.rotate, (*particleIte).transform.translate);
-
+		(*particleIte).transform.scale = MathCalc::Lerp((*particleIte).transform.scale, { 0,0,0 }, (*particleIte).currentTime / (*particleIte).lifeTime);
 		//(*particleIte).transform.translate += newVelocity;
 		(*particleIte).currentTime += (1.0f / 60.0f);
 
-		float alpha = 1.0f - ((*particleIte).currentTime / (*particleIte).lifeTime);
+		float alpha = 0.75f - ((*particleIte).currentTime / (*particleIte).lifeTime);
+
+		if (alpha <= 0) {
+			alpha = 0;
+		}
+
 		if (numCount_ < kMaxSize) {
 
 			Matrix4x4 worldViewProjectionMatrix = MatLib::Multiply(worldMatrix, MatLib::Multiply(camera_->matView, camera_->matProjection));
@@ -339,13 +344,11 @@ void Instancing::UpdateMatrix()
 void Instancing::ImGuiWidget()
 {
 	ImGui::Begin("Instancing");
-	
-	ImGui::DragFloat3("Camera", &cameraTransform_.translate.x);
-	
-	ImGui::DragFloat3("pos", &emitter_.transform.translate.x, 0.01f);
+		
+	//ImGui::DragFloat3("pos", &emitter_.transform.translate.x, 0.01f);
 
 	if (ImGui::Button("Add")) {
-		particles_.splice(particles_.end(), Emit(emitter_, randomEngine_));
+		//particles_.splice(particles_.end(), Emit(emitter_, randomEngine_));
 	}
 
 	ImGui::End();
@@ -389,6 +392,13 @@ void Instancing::AddEmitter(const Vector3& position)
 	position;
 }
 
+void Instancing::AddEmitter(IEmitter* emitter)
+{
+
+	this->emitters_.push_back(emitter);
+
+}
+
 void Instancing::PreDraw(ID3D12GraphicsCommandList* commandList)
 {
 	assert(sCommandList_ == nullptr);
@@ -418,13 +428,16 @@ Instancing::ParticleStruct Instancing::MakeNew(std::mt19937& randomEngine)
 	instance.transform.rotate = {};
 	instance.transform.translate = { distribution(randomEngine),distribution(randomEngine),3.0f };
 	
-	instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
-	
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-	instance.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine), 1.0f };
+	//instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
+	//std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	//instance.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine), 1.0f };
+	//std::uniform_real_distribution<float> distTime(2.0f, 6.0f);
+	//instance.lifeTime = distTime(randomEngine);
 
-	std::uniform_real_distribution<float> distTime(2.0f, 6.0f);
-	instance.lifeTime = distTime(randomEngine);
+	instance.velocity = {};
+	instance.color = { 1,1,1,1 };
+	instance.lifeTime = 100;
+
 	instance.currentTime = 0;
 
 	return instance;
@@ -436,17 +449,22 @@ Instancing::ParticleStruct Instancing::MakeNew(std::mt19937& randomEngine, const
 	ParticleStruct instance;
 	instance.transform.scale = { 1,1,1 };
 	instance.transform.rotate = {};
-	Vector3 randomPoint = { distribution(randomEngine),distribution(randomEngine),3.0f };
-	instance.transform.translate = translate + randomPoint;
+	instance.transform.translate = translate;
+	randomEngine;
+	//Vector3 randomPoint = { distribution(randomEngine),distribution(randomEngine),3.0f };
+	//instance.transform.translate = translate + randomPoint;
 
+	//instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
 
-	instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
+	//std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	//instance.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine), 1.0f };
+	//std::uniform_real_distribution<float> distTime(2.0f, 6.0f);
+	//instance.lifeTime = distTime(randomEngine);
 
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-	instance.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine), 1.0f };
+	instance.velocity = {};
+	instance.color = { 1,1,1,1 };
+	instance.lifeTime = 100;
 
-	std::uniform_real_distribution<float> distTime(2.0f, 6.0f);
-	instance.lifeTime = distTime(randomEngine);
 	instance.currentTime = 0;
 
 	return instance;
@@ -457,6 +475,15 @@ std::list<Instancing::ParticleStruct> Instancing::Emit(const Emitter& emitter, s
 	std::list<ParticleStruct> particles;
 	for (uint32_t count = 0; count < emitter.count; ++count) {
 		particles.push_back(MakeNew(randomEngine,emitter.transform.translate));
+	}
+	return particles;
+}
+
+std::list<Instancing::ParticleStruct> Instancing::Emit(const Vector3& emitterPos,uint32_t count, std::mt19937& randomEngine)
+{
+	std::list<ParticleStruct> particles;
+	for (uint32_t i = 0; i < count; ++i) {
+		particles.push_back(MakeNew(randomEngine, emitterPos));
 	}
 	return particles;
 }

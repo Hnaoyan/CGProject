@@ -310,6 +310,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Scene\SampleScene.cpp" />
     <ClCompile Include="DirectXGame\Application\Sample\SampleMissile.cpp" />
     <ClCompile Include="DirectXGame\Application\Sample\SamplePlayer.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\Drawer\IEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.h" />
@@ -396,6 +397,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Scene\SampleScene.h" />
     <ClInclude Include="DirectXGame\Application\Sample\SampleMissile.h" />
     <ClInclude Include="DirectXGame\Application\Sample\SamplePlayer.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\IEmitter.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
