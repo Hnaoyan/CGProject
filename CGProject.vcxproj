@@ -274,6 +274,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Input\Input.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\QuatLib.cpp" />
     <ClCompile Include="DirectXGame\Engine\NLib\NLib.cpp" />
+    <ClCompile Include="DirectXGame\Engine\NLib\Timer.cpp" />
     <ClCompile Include="DirectXGame\main.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\MathCalc.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\MatLib.cpp" />
@@ -318,6 +319,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\Scene\ClearScene.h" />
     <ClInclude Include="DirectXGame\Engine\Base\ManagerList.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\NBase\Singleton.h" />
+    <ClInclude Include="DirectXGame\Engine\NLib\Timer.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\AbstractSceneFactory.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.h" />
