@@ -454,7 +454,7 @@ Instancing::ParticleStruct Instancing::MakeNew(std::mt19937& randomEngine, const
 	//Vector3 randomPoint = { distribution(randomEngine),distribution(randomEngine),3.0f };
 	//instance.transform.translate = translate + randomPoint;
 
-	//instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
+	instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
 
 	//std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 	//instance.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine), 1.0f };
@@ -463,7 +463,7 @@ Instancing::ParticleStruct Instancing::MakeNew(std::mt19937& randomEngine, const
 
 	instance.velocity = {};
 	instance.color = { 1,1,1,1 };
-	instance.lifeTime = 100;
+	instance.lifeTime = 60;
 
 	instance.currentTime = 0;
 

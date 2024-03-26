@@ -19,7 +19,13 @@ void SampleScene::Initialize()
 	inst_->Initialize(&viewProjection_);
 
 	plWTF_.Initialize();
+	secondWTF_.Initialize();
+
+	secondWTF_.translation_ = { 10.0f,0,0 };
+	secondWTF_.rotation_.y = 1.57f;
+
 	testModel_.reset(Model::Create());
+	secondModel_.reset(Model::CreateFromObj("Bullet"));
 
 	target_ = std::make_unique<SamplePlayer>();
 	target_->Initialize(testModel_.get());
@@ -42,8 +48,26 @@ void SampleScene::Update()
 	target_->Update();
 	emitter_->Update(newPoint);
 
+	plWTF_.UpdateMatrix();
+	secondWTF_.UpdateMatrix();
+
 	for (SamplePlayer* obj : targetObjs_) {
 		obj->Update();
+	}
+
+
+	if (input_->PressKey(DIK_W)) {
+		viewProjection_.translate_.y -= 0.1f;
+	}
+	else if (input_->PressKey(DIK_S)) {
+		viewProjection_.translate_.y += 0.1f;
+	}
+
+	if (input_->PressKey(DIK_A)) {
+		viewProjection_.translate_.x -= 0.1f;
+	}
+	else if (input_->PressKey(DIK_D)) {
+		viewProjection_.translate_.x += 0.1f;
 	}
 
 	// 更新
@@ -69,6 +93,7 @@ void SampleScene::Draw()
 	Model::PreDraw(commandList);
 
 	target_->Draw(viewProjection_);
+	secondModel_->Draw(secondWTF_, viewProjection_);
 
 	for (SamplePlayer* obj : targetObjs_) {
 		obj->Draw(viewProjection_);

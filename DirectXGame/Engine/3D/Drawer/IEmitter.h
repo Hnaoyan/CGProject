@@ -23,6 +23,9 @@ public:
 	uint32_t count_;		// 発生数
 
 private:
+	float lifeTime_;	// 時間
+	float limitTime_;	// 制限時間
+
 
 public:
 

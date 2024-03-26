@@ -42,10 +42,12 @@ private:
 	Instancing* inst_;
 
 	WorldTransform plWTF_;
+	WorldTransform secondWTF_;
 
 	std::unique_ptr<IEmitter> emitter_;
 
 	std::unique_ptr<Model> testModel_;
+	std::unique_ptr<Model> secondModel_;
 
 	std::unique_ptr<SamplePlayer> target_;
 

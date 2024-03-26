@@ -10,17 +10,17 @@ IScene* SceneFactory::CreateScene(const std::string& sceneName)
 		newScene = new TitleScene();
 	}
 
-	else if (sceneName == "GAME") {
-		newScene = new GameScene();
-	}
+	//else if (sceneName == "GAME") {
+	//	newScene = new GameScene();
+	//}
 
-	else if (sceneName == "TEST") {
-		newScene = new TestScene();
-	}
+	//else if (sceneName == "TEST") {
+	//	newScene = new TestScene();
+	//}
 
-	else if (sceneName == "CLEAR") {
-		newScene = new ClearScene();
-	}
+	//else if (sceneName == "CLEAR") {
+	//	newScene = new ClearScene();
+	//}
 
 	else if (sceneName == "SAMPLE") {
 		newScene = new SampleScene();
