@@ -36,7 +36,8 @@ void SampleScene::Initialize()
 	emitter_ = std::make_unique<IEmitter>();
 	emitter_->Initialize(1, 30);
 	emitter_->transform.translate = newPoint;
-
+	inst_->AddEmitter(emitter_.get());
+	selectNumber_ = 0;
 }
 
 void SampleScene::Update()
@@ -55,7 +56,13 @@ void SampleScene::Update()
 		obj->Update();
 	}
 
-
+	if (input_->TriggerKey(DIK_1)) {
+		selectNumber_ = 1;
+	}
+	else if (input_->TriggerKey(DIK_0)) {
+		selectNumber_ = 0;
+	}
+	
 	if (input_->PressKey(DIK_W)) {
 		viewProjection_.translate_.y -= 0.1f;
 	}
@@ -103,7 +110,7 @@ void SampleScene::Draw()
 	Model::PostDraw();
 
 	Instancing::PreDraw(commandList);
-	inst_->Draw(texture_[1]);
+	inst_->Draw(texture_[selectNumber_]);
 	Instancing::PostDraw();
 
 }

@@ -59,5 +59,7 @@ private:
 
 	uint32_t texture_[2];
 
+	uint32_t selectNumber_ = 0;
+
 };
 

@@ -285,7 +285,7 @@ void Instancing::Update()
 	UpdateMatrix();
 
 	for (IEmitter* emitter : emitters_) {
-
+		//emitter->Update();
 		if (1.0f <= emitter->frequencyTime_) {
 			particles_.splice(particles_.end(), Emit(emitter->transform.translate, emitter->count_, randomEngine_));
 			emitter->Reset();
@@ -314,10 +314,10 @@ void Instancing::UpdateMatrix()
 			continue;
 		}
 
-		//Vector3 newVelocity = (*particleIte).velocity * (1.0f / 60.0f);
+		Vector3 newVelocity = (*particleIte).velocity * (1.0f / 60.0f);
 		Matrix4x4 worldMatrix = MatLib::MakeAffineMatrix((*particleIte).transform.scale, (*particleIte).transform.rotate, (*particleIte).transform.translate);
 		(*particleIte).transform.scale = MathCalc::Lerp((*particleIte).transform.scale, { 0,0,0 }, (*particleIte).currentTime / (*particleIte).lifeTime);
-		//(*particleIte).transform.translate += newVelocity;
+		(*particleIte).transform.translate += newVelocity;
 		(*particleIte).currentTime += (1.0f / 60.0f);
 
 		float alpha = 0.75f - ((*particleIte).currentTime / (*particleIte).lifeTime);
@@ -428,13 +428,13 @@ Instancing::ParticleStruct Instancing::MakeNew(std::mt19937& randomEngine)
 	instance.transform.rotate = {};
 	instance.transform.translate = { distribution(randomEngine),distribution(randomEngine),3.0f };
 	
-	//instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
 	//std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 	//instance.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine), 1.0f };
 	//std::uniform_real_distribution<float> distTime(2.0f, 6.0f);
 	//instance.lifeTime = distTime(randomEngine);
 
-	instance.velocity = {};
+	instance.velocity = { distribution(randomEngine) ,distribution(randomEngine) ,distribution(randomEngine) };
+	//instance.velocity = {};
 	instance.color = { 1,1,1,1 };
 	instance.lifeTime = 100;
 
@@ -461,7 +461,7 @@ Instancing::ParticleStruct Instancing::MakeNew(std::mt19937& randomEngine, const
 	//std::uniform_real_distribution<float> distTime(2.0f, 6.0f);
 	//instance.lifeTime = distTime(randomEngine);
 
-	instance.velocity = {};
+	//instance.velocity = {};
 	instance.color = { 1,1,1,1 };
 	instance.lifeTime = 60;
 
