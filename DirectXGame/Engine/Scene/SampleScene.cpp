@@ -37,6 +37,12 @@ void SampleScene::Initialize()
 	emitter_->Initialize(1, 30);
 	emitter_->transform.translate = newPoint;
 	inst_->AddEmitter(emitter_.get());
+
+	emitter2_ = std::make_unique<IEmitter>();
+	emitter2_->Initialize(2, 30);
+	emitter2_->transform.translate = newPoint + Vector3(-10.0f,0,0);
+	inst_->AddEmitter(emitter2_.get());
+
 	selectNumber_ = 0;
 }
 
@@ -48,7 +54,7 @@ void SampleScene::Update()
 	inst_->Update();
 	target_->Update();
 	emitter_->Update(newPoint);
-
+	emitter2_->Update(newPoint + Vector3(-10.0f, 0, 0));
 	plWTF_.UpdateMatrix();
 	secondWTF_.UpdateMatrix();
 

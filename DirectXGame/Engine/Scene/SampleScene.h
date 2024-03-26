@@ -45,6 +45,7 @@ private:
 	WorldTransform secondWTF_;
 
 	std::unique_ptr<IEmitter> emitter_;
+	std::unique_ptr<IEmitter> emitter2_;
 
 	std::unique_ptr<Model> testModel_;
 	std::unique_ptr<Model> secondModel_;
