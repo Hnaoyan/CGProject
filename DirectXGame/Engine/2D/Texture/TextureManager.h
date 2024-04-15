@@ -97,15 +97,15 @@ private:
 	// テクスチャコンテナ
 	std::array<Texture, kNumDescriptor> textures_;
 	//std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, kNumDescriptor> texResources_;
-	// テクスチャリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> resource[kNumDescriptor];
-	// シェーダーリソースビューのハンドル（CPU）
-	D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV[kNumDescriptor];
-	// シェーダーリソースビューのハンドル（GPU）
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV[kNumDescriptor];
-	// 名前
-	std::string name[kNumDescriptor];
-	Texture texture_[kNumDescriptor];
+	//// テクスチャリソース
+	//Microsoft::WRL::ComPtr<ID3D12Resource> resource[kNumDescriptor];
+	//// シェーダーリソースビューのハンドル（CPU）
+	//D3D12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV[kNumDescriptor];
+	//// シェーダーリソースビューのハンドル（GPU）
+	//D3D12_GPU_DESCRIPTOR_HANDLE gpuDescHandleSRV[kNumDescriptor];
+	//// 名前
+	//std::string name[kNumDescriptor];
+	//Texture texture_[kNumDescriptor];
 
 	/// <summary>
 	/// 読み込み設定
