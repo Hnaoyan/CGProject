@@ -12,6 +12,10 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 using namespace Microsoft::WRL;
 using namespace Pipeline;
 
@@ -422,6 +426,68 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 
 	if (smoothing) {
 		mesh->CalculateSmoothedVertexNormals();
+	}
+
+}
+
+void Model::LoadAssimp(const std::string& modelName, bool smoothing)
+{
+	const std::string directoryPath = kBaseDirectory + modelName + "/";
+
+	//// ファイルストリーム
+	//std::ifstream file;
+	//// .objファイルを開く
+	//file.open(directoryPath + fileName);
+	//// 失敗をチェック
+	//if (file.fail()) {
+	//	assert(0);
+	//}
+
+	Assimp::Importer importer;
+	std::string filePath = directoryPath + modelName;
+
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	assert(scene->HasMeshes()); // メッシュがないのは対応しない
+
+	// メッシュ生成
+	meshes_.emplace_back(new Mesh);
+	Mesh* meshPtr = meshes_.back();
+
+	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+		assert(mesh->HasNormals());	// 法線がないMeshは今回は非対応
+		assert(mesh->HasTextureCoords(0));	// TexCoordが無い場合は今回は非対応
+		// ここからMeshのFaceを解析
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);	// 三角のみサポート
+			// ここからFaceのVertexの解析
+			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+				uint32_t vertexIndex = face.mIndices[element];
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+
+				Mesh::VertexPosNormalUv vertex{};
+
+				//VertexData vertex;
+				vertex.pos = { position.x,position.y,position.z };
+				vertex.normal = { normal.x,normal.y,normal.z };
+				vertex.uv = { texcoord.x,texcoord.y };
+
+				vertex.pos.x *= -1.0f;
+				vertex.normal.x *= -1.0f;
+
+				// Meshに追加
+				meshPtr->AddVertex(vertex);
+			}
+		}
+
+	}
+
+	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+		aiMaterial* material = scene->mMaterials[materialIndex];
+
 	}
 
 }

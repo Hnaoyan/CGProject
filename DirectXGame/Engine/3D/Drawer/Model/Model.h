@@ -168,6 +168,12 @@ private:	// メンバ関数
 	/// <param name="smoothing"></param>
 	void LoadModel(const std::string& modelName, bool smoothing);
 
+	void LoadAssimp(const std::string& modelName, bool smoothing);
+
+	//void CreateObj(bool smoothing);
+
+	//void CreateAssimp();
+
 	/// <summary>
 	/// マテリアル読み込み
 	/// </summary>
