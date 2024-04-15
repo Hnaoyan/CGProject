@@ -30,6 +30,11 @@ public:
 	float alpha_;
 	std::string textureFilename_;
 
+	Vector4 color_;
+	int32_t enableLighting_;
+	float padding[3];
+	Matrix4x4 uvTransform_;
+
 public:
 
 	ID3D12Resource* GetConstantBuffer() { return constBuff_.Get(); }

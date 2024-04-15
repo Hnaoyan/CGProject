@@ -26,24 +26,19 @@
 class Model
 {
 public:
-	//enum class RootParameter : int{
-	//	kWorldTransform,
-	//	kViewProjection,
-	//	kMaterial,
-	//	kTexture,
-	//	kLight,
-	//	kCountOfParameter,	// サイズを取得する為の値
-	//};
 
-	//enum class BlendMode : int {
-	//	kNone,
-	//	kNormal,
-	//	kAdd,
-	//	kSubtract,
-	//	kMultiply,
-	//	kScreen,
-	//	kCountOfBlendMode,
-	//};
+	struct MaterialData
+	{
+		std::string textureFilePath;
+	};
+	struct ModelData
+	{
+		std::vector<VertexData> vertices;
+		MaterialData material;
+	};
+
+private:
+	ModelData modelData_;
 
 private:
 	static const std::string kBaseDirectory;

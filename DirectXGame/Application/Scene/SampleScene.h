@@ -1,7 +1,6 @@
 #pragma once
 #include "IScene.h"
 #include "Drawer/Instancing.h"
-#include "Player.h"
 #include "Sample/SamplePlayer.h"
 #include "Sample/SampleMissile.h"
 #include "Drawer/IEmitter.h"
@@ -39,23 +38,7 @@ public: // メンバ関数
 	void ImGuiUpdate();
 
 private:
-	Instancing* inst_;
 
-	WorldTransform plWTF_;
-
-	std::unique_ptr<IEmitter> emitter_;
-
-	std::unique_ptr<Model> testModel_;
-
-	std::unique_ptr<SamplePlayer> target_;
-
-	std::list<SamplePlayer*> targetObjs_;
-
-	void RegisterList(const Vector3& position);
-
-	Vector3 newPoint = {};
-
-	uint32_t texture_[2];
 
 };
 

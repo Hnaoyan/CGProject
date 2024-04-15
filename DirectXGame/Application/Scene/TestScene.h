@@ -63,32 +63,6 @@ private:
 	AudioManager* audio_;
 	Input* input_ = nullptr;
 
-	WorldTransform testTransform_;
-	WorldTransform objTransform_;
-	ViewProjection view_;
-
-	std::unique_ptr<Model> testModel_;
-	std::unique_ptr<Model> obj2Model_;
-	std::unique_ptr<Model> planeModel_;
-	std::unique_ptr<Sprite> testSprite_;
-
-	uint32_t texture_ = 0u;
-
-	float alphaValue_;
-
-	int32_t testValue_;
-	float editTest = 3.0f;
-
-	int32_t TexValue;
-
-	EnemyInfo enemyInfo1_;
-
-	Vector3 savePoint_ = {};
-
-	Vector3 nowPoint_ = {};
-
-	int serialNumber_;
-
 	void ApplyGlobalVariables();
 };
 

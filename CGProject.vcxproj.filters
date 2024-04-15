@@ -168,9 +168,6 @@
     <ClCompile Include="DirectXGame\Engine\Math\MatLib.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Player\FollowCamera.cpp">
-      <Filter>ソース ファイル\other</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Other\GlobalVariables.cpp">
       <Filter>ソース ファイル\other</Filter>
     </ClCompile>
@@ -179,9 +176,6 @@
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Camera\DebugCamera.cpp">
       <Filter>ソース ファイル\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\ParticleManager.cpp">
-      <Filter>ソース ファイル\particle</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.cpp">
       <Filter>ソース ファイル\particle</Filter>
@@ -204,13 +198,7 @@
     <ClCompile Include="DirectXGame\Engine\Math\Vector\VectorLib.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\TimeCall\TimedCall.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Application\Scene\TestScene.cpp">
@@ -243,43 +231,16 @@
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\RTV.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\IMissile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\NLib\NLib.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Camera\ICamera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy\Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\Editor\Editor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Guidance\IGuidanceState.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\PIDController.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Application\Scene\TitleScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.cpp">
@@ -297,16 +258,10 @@
     <ClCompile Include="DirectXGame\Engine\Scene\SceneFactory.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\NLib\TransitionManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Instancing.cpp">
@@ -398,9 +353,6 @@
     <ClInclude Include="DirectXGame\Engine\Math\MatLib.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Player\FollowCamera.h">
-      <Filter>ヘッダー ファイル\other</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h">
       <Filter>ヘッダー ファイル\other</Filter>
     </ClInclude>
@@ -409,9 +361,6 @@
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Camera\DebugCamera.h">
       <Filter>ヘッダー ファイル\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\ParticleManager.h">
-      <Filter>ヘッダー ファイル\particle</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.h">
       <Filter>ヘッダー ファイル\particle</Filter>
@@ -434,13 +383,7 @@
     <ClInclude Include="DirectXGame\Engine\Math\Vector\VectorLib.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\TimeCall\TimedCall.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\LockOn.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Application\Scene\TestScene.h">
@@ -488,43 +431,16 @@
     <ClInclude Include="DirectXGame\Engine\3D\Descriptor\RTV.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\IMissile.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\NLib\NLib.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Camera\ICamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Editor\Editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Guidance\IGuidanceState.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\PIDController.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Application\Scene\TitleScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.h">
@@ -548,9 +464,6 @@
     <ClInclude Include="DirectXGame\Engine\Scene\SceneList.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -558,12 +471,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\NLib\NBase\Singleton.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileList.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\Base\ManagerList.h">
@@ -585,6 +492,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGame\Engine\NLib\Timer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Object3D\Object3D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Model\ObjectLoader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

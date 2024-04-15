@@ -241,14 +241,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\ClearScene.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy\Enemy.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\IMissile.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileManager.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
@@ -274,7 +267,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Camera\DebugCamera.cpp" />
     <ClCompile Include="DirectXGame\Engine\FrameWork\Framework.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\ParticleManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\Input\Input.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\QuatLib.cpp" />
     <ClCompile Include="DirectXGame\Engine\NLib\NLib.cpp" />
@@ -284,14 +276,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\Math\MatLib.cpp" />
     <ClCompile Include="DirectXGame\Engine\Math\Vector\VectorLib.cpp" />
     <ClCompile Include="DirectXGame\MyGame.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Player\FollowCamera.cpp" />
     <ClCompile Include="DirectXGame\Engine\Other\GlobalVariables.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\IScene.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\GameScene.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\SceneManager.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Player\Player.cpp" />
     <ClCompile Include="DirectXGame\Engine\TimeCall\TimedCall.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\LockOn.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\TestScene.cpp" />
     <ClCompile Include="DirectXGame\Engine\Map\MapLoader.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Graphics\PipelineManager.cpp" />
@@ -300,15 +289,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DSV.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\RTV.cpp" />
     <ClCompile Include="DirectXGame\Engine\Editor\Editor.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Guidance\IGuidanceState.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\PIDController.cpp" />
     <ClCompile Include="DirectXGame\Application\Scene\TitleScene.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Respect\NEngine.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Respect\TestParticle.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\SceneFactory.cpp" />
-    <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.cpp" />
     <ClCompile Include="DirectXGame\Engine\NLib\TransitionManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Instancing.cpp" />
@@ -318,19 +303,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\IEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileList.h" />
     <ClInclude Include="DirectXGame\Application\Scene\ClearScene.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Model\ObjectLoader.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\Object3D\Object3D.h" />
     <ClInclude Include="DirectXGame\Engine\Base\ManagerList.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\NBase\Singleton.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\Timer.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\AbstractSceneFactory.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy\Enemy.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Enemy\EnemyManager.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\FixedPointCam.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\IMissile.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileManager.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.h" />
     <ClInclude Include="DirectXGame\Engine\3D\CBuffer.h" />
     <ClInclude Include="DirectXGame\Engine\Audio\AudioManager.h" />
@@ -359,7 +338,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\Camera\DebugCamera.h" />
     <ClInclude Include="DirectXGame\Engine\FrameWork\Framework.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\Particle.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\ParticleManager.h" />
     <ClInclude Include="DirectXGame\Engine\Input\Input.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MathCalc.h" />
     <ClInclude Include="DirectXGame\Engine\Math\MathLib.h" />
@@ -369,14 +347,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\NLib\NLib.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SceneList.h" />
     <ClInclude Include="DirectXGame\MyGame.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Player\FollowCamera.h" />
     <ClInclude Include="DirectXGame\Engine\Other\GlobalVariables.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\IScene.h" />
     <ClInclude Include="DirectXGame\Application\Scene\GameScene.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SceneManager.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Player\Player.h" />
     <ClInclude Include="DirectXGame\Engine\TimeCall\TimedCall.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\LockOn.h" />
     <ClInclude Include="DirectXGame\Application\Scene\TestScene.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector3.h" />
     <ClInclude Include="DirectXGame\Engine\Math\Vector\Vector2.h" />
@@ -388,15 +363,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Engine\3D\Descriptor\DSV.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Descriptor\RTV.h" />
     <ClInclude Include="DirectXGame\Engine\Editor\Editor.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Guidance\IGuidanceState.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\PIDController.h" />
     <ClInclude Include="DirectXGame\Application\Scene\TitleScene.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Respect\NEngine.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Respect\TestParticle.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SceneFactory.h" />
-    <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\TransitionManager.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Instancing.h" />

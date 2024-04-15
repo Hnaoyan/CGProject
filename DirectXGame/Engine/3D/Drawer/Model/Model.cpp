@@ -491,6 +491,9 @@ void Model::LoadAssimp(const std::string& modelName)
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 			std::string materialPath = directoryPath + "/" + textureFilePath.C_Str();
+			//Material* newMaterial;
+			//newMaterial->
+
 		}
 	}
 
