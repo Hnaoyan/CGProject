@@ -430,7 +430,7 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 
 }
 
-void Model::LoadAssimp(const std::string& modelName, bool smoothing)
+void Model::LoadAssimp(const std::string& modelName)
 {
 	const std::string directoryPath = kBaseDirectory + modelName + "/";
 
@@ -487,7 +487,11 @@ void Model::LoadAssimp(const std::string& modelName, bool smoothing)
 
 	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
 		aiMaterial* material = scene->mMaterials[materialIndex];
-
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+			aiString textureFilePath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+			std::string materialPath = directoryPath + "/" + textureFilePath.C_Str();
+		}
 	}
 
 }
