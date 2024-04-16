@@ -38,7 +38,7 @@ void SampleScene::Update()
 
 	ImGuiUpdate();
 
-	inst_->Update();
+	//inst_->Update();
 	target_->Update();
 	emitter_->Update(newPoint);
 
@@ -113,3 +113,41 @@ void SampleScene::RegisterList(const Vector3& position)
 	this->targetObjs_.push_back(newInstance);
 
 }
+
+#pragma region ImGui用関数
+void SampleScene::ImGuiMatrixPrintf(const Matrix4x4& matrix, const char* tag)
+{
+
+	ImGui::Begin("4x4Matrix");
+	if (ImGui::TreeNode(tag)) {
+		for (int y = 0; y < 4; y++) {
+			ImGui::Text("%6.3f : %6.3f : %6.3f : %6.3f", matrix.m[y][0], matrix.m[y][1], matrix.m[y][2], matrix.m[y][3]);
+		}
+		ImGui::TreePop();
+	}
+	ImGui::End();
+
+}
+
+void SampleScene::ImGuiVector3Printf(const Vector3& vector, const char* tag)
+{
+	ImGui::Begin("Vector3");
+	if (ImGui::TreeNode(tag)) {
+		ImGui::Text("%6.3f : %6.3f : %6.3f : %s", vector.x, vector.y, vector.z, tag);
+		ImGui::TreePop();
+	}
+	ImGui::End();
+
+}
+
+void SampleScene::ImGuiQuaternionPrintf(const Quaternion& quat, const char* tag)
+{
+	ImGui::Begin("Quaternion");
+	if (ImGui::TreeNode(tag)) {
+		ImGui::Text("%6.3f : %6.3f : %6.3f : %6.3f : %s", quat.x, quat.y, quat.z, quat.w, tag);
+		ImGui::TreePop();
+	}
+	ImGui::End();
+}
+
+#pragma endregion
