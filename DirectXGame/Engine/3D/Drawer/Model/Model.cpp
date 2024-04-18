@@ -44,6 +44,14 @@ Model* Model::Create()
 	return instance;
 }
 
+Model* Model::CreateAssimp(const std::string& modelName)
+{
+	// メモリ確保
+	Model* instance = new Model;
+	instance->Initialize_Assimp(modelName);
+	return instance;
+}
+
 Model* Model::CreatePlane()
 {
 	// メモリ確保
@@ -179,6 +187,13 @@ void Model::Initialize(const std::string& modelName, bool smoothing)
 
 	// テクスチャの読み込み
 	LoadTextures();
+}
+
+void Model::Initialize_Assimp(const std::string& modelName)
+{
+
+	LoadAssimp(modelName);
+
 }
 
 void Model::Update()
@@ -430,67 +445,131 @@ void Model::LoadModel(const std::string& modelName, bool smoothing)
 
 }
 
-//void Model::LoadAssimp(const std::string& modelName, bool smoothing)
-//{
-//	const std::string directoryPath = kBaseDirectory + modelName + "/";
-//
-//	//// ファイルストリーム
-//	//std::ifstream file;
-//	//// .objファイルを開く
-//	//file.open(directoryPath + fileName);
-//	//// 失敗をチェック
-//	//if (file.fail()) {
-//	//	assert(0);
-//	//}
-//
-//	Assimp::Importer importer;
-//	std::string filePath = directoryPath + modelName;
-//
-//	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
-//	assert(scene->HasMeshes()); // メッシュがないのは対応しない
-//
-//	// メッシュ生成
-//	meshes_.emplace_back(new Mesh);
-//	Mesh* meshPtr = meshes_.back();
-//
-//	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
-//		aiMesh* mesh = scene->mMeshes[meshIndex];
-//		assert(mesh->HasNormals());	// 法線がないMeshは今回は非対応
-//		assert(mesh->HasTextureCoords(0));	// TexCoordが無い場合は今回は非対応
-//		// ここからMeshのFaceを解析
-//		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
-//			aiFace& face = mesh->mFaces[faceIndex];
-//			assert(face.mNumIndices == 3);	// 三角のみサポート
-//			// ここからFaceのVertexの解析
-//			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
-//				uint32_t vertexIndex = face.mIndices[element];
-//				aiVector3D& position = mesh->mVertices[vertexIndex];
-//				aiVector3D& normal = mesh->mNormals[vertexIndex];
-//				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
-//
-//				Mesh::VertexPosNormalUv vertex{};
-//
-//				//VertexData vertex;
-//				vertex.pos = { position.x,position.y,position.z };
-//				vertex.normal = { normal.x,normal.y,normal.z };
-//				vertex.uv = { texcoord.x,texcoord.y };
-//
-//				vertex.pos.x *= -1.0f;
-//				vertex.normal.x *= -1.0f;
-//
-//				// Meshに追加
-//				meshPtr->AddVertex(vertex);
-//			}
-//		}
-//
-//	}
-//
-//	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
-//		aiMaterial* material = scene->mMaterials[materialIndex];
-//
-//	}
-//
-//}
+void Model::LoadAssimp(const std::string& modelName)
+{
+	const std::string directoryPath = kBaseDirectory + modelName + "/";
+
+	//// ファイルストリーム
+	//std::ifstream file;
+	//// .objファイルを開く
+	//file.open(directoryPath + fileName);
+	//// 失敗をチェック
+	//if (file.fail()) {
+	//	assert(0);
+	//}
+
+	Assimp::Importer importer;
+	std::string filePath = directoryPath + modelName + ".obj";
+
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	assert(scene->HasMeshes()); // メッシュがないのは対応しない
+
+	// メッシュ生成
+	meshes_.emplace_back(new Mesh);
+	Mesh* meshPtr = meshes_.back();
+
+	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+		assert(mesh->HasNormals());	// 法線がないMeshは今回は非対応
+		assert(mesh->HasTextureCoords(0));	// TexCoordが無い場合は今回は非対応
+		// ここからMeshのFaceを解析
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);	// 三角のみサポート
+			// ここからFaceのVertexの解析
+			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+				uint32_t vertexIndex = face.mIndices[element];
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+
+				Mesh::VertexPosNormalUv vertex{};
+
+				//VertexData vertex;
+				vertex.pos = { position.x,position.y,position.z };
+				vertex.normal = { normal.x,normal.y,normal.z };
+				vertex.uv = { texcoord.x,texcoord.y };
+
+				vertex.pos.x *= -1.0f;
+				vertex.normal.x *= -1.0f;
+
+				// Meshに追加
+				meshPtr->AddVertex(vertex);
+			}
+		}
+
+	}
+
+	Material* material_ptr = nullptr;
+	//std::string texturePath;
+
+	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+		aiMaterial* material = scene->mMaterials[materialIndex];
+
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+			aiString textureFilePath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+
+			// マテリアル生成
+			material_ptr = Material::Create();
+			material_ptr->name_ = /*directoryPath + "/" + */textureFilePath.C_Str();
+			material_ptr->textureFilename_ = modelName + "/" + textureFilePath.C_Str();
+			//texturePath = textureFilePath.C_Str();
+			if (material) {
+				AddMaterial(material_ptr);
+			}
+			//materials_.
+			//modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+		}
+
+	}
+
+	// メッシュ
+	for (auto& m : meshes_) {
+		if (m->GetMaterial() == nullptr) {
+			if (defaultMaterial_ == nullptr) {
+				// デフォルトマテリアルを生成
+				defaultMaterial_ = Material::Create();
+				defaultMaterial_->name_ = "no material";
+				materials_.emplace(defaultMaterial_->name_, defaultMaterial_);
+			}
+
+			m->SetMaterial(defaultMaterial_);
+		}
+	}
+
+	// メッシュのバッファ生成
+	for (auto& m : meshes_) {
+		m->CreateBuffers();
+	}
+
+	// マテリアルの数値を定数バッファに反映
+	for (auto& m : materials_) {
+		m.second->Update();
+	}
+
+	// テクスチャの読み込み
+	int textureIndex = 0;
+
+	for (auto& m : materials_) {
+		Material* material = m.second;
+
+		// テクスチャあり
+		if (material->textureFilename_.size() > 0) {
+			// テクスチャ読み込み
+			material->LoatTextureAssimp(material->textureFilename_);
+			textureIndex++;
+		}
+		// テクスチャなし
+		else
+		{
+			// 仮のテクスチャ読み込み
+			material->LoatTextureAssimp("white1x1.png");
+			textureIndex++;
+		}
+	}
+
+}
 
 void Model::LoadMaterial(const std::string& directoryPath, const std::string& fileName)
 {

@@ -21,6 +21,11 @@ void SampleScene::Initialize()
 	plWTF_.Initialize();
 	testModel_.reset(Model::Create());
 
+	assimpTest_.reset(Model::Create());
+
+	assimpTrf.Initialize();
+	assimpTrf.translation_ = { 0,0,20.0f };
+
 	target_ = std::make_unique<SamplePlayer>();
 	target_->Initialize(testModel_.get());
 	target_->InitSetting({ 10.0f,0,100.0f });
@@ -35,10 +40,10 @@ void SampleScene::Initialize()
 
 void SampleScene::Update()
 {
-
 	ImGuiUpdate();
 
 	//inst_->Update();
+	assimpTrf.UpdateMatrix();
 	target_->Update();
 	emitter_->Update(newPoint);
 
@@ -68,11 +73,13 @@ void SampleScene::Draw()
 	// 描画前処理
 	Model::PreDraw(commandList);
 
-	target_->Draw(viewProjection_);
+	//target_->Draw(viewProjection_);
 
-	for (SamplePlayer* obj : targetObjs_) {
-		obj->Draw(viewProjection_);
-	}
+	assimpTest_->Draw(assimpTrf, viewProjection_);
+
+	//for (SamplePlayer* obj : targetObjs_) {
+	//	obj->Draw(viewProjection_);
+	//}
 
 	// 描画後処理
 	Model::PostDraw();

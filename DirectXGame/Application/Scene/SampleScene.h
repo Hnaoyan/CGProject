@@ -72,6 +72,10 @@ private:
 
 	std::unique_ptr<SamplePlayer> target_;
 
+	std::unique_ptr<Model> assimpTest_;
+
+	WorldTransform assimpTrf;
+
 	std::list<SamplePlayer*> targetObjs_;
 
 	void RegisterList(const Vector3& position);

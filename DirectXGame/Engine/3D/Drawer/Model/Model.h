@@ -88,6 +88,8 @@ public:
 	/// <returns></returns>
 	static Model* Create();
 
+	static Model* CreateAssimp(const std::string& modelName);
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -126,6 +128,8 @@ public:
 	/// <param name="modelName"></param>
 	/// <param name="smoothing"></param>
 	void Initialize(const std::string& modelName, bool smoothing = false);
+
+	void Initialize_Assimp(const std::string& modelName);
 
 	/// <summary>
 	/// 更新処理
@@ -168,7 +172,7 @@ private:	// メンバ関数
 	/// <param name="smoothing"></param>
 	void LoadModel(const std::string& modelName, bool smoothing);
 
-	//void LoadAssimp(const std::string& modelName, bool smoothing);
+	void LoadAssimp(const std::string& modelName);
 
 	//void CreateObj(bool smoothing);
 

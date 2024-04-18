@@ -50,7 +50,7 @@ private:
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc_{};
 
 private: // 作成用関数
-	D3D12_DESCRIPTOR_HEAP_DESC CreateDescriptorHeapDesc(D3D12_DESCRIPTOR_HEAP_TYPE type, UINT numDescriptor, bool shaderVisible);
+	D3D12_DESCRIPTOR_HEAP_DESC CreateDescriptorHeapDesc(D3D12_DESCRIPTOR_HEAP_TYPE type, UINT numDescriptor, bool shaderVisible);	
 	D3D12_RESOURCE_DESC CreateResourceDesc(DXGI_FORMAT format, D3D12_RESOURCE_DIMENSION dimension,
 		D3D12_RESOURCE_FLAGS flags, uint32_t width, uint32_t height);
 	D3D12_HEAP_PROPERTIES CreateHeapProps(D3D12_HEAP_TYPE type);

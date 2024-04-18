@@ -36,6 +36,8 @@ public:
 
 	void LoadTexture(const std::string& directoryPath);
 
+	void LoatTextureAssimp(std::string directPath);
+
 	void Update();
 
 	void SetAlpha(float alpha) { alpha_ = alpha; }

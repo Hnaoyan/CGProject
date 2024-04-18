@@ -60,6 +60,13 @@ void Material::LoadTexture(const std::string& directoryPath)
 	textureHandle_ = TextureManager::Load(filepath);
 }
 
+void Material::LoatTextureAssimp(std::string directPath)
+{
+	// テクスチャ読み込み
+	textureHandle_ = TextureManager::Load(directPath);
+
+}
+
 void Material::Update()
 {
 	// 定数バッファのデータ転送

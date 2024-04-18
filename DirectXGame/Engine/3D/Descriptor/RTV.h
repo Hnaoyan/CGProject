@@ -1,5 +1,6 @@
 #pragma once
 #include "DirectXCommon.h"
+#include "../Math/MathLib.h"
 #include <vector>
 #include <wrl.h>
 
@@ -13,6 +14,8 @@ public:
 
 	void PostDraw();
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(ID3D12Device* device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+
 public: // アクセッサ
 	ID3D12DescriptorHeap* GetHeap() { return heap_.Get(); }
 	D3D12_RENDER_TARGET_VIEW_DESC GetDesc() { return rtvDesc_; }
@@ -23,6 +26,9 @@ public:
 	void CreateSwapChain();
 	void CreateRenderTargetView();
 	void ClearRenderTarget(ID3D12GraphicsCommandList* cmdList);
+
+private:
+	//void CreateRenderTexture();
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
@@ -41,24 +47,5 @@ private:
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffer_;
 	float clearColor_[4] = { 0.1f,0.25f,0.5f,1.0f };
-
-//private:
-//	void CreateSwapChain(int32_t bufferWidth, int32_t bufferHeight);
-//
-//	void CreateRenderTarget();
-//
-//public:
-//
-//	void ClearRenderTarget(ID3D12GraphicsCommandList* cmdList);
-//
-//private:
-//
-//	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
-//	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffer_;
-//
-//public:
-//	IDXGISwapChain4* GetSwapChain() { return swapChain_.Get(); }
-//
-
 };
 

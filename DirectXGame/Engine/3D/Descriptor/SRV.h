@@ -17,6 +17,8 @@ public:
 
 	void CreateInstancingSRV();
 
+	void CreateRenderTexture(ID3D12Resource* resource, D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle);
+
 	void StaticInitialize(DirectXCommon* dxCommon);
 
 	ID3D12DescriptorHeap* GetHeap() { return heap_.Get(); }

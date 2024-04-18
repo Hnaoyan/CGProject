@@ -62,8 +62,8 @@ void DirectXCommon::PreDraw()
 	commandList_->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
 	rtv_->ClearRenderTarget(commandList_.Get());
-
-	ClearDepthBuffer();
+	dsv_->ClearDepthBuffer(commandList_.Get());
+	//ClearDepthBuffer();
 
 	// ビューポートの設定
 	D3D12_VIEWPORT viewport = CreateViewport(FLOAT(backBufferWidth_), FLOAT(backBufferHeight_), 0, 0, 0.0f, 1.0f);
