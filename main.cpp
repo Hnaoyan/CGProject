@@ -38,6 +38,10 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 
 #include"Matrix.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 struct Vector2 {
 	float x, y;
 };
@@ -73,11 +77,40 @@ struct MaterialData {
 	std::string textureFilePath;
 };
 
+struct Node {
+	Matrix4x4 localMatrix;
+	std::string name;
+	std::vector<Node> children;
+};
+
 struct ModelData {
 	std::vector<VertexData> vertices;
 	MaterialData material;
+	Node rootNode;
 };
 
+
+Node ReadNode(aiNode* node) {
+	Node result;
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation;	// NodeのLocalMatrixを取得
+	aiLocalMatrix.Transpose();							// 列ベクトル形式を行ベクトル形式に転置
+	//result.localMatrix.m[0][0] = aiLocalMatrix[0][0];	// 他の要素も同様に
+	for (uint32_t y = 0; y < 4; ++y) {
+		for (uint32_t x = 0; x < 4; ++x) {
+			result.localMatrix.m[y][x] = aiLocalMatrix[y][x];
+		}
+	}
+
+	// ...
+	result.name = node->mName.C_Str();
+	result.children.resize(node->mNumChildren);
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
+		// 再帰的に読み込み階層構造を作っていく
+		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
+	}
+
+	return result;
+}
 
 MaterialData LoadMaterial(const std::string& directory, const std::string& filename) {
 	MaterialData materialData;
@@ -180,6 +213,121 @@ ModelData LoadObj(const std::string& directory, const std::string& fileName) {
 	}
 
 	return modelData;
+}
+
+ModelData LoadAssimp(const std::string& directory, const std::string& fileName) 
+{
+	ModelData modelData;
+
+	Assimp::Importer importer;
+	std::string filePath = directory + "/" + fileName;
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	assert(scene->HasMeshes());
+	
+
+	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+		assert(mesh->HasNormals());	// 法線がないMeshは今回は非対応
+		assert(mesh->HasTextureCoords(0));	// TexCoordが無い場合は今回は非対応
+		// ここからMeshのFaceを解析
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);	// 三角のみサポート
+			// ここからFaceのVertexの解析
+			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+				uint32_t vertexIndex = face.mIndices[element];
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+
+				VertexData vertex;
+
+				//VertexData vertex;
+				vertex.position = { position.x,position.y,position.z,1.0f };
+				vertex.normal = { normal.x,normal.y,normal.z };
+				vertex.texcoord = { texcoord.x,texcoord.y };
+
+				//vertex.position.x *= -1.0f;
+				vertex.normal.x *= -1.0f;
+				//vertex.normal.z *= -1.0f;
+
+				// Meshに追加
+				modelData.vertices.push_back(vertex);
+			}
+		}
+
+	}
+
+	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+		aiMaterial* material = scene->mMaterials[materialIndex];
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+			aiString textureFilePath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+			modelData.material.textureFilePath = directory + "/" + textureFilePath.C_Str();
+		}
+
+	}
+	ModelData data = modelData;
+	return data;
+}
+
+ModelData LoadGlTFModel(const std::string& directory, const std::string& fileName) {
+	ModelData modelData;
+
+	Assimp::Importer importer;
+	std::string filePath = directory + "/" + fileName;
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	assert(scene->HasMeshes());
+
+
+	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+		assert(mesh->HasNormals());	// 法線がないMeshは今回は非対応
+		assert(mesh->HasTextureCoords(0));	// TexCoordが無い場合は今回は非対応
+		// ここからMeshのFaceを解析
+		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
+			aiFace& face = mesh->mFaces[faceIndex];
+			assert(face.mNumIndices == 3);	// 三角のみサポート
+			// ここからFaceのVertexの解析
+			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
+				uint32_t vertexIndex = face.mIndices[element];
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
+
+				VertexData vertex;
+
+				//VertexData vertex;
+				vertex.position = { position.x,position.y,position.z,1.0f };
+				vertex.normal = { normal.x,normal.y,normal.z };
+				vertex.texcoord = { texcoord.x,texcoord.y };
+
+				//vertex.position.x *= -1.0f;
+				vertex.normal.x *= -1.0f;
+				//vertex.normal.z *= -1.0f;
+
+				// Meshに追加
+				modelData.vertices.push_back(vertex);
+			}
+		}
+
+	}
+
+	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+		aiMaterial* material = scene->mMaterials[materialIndex];
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+			aiString textureFilePath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+			modelData.material.textureFilePath = directory + "/" + textureFilePath.C_Str();
+		}
+
+	}
+
+	// ノード読み込み
+	modelData.rootNode = ReadNode(scene->mRootNode);
+
+	ModelData data = modelData;
+	return data;
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -785,7 +933,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 
 
-	const uint32_t kInstanceCount = 10;
+	const uint32_t kInstanceCount = 1;
 
 	// DepthStencilStateの設定
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
@@ -1068,7 +1216,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region Test
 
 	// モデル読み込み
-	ModelData modelData = LoadObj("Resources", "plane.obj");
+	ModelData modelData = LoadGlTFModel("Resources", "plane.gltf");
 	// 頂点
 	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
 	// ビュー
@@ -1255,8 +1403,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				Matrix4x4 worldMatrix = MakeAffineMatrix(transforms[i].scale, transforms[i].rotate, transforms[i].translate);
 				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 				
-				instancingData[i].WVP = worldViewProjectionMatrix;
-				instancingData[i].World = worldMatrix;
+				//instancingData[i].WVP = worldViewProjectionMatrix;
+				//instancingData[i].World = worldMatrix;
+				instancingData[i].WVP = Multiply(modelData.rootNode.localMatrix, Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix)));
+				instancingData[i].World = Multiply(modelData.rootNode.localMatrix, worldMatrix);
 
 				tag[i] = name + std::to_string(i);
 			
@@ -1290,6 +1440,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f);
 			ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
 			ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f);
+			for (uint32_t i = 0; i < kInstanceCount; ++i) {
+				ImGui::DragFloat3("Translate", &transforms[i].translate.x, 0.01f);
+				ImGui::DragFloat3("Rotate", &transforms[i].rotate.x, 0.01f);
+				ImGui::DragFloat3("Scale", &transforms[i].scale.x, 0.01f);
+			}
 
 			ImGui::End();
 			transformSprite.translate.x = float3[0];
