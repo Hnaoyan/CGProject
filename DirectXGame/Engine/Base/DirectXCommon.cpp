@@ -52,6 +52,9 @@ void DirectXCommon::PreDraw()
 	// Barrier
 	D3D12_RESOURCE_BARRIER barrier = DescriptorManager::GetBarrier(rtv_->GetBackBuffer(backBufferIndex),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	//D3D12_RESOURCE_BARRIER barrier = DescriptorManager::GetBarrier(rtv_->GetRenderTexture(),
+	//	D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	// TransitionBarrierを張る
 	commandList_->ResourceBarrier(1, &barrier);
 	// 描画先のRTVを設定する
@@ -75,13 +78,14 @@ void DirectXCommon::PreDraw()
 void DirectXCommon::PostDraw() {
 	HRESULT result = S_FALSE;
 
-	//rtv_->PostDraw();
-
 	// これから書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
 	// Barrier
 	D3D12_RESOURCE_BARRIER barrier = DescriptorManager::GetBarrier(rtv_->GetBackBuffer(backBufferIndex),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
+	//D3D12_RESOURCE_BARRIER barrier = DescriptorManager::GetBarrier(rtv_->GetRenderTexture(),
+	//	D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	commandList_->ResourceBarrier(1, &barrier);
 

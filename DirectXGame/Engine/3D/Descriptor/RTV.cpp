@@ -136,14 +136,6 @@ void RTV::CreateRenderTargetView()
 	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;	// 出力結果をSRGBに変換して書き込む
 	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;	// 2Dテクスチャとして書き込む
 
-	// OffScreenRendering
-	//D3D12_CPU_DESCRIPTOR_HANDLE handle = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), 0);
-
-	//const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };
-	//ComPtr<ID3D12Resource> renderTextureResource = CreateRenderTextureResource(device_, WindowAPI::kClientWidth, WindowAPI::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
-	//device_->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc_, handle);
-	//// SRVの作成
-	//SRV::GetInstance()->CreateRenderTexture(renderTextureResource.Get(), handle);
 
 	// 裏表の2つ分
 	backBuffer_.resize(swapChainDesc.BufferCount);
@@ -157,6 +149,15 @@ void RTV::CreateRenderTargetView()
 
 		device_->CreateRenderTargetView(backBuffer_[i].Get(), &rtvDesc_, handle);
 	}
+	//// OffScreenRendering
+	//D3D12_CPU_DESCRIPTOR_HANDLE handle = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), swapChainDesc.BufferCount);
+
+	//const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };
+	//renderTextureResource_ = CreateRenderTextureResource(device_, WindowAPI::kClientWidth, WindowAPI::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
+	//device_->CreateRenderTargetView(renderTextureResource_.Get(), &rtvDesc_, handle);
+	// SRVの作成
+	//D3D12_CPU_DESCRIPTOR_HANDLE handleSrv = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), 1);
+	//SRV::GetInstance()->CreateRenderTexture(renderTextureResource_.Get(), handle,device_);
 
 }
 

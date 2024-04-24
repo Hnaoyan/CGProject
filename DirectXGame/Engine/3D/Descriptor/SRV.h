@@ -17,7 +17,7 @@ public:
 
 	void CreateInstancingSRV();
 
-	void CreateRenderTexture(ID3D12Resource* resource, D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle);
+	void CreateRenderTexture(ID3D12Resource* resource, D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle, ID3D12Device* device);
 
 	void StaticInitialize(DirectXCommon* dxCommon);
 

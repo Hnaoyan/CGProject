@@ -21,7 +21,7 @@ public: // アクセッサ
 	D3D12_RENDER_TARGET_VIEW_DESC GetDesc() { return rtvDesc_; }
 	ID3D12Resource* GetBackBuffer(UINT index) { return backBuffer_[index].Get(); }
 	size_t GetBackBufferCount() const { return backBuffer_.size(); }
-
+	ID3D12Resource* GetRenderTexture() { return renderTextureResource_.Get(); }
 public:
 	void CreateSwapChain();
 	void CreateRenderTargetView();
@@ -47,5 +47,7 @@ private:
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffer_;
 	float clearColor_[4] = { 0.1f,0.25f,0.5f,1.0f };
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> renderTextureResource_;
 };
 
