@@ -580,9 +580,12 @@ Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(Microsoft::WR
 	D3D12_RESOURCE_DESC resourceDesc{};
 	resourceDesc.Width = width;
 	resourceDesc.Height = height;
-	//resourceDesc.Format = format;
-	//resourceDesc.MipLevels = 1;	// mipmapの数
-	//resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	// ２次元
+	resourceDesc.MipLevels = 1;	// mipmapの数
+	resourceDesc.DepthOrArraySize = 1;	// 奥行き or 配列Textureの配列数
+	resourceDesc.Format = format;	// DepthStencilとして両可能なフォーマット
+	resourceDesc.SampleDesc.Count = 1;	// サンプリングカウント。1固定。
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	// ２次元
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 	// 利用するHeapの設定
 	D3D12_HEAP_PROPERTIES heapProperties{};
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -599,7 +602,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(Microsoft::WR
 		&heapProperties,	// Heapの設定
 		D3D12_HEAP_FLAG_NONE,	// Heapの特殊な設定。特になし。
 		&resourceDesc,	// Resourceの設定
-		D3D12_RESOURCE_STATE_DEPTH_WRITE,	// 深度値を書き込む状態にしておく
+		D3D12_RESOURCE_STATE_RENDER_TARGET,	//
 		&clearValue,
 		IID_PPV_ARGS(&resource));
 	assert(SUCCEEDED(hr));
@@ -796,7 +799,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ディスクリプタヒープの生成
 	// RTV用のヒープでディスクリプタの数は2。RTVはShader内で触れるものではないので、ShaderVisibleはfalse
-	ID3D12DescriptorHeap* rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	ID3D12DescriptorHeap* rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 3, false);
 	// SRV用のヒープでディスクリプタの数は128。SRVはShader内で触るものなので、ShaderVisibleはtrue
 	ID3D12DescriptorHeap* srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 	// SwapChainからResourceを引っ張ってくる
@@ -815,7 +818,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
 	// RTVを2つ作るのでディスクリプタを2つ用意
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[3];
 	// まず1つ目を作る。1つ目は最初のところに作る。作る場所をこちらで指定してあげる必要がある
 	rtvHandles[0] = GetCPUDescriptorHandle(rtvDescriptorHeap, descriptorSizeRTV, 0);
 	device->CreateRenderTargetView(swapChainResources[0], &rtvDesc, rtvHandles[0]);
@@ -823,6 +826,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	// 2つ目を作る
 	device->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandles[1]);
+
+
+	//rtvHandles[2] = GetCPUDescriptorHandle(rtvDescriptorHeap, descriptorSizeRTV, 2);
+	rtvHandles[2].ptr = rtvHandles[1].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	const Vector4 kRenderTargetClearValue = { 1.0f,0.0f,0.0f,1.0f };
+	auto renderTextureResource = CreateRenderTextureResource(device, kClientWidth, kClientHeight,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
+
+	device->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc, rtvHandles[2]);
+
+
 	// 初期値0でFenceを作る
 	ID3D12Fence* fence = nullptr;
 	uint16_t fenceValue = 0;
@@ -1364,18 +1379,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	textureSrvHandleGPU[0].ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource[0].Get(), &srvDesc[0], textureSrvHandleCPU[0]);
+	uint32_t srvIndex = 2;
 
 	// SRV2
-	textureSrvHandleCPU[1] = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
-	textureSrvHandleGPU[1] = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
+	textureSrvHandleCPU[1] = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, srvIndex);
+	textureSrvHandleGPU[1] = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, srvIndex);
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource[1].Get(), &srvDesc[1], textureSrvHandleCPU[1]);
-
+	srvIndex++;
 	// SRV3
-	textureSrvHandleCPU[2] = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
-	textureSrvHandleGPU[2] = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 2);
+	textureSrvHandleCPU[2] = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, srvIndex);
+	textureSrvHandleGPU[2] = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, srvIndex);
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource[2].Get(), &srvDesc[2], textureSrvHandleCPU[2]);
+	srvIndex++;
 
 	// インスタンシング用
 	D3D12_SHADER_RESOURCE_VIEW_DESC instancingSrvDesc{};
@@ -1387,16 +1404,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	instancingSrvDesc.Buffer.NumElements = kInstanceCount;
 	instancingSrvDesc.Buffer.StructureByteStride = sizeof(TransformationMatrix);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 3);
-	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 3);
+	D3D12_CPU_DESCRIPTOR_HANDLE instancingSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, srvIndex);
+	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, srvIndex);
 
 	device->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
-
-	const Vector4 kRenderTargetClearValue = { 1.0f,0.0f,0.0f,1.0f };
-	auto renderTextureResource = CreateRenderTextureResource(device, kClientWidth, kClientHeight,
-		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
-
-	//device->CreateRenderTargetView(renderTextureResource.Get(),&rtvDesc,)
+	srvIndex++;
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC renderTextureSrvDesc{};
 	renderTextureSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
@@ -1404,8 +1416,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	renderTextureSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	renderTextureSrvDesc.Texture2D.MipLevels = 1;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE rtSrvCPUHandle = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 4);
-	D3D12_GPU_DESCRIPTOR_HANDLE rtSrvGPUHandle = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 4);
+	D3D12_CPU_DESCRIPTOR_HANDLE rtSrvCPUHandle = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, srvIndex);
+	D3D12_GPU_DESCRIPTOR_HANDLE rtSrvGPUHandle = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, srvIndex);
 	// SRVのseisei
 
 	//device->CreateShaderResourceView()
