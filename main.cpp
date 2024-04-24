@@ -575,6 +575,38 @@ D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descrip
 	return handleGPU;
 }
 
+Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
+	Microsoft::WRL::ComPtr<ID3D12Resource> resource;
+	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Width = width;
+	resourceDesc.Height = height;
+	//resourceDesc.Format = format;
+	//resourceDesc.MipLevels = 1;	// mipmapの数
+	//resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	// ２次元
+	// 利用するHeapの設定
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	// 深度値のクリア設定
+	D3D12_CLEAR_VALUE clearValue{};
+	clearValue.Color[0] = clearColor.x;
+	clearValue.Color[1] = clearColor.y;
+	clearValue.Color[2] = clearColor.z;
+	clearValue.Color[3] = clearColor.w;
+	clearValue.Format = format;	// フォーマット。Resourceと合わせる
+
+	HRESULT hr = device->CreateCommittedResource(
+		&heapProperties,	// Heapの設定
+		D3D12_HEAP_FLAG_NONE,	// Heapの特殊な設定。特になし。
+		&resourceDesc,	// Resourceの設定
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,	// 深度値を書き込む状態にしておく
+		&clearValue,
+		IID_PPV_ARGS(&resource));
+	assert(SUCCEEDED(hr));
+
+	return resource;
+}
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//DirectX* directX = nullptr;
@@ -1359,6 +1391,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3D12_GPU_DESCRIPTOR_HANDLE instancingSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 3);
 
 	device->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
+
+	const Vector4 kRenderTargetClearValue = { 1.0f,0.0f,0.0f,1.0f };
+	auto renderTextureResource = CreateRenderTextureResource(device, kClientWidth, kClientHeight,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
+
+	//device->CreateRenderTargetView(renderTextureResource.Get(),&rtvDesc,)
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC renderTextureSrvDesc{};
+	renderTextureSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	renderTextureSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	renderTextureSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	renderTextureSrvDesc.Texture2D.MipLevels = 1;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE rtSrvCPUHandle = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 4);
+	D3D12_GPU_DESCRIPTOR_HANDLE rtSrvGPUHandle = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 4);
+	// SRVのseisei
+
+	//device->CreateShaderResourceView()
 
 #pragma endregion
 
