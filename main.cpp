@@ -88,7 +88,31 @@ struct ModelData {
 	MaterialData material;
 	Node rootNode;
 };
+struct Quaternion {
+	float x, y, z, w;
+};
+struct KeyframeVector3 {
+	Vector3 value;
+	float time;
+};
 
+struct KeyframeQuaternion {
+	Quaternion value;
+	float time;
+};
+
+template<typename tValue>
+struct Keyframe {
+	float time;
+	tValue value;
+};
+using KeyframeVector3 = Keyframe<Vector3>;
+using KeyframeQuaternion = Keyframe<Quaternion>;
+
+struct NodeAnimation {
+	std::vector<KeyframeVector3> translate;
+	std::vector<KeyframeQuaternion> rotate;
+};
 
 Node ReadNode(aiNode* node) {
 	Node result;
