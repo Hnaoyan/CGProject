@@ -36,6 +36,13 @@ void SampleScene::Initialize()
 	emitter_->Initialize(1, 30);
 	emitter_->transform.translate = newPoint;
 
+	sprite_.reset(Sprite::Create(texture_[0], { 200,200 }, { 1,1,1,1 }, { 0.5f,0.5f }, false, false));
+
+	//for (std::list<std::unique_ptr<Sprite>>::iterator it = sprites_.begin();
+	//	it != sprites_.end(); ++it) {
+	//	(*it).reset(Sprite::Create(texture_[0], { 200,200 }, { 1,1,1,1 }, { 0.5f,0.5f }, false, false));
+	//}
+
 }
 
 void SampleScene::Update()
@@ -50,7 +57,11 @@ void SampleScene::Update()
 	for (SamplePlayer* obj : targetObjs_) {
 		obj->Update();
 	}
-
+	//for (std::list<std::unique_ptr<Sprite>>::iterator it = sprites_.begin();
+	//	it != sprites_.end(); ++it) {
+	//	(*it)->Update();
+	//}
+	sprite_->Update();
 	// 更新
 	viewProjection_.UpdateMatrix();
 }
@@ -63,7 +74,11 @@ void SampleScene::Draw()
 	// 描画前処理
 	Sprite::PreDraw(commandList);
 
-
+	//for (std::list<std::unique_ptr<Sprite>>::iterator it = sprites_.begin();
+	//	it != sprites_.end(); ++it) {
+	//	(*it)->Draw();
+	//}
+	sprite_->Draw();
 	// 描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア

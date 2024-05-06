@@ -84,7 +84,7 @@ private:	// 静的メンバ変数
 
 	//static Microsoft::WRL::ComPtr<ID3D12PipelineState> gPipelineState_;
 	// デスクリプタサイズ
-	static UINT sDescriptorHandleIncrementSize_;
+	//static UINT sDescriptorHandleIncrementSize_;
 
 	static Matrix4x4 sMatProjection_;
 

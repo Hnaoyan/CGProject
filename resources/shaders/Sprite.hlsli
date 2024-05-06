@@ -1,6 +1,6 @@
 cbuffer cbuff0 : register(b0) {
 	float32_t4 color;
-	matrix mat;
+	float32_t4x4 mat;
 }
 
 struct VSOutput {

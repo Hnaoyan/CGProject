@@ -5,6 +5,7 @@
 #include "Sample/SamplePlayer.h"
 #include "Sample/SampleMissile.h"
 #include "Drawer/IEmitter.h"
+#include "2D/Sprite.h"
 
 #include <list>
 
@@ -84,5 +85,8 @@ private:
 
 	uint32_t texture_[2];
 
+	std::unique_ptr<Sprite> sprite_;
+
+	//std::list<std::unique_ptr<Sprite>> sprites_;
 };
 

@@ -13,7 +13,7 @@ using namespace Pipeline;
 
 ID3D12Device* Sprite::sDevice_ = nullptr;
 ID3D12GraphicsCommandList* Sprite::sCommandList_;
-UINT Sprite::sDescriptorHandleIncrementSize_;
+//UINT Sprite::sDescriptorHandleIncrementSize_;
 Matrix4x4 Sprite::sMatProjection_;
 
 ComPtr<ID3D12RootSignature> Sprite::sRootSignature_;
@@ -52,9 +52,9 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	sDevice_ = device;
 	HRESULT result = S_FALSE;
 
-	// デスクリプタサイズを取得
-	sDescriptorHandleIncrementSize_ =
-		sDevice_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//// デスクリプタサイズを取得
+	//sDescriptorHandleIncrementSize_ =
+	//	sDevice_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	// Shaderをコンパイルする
 	ComPtr<IDxcBlob> vertexShaderBlob;	// 頂点シェーダオブジェクト
