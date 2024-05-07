@@ -56,13 +56,13 @@ void MyGame::Draw()
 	dxCommon->RenderTexturePreDraw();
 	// ゲームシーン描画処理
 	SceneManager::GetInstance()->Draw();
-	dxCommon->RenderTexturePostDraw();
 
+	dxCommon->RenderTexturePostDraw();
 
 	// 描画前処理
 	dxCommon->PreDraw();
-	RenderSprite::GetInstance()->Draw(dxCommon->GetSRV());
 
+	RenderSprite::GetInstance()->Draw(dxCommon->GetSRV());
 	// ImGui描画
 	imguiManager_->Draw();
 
