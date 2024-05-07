@@ -21,7 +21,7 @@ void RenderSprite::Draw(SRV* srv)
 	ID3D12DescriptorHeap* ppHeap[] = { srv->GetHeap() };
 	commandList_->SetDescriptorHeaps(_countof(ppHeap), ppHeap);
 
-	D3D12_GPU_DESCRIPTOR_HANDLE srvGPUHandle = DescriptorManager::GetGPUDescriptorHandle(srv->GetHeap(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 2);
+	D3D12_GPU_DESCRIPTOR_HANDLE srvGPUHandle = DescriptorManager::GetGPUDescriptorHandle(srv->GetHeap(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), 2);
 
 	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList_->SetGraphicsRootDescriptorTable(0, srvGPUHandle);
