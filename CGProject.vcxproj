@@ -250,6 +250,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileManager.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Descriptor\DescriptorManager.cpp" />
+    <ClCompile Include="DirectXGame\Engine\3D\RenderSprite.cpp" />
     <ClCompile Include="DirectXGame\Engine\Audio\AudioManager.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\Sprite.cpp" />
     <ClCompile Include="DirectXGame\Engine\2D\SpriteCommon.cpp" />
@@ -305,8 +306,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="DirectXGame\Application\Scene\TitleScene.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.cpp" />
-    <ClCompile Include="DirectXGame\Engine\3D\Respect\NEngine.cpp" />
-    <ClCompile Include="DirectXGame\Engine\3D\Respect\TestParticle.cpp" />
     <ClCompile Include="DirectXGame\Engine\Scene\SceneFactory.cpp" />
     <ClCompile Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.cpp" />
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.cpp" />
@@ -321,6 +320,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileFactory.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\MissileList.h" />
     <ClInclude Include="DirectXGame\Application\Scene\ClearScene.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\RenderSprite.h" />
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\RenderTexture.h" />
     <ClInclude Include="DirectXGame\Engine\Base\ManagerList.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\NBase\Singleton.h" />
     <ClInclude Include="DirectXGame\Engine\NLib\Timer.h" />
@@ -393,8 +394,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="DirectXGame\Application\Scene\TitleScene.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\Particle\IParticle.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.h" />
-    <ClInclude Include="DirectXGame\Engine\3D\Respect\NEngine.h" />
-    <ClInclude Include="DirectXGame\Engine\3D\Respect\TestParticle.h" />
     <ClInclude Include="DirectXGame\Engine\Scene\SceneFactory.h" />
     <ClInclude Include="DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.h" />
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Model\Sphere.h" />
@@ -414,6 +413,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\shaders\FullScreen.hlsli" />
     <None Include="Resources\shaders\Instancing.hlsli" />
     <None Include="resources\shaders\Obj.hlsli" />
     <None Include="Resources\shaders\Particle.hlsli" />
@@ -424,6 +424,33 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Resources\shaders\FullScreenPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\FullScreenVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\GrayscalePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Demo|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Resources\shaders\InstancingPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

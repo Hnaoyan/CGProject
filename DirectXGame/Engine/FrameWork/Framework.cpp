@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include "RenderSprite.h"
 
 void Framework::Execute()
 {
@@ -67,6 +68,8 @@ void Framework::Initialize()
 
 	// モデルインスタンス
 	Model::StaticInitialize();
+
+	RenderSprite::GetInstance()->Initialize(dxCommon->GetDevice(), dxCommon->GetCommandList());
 
 	// パーティクルインスタンス
 	// 未完成

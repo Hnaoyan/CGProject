@@ -285,12 +285,6 @@
     <ClCompile Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\3D\Respect\NEngine.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectXGame\Engine\3D\Respect\TestParticle.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="DirectXGame\Application\Scene\ClearScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -325,6 +319,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="DirectXGame\Engine\NLib\Timer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXGame\Engine\3D\RenderSprite.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -530,12 +527,6 @@
     <ClInclude Include="DirectXGame\Engine\3D\Drawer\Particle\ParticleData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\3D\Respect\NEngine.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectXGame\Engine\3D\Respect\TestParticle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="DirectXGame\Application\Scene\ClearScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -587,6 +578,12 @@
     <ClInclude Include="DirectXGame\Engine\NLib\Timer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\Drawer\RenderTexture.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXGame\Engine\3D\RenderSprite.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
@@ -609,6 +606,9 @@
     </FxCompile>
     <FxCompile Include="Resources\shaders\InstancingVS.hlsl" />
     <FxCompile Include="Resources\shaders\InstancingPS.hlsl" />
+    <FxCompile Include="Resources\shaders\FullScreenPS.hlsl" />
+    <FxCompile Include="Resources\shaders\FullScreenVS.hlsl" />
+    <FxCompile Include="Resources\shaders\GrayscalePS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -621,5 +621,6 @@
       <Filter>シェーダーファイル</Filter>
     </None>
     <None Include="Resources\shaders\Instancing.hlsli" />
+    <None Include="Resources\shaders\FullScreen.hlsli" />
   </ItemGroup>
 </Project>

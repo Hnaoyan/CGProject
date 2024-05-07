@@ -1,8 +1,11 @@
 #include "RTV.h"
 #include "DescriptorManager.h"
 #include <cassert>
+#include "SRV.h"
 
 using namespace Microsoft::WRL;
+
+uint32_t RTV::sNextIndexDescpritorHeap_ = 0u;
 
 void RTV::StaticInitialize(DirectXCommon* dxCommon, int32_t bufferWidth, int32_t bufferHeight)
 {
@@ -15,7 +18,8 @@ void RTV::StaticInitialize(DirectXCommon* dxCommon, int32_t bufferWidth, int32_t
 
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
 	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvDescriptorHeapDesc.NumDescriptors = 1;
+	rtvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	rtvDescriptorHeapDesc.NumDescriptors = kNumDescriptor;
 	//rtvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
 	result = device_->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&heap_));
@@ -41,9 +45,8 @@ void RTV::PostDraw()
 	assert(SUCCEEDED(result));
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> RTV::CreateRenderTextureResource(ID3D12Device* device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor)
+Microsoft::WRL::ComPtr<ID3D12Resource> RTV::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor)
 {
-	Microsoft::WRL::ComPtr<ID3D12Resource> resultResource;
 	D3D12_RESOURCE_DESC resourceDesc{};
 	// RenderTarget
 	resourceDesc.Width = width;
@@ -58,10 +61,10 @@ Microsoft::WRL::ComPtr<ID3D12Resource> RTV::CreateRenderTextureResource(ID3D12De
 	D3D12_HEAP_PROPERTIES heapProperties{};
 	// VRAM上に
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	heapProperties.CreationNodeMask = 1;
-	heapProperties.VisibleNodeMask = 1;
+	//heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	//heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	//heapProperties.CreationNodeMask = 1;
+	//heapProperties.VisibleNodeMask = 1;
 
 	D3D12_CLEAR_VALUE clearValue;
 	clearValue.Format = format;
@@ -70,16 +73,19 @@ Microsoft::WRL::ComPtr<ID3D12Resource> RTV::CreateRenderTextureResource(ID3D12De
 	clearValue.Color[2] = clearColor.z;
 	clearValue.Color[3] = clearColor.w;
 
-	device->CreateCommittedResource(
+	//Microsoft::WRL::ComPtr<ID3D12Resource> resultResource;
+	ID3D12Resource* resultResource = nullptr;
+	device_->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
-		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 		&clearValue,
 		IID_PPV_ARGS(&resultResource)
 	);
+	Microsoft::WRL::ComPtr<ID3D12Resource> result = resultResource;
 
-	return resultResource;
+	return result;
 }
 
 void RTV::CreateSwapChain()
@@ -125,17 +131,9 @@ void RTV::CreateRenderTargetView()
 	result = dxCommon_->GetSwapChain()->GetDesc(&swapChainDesc);
 	assert(SUCCEEDED(result));
 
-	// RTVヒープの生成
-	D3D12_DESCRIPTOR_HEAP_DESC rtvDescHeapDesc{};
-	rtvDescHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvDescHeapDesc.NumDescriptors = swapChainDesc.BufferCount;
-	result = device_->CreateDescriptorHeap(&rtvDescHeapDesc, IID_PPV_ARGS(&heap_));
-	assert(SUCCEEDED(result));
-
 	// RTVデスクの設定
 	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;	// 出力結果をSRGBに変換して書き込む
 	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;	// 2Dテクスチャとして書き込む
-
 
 	// 裏表の2つ分
 	backBuffer_.resize(swapChainDesc.BufferCount);
@@ -145,19 +143,36 @@ void RTV::CreateRenderTargetView()
 		assert(SUCCEEDED(result));
 
 
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), i);
-
+		//D3D12_CPU_DESCRIPTOR_HANDLE handle = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), i);
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = GetCPUDescriptorHandle();
+		NextIndex();
 		device_->CreateRenderTargetView(backBuffer_[i].Get(), &rtvDesc_, handle);
 	}
-	//// OffScreenRendering
-	//D3D12_CPU_DESCRIPTOR_HANDLE handle = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), swapChainDesc.BufferCount);
 
-	//const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };
-	//renderTextureResource_ = CreateRenderTextureResource(device_, WindowAPI::kClientWidth, WindowAPI::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue);
-	//device_->CreateRenderTargetView(renderTextureResource_.Get(), &rtvDesc_, handle);
-	// SRVの作成
-	//D3D12_CPU_DESCRIPTOR_HANDLE handleSrv = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), 1);
-	//SRV::GetInstance()->CreateRenderTexture(renderTextureResource_.Get(), handle,device_);
+}
+
+void RTV::CreateRenderTexture(SRV* srv)
+{
+	// OffScreenRendering
+	//D3D12_CPU_DESCRIPTOR_HANDLE handle = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), 0);
+	D3D12_CPU_DESCRIPTOR_HANDLE handle = GetCPUDescriptorHandle();
+	NextIndex();
+
+	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;	// 出力結果をSRGBに変換して書き込む
+	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;	// 2Dテクスチャとして書き込む
+
+	renderTextureResource_ = CreateRenderTextureResource(bufferWidth_, bufferHeight_, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue_);
+	device_->CreateRenderTargetView(renderTextureResource_.Get(), &rtvDesc_, handle);
+	//SRVの作成
+		//D3D12_CPU_DESCRIPTOR_HANDLE handleSrv = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), 3);
+	D3D12_SHADER_RESOURCE_VIEW_DESC renderTextureSrvDesc{};
+	renderTextureSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	renderTextureSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	renderTextureSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	renderTextureSrvDesc.Texture2D.MipLevels = 1;
+	D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = DescriptorManager::GetCPUDescriptorHandle(srv->GetHeap(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV), 2);
+	device_->CreateShaderResourceView(renderTextureResource_.Get(), &renderTextureSrvDesc, srvHandle);
+	//srv->Create(renderTextureResource_.Get(), handle, device_);
 
 }
 
@@ -172,4 +187,18 @@ void RTV::ClearRenderTarget(ID3D12GraphicsCommandList* cmdList)
 	
 	// 指定した色で画面全体をクリアする
 	cmdList->ClearRenderTargetView(rtvHandle, clearColor_, 0, nullptr);	
+}
+
+void RTV::ClearRenderTexture(ID3D12GraphicsCommandList* cmdList)
+{
+	// これから書き込むバックバッファのインデックスを取得
+	//UINT backBufferIndex = dxCommon_->GetSwapChain()->GetCurrentBackBufferIndex();
+
+	// 描画先のRTVを設定する
+	// ハンドルを取得
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = DescriptorManager::GetCPUDescriptorHandle(heap_.Get(), device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV), 2);
+
+	// 指定した色で画面全体をクリアする
+	float color[4] = { kRenderTargetClearValue_.x,kRenderTargetClearValue_.y,kRenderTargetClearValue_.z,kRenderTargetClearValue_.w };
+	cmdList->ClearRenderTargetView(rtvHandle, color, 0, nullptr);
 }

@@ -78,9 +78,14 @@ public:
 	static Microsoft::WRL::ComPtr<ID3D12PipelineState> sParticlePipelineStates_;
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sParticleRootSignature_;
 
+	// RenderTexture用
+	static Microsoft::WRL::ComPtr<ID3D12PipelineState> sRenderSpritePipelineStates_;
+	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRenderSpriteRootSignature_;
+
 public: // 作成関数
 	static void CreateModelPipeline();
 	static void CreateParticlePipeline();
+	static void CreateRenderSpritePipeline();
 
 public:
 	static D3D12_RASTERIZER_DESC SetRasterizerState(D3D12_FILL_MODE fillMode, D3D12_CULL_MODE cullMode);

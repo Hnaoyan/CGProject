@@ -1,6 +1,7 @@
 #include "MyGame.h"
 #include "GlobalVariables.h"
 #include "Editor/Editor.h"
+#include "RenderSprite.h"
 
 void MyGame::Initialize()
 {
@@ -49,18 +50,24 @@ void MyGame::Update()
 
 void MyGame::Draw()
 {
-	// 描画前処理
-	dxCommon->PreDraw();
-
-	// ゲームシーン描画処理
-	SceneManager::GetInstance()->Draw();
-
 	// ImGui受付終了
 	imguiManager_->End();
+
+	dxCommon->RenderTexturePreDraw();
+	// ゲームシーン描画処理
+	SceneManager::GetInstance()->Draw();
+	dxCommon->RenderTexturePostDraw();
+
+
+	// 描画前処理
+	dxCommon->PreDraw();
+	RenderSprite::GetInstance()->Draw(dxCommon->GetSRV());
 
 	// ImGui描画
 	imguiManager_->Draw();
 
 	// 描画後処理
 	dxCommon->PostDraw();
+
+
 }

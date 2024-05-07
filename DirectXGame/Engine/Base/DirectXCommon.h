@@ -49,6 +49,10 @@ public:
 	/// </summary>
 	void PostDraw();
 
+	void RenderTexturePreDraw();
+
+	void RenderTexturePostDraw();
+
 	/// <summary>
 	/// 深度バッファのクリア
 	/// </summary>

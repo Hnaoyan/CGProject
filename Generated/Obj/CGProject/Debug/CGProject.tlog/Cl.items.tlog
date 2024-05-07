@@ -7,6 +7,7 @@ C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Application\GameObjec
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Application\GameObject\Missile\MissileManager.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\MissileManager.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Application\GameObject\SkyDome\SkyDome.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\SkyDome.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\3D\Descriptor\DescriptorManager.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\DescriptorManager.obj
+C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\3D\RenderSprite.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\RenderSprite.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\Audio\AudioManager.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\AudioManager.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\2D\Sprite.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\Sprite.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\2D\SpriteCommon.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\SpriteCommon.obj
@@ -62,8 +63,6 @@ C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Application\GameObjec
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Application\Scene\TitleScene.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\TitleScene.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Application\GameObject\Missile\Particle\IParticle.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\IParticle.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\3D\Drawer\Particle\ParticleData.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\ParticleData.obj
-C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\3D\Respect\NEngine.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\NEngine.obj
-C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\3D\Respect\TestParticle.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\TestParticle.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\Scene\SceneFactory.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\SceneFactory.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Application\GameObject\Missile\MissileType\SlerpMissile.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\SlerpMissile.obj
 C:\Users\hazama naoya\Desktop\NaEngine\Project\DirectXGame\Engine\3D\Drawer\Model\Sphere.cpp;C:\Users\hazama naoya\Desktop\NaEngine\Project\Generated\Obj\CGProject\Debug\Sphere.obj

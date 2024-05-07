@@ -65,7 +65,7 @@ void SRV::StaticInitialize(DirectXCommon* dxCommon)
 void SRV::Initialize()
 {
 	descriptorSizeSRV_ = dxCommon_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	index_ = 2;
+	index_ = 3;
 }
 
 void SRV::AddPtr(uint32_t index, D3D12_DESCRIPTOR_HEAP_TYPE type)
