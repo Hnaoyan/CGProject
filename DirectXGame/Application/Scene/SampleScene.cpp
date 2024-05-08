@@ -78,7 +78,7 @@ void SampleScene::Update()
 void SampleScene::Draw()
 {
 	// コマンドリストの取得
-	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	// 描画前処理
 	Sprite::PreDraw(commandList);
@@ -91,7 +91,7 @@ void SampleScene::Draw()
 	// 描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
-	DirectXCommon::GetInstance()->ClearDepthBuffer();
+	dxCommon_->ClearDepthBuffer();
 
 
 	// 描画前処理
