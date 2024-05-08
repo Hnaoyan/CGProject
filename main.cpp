@@ -4,6 +4,7 @@
 #include <format>
 #include <cassert>
 #include <vector>
+#include <map>
 #define _USE_MATH_DEFINES
 #include <cmath>
 
@@ -112,6 +113,24 @@ using KeyframeQuaternion = Keyframe<Quaternion>;
 struct NodeAnimation {
 	std::vector<KeyframeVector3> translate;
 	std::vector<KeyframeQuaternion> rotate;
+	std::vector<KeyframeVector3> scale;
+};
+
+template<typename tValue>
+struct AnimationCurve {
+	std::vector<Keyframe<tValue>> keyframes;
+};
+
+struct NodeAnimation {
+	AnimationCurve<Vector3> translate;
+	AnimationCurve<Quaternion> rotate;
+	AnimationCurve<Vector3> scale;
+};
+
+struct Animation {
+	float duration;	// アニメーション全体の借
+	// NodeAnimationの集合。Node名でひけるようにしておく
+	std::map<std::string, NodeAnimation> nodeAnimations;
 };
 
 Node ReadNode(aiNode* node) {
@@ -136,13 +155,22 @@ Node ReadNode(aiNode* node) {
 	return result;
 }
 
+#pragma region Animationの読み込み系
+
+Animation LoadAnimationFile(const std::string& directory
+)
+
+#pragma endregion
+
+
+#pragma region Objectの読み込み系
 MaterialData LoadMaterial(const std::string& directory, const std::string& filename) {
 	MaterialData materialData;
 	std::string line;
 	std::ifstream file(directory + "/" + filename);
 	assert(file.is_open());
 
-	while (std::getline(file,line))
+	while (std::getline(file, line))
 	{
 		std::string identifier;
 		std::istringstream s(line);
@@ -169,9 +197,9 @@ ModelData LoadObj(const std::string& directory, const std::string& fileName) {
 
 	std::ifstream file(directory + "/" + fileName);
 	assert(file.is_open());
-	
+
 	// 読み込み
-	while (std::getline(file,line))
+	while (std::getline(file, line))
 	{
 		std::string identifier;
 		std::istringstream s(line);
@@ -188,7 +216,7 @@ ModelData LoadObj(const std::string& directory, const std::string& fileName) {
 			Vector2 texcoord;
 			s >> texcoord.x >> texcoord.y;
 			// V方向反転
-			texcoord.y = 1.0f - texcoord.y; 
+			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 		}
 		else if (identifier == "vn") {
@@ -239,7 +267,7 @@ ModelData LoadObj(const std::string& directory, const std::string& fileName) {
 	return modelData;
 }
 
-ModelData LoadAssimp(const std::string& directory, const std::string& fileName) 
+ModelData LoadAssimp(const std::string& directory, const std::string& fileName)
 {
 	ModelData modelData;
 
@@ -247,7 +275,7 @@ ModelData LoadAssimp(const std::string& directory, const std::string& fileName)
 	std::string filePath = directory + "/" + fileName;
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 	assert(scene->HasMeshes());
-	
+
 
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
 		aiMesh* mesh = scene->mMeshes[meshIndex];
@@ -353,6 +381,7 @@ ModelData LoadGlTFModel(const std::string& directory, const std::string& fileNam
 	ModelData data = modelData;
 	return data;
 }
+#pragma endregion
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
