@@ -121,7 +121,7 @@ struct AnimationCurve {
 	std::vector<Keyframe<tValue>> keyframes;
 };
 
-struct NodeAnimation {
+struct NodeAnimationCurve {
 	AnimationCurve<Vector3> translate;
 	AnimationCurve<Quaternion> rotate;
 	AnimationCurve<Vector3> scale;
@@ -157,8 +157,52 @@ Node ReadNode(aiNode* node) {
 
 #pragma region Animationの読み込み系
 
-Animation LoadAnimationFile(const std::string& directory
-)
+Animation LoadAnimationFile(const std::string& directory, const std::string& filename)
+{
+	Animation animation; // 作る奴
+	Assimp::Importer importer;
+	std::string filePath = directory + "/" + filename;
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), 0);
+
+	assert(scene->mNumAnimations != 0); // アニメーションがない
+
+	aiAnimation* animationAssimp = scene->mAnimations[0]; // 最初のアニメーションのみ採用
+	animation.duration = float(animationAssimp->mDuration / animationAssimp->mTicksPerSecond);// 時間を秒単位に変換
+
+	// assimpでは個々のNodeのAnimationをChannelと呼んでいるのでChannelを回してNodeAnimationの情報を取得する
+	for (uint32_t channelIndex = 0; channelIndex < animationAssimp->mNumChannels; ++channelIndex) {
+
+		aiNodeAnim* nodeAnimationAssimp = animationAssimp->mChannels[channelIndex];
+		NodeAnimation& nodeAnimation = animation.nodeAnimations[nodeAnimationAssimp->mNodeName.C_Str()];
+		// Position
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumPositionKeys; ++keyIndex) {
+			aiVectorKey& keyAssimp = nodeAnimationAssimp->mPositionKeys[keyIndex];
+			KeyframeVector3 keyframe;
+			keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);// 秒変換
+			keyframe.value = { -keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };	// 右手→左手
+			nodeAnimation.translate.push_back(keyframe);
+		}
+		// Rotate
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumRotationKeys; ++keyIndex) {
+			aiQuatKey& keyAssimp = nodeAnimationAssimp->mRotationKeys[keyIndex];
+			KeyframeQuaternion keyframe;
+			keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);// 秒変換
+			keyframe.value = { keyAssimp.mValue.x,-keyAssimp.mValue.y,-keyAssimp.mValue.z,keyAssimp.mValue.w };	// 右手→左手
+			nodeAnimation.rotate.push_back(keyframe);
+		}
+		// Scale
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumScalingKeys; ++keyIndex) {
+			aiVectorKey& keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
+			KeyframeVector3 keyframe;
+			keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);// 秒変換
+			keyframe.value = { keyAssimp.mValue.x,keyAssimp.mValue.y,keyAssimp.mValue.z };	// 右手→左手
+			nodeAnimation.scale.push_back(keyframe);
+		}
+
+	}
+
+	return animation;
+}
 
 #pragma endregion
 
@@ -1329,6 +1373,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	VertexData* vertexData = nullptr;
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
+
+	ModelData animModel = LoadGlTFModel("Resources/AnimatedCube", "AnimatedCube.gltf");
+	Animation animation = LoadAnimationFile("Resources/AnimatedCube", "AnimatedCube.gltf");
 
 #pragma endregion
 
