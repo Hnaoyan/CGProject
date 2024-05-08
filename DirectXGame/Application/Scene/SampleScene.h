@@ -77,6 +77,8 @@ private:
 
 	WorldTransform assimpTrf;
 
+	std::list<WorldTransform> trfLists_;
+
 	std::list<SamplePlayer*> targetObjs_;
 
 	void RegisterList(const Vector3& position);

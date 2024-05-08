@@ -24,7 +24,12 @@ void SampleScene::Initialize()
 	assimpTest_.reset(Model::Create());
 
 	assimpTrf.Initialize();
-	assimpTrf.translation_ = { 0,0,20.0f };
+	for (uint32_t i = 0; i < 5; ++i) {
+		assimpTrf.translation_ = { 0,-10.0f + (i * 2.0f),(i * 4.0f) };
+		trfLists_.push_back(assimpTrf);
+	}
+
+	assimpTrf.translation_ = { 5.0f,-2.0f,10.0f };
 
 	target_ = std::make_unique<SamplePlayer>();
 	target_->Initialize(testModel_.get());
@@ -53,6 +58,10 @@ void SampleScene::Update()
 	assimpTrf.UpdateMatrix();
 	target_->Update();
 	emitter_->Update(newPoint);
+
+	for (WorldTransform obj : trfLists_) {
+		obj.UpdateMatrix();
+	}
 
 	for (SamplePlayer* obj : targetObjs_) {
 		obj->Update();
@@ -89,8 +98,12 @@ void SampleScene::Draw()
 	Model::PreDraw(commandList);
 
 	//target_->Draw(viewProjection_);
+	for (WorldTransform obj : trfLists_) {
+		//assimpTest_->Draw(obj, viewProjection_);
+		testModel_->Draw(obj, viewProjection_);
+	}
 
-	assimpTest_->Draw(assimpTrf, viewProjection_);
+	//assimpTest_->Draw(assimpTrf, viewProjection_);
 
 	//for (SamplePlayer* obj : targetObjs_) {
 	//	obj->Draw(viewProjection_);
