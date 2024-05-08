@@ -609,6 +609,9 @@
     <FxCompile Include="Resources\shaders\FullScreenPS.hlsl" />
     <FxCompile Include="Resources\shaders\FullScreenVS.hlsl" />
     <FxCompile Include="Resources\shaders\GrayscalePS.hlsl" />
+    <FxCompile Include="Resources\shaders\VignettePS.hlsl" />
+    <FxCompile Include="Resources\shaders\GrayscaleVignettePS.hlsl" />
+    <FxCompile Include="Resources\shaders\BoxFilterPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
