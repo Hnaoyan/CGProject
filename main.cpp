@@ -92,15 +92,15 @@ struct ModelData {
 struct Quaternion {
 	float x, y, z, w;
 };
-struct KeyframeVector3 {
-	Vector3 value;
-	float time;
-};
-
-struct KeyframeQuaternion {
-	Quaternion value;
-	float time;
-};
+//struct KeyframeVector3 {
+//	Vector3 value;
+//	float time;
+//};
+//
+//struct KeyframeQuaternion {
+//	Quaternion value;
+//	float time;
+//};
 
 template<typename tValue>
 struct Keyframe {
@@ -202,6 +202,40 @@ Animation LoadAnimationFile(const std::string& directory, const std::string& fil
 	}
 
 	return animation;
+}
+
+float Lerp(float start, float end, float t) {
+	return start + (end - start) * t;
+}
+
+Vector3 Lerp(const Vector3& start, const Vector3& end, float t) {
+	Vector3 result = {};
+	result.x = start.x + (end.x - start.x) * t;
+	result.y = start.y + (end.y - start.y) * t;
+	result.z = start.z + (end.z - start.z) * t;
+	return result;
+}
+
+Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframes, float time) {
+	assert(!keyframes.empty());
+	if (keyframes.size() == 1 || time <= keyframes[0].time) {
+		return keyframes[0].value;
+	}
+
+	for (size_t index = 0; index < keyframes.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		// indexとnextIndexの2つのKeyframeを取得して範囲内に自国があるかを判定
+		if (keyframes[index].time <= time && time <= keyframes[nextIndex].time) {
+			// 範囲内を補間する
+			float t = (time - keyframes[index].time / (keyframes[nextIndex].time - keyframes[index].time));
+			return Lerp(keyframes[index].value, keyframes[nextIndex].value, t);
+		}
+	}
+	return (*keyframes.rbegin()).value;
+}
+
+Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframes, float time) {
+
 }
 
 #pragma endregion
@@ -425,6 +459,7 @@ ModelData LoadGlTFModel(const std::string& directory, const std::string& fileNam
 	ModelData data = modelData;
 	return data;
 }
+
 #pragma endregion
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -1361,21 +1396,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// モデル読み込み
 	ModelData modelData = LoadGlTFModel("Resources", "plane.gltf");
+
+	ModelData animModel = LoadGlTFModel("Resources/AnimatedCube", "AnimatedCube.gltf");
+	Animation animation = LoadAnimationFile("Resources/AnimatedCube", "AnimatedCube.gltf");
+
 	// 頂点
-	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
+	ID3D12Resource* vertexResource = CreateBufferResource(device, sizeof(VertexData) * animModel.vertices.size());
 	// ビュー
 	D3D12_VERTEX_BUFFER_VIEW vbView{};
 	vbView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	vbView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vbView.SizeInBytes = UINT(sizeof(VertexData) * animModel.vertices.size());
 	vbView.StrideInBytes = sizeof(VertexData);	//
 
 	// データを書き込む
 	VertexData* vertexData = nullptr;
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
-
-	ModelData animModel = LoadGlTFModel("Resources/AnimatedCube", "AnimatedCube.gltf");
-	Animation animation = LoadAnimationFile("Resources/AnimatedCube", "AnimatedCube.gltf");
+	std::memcpy(vertexData, animModel.vertices.data(), sizeof(VertexData)* animModel.vertices.size());
 
 #pragma endregion
 
@@ -1433,7 +1469,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	intermediateResource = UploadTextureData(textureResource[1].Get(), mipImages[1], device, commandList);
 
 	// Texture 3
-	mipImages[2] = LoadTexture(modelData.material.textureFilePath);
+	mipImages[2] = LoadTexture(animModel.material.textureFilePath);
 	const DirectX::TexMetadata& metadata3 = mipImages[2].GetMetadata();
 	textureResource[2] = CreateTextureResource(device, metadata3);
 	intermediateResource = UploadTextureData(textureResource[2].Get(), mipImages[2], device, commandList);
@@ -1537,6 +1573,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	std::string name = "Instance";
 
+
+	float animationTime = 0.0f;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
 		// Windowにメッセージが来てたら最優先で処理させる
@@ -1561,14 +1600,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//wvpData->World = worldMatrix;
 			//wvpData->WVP = worldViewProjectionMatrix;
 
+			animationTime += 1.0f / 60.0f;
+			animationTime = std::fmod(animationTime, animation.duration);
+			NodeAnimation& rootNodeAnimation = animation.nodeAnimations[animModel.rootNode.name];
+			Vector3 animTranslate = CalculateValue(rootNodeAnimation.translate, animationTime);
+			Quaternion animRotate = CalculateValue(rootNodeAnimation.rotate, animationTime);
+			Vector3 animScale = CalculateValue(rootNodeAnimation.scale, animationTime);
+			Matrix4x4 localMat = MakeAffineMatrix(animScale, animRotate, animTranslate);
+
 			for (uint32_t i = 0; i < kInstanceCount; ++i) {
 				Matrix4x4 worldMatrix = MakeAffineMatrix(transforms[i].scale, transforms[i].rotate, transforms[i].translate);
 				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 				
 				//instancingData[i].WVP = worldViewProjectionMatrix;
 				//instancingData[i].World = worldMatrix;
-				instancingData[i].WVP = Multiply(modelData.rootNode.localMatrix, Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix)));
-				instancingData[i].World = Multiply(modelData.rootNode.localMatrix, worldMatrix);
+				instancingData[i].WVP = Multiply(animModel.rootNode.localMatrix, Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix)));
+				instancingData[i].World = Multiply(animModel.rootNode.localMatrix, worldMatrix);
 
 				tag[i] = name + std::to_string(i);
 			
@@ -1678,7 +1725,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//---描画！（DrawCall/ドローコール）。3頂点で1つのインスタンス。インスタンスについては今後---//
 			// 球体
 
-			commandList->DrawInstanced(UINT(modelData.vertices.size()), kInstanceCount, 0, 0);
+			commandList->DrawInstanced(UINT(animModel.vertices.size()), kInstanceCount, 0, 0);
 
 			//commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU[0]);
 
