@@ -89,9 +89,6 @@ struct ModelData {
 	MaterialData material;
 	Node rootNode;
 };
-struct Quaternion {
-	float x, y, z, w;
-};
 //struct KeyframeVector3 {
 //	Vector3 value;
 //	float time;

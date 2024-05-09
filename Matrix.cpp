@@ -271,3 +271,17 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 	result.m[3][3] = 1;
 	return result;
 }
+
+Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion)
+{
+	Matrix4x4 result = {};
+	float x = quaternion.x;
+	float y = quaternion.y;
+	float z = quaternion.z;
+	float w = quaternion.w;
+
+	result.m[0][0] = 1 - std::powf(2 * y, 2) - std::powf(2 * z, 2);
+	result.m[0][1] = 2 * x * y + 2 * w * z;
+
+	return Matrix4x4();
+}
