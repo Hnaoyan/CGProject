@@ -198,7 +198,8 @@ Animation LoadAnimationFile(const std::string& directory, const std::string& fil
 
 	}
 
-	return animation;
+	Animation result = animation;
+	return result;
 }
 
 float Lerp(float start, float end, float t) {
@@ -210,6 +211,15 @@ Vector3 Lerp(const Vector3& start, const Vector3& end, float t) {
 	result.x = start.x + (end.x - start.x) * t;
 	result.y = start.y + (end.y - start.y) * t;
 	result.z = start.z + (end.z - start.z) * t;
+	return result;
+}
+Quaternion Lerp(const Quaternion& start, const Quaternion& end, float t) {
+	Quaternion result = {};
+
+	result.x = start.x + (end.x - start.x) * t;
+	result.y = start.y + (end.y - start.y) * t;
+	result.z = start.z + (end.z - start.z) * t;
+	result.w = start.w + (end.w - start.w) * t;
 	return result;
 }
 
@@ -232,7 +242,21 @@ Vector3 CalculateValue(const std::vector<KeyframeVector3>& keyframes, float time
 }
 
 Quaternion CalculateValue(const std::vector<KeyframeQuaternion>& keyframes, float time) {
+	assert(!keyframes.empty());
+	if (keyframes.size() == 1 || time <= keyframes[0].time) {
+		return keyframes[0].value;
+	}
 
+	for (size_t index = 0; index < keyframes.size() - 1; ++index) {
+		size_t nextIndex = index + 1;
+		// indexとnextIndexの2つのKeyframeを取得して範囲内に自国があるかを判定
+		if (keyframes[index].time <= time && time <= keyframes[nextIndex].time) {
+			// 範囲内を補間する
+			float t = (time - keyframes[index].time / (keyframes[nextIndex].time - keyframes[index].time));
+			return Lerp(keyframes[index].value, keyframes[nextIndex].value, t);
+		}
+	}
+	return (*keyframes.rbegin()).value;
 }
 
 #pragma endregion
@@ -1611,8 +1635,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				
 				//instancingData[i].WVP = worldViewProjectionMatrix;
 				//instancingData[i].World = worldMatrix;
-				instancingData[i].WVP = Multiply(animModel.rootNode.localMatrix, Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix)));
-				instancingData[i].World = Multiply(animModel.rootNode.localMatrix, worldMatrix);
+				instancingData[i].WVP = Multiply(localMat, Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix)));
+				instancingData[i].World = Multiply(localMat, worldMatrix);
 
 				tag[i] = name + std::to_string(i);
 			

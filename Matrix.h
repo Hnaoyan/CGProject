@@ -17,6 +17,7 @@ struct Quaternion {
 };
 
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const Vector3& translate);
 //Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
 Matrix4x4 Subtract(const Matrix4x4& m1, const Matrix4x4& m2);
 // Rotate
@@ -39,3 +40,5 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
 Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
+float Norm(const Quaternion& quaternion); 
+Quaternion Normalize(const Quaternion& quaternion);
