@@ -31,20 +31,6 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const
 	Matrix4x4 result = {};
 	Matrix4x4 matrixRotate = MakeRotateMatrix(rotate);
 
-	//result.m[0][0] = scale.x * matrixRotate.m[0][0];
-	//result.m[0][1] = scale.x * matrixRotate.m[0][1];
-	//result.m[0][2] = scale.x * matrixRotate.m[0][2];
-	//result.m[1][0] = scale.y * matrixRotate.m[1][0];
-	//result.m[1][1] = scale.y * matrixRotate.m[1][1];
-	//result.m[1][2] = scale.y * matrixRotate.m[1][2];
-	//result.m[2][0] = scale.z * matrixRotate.m[2][0];
-	//result.m[2][1] = scale.z * matrixRotate.m[2][1];
-	//result.m[2][2] = scale.z * matrixRotate.m[2][2];
-
-	//result.m[3][3] = 1.0f;
-	//result.m[3][0] = translate.x;
-	//result.m[3][1] = translate.y;
-	//result.m[3][2] = translate.z;
 
 	Matrix4x4 scaleMat = MakeScaleMatrix(scale);
 	Matrix4x4 translateMat = MakeTranslateMatrix(translate);
@@ -301,27 +287,6 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 
 Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion)
 {
-	//Matrix4x4 result = {};
-	//float x = quaternion.x;
-	//float y = quaternion.y;
-	//float z = quaternion.z;
-	//float w = quaternion.w;
-
-	//result.m[0][0] = 1.0f - 2.0f * (std::powf(y, 2.0f) + std::powf(z, 2.0f));
-	//result.m[0][1] = 2.0f * (y * z - x * w);
-	//result.m[0][2] = 2.0f * (y * w + x * z);
-	//
-	//result.m[1][0] = 2.0f * (x * y - w * z);
-	//result.m[1][1] = 1.0f - 2.0f * (std::powf(x, 2.0f) + std::powf(z, 2.0f));
-	//result.m[1][2] = 2.0f * (y * z + w * x);
-
-	//result.m[2][0] = 2.0f * (x * z + w * y);
-	//result.m[2][1] = 2.0f * (y * z - w * x);
-	//result.m[2][2] = 1.0f - 2.0f * (std::powf(x, 2.0f) + std::powf(y, 2.0f));
-
-	//result.m[3][3] = 1.0f;
-
-	//return result;
 	Matrix4x4 result = {};
 	float x = quaternion.x;
 	float y = quaternion.y;
@@ -346,6 +311,29 @@ Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion)
 	result.m[3][3] = 1.0f;
 
 	return result;
+
+	//Matrix4x4 result = {};
+	//float x = quaternion.x;
+	//float y = quaternion.y;
+	//float z = quaternion.z;
+	//float w = quaternion.w;
+
+	//result.m[0][0] = 1.0f - 2.0f * (std::powf(y, 2.0f) + std::powf(z, 2.0f));
+	//result.m[0][1] = 2.0f * (y * z - x * w);
+	//result.m[0][2] = 2.0f * (y * w + x * z);
+	//
+	//result.m[1][0] = 2.0f * (x * y - w * z);
+	//result.m[1][1] = 1.0f - 2.0f * (std::powf(x, 2.0f) + std::powf(z, 2.0f));
+	//result.m[1][2] = 2.0f * (y * z + w * x);
+
+	//result.m[2][0] = 2.0f * (x * z + w * y);
+	//result.m[2][1] = 2.0f * (y * z - w * x);
+	//result.m[2][2] = 1.0f - 2.0f * (std::powf(x, 2.0f) + std::powf(y, 2.0f));
+
+	//result.m[3][3] = 1.0f;
+
+	//return result;
+
 }
 
 float Norm(const Quaternion& quaternion)
