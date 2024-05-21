@@ -31,6 +31,8 @@ void SampleScene::Initialize()
 	emitter_->Initialize(1, 30);
 	emitter_->transform.translate = newPoint;
 
+	sprite_.reset(Sprite::Create(texture_[0], { 100,100 }, { 1,1,1,1 }, { 0.5f,0.5f }, false, false));
+
 }
 
 void SampleScene::Update()
@@ -41,7 +43,7 @@ void SampleScene::Update()
 	inst_->Update();
 	target_->Update();
 	emitter_->Update(newPoint);
-
+	sprite_->Update();
 	for (SamplePlayer* obj : targetObjs_) {
 		obj->Update();
 	}
@@ -58,6 +60,7 @@ void SampleScene::Draw()
 	// 描画前処理
 	Sprite::PreDraw(commandList);
 
+	sprite_->Draw();
 
 	// 描画後処理
 	Sprite::PostDraw();

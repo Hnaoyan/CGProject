@@ -107,11 +107,11 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 
 	gPipeline.DepthStencilState = dsDesc;
 
-	const D3D12_DEPTH_STENCILOP_DESC defaultStencilOp =
-	{ D3D12_STENCIL_OP_KEEP,D3D12_STENCIL_OP_KEEP,D3D12_STENCIL_OP_KEEP,D3D12_COMPARISON_FUNC_ALWAYS };
+	//const D3D12_DEPTH_STENCILOP_DESC defaultStencilOp =
+	//{ D3D12_STENCIL_OP_KEEP,D3D12_STENCIL_OP_KEEP,D3D12_STENCIL_OP_KEEP,D3D12_COMPARISON_FUNC_ALWAYS };
 
-	dsDesc.FrontFace = defaultStencilOp;
-	dsDesc.BackFace = defaultStencilOp;
+	//dsDesc.FrontFace = defaultStencilOp;
+	//dsDesc.BackFace = defaultStencilOp;
 
 	//dsDesc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 
