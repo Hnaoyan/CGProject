@@ -42,3 +42,8 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
 float Norm(const Quaternion& quaternion); 
 Quaternion Normalize(const Quaternion& quaternion);
+
+Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t);
+float Dot(const Quaternion& q0, const Quaternion& q1);
+Quaternion Scaler(const Quaternion& q, float scaler);
+Quaternion Add(const Quaternion& q0, const Quaternion& q1);

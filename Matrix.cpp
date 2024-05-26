@@ -344,3 +344,35 @@ Quaternion Normalize(const Quaternion& quaternion)
 
 	return result;
 }
+
+Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t)
+{
+	Quaternion quat0 = q0;
+	Quaternion quat1 = q1;
+	float dot = Dot(q0, q1);
+	if (dot < 0) {
+		quat0 = Scaler(q0, -1.0f);
+		dot *= -1.0f;
+	}
+	// なす角
+	float theta = std::acosf(dot);
+
+	float scale0 = std::sinf((1 - t) * theta) / std::sinf(theta);
+	float scale1 = std::sinf(t * theta) / std::sinf(theta);
+
+	return Add(Scaler(q0, scale0), Scaler(q1, scale1));
+}
+float Dot(const Quaternion& q0, const Quaternion& q1)
+{
+	return ((q0.x * q1.x) + (q0.y * q1.y) + (q0.z * q1.z) + (q0.w * q1.w));
+}
+
+Quaternion Scaler(const Quaternion& q, float scaler)
+{
+	return Quaternion(q.x * scaler, q.y * scaler, q.z * scaler, q.w * scaler);
+}
+
+Quaternion Add(const Quaternion& q0, const Quaternion& q1)
+{
+	return Quaternion(q0.x + q1.x, q0.y + q1.y, q0.z + q1.z, q0.w + q1.w);
+}
