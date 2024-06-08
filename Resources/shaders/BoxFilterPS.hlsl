@@ -24,41 +24,11 @@ static const float32_t2 kIndex3x3[3][3] =
 
 static const float32_t2 kIndex5x5[5][5] =
 {
-    {
-        { -1.0f, -1.0f },
-        { -0.5f, -1.0f },
-        { 0.0f, -1.0f },
-        { 0.5f, -1.0f },
-        { 1.0f, -1.0f },
-    },
-    {
-        { -1.0f, -0.5f },
-        { -0.5f, -0.5f },
-        { 0.0f, -0.5f },
-        { 0.5f, -0.5f },
-        { 1.0f, -0.5f },
-    },
-    {
-        { -1.0f, 0.0f },
-        { -0.5f, 0.0f },
-        { 0.0f, 0.0f },
-        { 0.5f, 0.0f },
-        { 1.0f, 0.0f },
-    },
-    {
-        { -1.0f, 0.5f },
-        { -0.5f, 0.5f },
-        { 0.0f, 0.5f },
-        { 0.5f, 0.5f },
-        { 1.0f, 0.5f },
-    },
-    {
-        { -1.0f, 1.0f },
-        { -0.5f, 1.0f },
-        { 0.0f, 1.0f },
-        { 0.5f, 1.0f },
-        { 1.0f, 1.0f },
-    },
+    { { -2.0f, -2.0f }, { -1.0f, -2.0f }, { 0.0f, -2.0f }, { 1.0f, -2.0f }, { 2.0f, -2.0f } },
+    { { -2.0f, -1.0f }, { -1.0f, -1.0f }, { 0.0f, -1.0f }, { 1.0f, -1.0f }, { 2.0f, -1.0f } },
+    { { -2.0f, 0.0f }, { -1.0f, 0.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 2.0f, 0.0f } },
+    { { -2.0f, 1.0f }, { -1.0f, 1.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 2.0f, 1.0f } },
+    { { -2.0f, 2.0f }, { -1.0f, 2.0f }, { 0.0f, 2.0f }, { 1.0f, 2.0f }, { 2.0f, 2.0f } },
 };
 
 struct PixelShaderOutput
@@ -76,7 +46,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     output.color.rgb = float32_t3(0.0f, 0.0f, 0.0f);
     output.color.a = 1.0f;
     
-    int32_t kernelSize = 3;
+    int32_t kernelSize = 5;
     
     float kernelSizeSquared = 1.0f / (kernelSize * kernelSize);
     
@@ -85,7 +55,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         for (int32_t y = 0; y < kernelSize; ++y)
         {
             // 3. 現在のtexcoordを算出
-            float32_t2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
+            float32_t2 texcoord = input.texcoord + kIndex5x5[x][y] * uvStepSize;
             // 4. 色に1/9掛けて足す
             float32_t3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
             

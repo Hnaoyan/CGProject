@@ -389,7 +389,7 @@ void PipelineManager::CreateRenderSpritePipeline()
 	assert(vsBlob != nullptr);
 
 	// ピクセルシェーダの読み込みとコンパイル
-	psBlob = Shader::GetInstance()->Compile(L"GrayscaleVignettePS.hlsl", L"ps_6_0");
+	psBlob = Shader::GetInstance()->Compile(L"BoxFilterPS.hlsl", L"ps_6_0");
 	assert(psBlob != nullptr);
 
 	D3D12_INPUT_LAYOUT_DESC inputLayout{};
