@@ -613,6 +613,7 @@
     <FxCompile Include="Resources\shaders\GrayscaleVignettePS.hlsl" />
     <FxCompile Include="Resources\shaders\BoxFilterPS.hlsl" />
     <FxCompile Include="Resources\shaders\GaussianFilter.hlsl" />
+    <FxCompile Include="Resources\shaders\LuminanceBasedOutlinePS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
